@@ -1,6 +1,6 @@
 import { IsArray, IsNumber, IsObject, Min, Max } from 'class-validator';
 
-export class QueryParamsDto {
+export class ApiQueryParamsDto {
   @IsObject()
   filter: object = {};
 

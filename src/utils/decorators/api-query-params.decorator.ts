@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const QueryParams = createParamDecorator(
+export const ApiQueryParams = createParamDecorator(
   (data: string | undefined, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
 
