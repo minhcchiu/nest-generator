@@ -16,6 +16,32 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "~base-inherit/*": [
+        "./src/base-inherit/*"
+      ],
+      "~config/*": [
+        "./src/config/*"
+      ],
+      "~lazy-module/*": [
+        "./src/lazy-module/*"
+      ],
+      "~authorizations/*": [
+        "./src/routes/authorizations/*"
+      ],
+      "~common/*": [
+        "./src/routes/common/*"
+      ],
+      "~features/*": [
+        "./src/routes/features/*"
+      ],
+      "~decorators/*": [
+        "./src/utils/decorators/*"
+      ],
+      "~exception/*": [
+        "./src/utils/exception/*"
+      ],
+    }
   }
 }

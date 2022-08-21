@@ -13,15 +13,16 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
-import { QueryParams } from 'src/utils/decorator/query-params.decorator';
-import { QueryParamsDto } from 'src/utils/interceptor/query-params.dto';
+import { ApiQueryParams } from '~decorators/api-query-params.decorator';
+import { ApiQueryParamsDto } from 'src/utils/interceptor/query-params.dto';
+import { collectionNames } from 'src/config/collections/collectionName';
+import { ProvinceService } from './province.service';
 
-@ApiTags('Users')
-@Controller('/users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@ApiTags('Provinces')
+@Controller(collectionNames.province.path)
+export class ProvinceController {
+  constructor(private readonly provinceService: ProvinceService) {}
 
   /**
    * Find all
@@ -30,8 +31,10 @@ export class UserController {
    */
   @Get('')
   @HttpCode(200)
-  async findAll(@QueryParams() queryParams: QueryParamsDto): Promise<any> {
-    return this.userService.find(queryParams);
+  async findAll(
+    @ApiQueryParams() queryParams: ApiQueryParamsDto,
+  ): Promise<any> {
+    return this.provinceService.find(queryParams);
   }
 
   /**
@@ -42,7 +45,7 @@ export class UserController {
   @Post('')
   @HttpCode(201)
   async create(@Body() body: any): Promise<any> {
-    return this.userService.create(body);
+    return this.provinceService.create(body);
   }
 
   /**
@@ -57,7 +60,7 @@ export class UserController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: any,
   ): Promise<any> {
-    return this.userService.updateById(id, body);
+    return this.provinceService.updateById(id, body);
   }
 
   /**
@@ -70,7 +73,7 @@ export class UserController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    return this.userService.deleteById(id);
+    return this.provinceService.deleteById(id);
   }
 
   /**
@@ -80,8 +83,8 @@ export class UserController {
    */
   @Get('paginate')
   @HttpCode(200)
-  async paginate(@QueryParams() query: QueryParamsDto): Promise<any> {
-    return this.userService.paginate(query);
+  async paginate(@ApiQueryParams() query: ApiQueryParamsDto): Promise<any> {
+    return this.provinceService.paginate(query);
   }
 
   /**
@@ -92,7 +95,7 @@ export class UserController {
   @Get('count')
   @HttpCode(200)
   async count(@Query() query: any): Promise<any> {
-    return this.userService.count(query);
+    return this.provinceService.count(query);
   }
 
   /**
@@ -105,7 +108,7 @@ export class UserController {
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.userService.findById(id);
+    const result = await this.provinceService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
 
