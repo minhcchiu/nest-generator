@@ -9,7 +9,7 @@ import {
 import { NotFoundException } from '@nestjs/common';
 
 import { BaseInterface } from './base.interface';
-import { QueryParamsDto } from 'src/utils/interceptor/query-params.dto';
+import { ApiQueryParamsDto } from 'src/utils/interceptor/query-params.dto';
 
 export class BaseService<T> implements BaseInterface<T> {
   private model: PaginateModel<T>;
@@ -23,7 +23,7 @@ export class BaseService<T> implements BaseInterface<T> {
    * @param queryParams
    * @returns
    */
-  async find(queryParams: QueryParamsDto): Promise<any[] | []> {
+  async find(queryParams: ApiQueryParamsDto): Promise<any[] | []> {
     const { filter, ...options } = queryParams;
 
     return this.model.find(filter, options.projection, options).lean();
@@ -44,40 +44,40 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find one
-   * @param id
+   * @param filter
    * @param options
    * @returns
    */
   async findOne(
-    id: Types.ObjectId,
+    filter: any = {},
     options: QueryOptions = {},
   ): Promise<any | null> {
-    return this.model.findOne(id, options.projection, options).lean();
+    return this.model.findOne(filter, options.projection, options).lean();
   }
 
   /**
    * Create new
-   * @param payload
+   * @param data
    * @returns
    */
-  async create(payload: any): Promise<any> {
-    return this.model.create(payload);
+  async create(data: any): Promise<any> {
+    return this.model.create(data);
   }
 
   /**
    * Find by ID and update
    * @param id
-   * @param updates
+   * @param data
    * @param options
    * @returns
    */
   async updateById(
     id: Types.ObjectId,
-    updates: any,
-    options: QueryOptions = {},
+    data: any,
+    options: QueryOptions = { new: true },
   ): Promise<any | null> {
     const updated = await this.model
-      .findByIdAndUpdate(id, updates, options)
+      .findByIdAndUpdate(id, data, options)
       .lean();
 
     if (!updated) throw new NotFoundException('Item not found.');
@@ -88,16 +88,16 @@ export class BaseService<T> implements BaseInterface<T> {
   /**
    * Find one and update
    * @param query
-   * @param payload
+   * @param data
    * @param options
    * @returns
    */
   async updateOne(
     query: object,
-    payload: any,
+    data: any,
     options: QueryOptions = { new: true },
   ): Promise<any | null> {
-    const updated = await this.model.updateOne(query, payload, options).lean();
+    const updated = await this.model.updateOne(query, data, options).lean();
 
     if (!updated) throw new NotFoundException('Item not found.');
 
@@ -107,16 +107,16 @@ export class BaseService<T> implements BaseInterface<T> {
   /**
    * Update many
    * @param query
-   * @param payload
+   * @param data
    * @param options
    * @returns
    */
   async updateMany(
     query: object = {},
-    payload: any,
+    data: any,
     options: QueryOptions = {},
   ): Promise<any> {
-    return this.model.updateMany(query, payload, options).lean();
+    return this.model.updateMany(query, data, options).lean();
   }
 
   /**
@@ -172,7 +172,7 @@ export class BaseService<T> implements BaseInterface<T> {
    * @returns
    */
   async paginate(
-    queryParams: QueryParamsDto,
+    queryParams: ApiQueryParamsDto,
   ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>> {
     const customLabels = {
       docs: 'docs',

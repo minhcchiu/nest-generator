@@ -4,28 +4,27 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import * as mongoosePaginate from 'mongoose-paginate-v2';
-import { UserModule } from 'src/routes/users/user.module';
-import QueryParamsMiddleware from 'src/utils/interceptor/query-params.middleware';
+import ApiQueryParamsMiddleware from 'src/utils/interceptor/query-params.middleware';
+import { DatabaseConfig } from '~config/database/database.config';
+import { UserModule } from '~common/c1-user/user.module';
+import { ProvinceModule } from '~common/province/province.module';
+import { MailModule } from 'src/lazy-modules/mail/mail.module';
+import { OtpModule } from '~common/c2-otp/otp.module';
+import { configuration } from '~config/config/configuration';
+import AuthModule from '~authorizations/c1-auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://minhchiu:Minhchiu.it.01@cluster0.llaipgz.mongodb.net',
-      {
-        dbName: 'awesome-nest-generator',
-        retryWrites: true,
-        connectionFactory: (connection) => {
-          connection.plugin(mongoosePaginate);
-          return connection;
-        },
-      },
-    ),
-
+    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    DatabaseConfig,
     UserModule,
+    ProvinceModule,
+    MailModule,
+    OtpModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -33,7 +32,7 @@ import QueryParamsMiddleware from 'src/utils/interceptor/query-params.middleware
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(QueryParamsMiddleware)
+      .apply(ApiQueryParamsMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.GET });
   }
 }
