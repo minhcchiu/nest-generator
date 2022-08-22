@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-import OtpService from './otp.service';
+import { OtpService } from './otp.service';
 import {
   SendOtpByPhoneDto,
   SendOtpByEmailDto,
@@ -22,13 +22,13 @@ import {
 } from './dto';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from 'src/utils/interceptor/query-params.dto';
+import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { collectionNames } from '~config/collections/collectionName';
 
 @ApiTags('Otps')
 @Controller(collectionNames.otp.path)
-export default class OtpController {
-  constructor(private readonly otpService: OtpService) {}
+export class OtpController {
+  constructor(private readonly otpService: OtpService) { }
 
   /**
    * Find all
