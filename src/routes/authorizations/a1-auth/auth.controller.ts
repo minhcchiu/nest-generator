@@ -1,8 +1,6 @@
 import { Body, Controller, Post, Put } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { UserService } from '~common/c1-user/user.service';
 import {
   SigninEmailDto,
   SigninPhoneDto,
@@ -11,12 +9,14 @@ import {
   SignupPhoneDto,
   TokenDto,
 } from './dto';
+import { AuthService } from './auth.service';
+import { UserService } from '~common/c1-user/user.service';
 import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { collectionNames } from '~config/collections/collectionName';
 
 @ApiTags('Auth')
 @Controller(collectionNames.auth.path)
-export default class AuthController {
+export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
@@ -47,7 +47,7 @@ export default class AuthController {
    * @param body
    * @returns
    */
-  @Post('signup-token')
+  @Post('signup-send-token-email')
   async signupWithToken(@Body() body: CreateUserDto) {
     return this.authService.signupWithToken(body);
   }
@@ -57,9 +57,9 @@ export default class AuthController {
    * @param body
    * @returns
    */
-  @Post('activate-account-token')
-  async activateAccountByToken(@Body() { token }: TokenDto) {
-    return this.authService.activateAccountByToken(token);
+  @Post('verify-signup-token')
+  async verifySignupToken(@Body() { token }: TokenDto) {
+    return this.authService.verifySignupToken(token);
   }
 
   /**
@@ -94,17 +94,21 @@ export default class AuthController {
 
   /**
    * Sign out
-   * @param userId
+   * @param idUser
    * @param deviceID
    * @returns
    */
   @Post('sign-out')
   async signout(
-    @Body('_id') id: Types.ObjectId,
+    @Body('_id') idUser: Types.ObjectId,
     @Body('deviceID') deviceID: string,
   ) {
     // Remove deviceID and pop fcm token
-    return this.userService.removeDeviceID(id, deviceID);
+    await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
+      console.log({ error });
+    });
+
+    return { success: true };
   }
 
   /**

@@ -13,19 +13,16 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { collectionNames } from 'src/config/collections/collectionName';
+import { WardService } from './ward.service';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
-@ApiTags('Users')
-@Controller(collectionNames.user.path)
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@ApiTags('Wards')
+@Controller(collectionNames.ward.path)
+export class WardController {
+  constructor(private readonly wardService: WardService) {}
 
   /**
    * Find all
@@ -37,7 +34,7 @@ export class UserController {
   async findAll(
     @ApiQueryParams() queryParams: ApiQueryParamsDto,
   ): Promise<any> {
-    return this.userService.find(queryParams);
+    return this.wardService.find(queryParams);
   }
 
   /**
@@ -47,8 +44,8 @@ export class UserController {
    */
   @Post('')
   @HttpCode(201)
-  async create(@Body() body: CreateUserDto): Promise<any> {
-    return this.userService.create(body);
+  async create(@Body() body: any): Promise<any> {
+    return this.wardService.create(body);
   }
 
   /**
@@ -61,9 +58,9 @@ export class UserController {
   @HttpCode(200)
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateUserDto,
+    @Body() body: any,
   ): Promise<any> {
-    return this.userService.updateById(id, body);
+    return this.wardService.updateById(id, body);
   }
 
   /**
@@ -76,7 +73,7 @@ export class UserController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    return this.userService.deleteById(id);
+    return this.wardService.deleteById(id);
   }
 
   /**
@@ -87,7 +84,7 @@ export class UserController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: ApiQueryParamsDto): Promise<any> {
-    return this.userService.paginate(query);
+    return this.wardService.paginate(query);
   }
 
   /**
@@ -98,7 +95,7 @@ export class UserController {
   @Get('count')
   @HttpCode(200)
   async count(@Query() query: any): Promise<any> {
-    return this.userService.count(query);
+    return this.wardService.count(query);
   }
 
   /**
@@ -111,7 +108,7 @@ export class UserController {
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.userService.findById(id);
+    const result = await this.wardService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
 

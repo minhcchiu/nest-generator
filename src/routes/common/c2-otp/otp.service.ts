@@ -11,11 +11,11 @@ import {
 } from './dto';
 import { BaseService } from '~base-inherit/base.service';
 import { Otp, OtpDocument } from './schemas/otp.schema';
-import { phoneHelper } from 'src/utils/helper/phone.helper';
+import { PhoneHelper } from 'src/utils/helper/phone.helper';
 import { MailService } from 'src/lazy-modules/mail/mail.service';
 
 @Injectable()
-export default class OtpService extends BaseService<OtpDocument> {
+export class OtpService extends BaseService<OtpDocument> {
   private otpModel: PaginateModel<OtpDocument>;
   constructor(
     @InjectModel(Otp.name) model: PaginateModel<OtpDocument>,
@@ -60,7 +60,7 @@ export default class OtpService extends BaseService<OtpDocument> {
     const { zipCode, phone, country } = data;
 
     // validate phone number
-    phoneHelper.validatePhone(phone, zipCode, country);
+    PhoneHelper.validatePhone(phone, zipCode, country);
 
     // Check can refresh otp
     const otpRefresh = await this.refreshOtpByPhone(phone);
@@ -179,7 +179,7 @@ export default class OtpService extends BaseService<OtpDocument> {
     const { otpCode, phone } = data;
 
     // validate phone
-    phoneHelper.validatePhone(phone);
+    PhoneHelper.validatePhone(phone);
 
     const otpDoc = await this.otpModel.findOne({ phone });
 

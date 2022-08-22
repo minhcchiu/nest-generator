@@ -15,14 +15,14 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from 'src/utils/interceptor/query-params.dto';
+import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { collectionNames } from 'src/config/collections/collectionName';
-import { ProvinceService } from './province.service';
+import { DistrictService } from './district.service';
 
-@ApiTags('Provinces')
-@Controller(collectionNames.province.path)
-export class ProvinceController {
-  constructor(private readonly provinceService: ProvinceService) {}
+@ApiTags('Districts')
+@Controller(collectionNames.district.path)
+export class DistrictController {
+  constructor(private readonly districtService: DistrictService) {}
 
   /**
    * Find all
@@ -34,7 +34,7 @@ export class ProvinceController {
   async findAll(
     @ApiQueryParams() queryParams: ApiQueryParamsDto,
   ): Promise<any> {
-    return this.provinceService.find(queryParams);
+    return this.districtService.find(queryParams);
   }
 
   /**
@@ -45,7 +45,7 @@ export class ProvinceController {
   @Post('')
   @HttpCode(201)
   async create(@Body() body: any): Promise<any> {
-    return this.provinceService.create(body);
+    return this.districtService.create(body);
   }
 
   /**
@@ -60,7 +60,7 @@ export class ProvinceController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: any,
   ): Promise<any> {
-    return this.provinceService.updateById(id, body);
+    return this.districtService.updateById(id, body);
   }
 
   /**
@@ -73,7 +73,7 @@ export class ProvinceController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    return this.provinceService.deleteById(id);
+    return this.districtService.deleteById(id);
   }
 
   /**
@@ -84,7 +84,7 @@ export class ProvinceController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: ApiQueryParamsDto): Promise<any> {
-    return this.provinceService.paginate(query);
+    return this.districtService.paginate(query);
   }
 
   /**
@@ -95,7 +95,7 @@ export class ProvinceController {
   @Get('count')
   @HttpCode(200)
   async count(@Query() query: any): Promise<any> {
-    return this.provinceService.count(query);
+    return this.districtService.count(query);
   }
 
   /**
@@ -108,7 +108,7 @@ export class ProvinceController {
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.provinceService.findById(id);
+    const result = await this.districtService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
 

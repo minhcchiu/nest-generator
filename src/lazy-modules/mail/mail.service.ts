@@ -70,7 +70,7 @@ export class MailService {
         from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
         to,
         subject,
-        html: './verify/verify.template.hbs',
+        template: './verify/verify.template.hbs',
         context: { verificationLink },
       };
 
