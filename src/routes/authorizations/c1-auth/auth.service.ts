@@ -261,7 +261,7 @@ export class AuthService {
     if (!userExist) {
       const token = await this.tokenService.generateSignupToken(data);
 
-      const verificationLink = `http://localhost:8888/auth/verify-signup-token?token=${token}`;
+      const verificationLink = `http://localhost:8888/auth/verify-signup-token/${token}`;
 
       // send mail
       await this.mailService.sendSignupToken(
@@ -287,7 +287,7 @@ export class AuthService {
    * @param token
    * @return
    */
-  async activateAccountByToken(token: string) {
+  async verifySignupToken(token: string) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { email, deviceID, iat, exp, ...rest } =
       await this.tokenService.verifySignupToken(token);
