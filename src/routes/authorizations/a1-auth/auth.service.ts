@@ -26,7 +26,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly otpService: OtpService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   /**
    * Sign in with email and password

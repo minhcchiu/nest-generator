@@ -22,18 +22,21 @@ import { Ward, WardSchema } from './schemas/ward.schema';
   ],
   controllers: [WardController],
   providers: [WardService],
-  exports: [WardService, MongooseModule.forFeatureAsync([
-    {
-      name: Ward.name,
-      useFactory: () => {
-        const schema = WardSchema;
+  exports: [
+    WardService,
+    MongooseModule.forFeatureAsync([
+      {
+        name: Ward.name,
+        useFactory: () => {
+          const schema = WardSchema;
 
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        schema.plugin(require('mongoose-slug-updater'));
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          schema.plugin(require('mongoose-slug-updater'));
 
-        return schema;
+          return schema;
+        },
       },
-    },
-  ]),],
+    ]),
+  ],
 })
-export class WardModule { }
+export class WardModule {}

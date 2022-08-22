@@ -14,4 +14,4 @@ import { TokenService } from './token.service';
   controllers: [AuthController],
   exports: [AuthService, TokenService],
 })
-export class AuthModule { }
+export class AuthModule {}

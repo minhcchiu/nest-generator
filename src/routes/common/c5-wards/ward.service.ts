@@ -7,9 +7,7 @@ import { Ward, WardDocument } from './schemas/ward.schema';
 
 @Injectable()
 export class WardService extends BaseService<WardDocument> {
-  constructor(
-    @InjectModel(Ward.name) model: PaginateModel<WardDocument>,
-  ) {
+  constructor(@InjectModel(Ward.name) model: PaginateModel<WardDocument>) {
     super(model);
   }
 }

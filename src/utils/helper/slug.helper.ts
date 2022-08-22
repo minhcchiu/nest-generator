@@ -14,5 +14,5 @@ export const SlugHelper = {
     _str = _str.replace(/^-+/g, '');
     _str = _str.replace(/-+$/g, '');
     return _str;
-  }
-}
+  },
+};

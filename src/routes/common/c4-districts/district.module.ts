@@ -22,18 +22,21 @@ import { District, DistrictSchema } from './schemas/district.schema';
   ],
   controllers: [DistrictController],
   providers: [DistrictService],
-  exports: [DistrictService, MongooseModule.forFeatureAsync([
-    {
-      name: District.name,
-      useFactory: () => {
-        const schema = DistrictSchema;
+  exports: [
+    DistrictService,
+    MongooseModule.forFeatureAsync([
+      {
+        name: District.name,
+        useFactory: () => {
+          const schema = DistrictSchema;
 
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        schema.plugin(require('mongoose-slug-updater'));
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          schema.plugin(require('mongoose-slug-updater'));
 
-        return schema;
+          return schema;
+        },
       },
-    },
-  ]),],
+    ]),
+  ],
 })
-export class DistrictModule { }
+export class DistrictModule {}

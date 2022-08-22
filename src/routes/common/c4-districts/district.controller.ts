@@ -22,7 +22,7 @@ import { DistrictService } from './district.service';
 @ApiTags('Districts')
 @Controller(collectionNames.district.path)
 export class DistrictController {
-  constructor(private readonly districtService: DistrictService) { }
+  constructor(private readonly districtService: DistrictService) {}
 
   /**
    * Find all

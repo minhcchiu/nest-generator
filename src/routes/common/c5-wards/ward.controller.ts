@@ -22,7 +22,7 @@ import { WardService } from './ward.service';
 @ApiTags('Wards')
 @Controller(collectionNames.ward.path)
 export class WardController {
-  constructor(private readonly wardService: WardService) { }
+  constructor(private readonly wardService: WardService) {}
 
   /**
    * Find all

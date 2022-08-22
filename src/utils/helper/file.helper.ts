@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'fs';
 
 export const FileHelper = {
   isFileExist(filePath: string): boolean {
@@ -7,5 +7,5 @@ export const FileHelper = {
 
   readFileSync(filePath: string): any {
     return fs.readFileSync(filePath);
-  }
-}
+  },
+};

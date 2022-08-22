@@ -21,7 +21,7 @@ export class District {
   @Prop({ type: String, default: 'district' })
   readonly type: string;
 
-  @Prop({ type: String, slug: 'name', })
+  @Prop({ type: String, slug: 'name' })
   readonly slug: string;
 }
 

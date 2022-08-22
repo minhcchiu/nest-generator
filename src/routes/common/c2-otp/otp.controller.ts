@@ -28,7 +28,7 @@ import { collectionNames } from '~config/collections/collectionName';
 @ApiTags('Otps')
 @Controller(collectionNames.otp.path)
 export class OtpController {
-  constructor(private readonly otpService: OtpService) { }
+  constructor(private readonly otpService: OtpService) {}
 
   /**
    * Find all
