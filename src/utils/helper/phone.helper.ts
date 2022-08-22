@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { phone } from 'phone';
 
-export const phoneHelper = {
+export const PhoneHelper = {
   /**
    * Validate phone
    * @param zipCode
