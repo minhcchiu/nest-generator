@@ -4,7 +4,8 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "lazy-modules/mail/templates/**/*"
+      "lazy-modules/mail/templates/**/*",
+      "**/*.json"
     ],
     "watchAssets": true
   }

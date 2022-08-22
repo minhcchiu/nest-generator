@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { phoneHelper } from 'src/utils/helper/phone.helper';
+import { PhoneHelper } from 'src/utils/helper/phone.helper';
 import { UserService } from '~common/c1-user/user.service';
-import OtpService from '~common/c2-otp/otp.service';
+import { OtpService } from '~common/c2-otp/otp.service';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import {
@@ -26,7 +26,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly otpService: OtpService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   /**
    * Sign in with email and password
@@ -83,7 +83,7 @@ export class AuthService {
   async signinWithPhone(data: SigninPhoneDto): Promise<AuthResponse> {
     const { phone, password, deviceID } = data;
     // validate phone
-    phoneHelper.validatePhone(phone);
+    PhoneHelper.validatePhone(phone);
 
     // Get and check user exist by phone
     const user = await this.userService.findOne({ phone });

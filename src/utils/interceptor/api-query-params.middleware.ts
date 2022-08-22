@@ -7,11 +7,11 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import * as aqp from 'api-query-params';
 
-import { ApiQueryParamsDto } from './query-params.dto';
-import { queryParamValidatorDto } from './query-params.validator';
+import { ApiQueryParamsDto } from './api-query-params.dto';
+import { queryParamValidatorDto } from './api-query-params.validator';
 
 @Injectable()
-export default class ApiQueryParamsMiddleware implements NestMiddleware {
+export class ApiQueryParamsMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     // Remove key query projection by key: "fields" in API-Query-Params
     if (req.query.fields && (req.query.fields as string).includes('password')) {

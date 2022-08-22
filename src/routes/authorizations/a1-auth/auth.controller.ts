@@ -16,11 +16,11 @@ import { collectionNames } from '~config/collections/collectionName';
 
 @ApiTags('Auth')
 @Controller(collectionNames.auth.path)
-export default class AuthController {
+export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   /**
    *Sign in with account email
