@@ -1,7 +1,5 @@
 export interface AuthResponse {
   user: any;
-  tokens: {
-    ac_token: string;
-    rf_token: string;
-  };
+  ac_token: string;
+  rf_token: string;
 }
