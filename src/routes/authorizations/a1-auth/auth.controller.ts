@@ -38,8 +38,8 @@ export class AuthController {
    * @returns
    */
   @Post('signup-email')
-  async signupWithEmail(@Body() body: SignupEmailDto) {
-    return this.authService.signupWithEmail(body);
+  async signupWithEmailAndOtp(@Body() body: SignupEmailDto) {
+    return this.authService.signupWithEmailAndOtp(body);
   }
 
   /**
@@ -48,8 +48,8 @@ export class AuthController {
    * @returns
    */
   @Post('signup-send-token-email')
-  async signupWithToken(@Body() body: CreateUserDto) {
-    return this.authService.signupWithToken(body);
+  async signupSendTokenToEmail(@Body() body: CreateUserDto) {
+    return this.authService.signupSendTokenToEmail(body);
   }
 
   /**
@@ -78,8 +78,8 @@ export class AuthController {
    * @returns
    */
   @Post('signup-phone')
-  async signupWithPhone(@Body() body: SignupPhoneDto) {
-    return this.authService.signupWithPhone(body);
+  async signupWithPhoneAndOtp(@Body() body: SignupPhoneDto) {
+    return this.authService.signupWithPhoneAndOtp(body);
   }
 
   /**

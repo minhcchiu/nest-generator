@@ -38,41 +38,26 @@ export class AuthService {
 
     const user = await this.userService.findOne({ email });
 
-    // check user has exist
-    if (!user)
-      throw new NotFoundException('The account does not exist in the system.');
+    if (user) {
+      // check password
+      await this.userService.checkPasswordById(user._id, password);
 
-    // check user deleted
-    if (user.deleted)
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+      // if exist deviceID => add deviceID to fcmTokens
+      if (deviceID) {
+        await this.userService.addDeviceID(user._id, deviceID);
+        user.deviceID = deviceID;
+      }
 
-    // compare password
-    const isPasswordValid = await this.userService.comparePasswordById(
-      user._id,
-      password,
-    );
+      // generate tokens
+      const tokens = await this.generateAuthTokens(user);
 
-    // Check password valid
-    if (!isPasswordValid)
-      throw new BadRequestException('Incorrect phone or password.');
-
-    // if exist deviceID => add deviceID to fcmTokens
-    if (deviceID) {
-      await this.userService.addDeviceID(user._id, deviceID);
-
-      user.deviceID = deviceID;
+      // success
+      return { ...tokens, user };
     }
 
-    // generate tokens
-    const tokens = await this.generateAuthTokens({
-      _id: user._id,
-      role: user.role,
-    });
-
-    // success
-    return { user, tokens };
+    throw new BadRequestException(
+      'The account does not exist or has been removed from the system.',
+    );
   }
 
   /**
@@ -88,41 +73,27 @@ export class AuthService {
     // Get and check user exist by phone
     const user = await this.userService.findOne({ phone });
 
-    if (!user)
-      throw new NotFoundException('The account does not exist in the system.');
+    if (user) {
+      // check password
+      await this.userService.checkPasswordById(user._id, password);
 
-    // check deleted
-    if (user.deleted) {
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+      // if exist deviceID => add deviceID to fcmTokens
+      if (deviceID) {
+        await this.userService.addDeviceID(user._id, deviceID);
+
+        user.deviceID = deviceID;
+      }
+
+      // generate tokens
+      const tokens = await this.generateAuthTokens(user);
+
+      // success
+      return { ...tokens, user };
     }
 
-    // compare password
-    const isPasswordValid = await this.userService.comparePasswordById(
-      user._id,
-      password,
+    throw new BadRequestException(
+      'The account does not exist or has been removed from the system.',
     );
-
-    // Check valid password
-    if (!isPasswordValid)
-      throw new BadRequestException('Incorrect phone or password.');
-
-    // if exist deviceID => add deviceID to fcmTokens
-    if (deviceID) {
-      await this.userService.addDeviceID(user._id, deviceID);
-
-      user.deviceID = deviceID;
-    }
-
-    // generate tokens
-    const tokens = await this.generateAuthTokens({
-      _id: user._id,
-      role: user.role,
-    });
-
-    // success
-    return { user, tokens };
   }
 
   /**
@@ -132,18 +103,18 @@ export class AuthService {
    */
   async signinWithSocial(data: SigninSocialDto): Promise<AuthResponse> {
     const { deviceID, accountType, authKey } = data;
-    // find user by tokenLogin + typeRegister
+
+    // find user
     let user = await this.userService.findOne({ authKey, accountType });
 
-    // if not exist user => create new
+    // check user not exist
     if (!user) user = await this.userService.create(data);
 
-    // if user has been deleted => update deleted = false
-    if (user.deleted) {
-      user = await this.userService.updateById(user._id, { deleted: false });
-    }
+    // check user has been deleted
+    if (user.deleted)
+      await this.userService.updateById(user._id, { authKey: '' });
 
-    // if exist deviceID => update deviceID and fcmTokens
+    // check add deviceID
     if (deviceID) {
       await this.userService.addDeviceID(user._id, deviceID);
 
@@ -151,13 +122,10 @@ export class AuthService {
     }
 
     // generate tokens
-    const tokens = await this.generateAuthTokens({
-      _id: user._id,
-      role: user.role,
-    });
+    const tokens = await this.generateAuthTokens(user);
 
     // success
-    return { user, tokens };
+    return { ...tokens, user };
   }
 
   /**
@@ -165,43 +133,35 @@ export class AuthService {
    * @param data
    * @returns
    */
-  async signupWithEmail(data: SignupEmailDto): Promise<AuthResponse> {
-    const { email, deviceID, otpCode, password, ...rest } = data;
-
+  async signupWithEmailAndOtp(data: SignupEmailDto): Promise<AuthResponse> {
     // validate user
-    const userExist = await this.userService.findUserExist({ email });
+    const userExist = await this.userService.findUserExist({
+      email: data.email,
+    });
 
-    // if userExist has not exist => sign up
-    if (!userExist) {
-      // verify otpCode by phone
-      await this.otpService.verifyOtpEmail({ email, otpCode });
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
 
-      // new user
-      const user = await this.userService.create({
-        ...rest,
-        email,
-        deviceID,
-        password,
-        fcmTokens: deviceID ? [deviceID] : [],
-      });
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens({
-        _id: user._id,
-        role: user.role,
-      });
-
-      // success
-      return { user, tokens };
+      // Delete old email
+      await this.userService.updateById(userExist._id, { email: '' });
     }
 
-    // check user deleted
-    if (userExist.deleted)
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+    // verify otpCode by phone
+    await this.otpService.verifyOtpEmail({
+      email: data.email,
+      otpCode: data.otpCode,
+    });
 
-    throw new BadRequestException('Account already exists in the system.');
+    // create user
+    const user = await this.userService.create(data);
+
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
@@ -209,77 +169,69 @@ export class AuthService {
    * @param data
    * @returns
    */
-  async signupWithPhone(data: SignupPhoneDto): Promise<AuthResponse> {
-    const { phone, deviceID, otpCode, password, ...rest } = data;
-
+  async signupWithPhoneAndOtp(data: SignupPhoneDto): Promise<AuthResponse> {
     // validate user
-    const userExist = await this.userService.findUserExist({ phone });
+    const userExist = await this.userService.findUserExist({
+      phone: data.phone,
+    });
 
-    // if userExist has not exist => sign up
-    if (!userExist) {
-      // verify otpCode by phone
-      await this.otpService.verifyOtpPhone({ phone, otpCode });
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
 
-      // new user
-      const user = await this.userService.create({
-        ...rest,
-        phone,
-        deviceID,
-        password,
-        fcmTokens: deviceID ? [deviceID] : [],
-      });
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens({
-        _id: user._id,
-        role: user.role,
-      });
-
-      // success
-      return { user, tokens };
+      // Delete old phone
+      await this.userService.updateById(userExist._id, { phone: '' });
     }
 
-    // check user deleted
-    if (userExist.deleted)
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+    // verify otpCode by phone
+    await this.otpService.verifyOtpPhone({
+      phone: data.phone,
+      otpCode: data.otpCode,
+    });
 
-    throw new BadRequestException('Account already exists in the system.');
+    // new user
+    const user = await this.userService.create(data);
+
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
    * Sign up with token
    * @param data
    */
-  async signupWithToken(data: CreateUserDto) {
+  async signupSendTokenToEmail(data: CreateUserDto) {
     // check email
     const userExist = await this.userService.findUserExist({
       email: data.email,
     });
 
-    if (!userExist) {
-      const token = await this.tokenService.generateSignupToken(data);
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
 
-      const verificationLink = `http://localhost:8888/auth/verify-signup-token/${token}`;
-
-      // send mail
-      await this.mailService.sendSignupToken(
-        verificationLink,
-        data.email,
-        'Register account.',
-      );
-
-      return verificationLink;
+      // Delete old phone
+      await this.userService.updateById(userExist._id, { email: '' });
     }
 
-    // check user deleted
-    if (userExist.deleted)
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+    // generate sugnup token
+    const token = await this.tokenService.generateSignupToken(data);
+    const verificationLink = `http://localhost:8888/auth/verify-signup-token/${token}`;
 
-    throw new BadRequestException('Account already exists in the system.');
+    // send mail
+    await this.mailService.sendSignupToken(
+      verificationLink,
+      data.email,
+      'Register account.',
+    );
+
+    // success
+    return verificationLink;
   }
 
   /**
@@ -288,39 +240,34 @@ export class AuthService {
    * @return
    */
   async verifySignupToken(token: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { email, deviceID, iat, exp, ...rest } =
-      await this.tokenService.verifySignupToken(token);
+    const decoded = await this.tokenService.verifySignupToken(token);
 
-    const userExist = await this.userService.findUserExist({ email });
+    // delete key of token
+    delete decoded.iat;
+    delete decoded.exp;
 
-    // check user hasn't exist
-    if (!userExist) {
-      // new user
-      const user = await this.userService.create({
-        email,
-        ...rest,
-        deviceID: deviceID || '',
-        fcmTokens: deviceID ? [deviceID] : [],
-      });
+    // validate user
+    const userExist = await this.userService.findUserExist({
+      email: decoded.email,
+    });
 
-      // generate tokens
-      const tokens = await this.generateAuthTokens({
-        _id: user._id,
-        role: user.role,
-      });
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
 
-      // success
-      return { user, tokens };
+      // Delete old email
+      await this.userService.updateById(userExist._id, { email: '' });
     }
 
-    // check user deleted
-    if (userExist.deleted)
-      throw new BadRequestException(
-        'The account has been removed from the system.',
-      );
+    // create user
+    const user = await this.userService.create(decoded);
 
-    throw new BadRequestException('Account already exists in the system.');
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
@@ -339,10 +286,14 @@ export class AuthService {
 
   /**
    * Generate auth tokens
-   * @param payload
+   * @param user
    * @returns
    */
-  async generateAuthTokens(payload: TokenPayload): Promise<AuthTokenPayload> {
+  async generateAuthTokens(user: any): Promise<AuthTokenPayload> {
+    const payload: TokenPayload = {
+      _id: user._id,
+      role: user.role,
+    };
     // Generate ac_token and rf_token
     const [ac_token, rf_token] = await Promise.all([
       this.tokenService.generateAccessToken(payload),

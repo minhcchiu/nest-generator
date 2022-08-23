@@ -57,5 +57,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @MinLength(12)
-  deviceID?: string;
+  readonly deviceID?: string;
 }

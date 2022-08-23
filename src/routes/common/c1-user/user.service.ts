@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PaginateModel, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as argon2 from 'argon2';
@@ -9,25 +9,46 @@ import { ValidateUserDto } from './dto/validate-user.dto';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
+  private _userModel: PaginateModel<UserDocument>;
   constructor(@InjectModel(User.name) userModel: PaginateModel<UserDocument>) {
     super(userModel);
+
+    this._userModel = userModel;
   }
 
   /**
-   * Compare password by id
+   * Create User
+   * @param data
+   * @returns
+   */
+  async create(data: any): Promise<any> {
+    const userItem = {
+      ...data,
+      deviceID: data.deviceID ? data.deviceID : '',
+      fcmTokens: data.deviceID ? [data.deviceID] : [],
+    };
+
+    return this._userModel.create(userItem);
+  }
+
+  /**
+   * check password by id
    * @param id
    * @param password
    * @returns
    */
-  public async comparePasswordById(
+  async checkPasswordById(
     id: Types.ObjectId,
     password: string,
   ): Promise<boolean> {
     const user = await this.findById(id, { projection: '+password' });
 
-    if (!user) throw new NotFoundException('User not found.');
+    if (user) {
+      const isPasswordValid = await argon2.verify(user.password, password);
+      if (isPasswordValid) return true;
+    }
 
-    return argon2.verify(user.password, password);
+    throw new BadRequestException('Incorrect account.');
   }
 
   /**
@@ -36,7 +57,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param deviceID
    * @returns
    */
-  public async addDeviceID(
+  async addDeviceID(
     id: Types.ObjectId,
     deviceID: string,
   ): Promise<UserDocument | null> {
@@ -51,7 +72,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param deviceID
    * @returns
    */
-  public async removeDeviceID(id: Types.ObjectId, deviceID: string) {
+  async removeDeviceID(id: Types.ObjectId, deviceID: string) {
     const updateData = { deviceID: '', $pull: { fcmTokens: deviceID } };
 
     const user = await this.updateById(id, updateData);
@@ -71,7 +92,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param data
    * @returns
    */
-  public async findUserExist(data: ValidateUserDto) {
+  async findUserExist(data: ValidateUserDto) {
     const { phone, authKey, email } = data;
     if (phone) {
       const userExists = await this.findOne({ phone });

@@ -20,19 +20,19 @@ export class User {
     type: [{ type: Types.ObjectId, ref: collectionNames.roleManager.ref }],
     default: [],
   })
-  readonly roleManager: Types.ObjectId[];
+  readonly idRoleManager: Types.ObjectId[];
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: collectionNames.endpointAPI.ref }],
     default: [],
   })
-  readonly apiCanAccess: Types.ObjectId[];
+  readonly apiListAccess: Types.ObjectId[];
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: collectionNames.endpointAPI.ref }],
     default: [],
   })
-  readonly apiDenines: Types.ObjectId[];
+  readonly apiListNotAccess: Types.ObjectId[];
 
   @Prop({ type: String, required: true })
   readonly fullName: string;
@@ -69,6 +69,9 @@ export class User {
 
   @Prop({ type: String, enum: RoleEnum, default: RoleEnum.USER })
   readonly role: RoleEnum;
+
+  @Prop({ type: Boolean, default: false })
+  readonly deleted: boolean;
 }
 
 type UserDocument = User & Document;
