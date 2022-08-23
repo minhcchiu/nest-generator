@@ -18,19 +18,11 @@ import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { collectionNames } from 'src/config/collections/collectionName';
 import { ProvinceService } from './province.service';
-import * as path from 'path';
-import { DistrictService } from '~common/c4-districts/district.service';
-import { WardService } from '~common/c5-wards/ward.service';
-import { FileHelper } from 'src/utils/helper/file.helper';
 
 @ApiTags('Provinces')
 @Controller(collectionNames.province.path)
 export class ProvinceController {
-  constructor(
-    private readonly provinceService: ProvinceService,
-    private readonly districtService: DistrictService,
-    private wardService: WardService,
-  ) {}
+  constructor(private readonly provinceService: ProvinceService) {}
 
   /**
    * Find all
@@ -42,66 +34,7 @@ export class ProvinceController {
   async findAll(
     @ApiQueryParams() queryParams: ApiQueryParamsDto,
   ): Promise<any> {
-    const [district, province, ward] = await Promise.all([
-      this.provinceService.deleteMany({}),
-      this.districtService.deleteMany({}),
-      this.wardService.deleteMany(),
-    ]);
-    console.log({ district, province, ward });
-    const jsonPath = path.join(__dirname, '../../../utils/json/dvhcvn.json');
-    /* eslint no-console: 0 */
-    console.log('jsonPath', jsonPath);
-
-    const idFileExist = FileHelper.isFileExist(jsonPath);
-    if (idFileExist) {
-      const dataString = FileHelper.readFileSync(jsonPath).toString();
-      try {
-        const { data } = JSON.parse(dataString);
-
-        const resultPromise = data.map((tinh: any) => {
-          const tinhPromise = this.provinceService.create({
-            name: tinh.name,
-            type: tinh.type,
-          });
-
-          return tinhPromise.then((rsTinh) => {
-            const idTinh = rsTinh._id;
-
-            return tinh.level2s.map((huyen: any) => {
-              const huyenPromise = this.districtService.create({
-                name: huyen.name,
-                type: huyen.type,
-                idProvince: idTinh,
-              });
-
-              huyenPromise.then((rsHuyen) => {
-                return huyen.level3s.map((xa: any) => {
-                  const xaPromise = this.wardService.create({
-                    name: xa.name,
-                    type: xa.type,
-                    idProvince: idTinh,
-                    idDistrict: rsHuyen._id,
-                  });
-
-                  return xaPromise;
-                });
-              });
-            });
-          });
-        });
-
-        await Promise.all(resultPromise);
-
-        return this.provinceService.find(queryParams);
-
-        return { success: true };
-      } catch (e) {
-        /* eslint no-console: 0 */
-        console.error(e);
-      }
-    } else {
-      console.error(`${jsonPath} was not found, cannot seed province`);
-    }
+    return this.provinceService.find(queryParams);
   }
 
   /**

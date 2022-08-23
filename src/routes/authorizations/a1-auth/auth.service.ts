@@ -17,7 +17,7 @@ import {
   SignupPhoneDto,
 } from './dto';
 import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
-import { MailService } from 'src/lazy-modules/mail/mail.service';
+import { MailService } from '~lazy-modules/mail/mail.service';
 
 @Injectable()
 export class AuthService {
