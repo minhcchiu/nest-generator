@@ -16,6 +16,7 @@ import { OtpModule } from '~common/c2-otp/otp.module';
 import { configuration } from '~config/config/configuration';
 import { AuthModule } from '~authorizations/a1-auth/auth.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
+import { LoggerModule } from '~lazy-modules/logger/logger.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SeedModule } from '~lazy-modules/seed/seed.module';
     OtpModule,
     AuthModule,
     SeedModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
