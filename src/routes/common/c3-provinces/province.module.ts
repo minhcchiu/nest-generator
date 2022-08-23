@@ -1,8 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import ProvinceSeeder from 'src/lazy-modules/seed/province.seeder';
-import { DistrictModule } from '~common/c4-districts/district.module';
-import { WardModule } from '~common/c5-wards/ward.module';
 import { ProvinceController } from './province.controller';
 import { ProvinceService } from './province.service';
 import { Province, ProvinceSchema } from './schemas/province.schema';
@@ -22,11 +19,9 @@ import { Province, ProvinceSchema } from './schemas/province.schema';
         },
       },
     ]),
-    DistrictModule,
-    WardModule,
   ],
   controllers: [ProvinceController],
-  providers: [ProvinceService, ProvinceSeeder],
+  providers: [ProvinceService],
   exports: [ProvinceService],
 })
 export class ProvinceModule {}

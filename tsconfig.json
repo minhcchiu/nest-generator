@@ -24,8 +24,8 @@
       "~config/*": [
         "./src/config/*"
       ],
-      "~lazy-module/*": [
-        "./src/lazy-module/*"
+      "~lazy-modules/*": [
+        "./src/lazy-modules/*"
       ],
       "~authorizations/*": [
         "./src/routes/authorizations/*"
@@ -41,6 +41,9 @@
       ],
       "~exception/*": [
         "./src/utils/exception/*"
+      ],
+      "~helper/*": [
+        "./src/utils/helper/*"
       ],
     }
   }

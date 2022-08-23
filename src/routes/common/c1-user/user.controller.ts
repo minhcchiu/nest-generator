@@ -21,11 +21,17 @@ import { collectionNames } from 'src/config/collections/collectionName';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Logger } from '~lazy-modules/logger/logger.service';
 
 @ApiTags('Users')
 @Controller(collectionNames.user.path)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext(UserController.name);
+  }
 
   /**
    * Find all
@@ -37,6 +43,7 @@ export class UserController {
   async findAll(
     @ApiQueryParams() queryParams: ApiQueryParamsDto,
   ): Promise<any> {
+    this.logger.error('error', { error: 's' });
     return this.userService.find(queryParams);
   }
 

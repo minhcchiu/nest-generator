@@ -11,10 +11,12 @@ import { ApiQueryParamsMiddleware } from 'src/utils/interceptor/api-query-params
 import { DatabaseConfig } from '~config/database/database.config';
 import { UserModule } from '~common/c1-user/user.module';
 import { ProvinceModule } from '~common/c3-provinces/province.module';
-import { MailModule } from 'src/lazy-modules/mail/mail.module';
+import { MailModule } from '~lazy-modules/mail/mail.module';
 import { OtpModule } from '~common/c2-otp/otp.module';
 import { configuration } from '~config/config/configuration';
 import { AuthModule } from '~authorizations/a1-auth/auth.module';
+import { SeedModule } from '~lazy-modules/seed/seed.module';
+import { LoggerModule } from '~lazy-modules/logger/logger.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AuthModule } from '~authorizations/a1-auth/auth.module';
     MailModule,
     OtpModule,
     AuthModule,
+    SeedModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

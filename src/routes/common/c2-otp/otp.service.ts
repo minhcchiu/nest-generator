@@ -12,7 +12,7 @@ import {
 import { BaseService } from '~base-inherit/base.service';
 import { Otp, OtpDocument } from './schemas/otp.schema';
 import { PhoneHelper } from 'src/utils/helper/phone.helper';
-import { MailService } from 'src/lazy-modules/mail/mail.service';
+import { MailService } from '~lazy-modules/mail/mail.service';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
