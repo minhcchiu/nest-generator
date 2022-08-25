@@ -23,10 +23,10 @@ import {
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
-import { collectionNames } from '~config/collections/collectionName';
+import { schemas } from '~config/collections/schemas.collection';
 
 @ApiTags('Otps')
-@Controller(collectionNames.otp.path)
+@Controller(schemas.otp.path)
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 

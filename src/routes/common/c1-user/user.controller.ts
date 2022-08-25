@@ -17,14 +17,14 @@ import { UserService } from './user.service';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
-import { collectionNames } from 'src/config/collections/collectionName';
+import { schemas } from '~config/collections/schemas.collection';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
 @ApiTags('Users')
-@Controller(collectionNames.user.path)
+@Controller(schemas.user.path)
 export class UserController {
   constructor(
     private readonly userService: UserService,

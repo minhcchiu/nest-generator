@@ -1,143 +1,143 @@
-interface CollectionName {
+type CollectionConfig = {
   [key: string]: {
     path: string;
-    schemaName: string;
+    name: string;
     ref: string;
   };
-}
+};
 
-export const collectionNames: CollectionName = {
+export const schemas: CollectionConfig = {
   // manager
   user: {
     path: 'users',
-    schemaName: 'users',
+    name: 'users',
     ref: 'User',
   },
 
   province: {
     path: 'provinces',
-    schemaName: 'provinces',
+    name: 'provinces',
     ref: 'Province',
   },
 
   district: {
     path: 'districts',
-    schemaName: 'districts',
+    name: 'districts',
     ref: 'District',
   },
 
   ward: {
     path: 'wards',
-    schemaName: 'wards',
+    name: 'wards',
     ref: 'Ward',
   },
 
   address: {
     path: 'address',
-    schemaName: 'address',
+    name: 'address',
     ref: 'Address',
   },
 
   otp: {
     path: 'otps',
-    schemaName: 'otps',
+    name: 'otps',
     ref: 'Otp',
   },
 
   fileManager: {
     path: 'file-manager',
-    schemaName: 'filemanager',
+    name: 'filemanager',
     ref: 'FileManager',
   },
 
   conversation: {
     path: 'conversations',
-    schemaName: 'conversations',
+    name: 'conversations',
     ref: 'Conversation',
   },
 
   message: {
     path: 'messages',
-    schemaName: 'messages',
+    name: 'messages',
     ref: 'Message',
   },
 
   notification: {
     path: 'notifications',
-    schemaName: 'notifications',
+    name: 'notifications',
     ref: 'Notification',
   },
 
   transaction: {
     path: 'transactions',
-    schemaName: 'transactions',
+    name: 'transactions',
     ref: 'Transaction',
   },
 
   accountBank: {
     path: 'account-banks',
-    schemaName: 'accountbanks',
+    name: 'accountbanks',
     ref: 'AccountBank',
   },
 
   // manager authorizations
   auth: {
     path: 'auth',
-    schemaName: 'auth',
+    name: 'auth',
     ref: 'Auth',
   },
   freeApi: {
     path: 'free-apis',
-    schemaName: 'freeapis',
+    name: 'freeapis',
     ref: 'FreeApi',
   },
 
   authUserAccess: {
     path: 'auth-user-accesses',
-    schemaName: 'authuseraccesses',
+    name: 'authuseraccesses',
     ref: 'AuthUserAccess',
   },
 
   authUserId: {
     path: 'auth-user-ids',
-    schemaName: 'authuserids',
+    name: 'authuserids',
     ref: 'AuthUserId',
   },
 
   roleManager: {
     path: 'role-manager',
-    schemaName: 'rolemanager',
+    name: 'rolemanager',
     ref: 'Rolemanager',
   },
 
   collectionManager: {
     path: 'collection-manager',
-    schemaName: 'collectionmanager',
+    name: 'collectionmanager',
     ref: 'Collectionmanager',
   },
 
   endpointAPI: {
     path: 'endpoint-apis',
-    schemaName: 'endpointapis',
+    name: 'endpointapis',
     ref: 'Endpointapi',
   },
 
   historyAccessApi: {
     path: 'history-access-apis',
-    schemaName: 'historyaccessapis',
+    name: 'historyaccessapis',
     ref: 'Historyaccessapi',
   },
 
   // features
   post: {
     path: 'posts',
-    schemaName: 'posts',
+    name: 'posts',
     ref: 'Post',
   },
 
   comment: {
     path: 'comments',
-    schemaName: 'comments',
+    name: 'comments',
     ref: 'Comment',
   },
 };

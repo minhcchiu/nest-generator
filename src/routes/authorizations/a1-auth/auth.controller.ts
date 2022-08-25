@@ -12,10 +12,10 @@ import {
 import { AuthService } from './auth.service';
 import { UserService } from '~common/c1-user/user.service';
 import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
-import { collectionNames } from '~config/collections/collectionName';
+import { schemas } from '~config/collections/schemas.collection';
 
 @ApiTags('Auth')
-@Controller(collectionNames.auth.path)
+@Controller(schemas.auth.path)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

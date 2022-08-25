@@ -1,6 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+// import { MailerConfig } from '~interface/mailer.interface';
+// import * as SendGrid from '@sendgrid/mail';
 
 @Injectable()
 export class MailService {
@@ -16,6 +18,19 @@ export class MailService {
    */
   public sendMail(params: any) {
     return this.mailerService.sendMail(params);
+    // const mailerConfig = this.config.get<MailerConfig>("mailer")
+
+    // const isGmailServer = mailerConfig.isGmailServer
+
+    // console.log({ isGmailServer })
+
+    // if (isGmailServer) {
+    //   return this.mailerService.sendMail(params);
+    // }
+
+    // SendGrid.setApiKey(mailerConfig.transport.sendgrid.auth.pass)
+
+    // return SendGrid.send(params)
   }
 
   /**

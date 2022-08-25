@@ -45,6 +45,9 @@
       "~helper/*": [
         "./src/utils/helper/*"
       ],
+      "~interface/*": [
+        "./src/utils/interface/*"
+      ],
     }
   }
 }

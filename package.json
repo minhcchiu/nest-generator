@@ -29,6 +29,7 @@
     "@nestjs/mongoose": "^9.2.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^6.0.5",
+    "@sendgrid/mail": "^7.7.0",
     "@types/nodemailer": "^6.4.5",
     "@types/otp-generator": "^4.0.0",
     "api-query-params": "^5.3.1",

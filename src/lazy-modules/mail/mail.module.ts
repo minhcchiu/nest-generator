@@ -4,23 +4,34 @@ import { Global, Module } from '@nestjs/common';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
+import { MailerConfig } from '~interface/mailer.interface';
 
 @Global()
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: async (config: ConfigService) => ({
-        transport: config.get('mailer').transport,
-        defaults: config.get('mailer').defaults,
+      useFactory: async (config: ConfigService) => {
+        const mailerConfig = config.get<MailerConfig>('mailer');
+        // const transport = mailerConfig.isGmailServer
+        //   ? mailerConfig.transport.gmail
+        //   : mailerConfig.transport.sendgrid;
 
-        template: {
-          dir: join(__dirname, 'templates'),
+        // console.log({ transport });
 
-          adapter: new HandlebarsAdapter(),
+        return {
+          transport: mailerConfig.transport.gmail,
+          defaults: mailerConfig.defaults,
 
-          options: { strict: true },
-        },
-      }),
+          template: {
+            dir: join(__dirname, 'templates'),
+
+            adapter: new HandlebarsAdapter(),
+
+            options: { strict: true },
+          },
+        };
+      },
+
       inject: [ConfigService],
     }),
   ],

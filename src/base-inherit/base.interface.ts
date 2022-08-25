@@ -83,6 +83,16 @@ export interface BaseInterface<T> {
   deleteOne(query?: object, options?: QueryOptions<T>): Promise<any>;
 
   /**
+   * Delete many by ids
+   * @param ids
+   * @param options
+   */
+  deleteManyByIds(
+    ids: Types.ObjectId[],
+    options?: QueryOptions<T>,
+  ): Promise<any>;
+
+  /**
    * Delete many
    * @param query
    * @param options
