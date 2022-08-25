@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import * as argon2 from 'argon2';
 
-import { collectionNames } from '~config/collections/collectionName';
+import { schemas } from '~config/collections/schemas.collection';
 import { GenderEnum } from '../enums/gender.enum';
 import { RoleEnum } from '../enums/role.enum';
 import { AccountTypeEnum } from '../enums/account-type.enum';
@@ -10,26 +10,26 @@ import { AccountTypeEnum } from '../enums/account-type.enum';
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: collectionNames.user.schemaName,
+  collection: schemas.user.name,
 })
 export class User {
-  @Prop({ type: Types.ObjectId, ref: collectionNames.address.ref })
+  @Prop({ type: Types.ObjectId, ref: schemas.address.ref })
   readonly idAddress: Types.ObjectId;
 
   @Prop({
-    type: [{ type: Types.ObjectId, ref: collectionNames.roleManager.ref }],
+    type: [{ type: Types.ObjectId, ref: schemas.roleManager.ref }],
     default: [],
   })
   readonly idRoleManager: Types.ObjectId[];
 
   @Prop({
-    type: [{ type: Types.ObjectId, ref: collectionNames.endpointAPI.ref }],
+    type: [{ type: Types.ObjectId, ref: schemas.endpointAPI.ref }],
     default: [],
   })
   readonly apiListAccess: Types.ObjectId[];
 
   @Prop({
-    type: [{ type: Types.ObjectId, ref: collectionNames.endpointAPI.ref }],
+    type: [{ type: Types.ObjectId, ref: schemas.endpointAPI.ref }],
     default: [],
   })
   readonly apiListNotAccess: Types.ObjectId[];

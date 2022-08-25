@@ -33,14 +33,29 @@ export CLOUD_NAME=dvnmolznq
 export CLOUD_API_KEY=974881534354895
 export CLOUD_API_SECRET=PfIbFwRWDOiNlDd_E_XENdKyNsA
 
-# SMTP configuration options for the email service
-export SMTP_HOST=smtp.gmail.com
-export SMTP_PORT=587
-export SMTP_USERNAME=minh.mchiu@gmail.com
-export SMTP_PASSWORD=mphkvglrdlylboiu
-export EMAIL_FROM=minh.mchiu@gmail.com
-export EMAIL_NAME=minhchiu
+
+# CONFIG MAIL_SERVER: gmail|sendgrid
+export MAIL_SERVER=sendgrid
+
+# CONFIG GMAIL
+export SMTP_GMAIL_HOST=smtp.gmail.com
+export SMTP_GMAIL_PORT=587
+export SMTP_GMAIL_USERNAME=minh.mchiu@gmail.com
+export SMTP_GMAIL_PASSWORD=mphkvglrdlylboiu
+
+# CONFIG SENDGRID 
+export SMTP_SENDGRID_HOST=smtp.sendgrid.net
+export SMTP_SENDGRID_PORT=587
+export SMTP_SENDGRID_USERNAME=apikey
+export SMTP_SENDGRID_PASSWORD=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 #SENDGRID_API_KEY
+
+# CONFIG EMAIL FROM
+export MAILER_FROM_EMAIL=minh.mchiu@gmail.com
+export MAILER_NAME_NAME=minhchiu
 
 # OAuth client
 export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.googleusercontent.com
 export OAUTH_CLIENT_SECRET=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
+
+
+

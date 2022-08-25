@@ -1,13 +1,19 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '~lazy-modules/logger/logger.service';
+// import { MailerConfig } from '~interface/mailer.interface';
+// import * as SendGrid from '@sendgrid/mail';
 
 @Injectable()
 export class MailService {
   constructor(
     private mailerService: MailerService,
     private config: ConfigService,
-  ) {}
+    private readonly logger: Logger,
+  ) {
+    logger.setContext(MailerService.name);
+  }
 
   /**
    * Send mail
@@ -16,6 +22,19 @@ export class MailService {
    */
   public sendMail(params: any) {
     return this.mailerService.sendMail(params);
+    // const mailerConfig = this.config.get<MailerConfig>("mailer")
+
+    // const isGmailServer = mailerConfig.isGmailServer
+
+    // console.log({ isGmailServer })
+
+    // if (isGmailServer) {
+    //   return this.mailerService.sendMail(params);
+    // }
+
+    // SendGrid.setApiKey(mailerConfig.transport.sendgrid.auth.pass)
+
+    // return SendGrid.send(params)
   }
 
   /**
@@ -44,9 +63,9 @@ export class MailService {
 
       await this.sendMail(params);
 
-      console.log('Send email success');
+      this.logger.log('SEND OTP TO EMAIL SUCCESS!');
     } catch (e) {
-      console.log('MailerModule sendOTP', (e as any).toString());
+      this.logger.error((e as any).toString());
     }
   }
 
@@ -76,11 +95,11 @@ export class MailService {
 
       const result = await this.sendMail(params);
 
-      console.log('Send email success');
+      this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
 
       return result;
     } catch (e) {
-      console.log('MailerModule sendOTP', (e as any).toString());
+      this.logger.error((e as any).toString());
     }
   }
 }
