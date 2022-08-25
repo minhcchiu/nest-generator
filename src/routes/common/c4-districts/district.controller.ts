@@ -22,7 +22,7 @@ import { DistrictService } from './district.service';
 @ApiTags('Districts')
 @Controller(schemas.district.path)
 export class DistrictController {
-  constructor(private readonly districtService: DistrictService) {}
+  constructor(private readonly districtService: DistrictService) { }
 
   /**
    * Find all
@@ -61,6 +61,19 @@ export class DistrictController {
     @Body() body: any,
   ): Promise<any> {
     return this.districtService.updateById(id, body);
+  }
+
+  /**
+ * Delete many by ids
+ * @param ids
+ * @returns
+ */
+  @Delete(':ids/ids')
+  // @HttpCode(204)
+  async deleteManyByIds(
+    @Param('ids',) ids: string,
+  ): Promise<any> {
+    return this.districtService.deleteMany({ _id: { $in: ids.split(",") } })
   }
 
   /**
