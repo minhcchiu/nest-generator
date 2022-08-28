@@ -12,7 +12,7 @@ import { Province, ProvinceSchema } from './schemas/province.schema';
         useFactory: () => {
           const schema = ProvinceSchema;
 
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          // eslint-disable-next-line
           schema.plugin(require('mongoose-slug-updater'));
 
           return schema;

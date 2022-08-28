@@ -24,7 +24,8 @@ import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { schemas } from '~config/collections/schemas.collection';
-@ApiTags('Otps')
+
+@ApiTags(schemas.otp.path)
 @Controller(schemas.otp.path)
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
@@ -34,8 +35,8 @@ export class OtpController {
    * @param query
    * @returns
    */
-  @Get('')
   @HttpCode(200)
+  @Get('')
   async findAll(@Query() query: any) {
     return this.otpService.find(query);
   }
@@ -45,8 +46,8 @@ export class OtpController {
    * @param body
    * @returns
    */
-  @Post('send-otp-email')
   @HttpCode(201)
+  @Post('send-otp-email')
   async sendOtpToEmail(@Body() body: SendOtpByEmailDto) {
     return this.otpService.sendOtpToEmail(body);
   }
@@ -56,8 +57,8 @@ export class OtpController {
    * @param body: SendOtpByPhoneDto
    * @returns
    */
-  @Post('send-otp-phone')
   @HttpCode(201)
+  @Post('send-otp-phone')
   async sendOtpToPhone(@Body() body: SendOtpByPhoneDto) {
     return this.otpService.sendOtpToPhone(body);
   }
@@ -67,8 +68,8 @@ export class OtpController {
    * @param body
    * @returns
    */
-  @Put('verify-otp-email')
   @HttpCode(200)
+  @Put('verify-otp-email')
   async verifyOtpEmail(@Body() body: VerifyOtpEmailDto) {
     return this.otpService.verifyOtpEmail(body);
   }
@@ -78,8 +79,8 @@ export class OtpController {
    * @param body: VerifyOtpPhoneDto
    * @returns: Boolean
    */
-  @Put('verify-otp-phone')
   @HttpCode(200)
+  @Put('verify-otp-phone')
   async verifyOtpPhone(@Body() body: VerifyOtpPhoneDto) {
     return this.otpService.verifyOtpPhone(body);
   }
@@ -89,9 +90,9 @@ export class OtpController {
    * @param ids
    * @returns
    */
-  @Delete(':ids/ids')
   // @HttpCode(204)
-  async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
+  @Delete(':ids/ids')
+  async deleteManyByIds(@Param('ids') ids: string) {
     return this.otpService.deleteMany({ _id: { $in: ids.split(',') } });
   }
 
@@ -100,8 +101,8 @@ export class OtpController {
    * @param id
    * @returns
    */
-  @Delete(':id')
   // @HttpCode(204)
+  @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.otpService.deleteById(id);
   }
@@ -110,8 +111,8 @@ export class OtpController {
    * @param query
    * @returns
    */
-  @Get('paginate')
   @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
     return this.otpService.paginate(query);
   }
@@ -121,8 +122,8 @@ export class OtpController {
    * @param id
    * @returns
    */
-  @Get(':id')
   @HttpCode(200)
+  @Get(':id')
   async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     const result = await this.otpService.findById(id);
 

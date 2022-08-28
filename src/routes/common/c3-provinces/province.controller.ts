@@ -19,7 +19,7 @@ import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { schemas } from '~config/collections/schemas.collection';
 import { ProvinceService } from './province.service';
 
-@ApiTags('Provinces')
+@ApiTags(schemas.province.path)
 @Controller(schemas.province.path)
 export class ProvinceController {
   constructor(private readonly provinceService: ProvinceService) {}
@@ -29,11 +29,9 @@ export class ProvinceController {
    * @param queryParams
    * @returns
    */
-  @Get('')
   @HttpCode(200)
-  async findAll(
-    @ApiQueryParams() queryParams: ApiQueryParamsDto,
-  ): Promise<any> {
+  @Get('')
+  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.provinceService.find(queryParams);
   }
 
@@ -42,9 +40,9 @@ export class ProvinceController {
    * @param body
    * @returns
    */
-  @Post('')
   @HttpCode(201)
-  async create(@Body() body: any): Promise<any> {
+  @Post('')
+  async create(@Body() body: any) {
     return this.provinceService.create(body);
   }
 
@@ -54,12 +52,12 @@ export class ProvinceController {
    * @param body
    * @returns
    */
-  @Put(':id')
   @HttpCode(200)
+  @Put(':id')
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: any,
-  ): Promise<any> {
+  ) {
     return this.provinceService.updateById(id, body);
   }
 
@@ -68,9 +66,9 @@ export class ProvinceController {
    * @param ids
    * @returns
    */
-  @Delete(':ids/ids')
   // @HttpCode(204)
-  async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
+  @Delete(':ids/ids')
+  async deleteManyByIds(@Param('ids') ids: string) {
     return this.provinceService.deleteMany({ _id: { $in: ids.split(',') } });
   }
 
@@ -79,11 +77,9 @@ export class ProvinceController {
    * @param id
    * @returns
    */
-  @Delete(':id')
   // @HttpCode(204)
-  async delete(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-  ): Promise<any> {
+  @Delete(':id')
+  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.provinceService.deleteById(id);
   }
 
@@ -92,9 +88,9 @@ export class ProvinceController {
    * @param query
    * @returns
    */
-  @Get('paginate')
   @HttpCode(200)
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto): Promise<any> {
+  @Get('paginate')
+  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
     return this.provinceService.paginate(query);
   }
 
@@ -103,9 +99,9 @@ export class ProvinceController {
    * @param query
    * @returns
    */
-  @Get('count')
   @HttpCode(200)
-  async count(@Query() query: any): Promise<any> {
+  @Get('count')
+  async count(@Query() query: any) {
     return this.provinceService.count(query);
   }
 
@@ -114,11 +110,9 @@ export class ProvinceController {
    * @param id
    * @returns
    */
-  @Get(':id')
   @HttpCode(200)
-  async findOneById(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-  ): Promise<any> {
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     const result = await this.provinceService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');

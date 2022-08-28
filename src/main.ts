@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
 import { AppModule } from './app/app.module';
 import { ValidationExceptions } from './utils/exception/validation.exceptions';
@@ -25,12 +26,18 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(configService.get('port'), () => {
-    console.log(
-      `The server is running on ${configService.get(
-        'port',
-      )} port: http://localhost:${configService.get('port')}/api`,
-    );
+  // Config swagger
+  const config = new DocumentBuilder()
+    .setTitle('Awesome NestJS Generator 2023')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  // Server run
+  const port = configService.get('port') || 8888;
+  await app.listen(port, () => {
+    console.log(`The server is running on: http://localhost:${port}/api`);
   });
 }
 bootstrap();

@@ -12,7 +12,7 @@ import { Ward, WardSchema } from './schemas/ward.schema';
         useFactory: () => {
           const schema = WardSchema;
 
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          // eslint-disable-next-line
           schema.plugin(require('mongoose-slug-updater'));
 
           return schema;
@@ -22,21 +22,6 @@ import { Ward, WardSchema } from './schemas/ward.schema';
   ],
   controllers: [WardController],
   providers: [WardService],
-  exports: [
-    WardService,
-    MongooseModule.forFeatureAsync([
-      {
-        name: Ward.name,
-        useFactory: () => {
-          const schema = WardSchema;
-
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          schema.plugin(require('mongoose-slug-updater'));
-
-          return schema;
-        },
-      },
-    ]),
-  ],
+  exports: [WardService],
 })
 export class WardModule {}

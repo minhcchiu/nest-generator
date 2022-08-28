@@ -49,5 +49,13 @@
         "./src/utils/interface/*"
       ],
     }
-  }
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "tmp",
+    "dist",
+    "node_modules",
+  ]
 }
