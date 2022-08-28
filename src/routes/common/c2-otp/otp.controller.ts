@@ -28,7 +28,7 @@ import { schemas } from '~config/collections/schemas.collection';
 @ApiTags('Otps')
 @Controller(schemas.otp.path)
 export class OtpController {
-  constructor(private readonly otpService: OtpService) {}
+  constructor(private readonly otpService: OtpService) { }
 
   /**
    * Find all
@@ -85,6 +85,20 @@ export class OtpController {
     return this.otpService.verifyOtpPhone(body);
   }
 
+
+  /**
+ * Delete many by ids
+ * @param ids
+ * @returns
+ */
+  @Delete(':ids/ids')
+  // @HttpCode(204)
+  async deleteManyByIds(
+    @Param('ids',) ids: string,
+  ): Promise<any> {
+    return this.otpService.deleteMany({ _id: { $in: ids.split(",") } })
+  }
+
   /**
    * Delete
    * @param id
@@ -95,7 +109,6 @@ export class OtpController {
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.otpService.deleteById(id);
   }
-
   /**
    * paginate
    * @param query

@@ -74,6 +74,19 @@ export class UserController {
   }
 
   /**
+ * Delete many by ids
+ * @param ids
+ * @returns
+ */
+  @Delete(':ids/ids')
+  // @HttpCode(204)
+  async deleteManyByIds(
+    @Param('ids',) ids: string,
+  ): Promise<any> {
+    return this.userService.deleteMany({ _id: { $in: ids.split(",") } })
+  }
+
+  /**
    * Delete by ID
    * @param id
    * @returns

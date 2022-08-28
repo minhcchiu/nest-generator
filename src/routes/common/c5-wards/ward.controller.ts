@@ -22,7 +22,7 @@ import { WardService } from './ward.service';
 @ApiTags('Wards')
 @Controller(schemas.ward.path)
 export class WardController {
-  constructor(private readonly wardService: WardService) {}
+  constructor(private readonly wardService: WardService) { }
 
   /**
    * Find all
@@ -62,6 +62,21 @@ export class WardController {
   ): Promise<any> {
     return this.wardService.updateById(id, body);
   }
+
+
+  /**
+* Delete many by ids
+* @param ids
+* @returns
+*/
+  @Delete(':ids/ids')
+  // @HttpCode(204)
+  async deleteManyByIds(
+    @Param('ids',) ids: string,
+  ): Promise<any> {
+    return this.wardService.deleteMany({ _id: { $in: ids.split(",") } })
+  }
+
 
   /**
    * Delete by ID

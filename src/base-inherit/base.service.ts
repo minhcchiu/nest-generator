@@ -137,25 +137,6 @@ export class BaseService<T> implements BaseInterface<T> {
   }
 
   /**
-   * Delete many by ids
-   * @param ids
-   * @param options
-   * @returns
-   */
-  async deleteManyByIds(
-    ids: Types.ObjectId[],
-    options: QueryOptions = {},
-  ): Promise<any> {
-    const deleted = this.model
-      .deleteMany({ _id: { $in: ids } }, options)
-      .lean();
-
-    if (!deleted) throw new NotFoundException('Item not found.');
-
-    return deleted;
-  }
-
-  /**
    * Find one and delete
    * @param query
    * @param options
