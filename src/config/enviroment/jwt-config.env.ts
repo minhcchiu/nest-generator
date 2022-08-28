@@ -1,4 +1,4 @@
-export const jwtConfig = {
+export const jwtConfigEnviroment = {
   secret: process.env.JWT_SECRET || '?wOfl6_4Q_KeYS(#a{qGe+W2!L_q6H', // https://randomkeygen.com/
   expiresIn: process.env.JWT_EXPIRESIN || '30m',
   expirationTime: {

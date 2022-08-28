@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { FileModule } from '~common/c6-files/file.module';
+import { FileManagerModule } from '~common/c6-files/file-manager.module';
 import { CloudinaryModule } from '~lazy-modules/storage/cloudinary/cloudinary.module';
 import { UploadController } from './upload.controller';
+import { UploadService } from './upload.service';
 
 @Module({
-  imports: [CloudinaryModule, FileModule],
+  imports: [CloudinaryModule, FileManagerModule],
   controllers: [UploadController],
-  providers: [],
+  providers: [UploadService],
   exports: [],
 })
 export class UploadModule {}

@@ -1,3 +1,5 @@
+import { UploadApiOptions } from 'cloudinary';
+
 export interface CloudinaryConfig {
   provide: string;
   config: {
@@ -5,4 +7,5 @@ export interface CloudinaryConfig {
     api_key: string;
     api_secret: string;
   };
+  options: UploadApiOptions;
 }

@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   UploadApiErrorResponse,
   UploadApiOptions,
@@ -6,9 +7,16 @@ import {
   v2,
 } from 'cloudinary';
 import { unlinkSync } from 'fs';
+import { CloudinaryConfig } from '~interface/cloudinary.interface';
 
 @Injectable()
 export class CloudinaryService {
+  private readonly cloudinaryConfig: CloudinaryConfig;
+
+  constructor(private readonly configService: ConfigService) {
+    this.cloudinaryConfig = configService.get<CloudinaryConfig>('cloudinary');
+  }
+
   /**
    * Upload
    * @param filePath
@@ -17,12 +25,20 @@ export class CloudinaryService {
    */
   async upload(
     filePath: string,
-    options: UploadApiOptions,
+    options?: UploadApiOptions,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
+      options = {
+        ...this.cloudinaryConfig.options,
+        options,
+      };
+
       v2.uploader.upload(filePath, options, (err, result) => {
-        if (err) return reject(err);
+        if (err) return reject(new BadRequestException('File does not exist.'));
+
+        // remove file in temp
         unlinkSync(filePath);
+
         resolve(result);
       });
     });
@@ -35,27 +51,27 @@ export class CloudinaryService {
    * @param width
    * @returns
    */
-  reSizeImage(id: string, height: number, width: number) {
+  resizeImage(id: string, height: number, width: number) {
     return v2.url(id, { height, width, crop: 'scale', format: 'jpg' });
   }
 
   /**
-   * Delete delete resources
-   * @param images
+   * Delete resources
+   * @param resourceIds
    * @returns
    */
-  deleteResources(images: string[]) {
-    return v2.api.delete_resources(images);
+  deleteResources(resourceIds: string[]) {
+    return v2.api.delete_resources(resourceIds);
   }
 
   /**
    * Destroy
-   * @param public_id
+   * @param resourceId
    * @returns
    */
-  async destroy(public_id: string) {
+  async destroy(resourceId: string) {
     try {
-      return await v2.uploader.destroy(public_id);
+      return await v2.uploader.destroy(resourceId);
     } catch (error) {
       console.log({ error });
     }

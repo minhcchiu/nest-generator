@@ -1,4 +1,4 @@
-export const mailerConfig = {
+export const mailerConfigEnviroment = {
   isGmailServer: process.env.MAIL_SERVER === 'gmail',
 
   transport: {

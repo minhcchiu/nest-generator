@@ -2,10 +2,10 @@ import { CloudinaryConfig } from '~interface/cloudinary.interface';
 import { DatabaseConfig } from '~interface/database.inteface';
 import { JwtConfig } from '~interface/jwt.interface';
 import { MailerConfig } from '~interface/mailer.interface';
-import { cloudinaryConfig } from './cloudinary.config';
-import { dataBaseConfig } from './database.config';
-import { jwtConfig } from './jwt.config';
-import { mailerConfig } from './mailer.config';
+import { cloudinaryConfigEnviroment } from './cloudinary-config.env';
+import { databaseConfigEnviroment } from './database-config.env';
+import { jwtConfigEnviroment } from './jwt-config.env';
+import { mailerConfigEnviroment } from './mailer-config.env';
 
 export const configuration = (): {
   env: string;
@@ -20,15 +20,15 @@ export const configuration = (): {
     port: +process.env.PORT || 8888,
 
     // DATABSE
-    database: dataBaseConfig,
+    database: databaseConfigEnviroment,
 
     // JWT
-    jwt: jwtConfig,
+    jwt: jwtConfigEnviroment,
 
     // MAILER
-    mailer: mailerConfig,
+    mailer: mailerConfigEnviroment,
 
     // CLOUDINARY
-    cloudinary: cloudinaryConfig,
+    cloudinary: cloudinaryConfigEnviroment,
   };
 };

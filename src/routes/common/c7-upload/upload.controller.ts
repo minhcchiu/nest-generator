@@ -95,7 +95,7 @@ export class UploadController {
   @HttpCode(200)
   @Post('save-file-to-cloudinary')
   async saveFileToCloudinary(@Body() body: { file: string }) {
-    return body;
+    return this.uploadService.saveFileToCloudinary(body.file);
   }
 
   /**

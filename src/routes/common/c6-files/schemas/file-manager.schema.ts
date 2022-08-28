@@ -8,7 +8,7 @@ import { StorageServiceEnum } from '../enum/storage-service.enum';
   versionKey: false,
   collection: schemas.file.name,
 })
-export class File {
+export class FileManager {
   @Prop({ type: Types.ObjectId, ref: schemas.user.ref })
   readonly owner: string;
 
@@ -19,19 +19,27 @@ export class File {
   })
   readonly storage: StorageServiceEnum;
 
-  @Prop({ type: String, default: '' })
-  readonly storageId: string;
-
-  @Prop({ type: Array, default: [] })
-  readonly file: string[];
-
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: 'image' })
   readonly type: string;
 
-  // size in bytes
-  @Prop({ type: Number, default: 0 })
+  @Prop({ type: String, required: true })
+  readonly format: string;
+
+  @Prop({ type: [String], required: true })
+  readonly files: string[];
+
+  @Prop({ type: String, default: 'Awesome-NestJS-generator-2023' })
+  readonly folder: string;
+
+  @Prop({ type: String, required: true })
+  readonly resourceID: string;
+
+  @Prop({ type: String, default: '' })
+  readonly secureUrl?: string;
+
+  @Prop({ type: Number, required: true })
   readonly size: number;
 }
 
-export type FileDocument = File & Document;
-export const FileSchema = SchemaFactory.createForClass(File);
+export type FileManagerDocument = FileManager & Document;
+export const FileManagerSchema = SchemaFactory.createForClass(FileManager);
