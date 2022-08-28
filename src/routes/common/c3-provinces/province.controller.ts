@@ -22,7 +22,7 @@ import { ProvinceService } from './province.service';
 @ApiTags('Provinces')
 @Controller(schemas.province.path)
 export class ProvinceController {
-  constructor(private readonly provinceService: ProvinceService) { }
+  constructor(private readonly provinceService: ProvinceService) {}
 
   /**
    * Find all
@@ -64,16 +64,14 @@ export class ProvinceController {
   }
 
   /**
- * Delete many by ids
- * @param ids
- * @returns
- */
+   * Delete many by ids
+   * @param ids
+   * @returns
+   */
   @Delete(':ids/ids')
   // @HttpCode(204)
-  async deleteManyByIds(
-    @Param('ids',) ids: string,
-  ): Promise<any> {
-    return this.provinceService.deleteMany({ _id: { $in: ids.split(",") } })
+  async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
+    return this.provinceService.deleteMany({ _id: { $in: ids.split(',') } });
   }
 
   /**
