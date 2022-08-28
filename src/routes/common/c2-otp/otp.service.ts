@@ -56,7 +56,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param data
    * @returns
    */
-  async sendOtpToPhone(data: SendOtpByPhoneDto): Promise<any> {
+  async sendOtpToPhone(data: SendOtpByPhoneDto) {
     const { zipCode, phone, country } = data;
 
     // validate phone number

@@ -16,10 +16,17 @@ import { OtpModule } from '~common/c2-otp/otp.module';
 import { AuthModule } from '~authorizations/a1-auth/auth.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
+import { FileModule } from '~common/c6-files/file.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { configuration } from '~config/enviroment/enviroment.config';
+import { UploadModule } from '~common/c7-upload/upload.module';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../', 'public'),
+    }),
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     DatabaseModule,
     UserModule,
@@ -29,6 +36,8 @@ import { configuration } from '~config/enviroment/enviroment.config';
     AuthModule,
     SeedModule,
     LoggerModule,
+    FileModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

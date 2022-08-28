@@ -2,7 +2,7 @@ import { Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SeedService } from './seed.service';
 
-@ApiTags('Seeder')
+@ApiTags('seeder')
 @Controller('seeds')
 export class SeedController {
   constructor(private seedService: SeedService) {}

@@ -12,7 +12,7 @@ import { District, DistrictSchema } from './schemas/district.schema';
         useFactory: () => {
           const schema = DistrictSchema;
 
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          // eslint-disable-next-line
           schema.plugin(require('mongoose-slug-updater'));
 
           return schema;
@@ -22,21 +22,6 @@ import { District, DistrictSchema } from './schemas/district.schema';
   ],
   controllers: [DistrictController],
   providers: [DistrictService],
-  exports: [
-    DistrictService,
-    MongooseModule.forFeatureAsync([
-      {
-        name: District.name,
-        useFactory: () => {
-          const schema = DistrictSchema;
-
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          schema.plugin(require('mongoose-slug-updater'));
-
-          return schema;
-        },
-      },
-    ]),
-  ],
+  exports: [DistrictService],
 })
 export class DistrictModule {}

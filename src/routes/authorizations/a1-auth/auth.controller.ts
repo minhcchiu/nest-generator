@@ -14,7 +14,7 @@ import { UserService } from '~common/c1-user/user.service';
 import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { schemas } from '~config/collections/schemas.collection';
 
-@ApiTags('Auth')
+@ApiTags('auth')
 @Controller(schemas.auth.path)
 export class AuthController {
   constructor(

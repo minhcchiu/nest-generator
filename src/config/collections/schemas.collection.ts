@@ -50,6 +50,18 @@ export const schemas: CollectionConfig = {
     ref: 'FileManager',
   },
 
+  file: {
+    path: 'files',
+    name: 'files',
+    ref: 'File',
+  },
+
+  upload: {
+    path: 'uploads',
+    name: '',
+    ref: '',
+  },
+
   conversation: {
     path: 'conversations',
     name: 'conversations',

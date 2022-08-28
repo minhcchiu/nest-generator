@@ -21,7 +21,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param data
    * @returns
    */
-  async create(data: any): Promise<any> {
+  async create(data: any) {
     const userItem = {
       ...data,
       deviceID: data.deviceID ? data.deviceID : '',

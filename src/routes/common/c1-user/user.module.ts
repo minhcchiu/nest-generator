@@ -12,7 +12,7 @@ import { UserService } from './user.service';
         useFactory: () => {
           const schema = UserSchema;
 
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          // eslint-disable-next-line
           schema.plugin(require('mongoose-slug-updater'));
 
           return schema;
