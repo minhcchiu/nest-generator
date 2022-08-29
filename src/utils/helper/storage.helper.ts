@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 /**
  * Edit file name
  * @param req
@@ -24,7 +26,10 @@ export const imageFileFilter = (
 
   // check allow file
   if (!file.originalname.match(new RegExp(expression))) {
-    return callback(new Error('Format files are allowed!'), false);
+    return callback(
+      new BadRequestException('Format files are allowed!'),
+      false,
+    );
   }
 
   callback(null, true);
