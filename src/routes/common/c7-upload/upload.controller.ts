@@ -51,7 +51,7 @@ export class UploadController {
   @HttpCode(200)
   @Post('save-file-to-local')
   async saveFileToDisk(@Body() body: { file: string }) {
-    return body;
+    return this.uploadService.saveFileToDisk(body.file);
   }
 
   /**

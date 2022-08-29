@@ -34,7 +34,7 @@ export class CloudinaryService {
       };
 
       v2.uploader.upload(filePath, options, (err, result) => {
-        if (err) return reject(new BadRequestException('File does not exist.'));
+        if (err) return reject(new BadRequestException(err.message));
 
         // remove file in temp
         unlinkSync(filePath);
@@ -47,12 +47,16 @@ export class CloudinaryService {
   /**
    * Resize image
    * @param id
-   * @param height
    * @param width
    * @returns
    */
-  resizeImage(id: string, height: number, width: number) {
-    return v2.url(id, { height, width, crop: 'scale', format: 'jpg' });
+  resizeImage(id: string, width: number) {
+    return v2.url(id, {
+      width,
+      opacity: 80,
+      // crop: 'scale',
+      format: 'jpeg',
+    });
   }
 
   /**

@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
 import { FileManagerService } from '~common/c6-files/file-manager.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
+import { LocalDiskService } from '~lazy-modules/storage/local-disk/local-disk.service';
+import { UploadHelper } from './upload.helper';
 
 @Injectable()
 export class UploadService {
   constructor(
     private readonly fileManagerService: FileManagerService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly localDiskService: LocalDiskService,
+    private readonly uploadHelper: UploadHelper,
   ) {}
 
   /**
@@ -16,7 +19,30 @@ export class UploadService {
    * @returns
    */
   async saveFileToDisk(filePath: string) {
-    return filePath;
+    // check file
+    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+
+    const result = await this.localDiskService.upload(realpathOfFile);
+
+    const { files, size, folder } = result;
+    const [type, format] = result?.type?.split('/')
+      ? result.type.split('/')
+      : ['files', realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1)];
+
+    // save file to database
+    const item = {
+      resourceID: files[0],
+      format,
+      type,
+      size,
+      files,
+      folder,
+      storage: 'LOCAL_DISK',
+    };
+
+    await this.fileManagerService.create(item);
+
+    return result;
   }
 
   /**
@@ -34,10 +60,11 @@ export class UploadService {
    * @returns
    */
   async saveFileToCloudinary(filePath: string) {
+    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+
+    console.log({ realpathOfFile });
     // upload file to cloudinary
-    const result = await this.cloudinaryService.upload(
-      this.getFullFilePath(filePath),
-    );
+    const result = await this.cloudinaryService.upload(realpathOfFile);
 
     // save file to database
     const item = {
@@ -48,25 +75,21 @@ export class UploadService {
       size: result.bytes,
       files: [
         result.url,
-        this.cloudinaryService.resizeImage(result.public_id, 200, 200),
-        this.cloudinaryService.resizeImage(result.public_id, 500, 500),
-        this.cloudinaryService.resizeImage(result.public_id, 300, 300),
+        this.cloudinaryService.resizeImage(result.public_id, 1080),
+        this.cloudinaryService.resizeImage(result.public_id, 720),
+        this.cloudinaryService.resizeImage(result.public_id, 360),
+        this.cloudinaryService.resizeImage(result.public_id, 480),
+        this.cloudinaryService.resizeImage(result.public_id, 360),
+        this.cloudinaryService.resizeImage(result.public_id, 150),
       ],
       secureUrl: result.secure_url,
       folder: result.folder,
+      storage: 'S3',
     };
+
     const file = await this.fileManagerService.create(item);
 
     // success
     return file.files;
-  }
-
-  /**
-   * Get full file path
-   * @param filePath
-   * @returns
-   */
-  private getFullFilePath(filePath: string) {
-    return join(__dirname, '../../../../', 'public', filePath);
   }
 }
