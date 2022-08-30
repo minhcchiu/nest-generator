@@ -10,6 +10,7 @@ import { mailerConfigEnviroment } from './mailer-config.env';
 export const configuration = (): {
   env: string;
   port: number;
+  clientUrl: string;
   database: DatabaseConfig;
   jwt: JwtConfig;
   mailer: MailerConfig;
@@ -18,7 +19,7 @@ export const configuration = (): {
   return {
     env: process.env.NODE_ENV || 'development',
     port: +process.env.PORT || 8888,
-
+    clientUrl: process.env.CLIENT_URL || 'http://localhost:8888',
     // DATABSE
     database: databaseConfigEnviroment,
 

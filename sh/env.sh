@@ -2,6 +2,8 @@
 export NODE_ENV=development
 export PORT=8888
 
+# CLIENT URL
+export CLIENT_URL=http://localhost:8888 
 
 # URL of the Mongo DB
 # export MONGODB_URL="mongodb://127.0.0.1:27017/node-boilerplate"
@@ -57,5 +59,9 @@ export MAILER_NAME_NAME=minhchiu
 export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.googleusercontent.com
 export OAUTH_CLIENT_SECRET=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
 
-
-
+# UPLOAD
+export UPLOAD_MAX_SIZE=25 #MB  
+export UPLOAD_IMAGE_FILE='jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json'
+export UPLOAD_IMAGE_FILE="jpg|jpeg|png|gif"
+export UPLOAD_RAW_FILE="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
+export fileSize=2

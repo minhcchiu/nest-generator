@@ -1,4 +1,5 @@
 cd c4-districts/ && perl-rename -v 's/province/district'/g * && cd schemas/ &&  perl-rename -v 's/province/district'/g * && cd ../dto/ && perl-rename -v 's/province/district'/g * && cd ../../
 cd c5-wards/ && perl-rename -v 's/province/ward'/g * && cd schemas/ &&  perl-rename -v 's/province/ward'/g * && cd ../dto/ && perl-rename -v 's/province/ward'/g * && cd ../../
 cd src/routes/common/c6-files/ && perl-rename -v 's/ward/files'/g * && cd schemas/ &&  perl-rename -v 's/ward/files'/g * && cd ../dto/ && perl-rename -v 's/ward/files'/g * && cd ../../../../../
+cd src/routes/common/c6-files/ && perl-rename -v 's/ward/files'/g * && cd schemas/ &&  perl-rename -v 's/ward/files'/g * && cd ../dto/ && perl-rename -v 's/ward/files'/g * && cd ../../../../../
 # UPLOAD FILE

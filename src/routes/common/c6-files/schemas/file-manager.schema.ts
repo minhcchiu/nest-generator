@@ -23,7 +23,7 @@ export class FileManager {
   readonly type: string;
 
   @Prop({ type: String, required: true })
-  readonly format: string;
+  readonly ext: string;
 
   @Prop({ type: [String], required: true })
   readonly files: string[];
