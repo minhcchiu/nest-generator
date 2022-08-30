@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
+import { ConfigService } from '@nestjs/config';
 import { statSync } from 'fs';
-import { LocalDiskHelper } from './local-disk.helper';
+import { LocalStorageHelper } from './local-storage.helper';
+
 @Injectable()
-export class LocalDiskService {
-  constructor(private readonly localDiskHelper: LocalDiskHelper) {}
+export class LocalStorageService {
+  constructor(
+    private readonly localDiskHelper: LocalStorageHelper,
+    private configService: ConfigService,
+  ) {}
 
   /**
    * Upload
@@ -19,24 +23,25 @@ export class LocalDiskService {
     const isFileImage = fileMime && fileMime.split('/')[0] === 'image';
 
     let files = [];
-    let folder: 'uploads/images' | 'uploads/files';
+    let uploadDir: 'uploads/images' | 'uploads/files';
 
-    // check valid file mine
+    // upload image
     if (isFileImage) {
       const imageType = fileMime.split('/')[1];
-      folder = 'uploads/images';
+      uploadDir = 'uploads/images';
       files = await this.localDiskHelper.compressImage(filePath, imageType);
     } else {
-      folder = 'uploads/files';
+      // upload file
+      uploadDir = 'uploads/files';
       files = [await this.localDiskHelper.moveFileToDiskStorage(filePath)];
     }
 
-    const appURL = 'http://localhost:8888';
+    const appURL = this.configService.get<string>('clientURL');
     // replace path
     for (let i = 0; i < files.length; i += 1) {
       files[i] = appURL + files[i].slice(files[i].indexOf('/uploads'));
     }
 
-    return { type: fileMime, files, size: fileSize, folder };
+    return { type: fileMime, files, size: fileSize, folder: uploadDir };
   }
 }

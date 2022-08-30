@@ -5,7 +5,7 @@ import { join } from 'path';
 import { resizeJPG, resizePNG } from '~helper/resize-image.helper';
 
 @Injectable()
-export class LocalDiskHelper {
+export class LocalStorageHelper {
   private uploadDir: string;
   constructor() {
     this.uploadDir = join(__dirname, '../../../../', 'public', 'uploads');
@@ -39,11 +39,13 @@ export class LocalDiskHelper {
    */
   async getBufferFromFile(filePath: string, maxLength: number): Promise<any[]> {
     return new Promise((resolve, reject) => {
+      // Open file
       open(filePath, 'r', (error, fd) => {
         if (error) return reject(error);
 
         const buffer = Buffer.alloc(maxLength);
 
+        // Read file data
         read(fd, buffer, 0, maxLength, 0, (err) => {
           if (err) return reject(err);
 
@@ -108,7 +110,7 @@ export class LocalDiskHelper {
    * @returns
    */
   private async compressPNG(filePath: string): Promise<any[]> {
-    const results = await Promise.all([
+    await Promise.all([
       resizePNG(filePath, this.generateSizePath(filePath), null),
       resizePNG(
         filePath,
@@ -123,7 +125,14 @@ export class LocalDiskHelper {
 
     unlinkSync(filePath);
 
-    return results;
+    return [
+      this.generateSizePath(filePath),
+      this.generateSizePath(filePath, { width: 1080 }),
+      this.generateSizePath(filePath, { width: 720 }),
+      this.generateSizePath(filePath, { width: 480 }),
+      this.generateSizePath(filePath, { width: 360 }),
+      this.generateSizePath(filePath, { width: 150 }),
+    ];
   }
 
   /**

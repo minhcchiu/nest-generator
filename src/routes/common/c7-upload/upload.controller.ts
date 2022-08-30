@@ -11,8 +11,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { schemas } from '~config/collections/schemas.collection';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { localDiskStorage } from '~lazy-modules/storage/local-disk/local-disk.storage';
 import { UploadService } from './upload.service';
+import { tempStorage } from '~helper/storage.helper';
 
 @ApiTags(schemas.upload.path)
 @Controller(schemas.upload.path)
@@ -23,7 +23,7 @@ export class UploadController {
    * Upload single file to tmp
    * @param file
    */
-  @UseInterceptors(FileInterceptor('file', localDiskStorage))
+  @UseInterceptors(FileInterceptor('file', tempStorage))
   @HttpCode(201)
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
@@ -34,7 +34,7 @@ export class UploadController {
    * Upload many files to tmp
    * @param files
    */
-  @UseInterceptors(FilesInterceptor('files', 25, localDiskStorage))
+  @UseInterceptors(FilesInterceptor('files', 25, tempStorage))
   @HttpCode(201)
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
@@ -44,14 +44,14 @@ export class UploadController {
   }
 
   /**
-   * Save file to local disk
+   * Save file to local local
    * @param body
    * @returns
    */
   @HttpCode(200)
   @Post('save-file-to-local')
-  async saveFileToDisk(@Body() body: { file: string }) {
-    return this.uploadService.saveFileToDisk(body.file);
+  async saveFileToLocal(@Body() body: { file: string }) {
+    return this.uploadService.saveFileToLocal(body.file);
   }
 
   /**
@@ -62,7 +62,11 @@ export class UploadController {
   @HttpCode(200)
   @Post('save-files-to-local')
   async saveFilesToLocal(@Body() body: { files: string[] }) {
-    return body;
+    const filesUploadedPromise = body.files.map((file) =>
+      this.uploadService.saveFileToLocal(file),
+    );
+
+    return Promise.all(filesUploadedPromise);
   }
 
   /**
@@ -106,6 +110,10 @@ export class UploadController {
   @HttpCode(200)
   @Post('save-files-to-cloudinary')
   async saveToCloudinary(@Body() body: { files: string[] }) {
-    return body;
+    const filesUploadedPromise = body.files.map((file) =>
+      this.uploadService.saveFileToLocal(file),
+    );
+
+    return Promise.all(filesUploadedPromise);
   }
 }

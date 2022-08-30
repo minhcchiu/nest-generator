@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileManagerService } from '~common/c6-files/file-manager.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
-import { LocalDiskService } from '~lazy-modules/storage/local-disk/local-disk.service';
+import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
 import { UploadHelper } from './upload.helper';
 
 @Injectable()
@@ -9,30 +9,31 @@ export class UploadService {
   constructor(
     private readonly fileManagerService: FileManagerService,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly localDiskService: LocalDiskService,
+    private readonly localStorageService: LocalStorageService,
     private readonly uploadHelper: UploadHelper,
   ) {}
 
   /**
-   * Save file to Disk
+   * Save file to local
    * @param filePath
    * @returns
    */
-  async saveFileToDisk(filePath: string) {
+  async saveFileToLocal(filePath: string) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
 
-    const result = await this.localDiskService.upload(realpathOfFile);
+    const result = await this.localStorageService.upload(realpathOfFile);
 
     const { files, size, folder } = result;
-    const [type, format] = result?.type?.split('/')
+
+    const [type, ext] = result?.type?.split('/')
       ? result.type.split('/')
-      : ['files', realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1)];
+      : ['raw', realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1)];
 
     // save file to database
     const item = {
       resourceID: files[0],
-      format,
+      ext,
       type,
       size,
       files,
@@ -46,42 +47,37 @@ export class UploadService {
   }
 
   /**
-   * Save file to S3
-   * @param filePath
-   * @returns
-   */
-  async saveFileToS3(filePath: string) {
-    return filePath;
-  }
-
-  /**
    * Save file to Cloudinary
    * @param filePath
    * @returns
    */
   async saveFileToCloudinary(filePath: string) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+    console.log(process.env.UPLOAD_IMAGE_FILE);
+    const imageExpression = `.(${process.env.UPLOAD_IMAGE_FILE})$`;
 
-    console.log({ realpathOfFile });
+    // check allow file
+    const isUploadImage = filePath.match(new RegExp(imageExpression));
+
     // upload file to cloudinary
-    const result = await this.cloudinaryService.upload(realpathOfFile);
+    const result = await this.cloudinaryService.upload(realpathOfFile, {
+      resource_type: isUploadImage ? 'image' : 'raw',
+    });
+
+    const files = isUploadImage
+      ? this.cloudinaryService.getAllResizeImage(result.url, result.public_id)
+      : [result.url];
 
     // save file to database
     const item = {
       resourceID: result.public_id,
-      format: result.format,
+      ext:
+        result.format ||
+        realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1),
       type: result.resource_type,
       createdAt: result.created_at,
       size: result.bytes,
-      files: [
-        result.url,
-        this.cloudinaryService.resizeImage(result.public_id, 1080),
-        this.cloudinaryService.resizeImage(result.public_id, 720),
-        this.cloudinaryService.resizeImage(result.public_id, 360),
-        this.cloudinaryService.resizeImage(result.public_id, 480),
-        this.cloudinaryService.resizeImage(result.public_id, 360),
-        this.cloudinaryService.resizeImage(result.public_id, 150),
-      ],
+      files,
       secureUrl: result.secure_url,
       folder: result.folder,
       storage: 'S3',
@@ -91,5 +87,14 @@ export class UploadService {
 
     // success
     return file.files;
+  }
+
+  /**
+   * Save file to S3
+   * @param filePath
+   * @returns
+   */
+  async saveFileToS3(filePath: string) {
+    return filePath;
   }
 }

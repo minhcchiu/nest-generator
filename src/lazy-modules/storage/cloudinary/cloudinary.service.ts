@@ -30,7 +30,7 @@ export class CloudinaryService {
     return new Promise((resolve, reject) => {
       options = {
         ...this.cloudinaryConfig.options,
-        options,
+        ...options,
       };
 
       v2.uploader.upload(filePath, options, (err, result) => {
@@ -50,13 +50,31 @@ export class CloudinaryService {
    * @param width
    * @returns
    */
-  resizeImage(id: string, width: number) {
+  private resizeImage(id: string, width: number) {
     return v2.url(id, {
       width,
       opacity: 80,
       // crop: 'scale',
       format: 'jpeg',
     });
+  }
+
+  /**
+   * Get all resize image
+   * @param url
+   * @param public_id
+   * @returns
+   */
+  async getAllResizeImage(url: string, public_id: string) {
+    return [
+      url,
+      this.resizeImage(public_id, 1080),
+      this.resizeImage(public_id, 720),
+      this.resizeImage(public_id, 360),
+      this.resizeImage(public_id, 480),
+      this.resizeImage(public_id, 360),
+      this.resizeImage(public_id, 150),
+    ];
   }
 
   /**
