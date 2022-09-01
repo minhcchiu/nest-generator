@@ -2,11 +2,10 @@ import { Body, Controller, Post, Put } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import {
-  SigninEmailDto,
-  SigninPhoneDto,
+  SigninDto,
   SigninSocialDto,
-  SignupEmailDto,
-  SignupPhoneDto,
+  SignupDto,
+  SignupSendTokenDto,
   TokenDto,
 } from './dto';
 import { AuthService } from './auth.service';
@@ -23,33 +22,43 @@ export class AuthController {
   ) {}
 
   /**
-   *Sign in with account email
+   * Signin with social
    * @param body
    * @returns
    */
-  @Post('signin-email')
-  async signinWithEmail(@Body() body: SigninEmailDto) {
-    return this.authService.signinWithEmail(body);
+  @Post('signin-social')
+  async signinWithSocial(@Body() body: SigninSocialDto) {
+    return this.authService.signinWithSocial(body);
   }
 
   /**
-   * Sign up with email, otp
+   *Sign in with email/phone and password
    * @param body
    * @returns
    */
-  @Post('signup-email')
-  async signupWithEmailAndOtp(@Body() body: SignupEmailDto) {
-    return this.authService.signupWithEmailAndOtp(body);
+  @Post('signin')
+  async signin(@Body() body: SigninDto) {
+    return this.authService.signin(body);
   }
 
   /**
-   * Sign up with token
+   * Sign up send token to email
    * @param body
    * @returns
    */
-  @Post('signup-send-token-email')
-  async signupSendTokenToEmail(@Body() body: CreateUserDto) {
-    return this.authService.signupSendTokenToEmail(body);
+  @Post('signup-send-token')
+  async signupSendToken(@Body() body: SignupSendTokenDto) {
+    return this.authService.signupSendToken(body);
+  }
+
+  /**
+   * Sign up with otp
+   * @param body
+   * @returns
+   */
+  @Post('signup')
+  async signup(@Body() body: SignupDto) {
+    return this.authService.signup(body);
   }
 
   /**
@@ -60,36 +69,6 @@ export class AuthController {
   @Post('verify-signup-token')
   async verifySignupToken(@Body() { token }: TokenDto) {
     return this.authService.verifySignupToken(token);
-  }
-
-  /**
-   *Sign in with account local
-   * @param body
-   * @returns
-   */
-  @Post('signin-phone')
-  async signinWithPhone(@Body() body: SigninPhoneDto) {
-    return this.authService.signinWithPhone(body);
-  }
-
-  /**
-   * Sign up with phone, otp
-   * @param body
-   * @returns
-   */
-  @Post('signup-phone')
-  async signupWithPhoneAndOtp(@Body() body: SignupPhoneDto) {
-    return this.authService.signupWithPhoneAndOtp(body);
-  }
-
-  /**
-   * Signin with social
-   * @param body
-   * @returns
-   */
-  @Post('signin-social')
-  async signinWithSocial(@Body() body: SigninSocialDto) {
-    return this.authService.signinWithSocial(body);
   }
 
   /**
@@ -119,5 +98,15 @@ export class AuthController {
   @Put('refresh-token')
   async refreshToken(@Body() { token }: TokenDto) {
     return this.authService.refreshToken(token);
+  }
+
+  /**
+   * Forgot password
+   * @param email
+   * @returns
+   */
+  @Put('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return this.authService.refreshToken(email);
   }
 }

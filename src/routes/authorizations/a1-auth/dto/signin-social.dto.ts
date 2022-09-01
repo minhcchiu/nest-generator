@@ -12,11 +12,11 @@ import { AccountTypeEnum } from '~common/c1-user/enums/account-type.enum';
 export class SigninSocialDto extends PartialType(CreateUserDto) {
   @IsNotEmpty()
   @IsString()
-  authKey: string;
+  readonly authKey: string;
 
   @IsNotEmpty()
   @IsEnum(AccountTypeEnum)
-  accountType: AccountTypeEnum;
+  readonly accountType: AccountTypeEnum;
 
   @IsOptional()
   @IsString()

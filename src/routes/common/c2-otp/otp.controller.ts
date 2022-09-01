@@ -47,7 +47,18 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp-email')
+  @Post('send-otp-signup')
+  async sendOptSignup(@Body() { email, phone }: any) {
+    return this.otpService.sendOtpSignup({ email, phone });
+  }
+
+  /**
+   * Send otp to email
+   * @param body
+   * @returns
+   */
+  @HttpCode(201)
+  @Post('send-otp-to-email')
   async sendOtpToEmail(@Body() body: SendOtpByEmailDto) {
     return this.otpService.sendOtpToEmail(body);
   }
@@ -58,7 +69,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp-phone')
+  @Post('send-otp-to-phone')
   async sendOtpToPhone(@Body() body: SendOtpByPhoneDto) {
     return this.otpService.sendOtpToPhone(body);
   }

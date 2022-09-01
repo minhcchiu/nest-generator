@@ -13,6 +13,8 @@ import { BaseService } from '~base-inherit/base.service';
 import { Otp, OtpDocument } from './schemas/otp.schema';
 import { PhoneHelper } from 'src/utils/helper/phone.helper';
 import { MailService } from '~lazy-modules/mail/mail.service';
+import { FilterVerifyOtpDto } from './dto/filter-verify-otp.dto';
+import { UserService } from '~common/c1-user/user.service';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
@@ -20,9 +22,40 @@ export class OtpService extends BaseService<OtpDocument> {
   constructor(
     @InjectModel(Otp.name) model: PaginateModel<OtpDocument>,
     private mailService: MailService,
+    private userService: UserService,
   ) {
     super(model);
     this.otpModel = model;
+  }
+
+  /**
+   * Send otp signup
+   */
+  async sendOtpSignup({ email, phone }: any) {
+    const filter = phone ? { phone } : { email };
+    const filterKey = phone ? 'phone' : 'email';
+
+    // validate user
+    const userExist = await this.userService.findOne(filter);
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
+
+      // Delete old filter key
+      await this.userService.updateById(userExist._id, {
+        [filterKey]: '',
+      });
+    }
+    // check filter exist in collection OTP
+
+    // if optDoc exist --> return call: refreshOtp
+
+    // generator new otp
+
+    // send otp
+
+    // save to mongodb
   }
 
   /**
@@ -30,7 +63,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email
    * @returns
    */
-  public async sendOtpToEmail({
+  async sendOtpToEmail({
     email,
   }: SendOtpByEmailDto): Promise<OtpDocument | string> {
     // check email exist
@@ -85,9 +118,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param phone: string
    * @returns OtpDocument
    */
-  public async refreshOtpByPhone(
-    phone: string,
-  ): Promise<OtpDocument | null | string> {
+  async refreshOtpByPhone(phone: string): Promise<OtpDocument | null | string> {
     const otpDoc = await this.otpModel.findOne({ phone });
 
     if (!otpDoc) return null;
@@ -117,9 +148,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email: email
    * @returns OtpDocument
    */
-  public async refreshOtpByEmail(
-    email: string,
-  ): Promise<OtpDocument | null | string> {
+  async refreshOtpByEmail(email: string): Promise<OtpDocument | null | string> {
     const otpDoc = await this.otpModel.findOne({ email });
 
     if (!otpDoc) return null;
@@ -138,6 +167,29 @@ export class OtpService extends BaseService<OtpDocument> {
     // FIXME [DEVELOPMENT]: comment
     await otpDoc.save();
     return otpCode;
+  }
+
+  /**
+   * Verify otp
+   * @param filter
+   * @param otpCode
+   */
+  async verifyOtp(filter: FilterVerifyOtpDto, otpCode: string) {
+    const otpDoc = await this.otpModel.findOne(filter);
+
+    // check expired otp
+    if (!otpDoc)
+      throw new BadRequestException('Phone does not exist or OTP has expired!');
+
+    // Check is valid otpCode
+    const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
+
+    if (!isValidOtpCode) throw new BadRequestException('Invalid otp code.');
+
+    // delete otp doc
+    const deletedOpt = await this.deleteById(otpDoc._id);
+
+    return deletedOpt;
   }
 
   /**
@@ -175,7 +227,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param data VerifyOtpPhoneDto
    * @returns Promise<OtpDocument>
    */
-  public async verifyOtpPhone(data: VerifyOtpPhoneDto): Promise<OtpDocument> {
+  async verifyOtpPhone(data: VerifyOtpPhoneDto): Promise<OtpDocument> {
     const { otpCode, phone } = data;
 
     // validate phone
@@ -205,7 +257,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param data VerifyOtpEmailDto
    * @returns Promise<OtpDocument>
    */
-  public async verifyOtpEmail(data: VerifyOtpEmailDto): Promise<OtpDocument> {
+  async verifyOtpEmail(data: VerifyOtpEmailDto): Promise<OtpDocument> {
     const { email, otpCode } = data;
     const otpDoc = await this.otpModel.findOne({ email });
 
