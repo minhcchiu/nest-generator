@@ -2,20 +2,28 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsPhoneNumber,
   IsString,
   Length,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
-export class SigninEmailDto {
+export class SigninDto {
+  @ValidateIf((object) => !object.phone)
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  readonly email: string;
+
+  @ValidateIf((object) => !object.email)
+  @IsNotEmpty()
+  @IsPhoneNumber('VN')
+  readonly phone: string;
 
   @IsNotEmpty()
   @Length(6, 50)
   @IsString()
-  password: string;
+  readonly password: string;
 
   @IsOptional()
   @IsString()

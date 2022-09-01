@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { OtpSchema, Otp } from './schemas/otp.schema';
 import { OtpController } from './otp.controller';
 import { OtpService } from './otp.service';
+import { UserModule } from '~common/c1-user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { OtpService } from './otp.service';
         schema: OtpSchema,
       },
     ]),
+    UserModule,
   ],
   controllers: [OtpController],
   providers: [OtpService],

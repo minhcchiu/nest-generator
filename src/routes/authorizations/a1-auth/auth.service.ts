@@ -4,20 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PhoneHelper } from 'src/utils/helper/phone.helper';
 import { UserService } from '~common/c1-user/user.service';
 import { OtpService } from '~common/c2-otp/otp.service';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import {
-  SigninEmailDto,
-  SigninPhoneDto,
+  SigninDto,
   SigninSocialDto,
-  SignupEmailDto,
-  SignupPhoneDto,
+  SignupDto,
+  SignupSendTokenDto,
 } from './dto';
 import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { MailService } from '~lazy-modules/mail/mail.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -26,75 +25,8 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly otpService: OtpService,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
-
-  /**
-   * Sign in with email and password
-   * @param data
-   * @returns
-   */
-  async signinWithEmail(data: SigninEmailDto): Promise<AuthResponse> {
-    const { password, email, deviceID } = data;
-
-    const user = await this.userService.findOne({ email });
-
-    if (user) {
-      // check password
-      await this.userService.checkPasswordById(user._id, password);
-
-      // if exist deviceID => add deviceID to fcmTokens
-      if (deviceID) {
-        await this.userService.addDeviceID(user._id, deviceID);
-        user.deviceID = deviceID;
-      }
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens(user);
-
-      // success
-      return { ...tokens, user };
-    }
-
-    throw new BadRequestException(
-      'The account does not exist or has been removed from the system.',
-    );
-  }
-
-  /**
-   * Sign in with account local
-   * @param data
-   * @returns
-   */
-  async signinWithPhone(data: SigninPhoneDto): Promise<AuthResponse> {
-    const { phone, password, deviceID } = data;
-    // validate phone
-    PhoneHelper.validatePhone(phone);
-
-    // Get and check user exist by phone
-    const user = await this.userService.findOne({ phone });
-
-    if (user) {
-      // check password
-      await this.userService.checkPasswordById(user._id, password);
-
-      // if exist deviceID => add deviceID to fcmTokens
-      if (deviceID) {
-        await this.userService.addDeviceID(user._id, deviceID);
-
-        user.deviceID = deviceID;
-      }
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens(user);
-
-      // success
-      return { ...tokens, user };
-    }
-
-    throw new BadRequestException(
-      'The account does not exist or has been removed from the system.',
-    );
-  }
 
   /**
    * Sign in with social
@@ -129,15 +61,51 @@ export class AuthService {
   }
 
   /**
-   * Sign up with account email and password
+   * Sign in with email/phone and password
    * @param data
    * @returns
    */
-  async signupWithEmailAndOtp(data: SignupEmailDto): Promise<AuthResponse> {
+  async signin(data: SigninDto): Promise<AuthResponse> {
+    const { password, email, deviceID, phone } = data;
+    const filter = phone ? { phone } : { email };
+
+    const user = await this.userService.findOne(filter);
+
+    if (user) {
+      // check password
+      await this.userService.checkPasswordById(user._id, password);
+
+      // if exist deviceID => add deviceID to fcmTokens
+      if (deviceID) {
+        await this.userService.addDeviceID(user._id, deviceID);
+        user.deviceID = deviceID;
+      }
+
+      // generate tokens
+      const tokens = await this.generateAuthTokens(user);
+
+      // success
+      return { ...tokens, user };
+    }
+
+    throw new BadRequestException(
+      'The account does not exist or has been removed from the system.',
+    );
+  }
+
+  /**
+   * Sign in with email and password
+   * @param data
+   * @returns
+   */
+  async signup(data: SignupDto): Promise<AuthResponse> {
+    const { phone, email } = data;
+
+    const filter = phone ? { phone } : { email };
+    const filterKey = phone ? 'phone' : 'email';
+
     // validate user
-    const userExist = await this.userService.findUserExist({
-      email: data.email,
-    });
+    const userExist = await this.userService.findOne(filter);
 
     // check user exist
     if (userExist) {
@@ -145,52 +113,17 @@ export class AuthService {
         throw new BadRequestException('Account already exists in the system.');
 
       // Delete old email
-      await this.userService.updateById(userExist._id, { email: '' });
+      await this.userService.updateById(userExist._id, {
+        [filterKey]: '',
+      });
     }
-
-    // verify otpCode by phone
-    await this.otpService.verifyOtpEmail({
-      email: data.email,
-      otpCode: data.otpCode,
-    });
+    // verify otpCode
+    await this.otpService.verifyOtp(
+      { [filterKey]: data[filterKey] },
+      data.otpCode,
+    );
 
     // create user
-    const user = await this.userService.create(data);
-
-    // generate tokens
-    const tokens = await this.generateAuthTokens(user);
-
-    // success
-    return { ...tokens, user };
-  }
-
-  /**
-   * Sign up with phone
-   * @param data
-   * @returns
-   */
-  async signupWithPhoneAndOtp(data: SignupPhoneDto): Promise<AuthResponse> {
-    // validate user
-    const userExist = await this.userService.findUserExist({
-      phone: data.phone,
-    });
-
-    // check user exist
-    if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
-
-      // Delete old phone
-      await this.userService.updateById(userExist._id, { phone: '' });
-    }
-
-    // verify otpCode by phone
-    await this.otpService.verifyOtpPhone({
-      phone: data.phone,
-      otpCode: data.otpCode,
-    });
-
-    // new user
     const user = await this.userService.create(data);
 
     // generate tokens
@@ -204,10 +137,10 @@ export class AuthService {
    * Sign up with token
    * @param data
    */
-  async signupSendTokenToEmail(data: CreateUserDto) {
+  async signupSendToken(data: SignupSendTokenDto) {
     // check email
     const userExist = await this.userService.findUserExist({
-      email: data.email,
+      // email: {},
     });
 
     // check user exist
@@ -221,12 +154,14 @@ export class AuthService {
 
     // generate sugnup token
     const token = await this.tokenService.generateSignupToken(data);
-    const verificationLink = `http://localhost:8888/auth/verify-signup-token/${token}`;
+
+    const clientUrl = this.configService.get('clientUrl');
+    const verificationLink = `${clientUrl}/auth/verify-signup-token/${token}`;
 
     // send mail
     await this.mailService.sendSignupToken(
       verificationLink,
-      data.email,
+      'data.email',
       'Register account.',
     );
 
@@ -247,9 +182,7 @@ export class AuthService {
     delete decoded.exp;
 
     // validate user
-    const userExist = await this.userService.findUserExist({
-      email: decoded.email,
-    });
+    const userExist = await this.userService.findOne({ email: decoded.email });
 
     // check user exist
     if (userExist) {
@@ -275,12 +208,16 @@ export class AuthService {
    * @param token
    */
   async refreshToken(token: string) {
+    // decoded data
     const decoded = await this.tokenService.verifyRefreshToken(token);
 
+    // find user
     const user = await this.userService.findById(decoded._id);
 
+    // check user
     if (!user) throw new NotFoundException('Invalid refreshToken');
 
+    // return new tokens
     return this.generateAuthTokens({ _id: user._id, role: user.role });
   }
 
