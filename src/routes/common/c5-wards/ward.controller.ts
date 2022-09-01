@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
 } from '@nestjs/common';
 
@@ -53,7 +53,7 @@ export class WardController {
    * @returns
    */
   @HttpCode(200)
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: any,

@@ -6,6 +6,7 @@ import * as argon2 from 'argon2';
 import { BaseService } from '~base-inherit/base.service';
 import { User, UserDocument } from './schemas/user.schema';
 import { ValidateUserDto } from './dto/validate-user.dto';
+import { UpdatePasswordDto } from './dto/update-password';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
@@ -22,6 +23,15 @@ export class UserService extends BaseService<UserDocument> {
    * @returns
    */
   async create(data: any) {
+    const filterValidate = {};
+
+    if (data.phone) filterValidate['phone'] = data.phone;
+
+    if (data.email) filterValidate['email'] = data.email;
+
+    // validate unquie key
+    await this.validateCreateUser(filterValidate);
+
     const userItem = {
       ...data,
       deviceID: data.deviceID ? data.deviceID : '',
@@ -29,6 +39,29 @@ export class UserService extends BaseService<UserDocument> {
     };
 
     return this._userModel.create(userItem);
+  }
+
+  /**
+   * Validate create user
+   * @param filter
+   * @returns
+   */
+  async validateCreateUser(filter: object) {
+    // validate user
+    const userExist = await this.findOne(filter);
+
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
+
+      // Delete old filter key
+      await this.updateById(userExist._id, {
+        [Object.keys(filter)[0]]: '',
+      });
+    }
+
+    return true;
   }
 
   /**
@@ -49,6 +82,22 @@ export class UserService extends BaseService<UserDocument> {
     }
 
     throw new BadRequestException('Incorrect account.');
+  }
+
+  /**
+   * Update password
+   */
+
+  async updatePasswordById(id: Types.ObjectId, data: UpdatePasswordDto) {
+    const [_, user] = await Promise.all([
+      this.checkPasswordById(id, data.password),
+      this._userModel.findById(id),
+    ]);
+    console.log({ _ });
+    // update password
+    user.password = data.newPassword;
+
+    return user.save();
   }
 
   /**
@@ -94,6 +143,7 @@ export class UserService extends BaseService<UserDocument> {
    */
   async findUserExist(data: ValidateUserDto) {
     const { phone, authKey, email } = data;
+
     if (phone) {
       const userExists = await this.findOne({ phone });
 

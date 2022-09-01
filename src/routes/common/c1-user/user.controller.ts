@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
 } from '@nestjs/common';
 
@@ -20,6 +20,7 @@ import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { schemas } from '~config/collections/schemas.collection';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password';
 @ApiTags(schemas.user.path)
 @Controller(schemas.user.path)
 export class UserController {
@@ -48,18 +49,66 @@ export class UserController {
   }
 
   /**
+   * Reset password
+   * @param id
+   * @param body
+   * @returns
+   */
+  @HttpCode(200)
+  @Patch(':id/password')
+  async resetPassword(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() body: UpdatePasswordDto,
+  ) {
+    return this.userService.updatePasswordById(id, body);
+  }
+
+  /**
    * Update by ID
    * @param id
    * @param body
    * @returns
    */
   @HttpCode(200)
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateUserDto,
   ) {
+    const filterValidate = {};
+
+    if (body.phone) filterValidate['phone'] = body.phone;
+
+    if (body.email) filterValidate['email'] = body.email;
+
+    await this.userService.validateCreateUser(filterValidate);
+
     return this.userService.updateById(id, body);
+  }
+
+  /**
+   * Delete by ID
+   * @param id
+   * @returns
+   */
+  // @HttpCode(204)
+  @Delete(':id/soft')
+  async deleteSoft(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userService.updateById(id, { deleted: true });
+  }
+
+  /**
+   * Delete many by ids
+   * @param ids
+   * @returns
+   */
+  // @HttpCode(204)
+  @Delete(':ids/soft-ids')
+  async deleteManySoftByIds(@Param('ids') ids: string) {
+    return this.userService.updateMany(
+      { _id: { $in: ids.split(',') } },
+      { deleted: true },
+    );
   }
 
   /**

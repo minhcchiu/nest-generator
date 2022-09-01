@@ -4,8 +4,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 
 import {
-  SendOtpByPhoneDto,
-  SendOtpByEmailDto,
+  SendOtpToPhoneDto,
+  SendOtpToEmailDto,
   VerifyOtpEmailDto,
   VerifyOtpPhoneDto,
 } from './dto';
@@ -37,6 +37,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
     // validate user
     const userExist = await this.userService.findOne(filter);
+
     // check user exist
     if (userExist) {
       if (!userExist.deleted)
@@ -47,15 +48,6 @@ export class OtpService extends BaseService<OtpDocument> {
         [filterKey]: '',
       });
     }
-    // check filter exist in collection OTP
-
-    // if optDoc exist --> return call: refreshOtp
-
-    // generator new otp
-
-    // send otp
-
-    // save to mongodb
   }
 
   /**
@@ -65,7 +57,7 @@ export class OtpService extends BaseService<OtpDocument> {
    */
   async sendOtpToEmail({
     email,
-  }: SendOtpByEmailDto): Promise<OtpDocument | string> {
+  }: SendOtpToEmailDto): Promise<OtpDocument | string> {
     // check email exist
     const otp = await this.refreshOtpByEmail(email);
 
@@ -89,7 +81,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param data
    * @returns
    */
-  async sendOtpToPhone(data: SendOtpByPhoneDto) {
+  async sendOtpToPhone(data: SendOtpToPhoneDto) {
     const { zipCode, phone, country } = data;
 
     // validate phone number

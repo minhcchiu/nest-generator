@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post, Patch } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -10,7 +10,6 @@ import {
 } from './dto';
 import { AuthService } from './auth.service';
 import { UserService } from '~common/c1-user/user.service';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { schemas } from '~config/collections/schemas.collection';
 
 @ApiTags('auth')
@@ -95,7 +94,7 @@ export class AuthController {
    * @param {refreshToken}
    * @returns
    */
-  @Put('refresh-token')
+  @Patch('refresh-token')
   async refreshToken(@Body() { token }: TokenDto) {
     return this.authService.refreshToken(token);
   }
@@ -105,7 +104,7 @@ export class AuthController {
    * @param email
    * @returns
    */
-  @Put('forgot-password')
+  @Patch('forgot-password')
   async forgotPassword(@Body('email') email: string) {
     return this.authService.refreshToken(email);
   }
