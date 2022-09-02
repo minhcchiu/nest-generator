@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PaginateModel, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as argon2 from 'argon2';
@@ -6,7 +10,6 @@ import * as argon2 from 'argon2';
 import { BaseService } from '~base-inherit/base.service';
 import { User, UserDocument } from './schemas/user.schema';
 import { ValidateUserDto } from './dto/validate-user.dto';
-import { UpdatePasswordDto } from './dto/update-password';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
@@ -86,18 +89,21 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Update password
+   * @param id
+   * @param newPassword
+   * @returns
    */
+  async updatePasswordById(id: Types.ObjectId, newPassword: string) {
+    const user = await this._userModel.findById(id);
 
-  async updatePasswordById(id: Types.ObjectId, data: UpdatePasswordDto) {
-    const [_, user] = await Promise.all([
-      this.checkPasswordById(id, data.password),
-      this._userModel.findById(id),
-    ]);
-    console.log({ _ });
+    if (!user) throw new NotFoundException('User not found.');
+
     // update password
-    user.password = data.newPassword;
+    user.password = newPassword;
 
-    return user.save();
+    await user.save();
+
+    return user.toObject();
   }
 
   /**

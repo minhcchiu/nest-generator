@@ -29,28 +29,6 @@ export class OtpService extends BaseService<OtpDocument> {
   }
 
   /**
-   * Send otp signup
-   */
-  async sendOtpSignup({ email, phone }: any) {
-    const filter = phone ? { phone } : { email };
-    const filterKey = phone ? 'phone' : 'email';
-
-    // validate user
-    const userExist = await this.userService.findOne(filter);
-
-    // check user exist
-    if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
-
-      // Delete old filter key
-      await this.userService.updateById(userExist._id, {
-        [filterKey]: '',
-      });
-    }
-  }
-
-  /**
    * Send opt by email
    * @param email
    * @returns

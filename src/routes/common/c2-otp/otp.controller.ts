@@ -66,7 +66,7 @@ export class OtpController {
   async sendOtpSignupToPhone(@Body() body: SendOtpToPhoneDto) {
     await this.userService.validateCreateUser({ phone: body.phone });
 
-    return this.otpService.sendOtpSignup(body);
+    return this.otpService.sendOtpToPhone(body);
   }
 
   /**
@@ -79,7 +79,7 @@ export class OtpController {
   async sendOtpSignupSignup(@Body() body: SendOtpToEmailDto) {
     await this.userService.validateCreateUser({ email: body.email });
 
-    return this.otpService.sendOtpSignup(body);
+    return this.otpService.sendOtpToEmail(body);
   }
 
   /**

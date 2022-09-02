@@ -60,7 +60,9 @@ export class UserController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdatePasswordDto,
   ) {
-    return this.userService.updatePasswordById(id, body);
+    await this.userService.checkPasswordById(id, body.password);
+
+    return this.userService.updatePasswordById(id, body.newPassword);
   }
 
   /**

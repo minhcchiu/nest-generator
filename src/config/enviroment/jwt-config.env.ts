@@ -5,6 +5,7 @@ export const jwtConfigEnviroment = {
     accessToken: process.env.JWT_ACCESS_EXPIRATION || '88d',
     refreshToken: process.env.JWT_REFRESH_EXPIRATION || '1m',
     signupToken: process.env.JWT_SIGNUP_EXPIRATION || '10m',
+    resetPasswordToken: process.env.JWT_RESET_PASSWORD_EXPIRATION || '5m',
   },
   secrets: {
     accessToken: process.env.JWT_ACCESS_SECRET || 'JWT_ACCESS_SECRET',
