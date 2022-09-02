@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import {
   ResetPasswordByTokenDto,
+  ResetPasswordDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
@@ -112,7 +113,17 @@ export class AuthController {
 
   /**
    * Reset password
-   * @param token
+   * @param body
+   * @returns
+   */
+  @Post('reset_password')
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPassword(body);
+  }
+
+  /**
+   * Reset password by token
+   * @param body
    * @returns
    */
   @Post('reset_password')

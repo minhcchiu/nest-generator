@@ -9,6 +9,7 @@ import { OtpService } from '~common/c2-otp/otp.service';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import {
+  ResetPasswordDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
@@ -27,38 +28,6 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
   ) {}
-
-  /**
-   * Sign in with social
-   * @param data
-   * @returns
-   */
-  async signinWithSocial(data: SigninSocialDto): Promise<AuthResponse> {
-    const { deviceID, accountType, authKey } = data;
-
-    // find user
-    let user = await this.userService.findOne({ authKey, accountType });
-
-    // check user not exist
-    if (!user) user = await this.userService.create(data);
-
-    // check user has been deleted
-    if (user.deleted)
-      await this.userService.updateById(user._id, { authKey: '' });
-
-    // check add deviceID
-    if (deviceID) {
-      await this.userService.addDeviceID(user._id, deviceID);
-
-      user.deviceID = deviceID;
-    }
-
-    // generate tokens
-    const tokens = await this.generateAuthTokens(user);
-
-    // success
-    return { ...tokens, user };
-  }
 
   /**
    * Sign in with email/phone and password
@@ -91,6 +60,38 @@ export class AuthService {
     throw new BadRequestException(
       'The account does not exist or has been removed from the system.',
     );
+  }
+
+  /**
+   * Sign in with social
+   * @param data
+   * @returns
+   */
+  async signinWithSocial(data: SigninSocialDto): Promise<AuthResponse> {
+    const { deviceID, accountType, authKey } = data;
+
+    // find user
+    let user = await this.userService.findOne({ authKey, accountType });
+
+    // check user not exist
+    if (!user) user = await this.userService.create(data);
+
+    // check user has been deleted
+    if (user.deleted)
+      await this.userService.updateById(user._id, { authKey: '' });
+
+    // check add deviceID
+    if (deviceID) {
+      await this.userService.addDeviceID(user._id, deviceID);
+
+      user.deviceID = deviceID;
+    }
+
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
@@ -209,6 +210,49 @@ export class AuthService {
 
     throw new NotFoundException('Email not found.');
   }
+
+  /**
+   * Activation account
+   * @param data
+   * @return
+   */
+  async resetPassword(data: ResetPasswordDto) {
+    const { email, phone } = data;
+
+    const filter = phone ? { phone } : { email };
+
+    const user = await this.userService.findOne(filter);
+
+    // check user exist
+    if (user) {
+      if (user.deleted) {
+        const deletedAt = new Date(user.updatedAt).toLocaleString();
+
+        throw new BadRequestException(`Account deleted on ${deletedAt}`);
+      }
+
+      // if exist deviceID => add deviceID to fcmTokens
+      if (data.deviceID) {
+        await this.userService.addDeviceID(user._id, data.deviceID);
+        user.deviceID = data.deviceID;
+      }
+
+      // verify otp
+      await this.otpService.verifyOtp(filter, data.otpCode);
+
+      // update password
+      await this.userService.updatePasswordById(user._id, data.password);
+
+      // generate tokens
+      const tokens = await this.generateAuthTokens(user);
+
+      // success
+      return { ...tokens, user };
+    }
+
+    throw new NotFoundException('Account not found.');
+  }
+
   /**
    * Activation account
    * @param token
