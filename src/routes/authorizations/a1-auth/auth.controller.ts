@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post, Patch } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  ResetPasswordByTokenDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
@@ -10,7 +11,6 @@ import {
 } from './dto';
 import { AuthService } from './auth.service';
 import { UserService } from '~common/c1-user/user.service';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { schemas } from '~config/collections/schemas.collection';
 
 @ApiTags('auth')
@@ -20,16 +20,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
-
-  /**
-   * Signin with social
-   * @param body
-   * @returns
-   */
-  @Post('signin-social')
-  async signinWithSocial(@Body() body: SigninSocialDto) {
-    return this.authService.signinWithSocial(body);
-  }
 
   /**
    *Sign in with email/phone and password
@@ -42,13 +32,13 @@ export class AuthController {
   }
 
   /**
-   * Sign up send token to email
+   * Signin with social
    * @param body
    * @returns
    */
-  @Post('signup-send-token')
-  async signupSendToken(@Body() body: SignupSendTokenDto) {
-    return this.authService.signupSendToken(body);
+  @Post('signin_social')
+  async signinWithSocial(@Body() body: SigninSocialDto) {
+    return this.authService.signinWithSocial(body);
   }
 
   /**
@@ -62,11 +52,21 @@ export class AuthController {
   }
 
   /**
+   * Sign up send token to email
+   * @param body
+   * @returns
+   */
+  @Post('signup_send_token_link')
+  async signupSendTokenLink(@Body() body: SignupSendTokenDto) {
+    return this.authService.signupSendTokenLink(body);
+  }
+
+  /**
    * Activate account by token
    * @param body
    * @returns
    */
-  @Post('verify-signup-token')
+  @Post('verify_signup_token')
   async verifySignupToken(@Body() { token }: TokenDto) {
     return this.authService.verifySignupToken(token);
   }
@@ -77,7 +77,7 @@ export class AuthController {
    * @param deviceID
    * @returns
    */
-  @Post('sign-out')
+  @Post('sign_out')
   async signout(
     @Body('_id') idUser: Types.ObjectId,
     @Body('deviceID') deviceID: string,
@@ -95,7 +95,7 @@ export class AuthController {
    * @param {refreshToken}
    * @returns
    */
-  @Put('refresh-token')
+  @Patch('refresh_token')
   async refreshToken(@Body() { token }: TokenDto) {
     return this.authService.refreshToken(token);
   }
@@ -105,8 +105,20 @@ export class AuthController {
    * @param email
    * @returns
    */
-  @Put('forgot-password')
-  async forgotPassword(@Body('email') email: string) {
-    return this.authService.refreshToken(email);
+  @Post('forgot_password_send_token_link')
+  async forgotPasswordSendTokenLink(@Body('email') email: string) {
+    return this.authService.forgotPasswordSendTokenLink(email);
+  }
+
+  /**
+   * Reset password
+   * @param token
+   * @returns
+   */
+  @Post('reset_password')
+  async resetPasswordByToken(
+    @Body() { token, password }: ResetPasswordByTokenDto,
+  ) {
+    return this.authService.resetPasswordByToken(token, password);
   }
 }

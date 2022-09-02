@@ -1,4 +1,4 @@
 export interface AuthTokenPayload {
-  ac_token: string;
-  rf_token: string;
+  readonly ac_token: string;
+  readonly rf_token: string;
 }

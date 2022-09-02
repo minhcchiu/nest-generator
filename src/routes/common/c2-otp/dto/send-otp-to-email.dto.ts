@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class SendOtpByEmailDto {
+export class SendOtpToEmailDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

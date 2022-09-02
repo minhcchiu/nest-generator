@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PaginateModel, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as argon2 from 'argon2';
@@ -22,6 +26,15 @@ export class UserService extends BaseService<UserDocument> {
    * @returns
    */
   async create(data: any) {
+    const filterValidate = {};
+
+    if (data.phone) filterValidate['phone'] = data.phone;
+
+    if (data.email) filterValidate['email'] = data.email;
+
+    // validate unquie key
+    await this.validateCreateUser(filterValidate);
+
     const userItem = {
       ...data,
       deviceID: data.deviceID ? data.deviceID : '',
@@ -29,6 +42,29 @@ export class UserService extends BaseService<UserDocument> {
     };
 
     return this._userModel.create(userItem);
+  }
+
+  /**
+   * Validate create user
+   * @param filter
+   * @returns
+   */
+  async validateCreateUser(filter: object) {
+    // validate user
+    const userExist = await this.findOne(filter);
+
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
+
+      // Delete old filter key
+      await this.updateById(userExist._id, {
+        [Object.keys(filter)[0]]: '',
+      });
+    }
+
+    return true;
   }
 
   /**
@@ -49,6 +85,25 @@ export class UserService extends BaseService<UserDocument> {
     }
 
     throw new BadRequestException('Incorrect account.');
+  }
+
+  /**
+   * Update password
+   * @param id
+   * @param newPassword
+   * @returns
+   */
+  async updatePasswordById(id: Types.ObjectId, newPassword: string) {
+    const user = await this._userModel.findById(id);
+
+    if (!user) throw new NotFoundException('User not found.');
+
+    // update password
+    user.password = newPassword;
+
+    await user.save();
+
+    return user.toObject();
   }
 
   /**
@@ -94,6 +149,7 @@ export class UserService extends BaseService<UserDocument> {
    */
   async findUserExist(data: ValidateUserDto) {
     const { phone, authKey, email } = data;
+
     if (phone) {
       const userExists = await this.findOne({ phone });
 

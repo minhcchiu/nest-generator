@@ -20,7 +20,7 @@ export class MailService {
    * @param params
    * @returns
    */
-  public sendMail(params: any) {
+  sendMail(params: any) {
     return this.mailerService.sendMail(params);
     // const mailerConfig = this.config.get<MailerConfig>("mailer")
 
@@ -76,30 +76,56 @@ export class MailService {
    * @param subject
    * @param from
    */
-  public async sendSignupToken(
+  async sendSignupToken(
     verificationLink: string,
     to: string,
     subject: string,
     from?: string,
   ) {
-    try {
-      const mailer = this.config.get('mailer');
+    const mailer = this.config.get('mailer');
 
-      const params = {
-        from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
-        to,
-        subject,
-        template: './verify/verify.template.hbs',
-        context: { verificationLink },
-      };
+    const params = {
+      from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
+      to,
+      subject,
+      template: './verify/verify.template.hbs',
+      context: { verificationLink },
+    };
 
-      const result = await this.sendMail(params);
+    const result = await this.sendMail(params);
 
-      this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
+    this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
 
-      return result;
-    } catch (e) {
-      this.logger.error((e as any).toString());
-    }
+    return result;
+  }
+
+  /**
+   * Send verify
+   * @param resetPasswordLink
+   * @param to
+   * @param subject
+   * @param from
+   */
+  async sendResetPasswordToken(
+    resetPasswordLink: string,
+    to: string,
+    subject: string,
+    from?: string,
+  ) {
+    const mailer = this.config.get('mailer');
+
+    const params = {
+      from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
+      to,
+      subject,
+      template: './verify/reset-password.template.hbs',
+      context: { resetPasswordLink },
+    };
+
+    const result = await this.sendMail(params);
+
+    this.logger.log('SEND RESET PASSWORD TOKEN SUCCESS!');
+
+    return result;
   }
 }

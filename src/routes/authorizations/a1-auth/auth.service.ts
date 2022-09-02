@@ -14,9 +14,9 @@ import {
   SignupDto,
   SignupSendTokenDto,
 } from './dto';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
+import { JwtConfig } from '~interface/jwt.interface';
 
 @Injectable()
 export class AuthService {
@@ -137,18 +137,16 @@ export class AuthService {
    * Sign up with token
    * @param data
    */
-  async signupSendToken(data: SignupSendTokenDto) {
+  async signupSendTokenLink(data: SignupSendTokenDto) {
     // check email
-    const userExist = await this.userService.findUserExist({
-      // email: {},
-    });
+    const userExist = await this.userService.findOne({ email: data.email });
 
     // check user exist
     if (userExist) {
       if (!userExist.deleted)
         throw new BadRequestException('Account already exists in the system.');
 
-      // Delete old phone
+      // Delete old email
       await this.userService.updateById(userExist._id, { email: '' });
     }
 
@@ -167,6 +165,87 @@ export class AuthService {
 
     // success
     return verificationLink;
+  }
+
+  /**
+   * Sign up with token
+   * @param email
+   */
+  async forgotPasswordSendTokenLink(email: string) {
+    // check email
+    const user = await this.userService.findOne({ email });
+
+    // check user exist
+    if (user) {
+      if (user.deleted) {
+        const deletedAt = new Date(user.updatedAt).toLocaleString();
+
+        throw new BadRequestException(`Account deleted on ${deletedAt}`);
+      }
+
+      const expireTime =
+        this.configService.get<JwtConfig>('jwt').expirationTime
+          .resetPasswordToken;
+
+      // generate accessToken
+      const token = await this.tokenService.generateAccessToken(
+        { _id: user._id, role: user.role },
+        expireTime,
+      );
+
+      const clientUrl = this.configService.get('clientUrl');
+      const resetPasswordLink = `${clientUrl}/auth/reset-password/${token}`;
+
+      // send mail
+      await this.mailService.sendResetPasswordToken(
+        resetPasswordLink,
+        'data.email',
+        'Reset password.',
+      );
+
+      // success
+      return { resetPasswordLink };
+    }
+
+    throw new NotFoundException('Email not found.');
+  }
+  /**
+   * Activation account
+   * @param token
+   * @return
+   */
+  async resetPasswordByToken(token: string, password: string) {
+    const decoded = await this.tokenService.verifyAccessToken(token);
+
+    // delete key of token
+    delete decoded.iat;
+    delete decoded.exp;
+
+    // validate user
+    const user = await this.userService.findById(decoded._id);
+
+    // check user exist
+    if (user) {
+      if (user.deleted) {
+        const deletedAt = new Date(user.updatedAt).toLocaleString();
+
+        throw new BadRequestException(`Account deleted on ${deletedAt}`);
+      }
+
+      // Update password
+      const userUpdated = await this.userService.updatePasswordById(
+        user._id,
+        password,
+      );
+
+      // generate tokens
+      const tokens = await this.generateAuthTokens(userUpdated);
+
+      // success
+      return { ...tokens, user };
+    }
+
+    throw new NotFoundException('Email not found.');
   }
 
   /**
