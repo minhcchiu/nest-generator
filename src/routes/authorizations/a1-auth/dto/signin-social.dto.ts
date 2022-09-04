@@ -6,8 +6,8 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
-import { AccountTypeEnum } from '~common/c1-user/enums/account-type.enum';
+import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
+import { AccountTypeEnum } from '~common/c1-users/enums/account-type.enum';
 
 export class SigninSocialDto extends PartialType(CreateUserDto) {
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FileManagerService } from '~common/c6-files/file-manager.service';
+import { FileService } from '~common/c6-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
 import { UploadHelper } from './upload.helper';
@@ -7,7 +7,7 @@ import { UploadHelper } from './upload.helper';
 @Injectable()
 export class UploadService {
   constructor(
-    private readonly fileManagerService: FileManagerService,
+    private readonly fileService: FileService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly localStorageService: LocalStorageService,
     private readonly uploadHelper: UploadHelper,
@@ -41,7 +41,7 @@ export class UploadService {
       storage: 'LOCAL_DISK',
     };
 
-    await this.fileManagerService.create(item);
+    await this.fileService.create(item);
 
     return result;
   }
@@ -83,7 +83,7 @@ export class UploadService {
       storage: 'S3',
     };
 
-    const file = await this.fileManagerService.create(item);
+    const file = await this.fileService.create(item);
 
     // success
     return file.files;

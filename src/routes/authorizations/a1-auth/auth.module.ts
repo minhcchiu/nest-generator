@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from '~common/c1-user/user.module';
+import { UserModule } from '~common/c1-users/user.module';
 import { OtpModule } from '~common/c2-otp/otp.module';
 
 import { AuthController } from './auth.controller';

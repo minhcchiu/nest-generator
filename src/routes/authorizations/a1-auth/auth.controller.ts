@@ -9,8 +9,7 @@ import {
   TokenDto,
 } from './dto';
 import { AuthService } from './auth.service';
-import { UserService } from '~common/c1-user/user.service';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
+import { UserService } from '~common/c1-users/user.service';
 import { schemas } from '~config/collections/schemas.collection';
 
 @ApiTags('auth')
@@ -26,7 +25,7 @@ export class AuthController {
    * @param body
    * @returns
    */
-  @Post('signin-social')
+  @Post('signin_social')
   async signinWithSocial(@Body() body: SigninSocialDto) {
     return this.authService.signinWithSocial(body);
   }
@@ -46,7 +45,7 @@ export class AuthController {
    * @param body
    * @returns
    */
-  @Post('signup-send-token')
+  @Post('signup_send_token')
   async signupSendToken(@Body() body: SignupSendTokenDto) {
     return this.authService.signupSendToken(body);
   }
@@ -66,7 +65,7 @@ export class AuthController {
    * @param body
    * @returns
    */
-  @Post('verify-signup-token')
+  @Post('verify_signup_token')
   async verifySignupToken(@Body() { token }: TokenDto) {
     return this.authService.verifySignupToken(token);
   }
@@ -77,7 +76,7 @@ export class AuthController {
    * @param deviceID
    * @returns
    */
-  @Post('sign-out')
+  @Post('sign_out')
   async signout(
     @Body('_id') idUser: Types.ObjectId,
     @Body('deviceID') deviceID: string,
@@ -95,7 +94,7 @@ export class AuthController {
    * @param {refreshToken}
    * @returns
    */
-  @Put('refresh-token')
+  @Put('refresh_token')
   async refreshToken(@Body() { token }: TokenDto) {
     return this.authService.refreshToken(token);
   }
@@ -105,7 +104,7 @@ export class AuthController {
    * @param email
    * @returns
    */
-  @Put('forgot-password')
+  @Put('forgot_password')
   async forgotPassword(@Body('email') email: string) {
     return this.authService.refreshToken(email);
   }

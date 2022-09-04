@@ -13,8 +13,8 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 
-import { GenderEnum } from '~common/c1-user/enums/gender.enum';
-import { RoleEnum } from '~common/c1-user/enums/role.enum';
+import { GenderEnum } from '~common/c1-users/enums/gender.enum';
+import { RoleEnum } from '~common/c1-users/enums/role.enum';
 
 export class CreateUserDto {
   @IsOptional()

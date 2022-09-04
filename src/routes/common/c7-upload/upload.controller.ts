@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -23,10 +24,12 @@ export class UploadController {
    * Upload single file to tmp
    * @param file
    */
-  @UseInterceptors(FileInterceptor('file', tempStorage))
+  @UseInterceptors(FileInterceptor('file'))
   @HttpCode(201)
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('File is required!');
+
     return { file: file.path.replace('public/', '') };
   }
 
@@ -49,7 +52,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-file-to-local')
+  @Post('save_file_to_local')
   async saveFileToLocal(@Body() body: { file: string }) {
     return this.uploadService.saveFileToLocal(body.file);
   }
@@ -60,7 +63,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-files-to-local')
+  @Post('save_files_to_local')
   async saveFilesToLocal(@Body() body: { files: string[] }) {
     const filesUploadedPromise = body.files.map((file) =>
       this.uploadService.saveFileToLocal(file),
@@ -75,7 +78,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-file-to-s3')
+  @Post('save_file_to_s3')
   async saveFileToS3(@Body() body: { file: string }) {
     return body;
   }
@@ -86,7 +89,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-files-to-s3')
+  @Post('save_files_to_s3')
   async saveFilesToS3(@Body() body: { files: string[] }) {
     return body;
   }
@@ -97,7 +100,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-file-to-cloudinary')
+  @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(@Body() body: { file: string }) {
     return this.uploadService.saveFileToCloudinary(body.file);
   }
@@ -108,7 +111,7 @@ export class UploadController {
    * @returns
    */
   @HttpCode(200)
-  @Post('save-files-to-cloudinary')
+  @Post('save_files_to_cloudinary')
   async saveToCloudinary(@Body() body: { files: string[] }) {
     const filesUploadedPromise = body.files.map((file) =>
       this.uploadService.saveFileToLocal(file),

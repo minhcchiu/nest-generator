@@ -8,7 +8,7 @@ import { StorageServiceEnum } from '../enum/storage-service.enum';
   versionKey: false,
   collection: schemas.file.name,
 })
-export class FileManager {
+export class File {
   @Prop({ type: Types.ObjectId, ref: schemas.user.ref })
   readonly owner: string;
 
@@ -41,5 +41,5 @@ export class FileManager {
   readonly size: number;
 }
 
-export type FileManagerDocument = FileManager & Document;
-export const FileManagerSchema = SchemaFactory.createForClass(FileManager);
+export type FileDocument = File & Document;
+export const FileSchema = SchemaFactory.createForClass(File);

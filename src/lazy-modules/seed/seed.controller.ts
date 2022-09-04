@@ -11,7 +11,7 @@ export class SeedController {
    * Seed data for provinces, district, ward
    * @returns
    */
-  @Post('provinces-districts-wards')
+  @Post('provinces_districts_wards')
   @HttpCode(200)
   async seedProvincesDistrictWard() {
     return this.seedService.seedProvincesDistrictWard();
@@ -21,7 +21,7 @@ export class SeedController {
    * Seed data for provinces, district, ward
    * @returns
    */
-  @Delete('provinces-districts-wards')
+  @Delete('provinces_districts_wards')
   @HttpCode(200)
   async deleteAllProvincesDistrictWard() {
     return this.seedService.deleteAllProvincesDistrictWard();

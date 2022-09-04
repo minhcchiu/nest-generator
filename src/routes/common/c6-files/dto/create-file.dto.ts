@@ -1,6 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateFileManagerDto {
+export class CreateFileDto {
   @IsNotEmpty()
   @IsMongoId()
   readonly idProvince: string;

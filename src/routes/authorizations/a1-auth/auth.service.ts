@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { UserService } from '~common/c1-user/user.service';
+import { UserService } from '~common/c1-users/user.service';
 import { OtpService } from '~common/c2-otp/otp.service';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
@@ -14,7 +14,7 @@ import {
   SignupDto,
   SignupSendTokenDto,
 } from './dto';
-import { CreateUserDto } from '~common/c1-user/dto/create-user.dto';
+import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
 

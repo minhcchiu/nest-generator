@@ -14,7 +14,7 @@ import { Otp, OtpDocument } from './schemas/otp.schema';
 import { PhoneHelper } from 'src/utils/helper/phone.helper';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { FilterVerifyOtpDto } from './dto/filter-verify-otp.dto';
-import { UserService } from '~common/c1-user/user.service';
+import { UserService } from '~common/c1-users/user.service';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {

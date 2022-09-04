@@ -4,6 +4,7 @@ import { ProvinceService } from '~common/c3-provinces/province.service';
 import { DistrictService } from '~common/c4-districts/district.service';
 import { WardService } from '~common/c5-wards/ward.service';
 import { FileHelper } from '~helper/file.helper';
+import { Logger } from '~lazy-modules/logger/logger.service';
 
 @Injectable()
 export class SeedService {
@@ -11,7 +12,10 @@ export class SeedService {
     private provinceService: ProvinceService,
     private districtService: DistrictService,
     private wardService: WardService,
-  ) {}
+    private logger: Logger,
+  ) {
+    this.logger.setContext(SeedService.name);
+  }
 
   /**
    * Delete all provinces districs wards
@@ -23,6 +27,12 @@ export class SeedService {
       this.districtService.deleteMany({}),
       this.wardService.deleteMany(),
     ]);
+
+    this.logger.log('Delete all provinces, district, wards successfully!', {
+      provinces,
+      districts,
+      wards,
+    });
 
     return { provinces, districts, wards };
   }
@@ -105,6 +115,13 @@ export class SeedService {
     });
 
     await Promise.all(resultPromise);
+
+    this.logger.log(
+      'Seed data for all provinces, district, wards successfully!',
+      {
+        ...counter,
+      },
+    );
 
     return { ...counter };
   }
