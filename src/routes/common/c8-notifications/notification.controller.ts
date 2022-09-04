@@ -17,12 +17,12 @@ import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { schemas } from '~config/collections/schemas.collection';
-import { WardService } from './ward.service';
+import { NotificationService } from './notification.service';
 
-@ApiTags(schemas.ward.path)
-@Controller(schemas.ward.path)
-export class WardController {
-  constructor(private readonly wardService: WardService) {}
+@ApiTags(schemas.notification.path)
+@Controller(schemas.notification.path)
+export class NotificationController {
+  constructor(private readonly notificationService: NotificationService) {}
 
   /**
    * Find all
@@ -32,7 +32,7 @@ export class WardController {
   @HttpCode(200)
   @Get('')
   async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.wardService.find(queryParams);
+    return this.notificationService.find(queryParams);
   }
 
   /**
@@ -43,7 +43,7 @@ export class WardController {
   @HttpCode(201)
   @Post('')
   async create(@Body() body: any) {
-    return this.wardService.create(body);
+    return this.notificationService.create(body);
   }
 
   /**
@@ -58,7 +58,7 @@ export class WardController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: any,
   ) {
-    return this.wardService.updateById(id, body);
+    return this.notificationService.updateById(id, body);
   }
 
   /**
@@ -69,7 +69,9 @@ export class WardController {
   // @HttpCode(204)
   @Delete(':ids/ids')
   async deleteManyByIds(@Param('ids') ids: string) {
-    return this.wardService.deleteMany({ _id: { $in: ids.split(',') } });
+    return this.notificationService.deleteMany({
+      _id: { $in: ids.split(',') },
+    });
   }
 
   /**
@@ -80,7 +82,7 @@ export class WardController {
   // @HttpCode(204)
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.wardService.deleteById(id);
+    return this.notificationService.deleteById(id);
   }
 
   /**
@@ -91,7 +93,7 @@ export class WardController {
   @HttpCode(200)
   @Get('paginate')
   async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.wardService.paginate(query);
+    return this.notificationService.paginate(query);
   }
 
   /**
@@ -102,7 +104,7 @@ export class WardController {
   @HttpCode(200)
   @Get('count')
   async count(@Query() query: any) {
-    return this.wardService.count(query);
+    return this.notificationService.count(query);
   }
 
   /**
@@ -113,7 +115,7 @@ export class WardController {
   @HttpCode(200)
   @Get(':id')
   async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.wardService.findById(id);
+    const result = await this.notificationService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
 

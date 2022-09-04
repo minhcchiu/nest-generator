@@ -3,11 +3,16 @@ import { PaginateModel } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { BaseService } from 'src/base-inherit/base.service';
-import { Ward, WardDocument } from './schemas/ward.schema';
+import {
+  Notification,
+  NotificationDocument,
+} from './schemas/notification.schema';
 
 @Injectable()
-export class WardService extends BaseService<WardDocument> {
-  constructor(@InjectModel(Ward.name) model: PaginateModel<WardDocument>) {
+export class NotificationService extends BaseService<NotificationDocument> {
+  constructor(
+    @InjectModel(Notification.name) model: PaginateModel<NotificationDocument>,
+  ) {
     super(model);
   }
 }

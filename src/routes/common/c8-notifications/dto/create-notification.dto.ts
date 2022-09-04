@@ -1,6 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateWardDto {
+export class CreateNotificationDto {
   @IsNotEmpty()
   @IsMongoId()
   readonly idProvince: string;

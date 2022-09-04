@@ -1,27 +1,23 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { WardController } from './ward.controller';
-import { WardService } from './ward.service';
-import { Ward, WardSchema } from './schemas/ward.schema';
+import { NotificationController } from './notification.controller';
+import { NotificationService } from './notification.service';
+import {
+  Notification,
+  NotificationSchema,
+} from './schemas/notification.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
+    MongooseModule.forFeature([
       {
-        name: Ward.name,
-        useFactory: () => {
-          const schema = WardSchema;
-
-          // eslint-disable-next-line
-          schema.plugin(require('mongoose-slug-updater'));
-
-          return schema;
-        },
+        name: Notification.name,
+        schema: NotificationSchema,
       },
     ]),
   ],
-  controllers: [WardController],
-  providers: [WardService],
-  exports: [WardService],
+  controllers: [NotificationController],
+  providers: [NotificationService],
+  exports: [NotificationService],
 })
-export class WardModule {}
+export class NotificationModule {}

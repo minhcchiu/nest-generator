@@ -21,6 +21,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UploadModule } from '~common/c7-upload/upload.module';
 import { configuration } from '~config/enviroment/configuration.env';
+import { NotificationModule } from '~common/c8-notifications/notification.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { configuration } from '~config/enviroment/configuration.env';
     LoggerModule,
     FileModule,
     UploadModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
