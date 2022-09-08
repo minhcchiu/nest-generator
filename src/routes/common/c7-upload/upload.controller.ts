@@ -11,9 +11,9 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { schemas } from '~config/collections/schemas.collection';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
-import { tempStorage } from '~helper/storage.helper';
+import { StorageFileInterceptor } from '~lazy-modules/interceptors/storage-file.interceptor';
+import { StorageFilesInterceptor } from '~lazy-modules/interceptors/storage-files.interceptor';
 
 @ApiTags(schemas.upload.path)
 @Controller(schemas.upload.path)
@@ -24,10 +24,11 @@ export class UploadController {
    * Upload single file to tmp
    * @param file
    */
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(StorageFileInterceptor('file'))
   @HttpCode(201)
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
+    // check file exist
     if (!file) throw new BadRequestException('File is required!');
 
     return { file: file.path.replace('public/', '') };
@@ -37,7 +38,7 @@ export class UploadController {
    * Upload many files to tmp
    * @param files
    */
-  @UseInterceptors(FilesInterceptor('files', 25, tempStorage))
+  @UseInterceptors(StorageFilesInterceptor('files'))
   @HttpCode(201)
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
