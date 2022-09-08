@@ -40,7 +40,7 @@ export class AuthService {
 
     const user = await this.userService.findOne(filter);
 
-    if (user) {
+    if (user && !user.deleted) {
       // check password
       await this.userService.checkPasswordById(user._id, password);
 
