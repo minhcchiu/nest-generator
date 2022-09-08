@@ -4,14 +4,14 @@ import { Global, Module } from '@nestjs/common';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
-import { MailerConfig } from '~interface/mailer.interface';
+import { MailerEnv } from '~interface/mailer.interface';
 
 @Global()
 @Module({
   imports: [
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => {
-        const mailerConfig = config.get<MailerConfig>('mailer');
+        const mailerConfig = config.get<MailerEnv>('mailer');
         // const transport = mailerConfig.isGmailServer
         //   ? mailerConfig.transport.gmail
         //   : mailerConfig.transport.sendgrid;
