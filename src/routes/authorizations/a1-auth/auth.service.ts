@@ -17,7 +17,7 @@ import {
 } from './dto';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
-import { JwtConfig } from '~interface/jwt.interface';
+import { JWTEnv } from '~interface/jwt-env.interface';
 
 @Injectable()
 export class AuthService {
@@ -185,8 +185,7 @@ export class AuthService {
       }
 
       const expireTime =
-        this.configService.get<JwtConfig>('jwt').expirationTime
-          .resetPasswordToken;
+        this.configService.get<JWTEnv>('jwt').expirationTime.resetPasswordToken;
 
       // generate accessToken
       const token = await this.tokenService.generateAccessToken(
