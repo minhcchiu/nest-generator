@@ -1,4 +1,6 @@
-export const mailerConfigEnviroment = {
+import { registerAs } from '@nestjs/config';
+
+export const mailerEnv = {
   isGmailServer: process.env.MAIL_SERVER === 'gmail',
 
   transport: {
@@ -28,3 +30,6 @@ export const mailerConfigEnviroment = {
 
   name: process.env.EMAIL_NAME,
 };
+
+export type MailerConfig = typeof mailerEnv;
+export const mailerConfig = registerAs('mailer', () => mailerEnv);

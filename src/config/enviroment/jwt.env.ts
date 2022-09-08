@@ -1,4 +1,6 @@
-export const jwtConfigEnviroment = {
+import { registerAs } from '@nestjs/config';
+
+const jwtEnv = {
   secret: process.env.JWT_SECRET || '?wOfl6_4Q_KeYS(#a{qGe+W2!L_q6H', // https://randomkeygen.com/
   expiresIn: process.env.JWT_EXPIRESIN || '30m',
   expirationTime: {
@@ -13,3 +15,7 @@ export const jwtConfigEnviroment = {
     signupToken: process.env.JWT_SIGNUP_SECRET || 'JWT_SIGNUP_SECRET',
   },
 };
+
+export type JWTConfig = typeof jwtEnv;
+
+export const jwtCofig = registerAs('jwt', () => jwtEnv);

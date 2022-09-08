@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as mongoosePaginateV2 from 'mongoose-paginate-v2';
-import { DatabaseConfig } from '~interface/database.inteface';
+import { DatabaseConfig } from '~config/enviroment';
 
 /**
  * Database module

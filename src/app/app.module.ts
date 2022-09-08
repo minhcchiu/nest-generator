@@ -20,15 +20,33 @@ import { FileModule } from '~common/c6-files/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UploadModule } from '~common/c7-upload/upload.module';
-import { configuration } from '~config/enviroment/configuration.env';
 import { NotificationModule } from '~common/c8-notifications/notification.module';
+
+import {
+  appCofig,
+  cloudinaryCofig,
+  databaseCofig,
+  jwtCofig,
+  mailerConfig,
+  uploadConfig,
+} from '~config/enviroment';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../', 'public'),
     }),
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        cloudinaryCofig,
+        databaseCofig,
+        jwtCofig,
+        mailerConfig,
+        uploadConfig,
+        appCofig,
+      ],
+    }),
     DatabaseModule,
     UserModule,
     ProvinceModule,

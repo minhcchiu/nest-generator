@@ -4,7 +4,6 @@ import { diskStorage } from 'multer';
 const fileSize =
   Math.pow(1024, +process.env.UPLOAD_MAX_SIZE) ?? Math.pow(1024, 2);
 const destination = './public/uploads/tmp';
-const extAllowed = process.env.UPLOAD_FILE_EXT;
 
 /**
  * Edit file name
@@ -22,7 +21,12 @@ export const editFileName = (req: any, file: any, cb: any) => {
 };
 
 // Image file filter
-export const imageFileFilter = (req: any, file: any, callback: any) => {
+export const imageFileFilter = (
+  extAllowed: string,
+  req: any,
+  file: any,
+  callback: any,
+) => {
   const expression = `.(${extAllowed})$`;
 
   // check allow file
@@ -40,6 +44,6 @@ export const tempStorage = {
   storage: diskStorage({ destination, filename: editFileName }),
   limits: { fileSize },
   fileFilter: (req: any, file: any, callback: any) => {
-    imageFileFilter(req, file, callback);
+    // imageFileFilter(req, file, callback);
   },
 };
