@@ -1,11 +1,11 @@
 import { ConfigService } from '@nestjs/config';
 import { v2 } from 'cloudinary';
-import { CloudinaryEnv } from '~interface/cloudinary-env.interface';
+import { CloudinaryConfig } from '~config/enviroment';
 
 export const CloudinaryProvider = {
   provide: 'Cloudinary',
   useFactory: (config: ConfigService) => {
-    const cloudinaryConfig = config.get<CloudinaryEnv>('cloudinary').config;
+    const cloudinaryConfig = config.get<CloudinaryConfig>('cloudinary').config;
 
     return v2.config(cloudinaryConfig);
   },

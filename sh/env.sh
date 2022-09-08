@@ -61,8 +61,8 @@ export OAUTH_CLIENT_SECRET=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
 
 # UPLOAD
 export UPLOAD_MAX_SIZE=25 #MB  
-export FILE_SIZE=2 
-export UPLOAD_IMAGE_FILE="jpg|jpeg|png|gif"
-export UPLOAD_RAW_FILE="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
-export UPLOAD_FILE='jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json'
-export UPLOAD_VIDEO='mp4|mkv'
+export UPLOAD_MAX_FILE=10
+export UPLOAD_EXT_IMAGE="jpg|jpeg|png|gif"
+export UPLOAD_EXT_RAW="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
+export UPLOAD_EXT_FILES='jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json'
+export UPLOAD_EXT_VIDEO='mp4|mkv'
