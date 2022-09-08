@@ -95,7 +95,7 @@ export class DistrictController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */

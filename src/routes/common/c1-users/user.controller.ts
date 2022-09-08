@@ -147,7 +147,7 @@ export class UserController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */

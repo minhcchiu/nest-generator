@@ -24,7 +24,7 @@ import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
 import { schemas } from '~config/collections/schemas.collection';
-import { UserService } from '~common/c1-user/user.service';
+import { UserService } from '~common/c1-users/user.service';
 
 @ApiTags(schemas.otp.path)
 @Controller(schemas.otp.path)
@@ -40,7 +40,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp')
+  @Post('send_otp')
   async sendOtpToPhone(@Body() body: SendOtpToPhoneDto) {
     return this.otpService.sendOtpToPhone(body);
   }
@@ -51,7 +51,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp-to-email')
+  @Post('send_otp_to_email')
   async sendOtpToEmail(@Body() body: SendOtpToEmailDto) {
     return this.otpService.sendOtpToEmail(body);
   }
@@ -62,7 +62,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp-signup')
+  @Post('send_otp_signup')
   async sendOtpSignupToPhone(@Body() body: SendOtpToPhoneDto) {
     await this.userService.validateCreateUser({ phone: body.phone });
 
@@ -75,7 +75,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send-otp-signup-to-email')
+  @Post('send_otp_signup_to_email')
   async sendOtpSignupSignup(@Body() body: SendOtpToEmailDto) {
     await this.userService.validateCreateUser({ email: body.email });
 
@@ -88,7 +88,7 @@ export class OtpController {
    * @returns: Boolean
    */
   @HttpCode(200)
-  @Patch('verify-otp')
+  @Patch('verify_otp')
   async verifyOtpPhone(@Body() body: VerifyOtpPhoneDto) {
     return this.otpService.verifyOtpPhone(body);
   }
@@ -99,7 +99,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(200)
-  @Patch('verify-otp-email')
+  @Patch('verify_otp_email')
   async verifyOtpEmail(@Body() body: VerifyOtpEmailDto) {
     return this.otpService.verifyOtpEmail(body);
   }
@@ -136,6 +136,7 @@ export class OtpController {
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.otpService.deleteById(id);
   }
+
   /**
    * paginate
    * @param query
@@ -145,6 +146,17 @@ export class OtpController {
   @Get('paginate')
   async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
     return this.otpService.paginate(query);
+  }
+
+  /**
+   * Count
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.otpService.count(query);
   }
 
   /**

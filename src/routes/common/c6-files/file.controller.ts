@@ -94,7 +94,7 @@ export class FileController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */

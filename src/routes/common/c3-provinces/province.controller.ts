@@ -95,7 +95,7 @@ export class ProvinceController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */

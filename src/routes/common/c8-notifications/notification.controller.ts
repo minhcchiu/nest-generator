@@ -97,7 +97,7 @@ export class NotificationController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */

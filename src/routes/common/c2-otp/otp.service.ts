@@ -33,9 +33,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email
    * @returns
    */
-  async sendOtpToEmail({
-    email,
-  }: SendOtpToEmailDto): Promise<OtpDocument | string> {
+  async sendOtpToEmail({ email }: SendOtpToEmailDto) {
     // check email exist
     const otp = await this.refreshOtpByEmail(email);
 
@@ -51,7 +49,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
     // FIXME [DEVELOPMENT]: comment
     await this.create({ email, otpCode });
-    return otpCode;
+    return { otpCode };
   }
 
   /**
@@ -80,7 +78,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
     // FIXME [DEVELOPMENT]: comment
     await this.create({ ...data, otpCode });
-    return otpCode;
+    return { otpCode };
   }
 
   /**
@@ -88,7 +86,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param phone: string
    * @returns OtpDocument
    */
-  async refreshOtpByPhone(phone: string): Promise<OtpDocument | null | string> {
+  async refreshOtpByPhone(phone: string) {
     const otpDoc = await this.otpModel.findOne({ phone });
 
     if (!otpDoc) return null;
@@ -110,7 +108,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
     // FIXME [DEVELOPMENT]: Comment
     await otpDoc.save();
-    return otpCode;
+    return { otpCode };
   }
 
   /**
@@ -118,7 +116,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email: email
    * @returns OtpDocument
    */
-  async refreshOtpByEmail(email: string): Promise<OtpDocument | null | string> {
+  async refreshOtpByEmail(email: string) {
     const otpDoc = await this.otpModel.findOne({ email });
 
     if (!otpDoc) return null;
@@ -136,7 +134,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
     // FIXME [DEVELOPMENT]: comment
     await otpDoc.save();
-    return otpCode;
+    return { otpCode };
   }
 
   /**

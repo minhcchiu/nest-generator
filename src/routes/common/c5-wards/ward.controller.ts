@@ -95,7 +95,7 @@ export class WardController {
   }
 
   /**
-   * Paginate
+   * Count
    * @param query
    * @returns
    */
