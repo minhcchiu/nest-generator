@@ -7,14 +7,14 @@ import {
   v2,
 } from 'cloudinary';
 import { unlinkSync } from 'fs';
-import { CloudinaryConfig } from '~interface/cloudinary.interface';
+import { CloudinaryEnv } from '~interface/cloudinary-env.interface';
 
 @Injectable()
 export class CloudinaryService {
-  private readonly cloudinaryConfig: CloudinaryConfig;
+  private readonly cloudinaryConfig: CloudinaryEnv;
 
   constructor(private readonly configService: ConfigService) {
-    this.cloudinaryConfig = configService.get<CloudinaryConfig>('cloudinary');
+    this.cloudinaryConfig = configService.get<CloudinaryEnv>('cloudinary');
   }
 
   /**

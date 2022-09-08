@@ -2,7 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '~lazy-modules/logger/logger.service';
-// import { MailerConfig } from '~interface/mailer.interface';
+// import { MailerEnv } from '~interface/mailer.interface';
 // import * as SendGrid from '@sendgrid/mail';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class MailService {
    */
   sendMail(params: any) {
     return this.mailerService.sendMail(params);
-    // const mailerConfig = this.config.get<MailerConfig>("mailer")
+    // const mailerConfig = this.config.get<MailerEnv>("mailer")
 
     // const isGmailServer = mailerConfig.isGmailServer
 
