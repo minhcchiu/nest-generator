@@ -1,5 +1,5 @@
 export interface AuthResponse {
-  user: any;
-  ac_token: string;
-  rf_token: string;
+  readonly user: any;
+  readonly ac_token: string;
+  readonly rf_token: string;
 }

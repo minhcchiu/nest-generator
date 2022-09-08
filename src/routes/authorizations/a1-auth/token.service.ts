@@ -35,8 +35,8 @@ export class TokenService {
    */
   async generateAccessToken(
     payload: TokenPayload,
-    atSecret = this.config.get('jwt').secrets.accessToken,
     atExpire = this.config.get('jwt').expirationTime.accessToken,
+    atSecret = this.config.get('jwt').secrets.accessToken,
   ): Promise<string> {
     return this.generateToken(payload, atSecret, atExpire);
   }

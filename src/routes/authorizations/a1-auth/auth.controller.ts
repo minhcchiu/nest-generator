@@ -1,7 +1,9 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post, Patch } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  ResetPasswordByTokenDto,
+  ResetPasswordDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
@@ -21,6 +23,16 @@ export class AuthController {
   ) {}
 
   /**
+   * Signin with email/phone and password
+   * @param body
+   * @returns
+   */
+  @Post('signin')
+  async signin(@Body() body: SigninDto) {
+    return this.authService.signin(body);
+  }
+
+  /**
    * Signin with social
    * @param body
    * @returns
@@ -31,33 +43,23 @@ export class AuthController {
   }
 
   /**
-   *Sign in with email/phone and password
-   * @param body
-   * @returns
-   */
-  @Post('signin')
-  async signin(@Body() body: SigninDto) {
-    return this.authService.signin(body);
-  }
-
-  /**
-   * Sign up send token to email
-   * @param body
-   * @returns
-   */
-  @Post('signup_send_token')
-  async signupSendToken(@Body() body: SignupSendTokenDto) {
-    return this.authService.signupSendToken(body);
-  }
-
-  /**
-   * Sign up with otp
+   * Signup with otp
    * @param body
    * @returns
    */
   @Post('signup')
   async signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
+  }
+
+  /**
+   * Signup send token to email
+   * @param body
+   * @returns
+   */
+  @Post('signup_send_token_link')
+  async signupSendTokenLink(@Body() body: SignupSendTokenDto) {
+    return this.authService.signupSendTokenLink(body);
   }
 
   /**
@@ -94,7 +96,7 @@ export class AuthController {
    * @param {refreshToken}
    * @returns
    */
-  @Put('refresh_token')
+  @Patch('refresh_token')
   async refreshToken(@Body() { token }: TokenDto) {
     return this.authService.refreshToken(token);
   }
@@ -104,8 +106,30 @@ export class AuthController {
    * @param email
    * @returns
    */
-  @Put('forgot_password')
+  @Patch('forgot_password')
   async forgotPassword(@Body('email') email: string) {
     return this.authService.refreshToken(email);
+  }
+
+  /**
+   * Reset password
+   * @param body
+   * @returns
+   */
+  @Post('reset_password')
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPassword(body);
+  }
+
+  /**
+   * Reset password by token
+   * @param body
+   * @returns
+   */
+  @Post('reset_password')
+  async resetPasswordByToken(
+    @Body() { token, password }: ResetPasswordByTokenDto,
+  ) {
+    return this.authService.resetPasswordByToken(token, password);
   }
 }

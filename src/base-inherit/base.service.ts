@@ -129,7 +129,7 @@ export class BaseService<T> implements BaseInterface<T> {
     id: Types.ObjectId,
     options: QueryOptions = {},
   ): Promise<any> {
-    const deleted = this.model.findByIdAndDelete(id, options).lean();
+    const deleted = await this.model.findByIdAndDelete(id, options).lean();
 
     if (!deleted) throw new NotFoundException('Item not found.');
 
@@ -146,7 +146,7 @@ export class BaseService<T> implements BaseInterface<T> {
     query: object,
     options: QueryOptions = {},
   ): Promise<any | null> {
-    const deleted = this.model.deleteOne(query, options).lean();
+    const deleted = await this.model.deleteOne(query, options).lean();
 
     if (!deleted) throw new NotFoundException('Item not found.');
 
@@ -201,7 +201,11 @@ export class BaseService<T> implements BaseInterface<T> {
    * @param query
    * @returns number
    */
-  async count(query = {}, options: QueryOptions = {}): Promise<number> {
-    return this.model.countDocuments(query, options).lean();
+  async count(
+    query = {},
+    options: QueryOptions = {},
+  ): Promise<{ totalDocs: number }> {
+    const totalDocs = await this.model.countDocuments(query, options).lean();
+    return { totalDocs };
   }
 }

@@ -5,6 +5,7 @@ export interface JwtConfig {
     accessToken: string;
     refreshToken: string;
     signupToken: string;
+    resetPasswordToken: string;
   };
   secrets: {
     accessToken: string;

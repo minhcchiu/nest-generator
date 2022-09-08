@@ -15,6 +15,7 @@ import { Types } from 'mongoose';
 
 import { GenderEnum } from '~common/c1-users/enums/gender.enum';
 import { RoleEnum } from '~common/c1-users/enums/role.enum';
+import { AccountTypeEnum } from '../enums/account-type.enum';
 
 export class CreateUserDto {
   @IsOptional()
@@ -26,19 +27,18 @@ export class CreateUserDto {
   readonly fullName: string;
 
   @IsOptional()
+  @IsEnum(AccountTypeEnum)
+  readonly accountType?: AccountTypeEnum;
+
+  @ValidateIf((object) => !object.phone)
   @IsEmail()
   readonly email?: string;
 
-  @IsOptional()
+  @ValidateIf((object) => !object.email)
   @IsPhoneNumber('VN')
   readonly phone?: string;
 
   @IsOptional()
-  @IsString()
-  @Length(12, 50)
-  readonly authKey?: string;
-
-  @ValidateIf((o) => Boolean(o.phone) || Boolean(o.email))
   @IsString()
   @Length(6, 50)
   readonly password?: string;

@@ -5,7 +5,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class SendOtpByPhoneDto {
+export class SendOtpToPhoneDto {
   @IsNotEmpty()
   @IsPhoneNumber('VN')
   phone: string;
