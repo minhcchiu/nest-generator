@@ -154,7 +154,7 @@ export class AuthService {
     // generate sugnup token
     const token = await this.tokenService.generateSignupToken(data);
 
-    const clientUrl = this.configService.get('clientUrl');
+    const clientUrl = this.configService.get('app.clientUrl');
     const verificationLink = `${clientUrl}/auth/verify-signup-token/${token}`;
 
     // send mail
@@ -194,7 +194,7 @@ export class AuthService {
         expireTime,
       );
 
-      const clientUrl = this.configService.get('clientUrl');
+      const clientUrl = this.configService.get('app.clientUrl');
       const resetPasswordLink = `${clientUrl}/auth/reset-password/${token}`;
 
       // send mail
