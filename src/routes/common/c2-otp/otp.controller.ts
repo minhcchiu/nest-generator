@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Patch,
+  Put,
   Query,
 } from '@nestjs/common';
 
@@ -88,7 +88,7 @@ export class OtpController {
    * @returns: Boolean
    */
   @HttpCode(200)
-  @Patch('verify_otp')
+  @Put('verify_otp')
   async verifyOtpPhone(@Body() body: VerifyOtpPhoneDto) {
     return this.otpService.verifyOtpPhone(body);
   }
@@ -99,7 +99,7 @@ export class OtpController {
    * @returns
    */
   @HttpCode(200)
-  @Patch('verify_otp_email')
+  @Put('verify_otp_email')
   async verifyOtpEmail(@Body() body: VerifyOtpEmailDto) {
     return this.otpService.verifyOtpEmail(body);
   }

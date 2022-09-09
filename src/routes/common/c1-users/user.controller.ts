@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Patch,
+  Put,
   Query,
 } from '@nestjs/common';
 
@@ -55,7 +55,7 @@ export class UserController {
    * @returns
    */
   @HttpCode(200)
-  @Patch(':id/password')
+  @Put(':id/password')
   async resetPassword(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdatePasswordDto,
@@ -72,7 +72,7 @@ export class UserController {
    * @returns
    */
   @HttpCode(200)
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateUserDto,
