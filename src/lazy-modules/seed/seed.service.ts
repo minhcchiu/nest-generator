@@ -19,6 +19,7 @@ export class SeedService {
 
   /**
    * Delete all provinces districs wards
+   *
    * @returns
    */
   async deleteAllProvincesDistrictWard() {
@@ -39,6 +40,7 @@ export class SeedService {
 
   /**
    * Seed data for provinces, district, ward
+   *
    * @returns
    */
   async seedProvincesDistrictWard() {

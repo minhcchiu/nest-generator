@@ -22,6 +22,7 @@ export class UploadController {
 
   /**
    * Upload single file to tmp
+   *
    * @param file
    */
   @UseInterceptors(StorageFileInterceptor('file'))
@@ -36,6 +37,7 @@ export class UploadController {
 
   /**
    * Upload many files to tmp
+   *
    * @param files
    */
   @UseInterceptors(StorageFilesInterceptor('files'))
@@ -48,7 +50,8 @@ export class UploadController {
   }
 
   /**
-   * Save file to local local
+   * Save file to local
+   *
    * @param body
    * @returns
    */
@@ -59,7 +62,8 @@ export class UploadController {
   }
 
   /**
-   * Save files to local disk
+   * Save files to local
+   *
    * @param body
    * @returns
    */
@@ -74,7 +78,8 @@ export class UploadController {
   }
 
   /**
-   * Save file to s3
+   * Save file to S3
+   *
    * @param body
    * @returns
    */
@@ -85,7 +90,8 @@ export class UploadController {
   }
 
   /**
-   * Save files to s3
+   * Save files to S3
+   *
    * @param body
    * @returns
    */
@@ -96,7 +102,8 @@ export class UploadController {
   }
 
   /**
-   * Save file to cloudinary
+   * Save file to Cloudinary
+   *
    * @param body
    * @returns
    */
@@ -107,7 +114,8 @@ export class UploadController {
   }
 
   /**
-   * Save files to cloudinary
+   * Save files to Cloudinary
+   *
    * @param body
    * @returns
    */

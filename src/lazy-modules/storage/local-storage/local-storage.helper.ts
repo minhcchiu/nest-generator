@@ -13,6 +13,7 @@ export class LocalStorageHelper {
 
   /**
    * Get type file need resize
+   *
    * @param filePath
    * @returns
    */
@@ -33,6 +34,7 @@ export class LocalStorageHelper {
 
   /**
    * Get buffer from file
+   *
    * @param filePath
    * @param maxLength
    * @returns
@@ -59,6 +61,7 @@ export class LocalStorageHelper {
 
   /**
    * Compress image
+   *
    * @param filePath
    * @param imageType
    * @returns
@@ -76,6 +79,7 @@ export class LocalStorageHelper {
 
   /**
    * Compress JPG LocalStorage
+   *
    * @param filePath
    * @returns
    */
@@ -106,6 +110,7 @@ export class LocalStorageHelper {
 
   /**
    * compress PNG LocalStorage
+   *
    * @param filePath
    * @returns
    */
@@ -137,6 +142,7 @@ export class LocalStorageHelper {
 
   /**
    * Genrate size path
+   *
    * @param filePath
    * @param options
    * @returns
@@ -155,6 +161,7 @@ export class LocalStorageHelper {
 
   /**
    * Movie file from temp to uploadFiles
+   *
    * @param filePath
    * @returns
    */
@@ -168,7 +175,8 @@ export class LocalStorageHelper {
   }
 
   /**
-   * get fileName from filePath
+   * Get fileName from filePath
+   *
    * @param filePath
    * @returns
    */

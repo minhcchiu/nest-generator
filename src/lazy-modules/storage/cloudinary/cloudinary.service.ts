@@ -19,6 +19,7 @@ export class CloudinaryService {
 
   /**
    * Upload
+   *
    * @param filePath
    * @param options
    * @returns
@@ -46,6 +47,7 @@ export class CloudinaryService {
 
   /**
    * Resize image
+   *
    * @param id
    * @param width
    * @returns
@@ -61,6 +63,7 @@ export class CloudinaryService {
 
   /**
    * Get all resize image
+   *
    * @param url
    * @param public_id
    * @returns
@@ -78,20 +81,22 @@ export class CloudinaryService {
   }
 
   /**
-   * Delete resources
+   * Delete many
+   *
    * @param resourceIds
    * @returns
    */
-  deleteResources(resourceIds: string[]) {
+  deleteByResourceIds(resourceIds: string[]) {
     return v2.api.delete_resources(resourceIds);
   }
 
   /**
-   * Destroy
+   * Delete one
+   *
    * @param resourceId
    * @returns
    */
-  async destroy(resourceId: string) {
+  async deleteByResourceId(resourceId: string) {
     try {
       return await v2.uploader.destroy(resourceId);
     } catch (error) {

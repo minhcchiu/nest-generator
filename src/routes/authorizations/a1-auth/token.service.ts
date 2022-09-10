@@ -13,6 +13,7 @@ export class TokenService {
 
   /**
    * Generate token
+   *
    * @param payload
    * @param secret
    * @param expiresIn
@@ -28,6 +29,7 @@ export class TokenService {
 
   /**
    * Generate accessToken
+   *
    * @param payload
    * @param atSecret
    * @param atExpire
@@ -43,6 +45,7 @@ export class TokenService {
 
   /**
    * Generate refresh token
+   *
    * @param payload
    * @param rtSecret
    * @param rtExpire
@@ -58,6 +61,7 @@ export class TokenService {
 
   /**
    * Generate sign up token
+   *
    * @param payload
    * @param suSecret
    * @param suExpire
@@ -73,6 +77,7 @@ export class TokenService {
 
   /**
    * Verify token
+   *
    * @param token
    * @param secret
    * @returns
@@ -92,6 +97,7 @@ export class TokenService {
 
   /**
    * Verify accessToken
+   *
    * @param token
    * @param secret
    * @returns
@@ -105,6 +111,7 @@ export class TokenService {
 
   /**
    * Verify refreshToken
+   *
    * @param rfToken
    * @param rtSecret
    * @returns
@@ -118,6 +125,7 @@ export class TokenService {
 
   /**
    * Verify refreshToken
+   *
    * @param token
    * @param secret
    * @returns

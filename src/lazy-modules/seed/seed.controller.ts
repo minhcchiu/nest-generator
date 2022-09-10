@@ -9,6 +9,7 @@ export class SeedController {
 
   /**
    * Seed data for provinces, district, ward
+   *
    * @returns
    */
   @Post('provinces_districts_wards')
@@ -19,6 +20,7 @@ export class SeedController {
 
   /**
    * Seed data for provinces, district, ward
+   *
    * @returns
    */
   @Delete('provinces_districts_wards')

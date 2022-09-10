@@ -26,6 +26,7 @@ export class WardController {
 
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -37,6 +38,7 @@ export class WardController {
 
   /**
    * Create
+   *
    * @param body
    * @returns
    */
@@ -48,6 +50,7 @@ export class WardController {
 
   /**
    * Update by ID
+   *
    * @param id
    * @param body
    * @returns
@@ -63,6 +66,7 @@ export class WardController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -74,6 +78,7 @@ export class WardController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -85,17 +90,19 @@ export class WardController {
 
   /**
    * Paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.wardService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.wardService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -107,6 +114,7 @@ export class WardController {
 
   /**
    * Find by id
+   *
    * @param id
    * @returns
    */

@@ -9,6 +9,7 @@ import {
 export interface BaseInterface<T> {
   /**
    * Find All
+   *
    * @param query
    * @param paginateOpts
    */
@@ -16,24 +17,28 @@ export interface BaseInterface<T> {
 
   /**
    * Find by id
+   *
    * @param id
    */
   findById(id: Types.ObjectId): Promise<any>;
 
   /**
    * Find one
+   *
    * @param query
    */
   findOne(query: object): Promise<any>;
 
   /**
    * Create
+   *
    * @param payload
    */
   create(payload: any): Promise<any>;
 
   /**
    * Find by id and update
+   *
    * @param id
    * @param payload
    * @param options
@@ -46,6 +51,7 @@ export interface BaseInterface<T> {
 
   /**
    * Find one and update
+   *
    * @param query
    * @param payload
    * @param options
@@ -58,6 +64,7 @@ export interface BaseInterface<T> {
 
   /**
    * Update many
+   *
    * @param query
    * @param payload
    * @param options
@@ -70,6 +77,7 @@ export interface BaseInterface<T> {
 
   /**
    * Find by id and delete
+   *
    * @param id
    * @param options
    */
@@ -77,6 +85,7 @@ export interface BaseInterface<T> {
 
   /**
    * Find one and delete
+   *
    * @param query
    * @param options
    */
@@ -84,6 +93,7 @@ export interface BaseInterface<T> {
 
   /**
    * Delete many
+   *
    * @param query
    * @param options
    */
@@ -91,6 +101,7 @@ export interface BaseInterface<T> {
 
   /**
    * Paginate
+   *
    * @param query
    * @param paginateOpts
    * @param args
@@ -100,4 +111,11 @@ export interface BaseInterface<T> {
     paginateOpts?: PaginateOptions,
     ...args: any[]
   ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>>;
+
+  /**
+   * Count
+   *
+   * @param query
+   */
+  count(query: object, options: QueryOptions): Promise<{ totalDocs: number }>;
 }

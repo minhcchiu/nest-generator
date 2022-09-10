@@ -26,6 +26,7 @@ export class ProvinceController {
 
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -37,6 +38,7 @@ export class ProvinceController {
 
   /**
    * Create
+   *
    * @param body
    * @returns
    */
@@ -48,6 +50,7 @@ export class ProvinceController {
 
   /**
    * Update by ID
+   *
    * @param id
    * @param body
    * @returns
@@ -63,6 +66,7 @@ export class ProvinceController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -74,6 +78,7 @@ export class ProvinceController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -85,17 +90,19 @@ export class ProvinceController {
 
   /**
    * Paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.provinceService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.provinceService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -107,6 +114,7 @@ export class ProvinceController {
 
   /**
    * Find by id
+   *
    * @param id
    * @returns
    */

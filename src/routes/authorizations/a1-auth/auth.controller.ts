@@ -24,6 +24,7 @@ export class AuthController {
 
   /**
    * Signin with email/phone and password
+   *
    * @param body
    * @returns
    */
@@ -34,6 +35,7 @@ export class AuthController {
 
   /**
    * Signin with social
+   *
    * @param body
    * @returns
    */
@@ -44,6 +46,7 @@ export class AuthController {
 
   /**
    * Signup with otp
+   *
    * @param body
    * @returns
    */
@@ -54,6 +57,7 @@ export class AuthController {
 
   /**
    * Signup send token to email
+   *
    * @param body
    * @returns
    */
@@ -63,17 +67,19 @@ export class AuthController {
   }
 
   /**
-   * Activate account by token
+   * Activate account by token link
+   *
    * @param body
    * @returns
    */
-  @Post('verify_signup_token')
-  async verifySignupToken(@Body() { token }: TokenDto) {
-    return this.authService.verifySignupToken(token);
+  @Post('activate_signup_token')
+  async activateSignupToken(@Body() { token }: TokenDto) {
+    return this.authService.activateSignupToken(token);
   }
 
   /**
    * Sign out
+   *
    * @param idUser
    * @param deviceID
    * @returns
@@ -93,6 +99,7 @@ export class AuthController {
 
   /**
    * Refresh token
+   *
    * @param {refreshToken}
    * @returns
    */
@@ -103,30 +110,33 @@ export class AuthController {
 
   /**
    * Forgot password
+   *
    * @param email
    * @returns
    */
-  @Put('forgot_password')
+  @Put('forgot_password_send_token_link')
   async forgotPassword(@Body('email') email: string) {
-    return this.authService.refreshToken(email);
+    return this.authService.forgotPasswordSendTokenLink(email);
   }
 
   /**
    * Reset password
+   *
    * @param body
    * @returns
    */
-  @Post('reset_password')
+  @Post('reset_password_by_otp')
   async resetPassword(@Body() body: ResetPasswordDto) {
-    return this.authService.resetPassword(body);
+    return this.authService.resetPasswordByOtp(body);
   }
 
   /**
    * Reset password by token
+   *
    * @param body
    * @returns
    */
-  @Post('reset_password')
+  @Post('reset_password_by_token')
   async resetPasswordByToken(
     @Body() { token, password }: ResetPasswordByTokenDto,
   ) {

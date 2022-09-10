@@ -25,6 +25,7 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -36,6 +37,7 @@ export class FileController {
 
   /**
    * Create
+   *
    * @param body
    * @returns
    */
@@ -47,6 +49,7 @@ export class FileController {
 
   /**
    * Update by ID
+   *
    * @param id
    * @param body
    * @returns
@@ -62,6 +65,7 @@ export class FileController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -73,6 +77,7 @@ export class FileController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -84,17 +89,19 @@ export class FileController {
 
   /**
    * Paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.fileService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.fileService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -106,6 +113,7 @@ export class FileController {
 
   /**
    * Find by id
+   *
    * @param id
    * @returns
    */

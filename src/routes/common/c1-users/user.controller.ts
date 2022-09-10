@@ -28,6 +28,7 @@ export class UserController {
 
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -39,6 +40,7 @@ export class UserController {
 
   /**
    * Create
+   *
    * @param body
    * @returns
    */
@@ -50,6 +52,7 @@ export class UserController {
 
   /**
    * Reset password
+   *
    * @param id
    * @param body
    * @returns
@@ -67,6 +70,7 @@ export class UserController {
 
   /**
    * Update by ID
+   *
    * @param id
    * @param body
    * @returns
@@ -90,6 +94,7 @@ export class UserController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -101,6 +106,7 @@ export class UserController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -115,6 +121,7 @@ export class UserController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -126,6 +133,7 @@ export class UserController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -137,17 +145,19 @@ export class UserController {
 
   /**
    * Paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.userService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.userService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -159,6 +169,7 @@ export class UserController {
 
   /**
    * Find by id
+   *
    * @param id
    * @returns
    */

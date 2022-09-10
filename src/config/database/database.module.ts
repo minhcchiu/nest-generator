@@ -3,9 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import * as mongoosePaginateV2 from 'mongoose-paginate-v2';
 import { DatabaseConfig } from '~config/enviroment';
 
-/**
- * Database module
- */
 export const DatabaseModule = MongooseModule.forRootAsync({
   imports: [ConfigModule],
 

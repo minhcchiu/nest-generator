@@ -26,6 +26,7 @@ export class NotificationController {
 
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -37,6 +38,7 @@ export class NotificationController {
 
   /**
    * Create
+   *
    * @param body
    * @returns
    */
@@ -48,6 +50,7 @@ export class NotificationController {
 
   /**
    * Update by ID
+   *
    * @param id
    * @param body
    * @returns
@@ -63,6 +66,7 @@ export class NotificationController {
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -76,6 +80,7 @@ export class NotificationController {
 
   /**
    * Delete by ID
+   *
    * @param id
    * @returns
    */
@@ -87,17 +92,19 @@ export class NotificationController {
 
   /**
    * Paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.notificationService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.notificationService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -109,6 +116,7 @@ export class NotificationController {
 
   /**
    * Find by id
+   *
    * @param id
    * @returns
    */

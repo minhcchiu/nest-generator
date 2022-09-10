@@ -36,7 +36,8 @@ export class OtpController {
 
   /**
    * Send otp to phone
-   * @param body: SendOtpToPhoneDto
+   *
+   * @param body
    * @returns
    */
   @HttpCode(201)
@@ -47,6 +48,7 @@ export class OtpController {
 
   /**
    * Send otp to email
+   *
    * @param body
    * @returns
    */
@@ -58,6 +60,7 @@ export class OtpController {
 
   /**
    * Send otp signup to phone
+   *
    * @param body
    * @returns
    */
@@ -71,6 +74,7 @@ export class OtpController {
 
   /**
    * Send otp signup to email
+   *
    * @param body
    * @returns
    */
@@ -84,7 +88,8 @@ export class OtpController {
 
   /**
    * Verify Otp Phone
-   * @param body: VerifyOtpPhoneDto
+   *
+   * @param body
    * @returns: Boolean
    */
   @HttpCode(200)
@@ -95,6 +100,7 @@ export class OtpController {
 
   /**
    * veirfy otp email
+   *
    * @param body
    * @returns
    */
@@ -106,17 +112,19 @@ export class OtpController {
 
   /**
    * Find all
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@Query() query: any) {
-    return this.otpService.find(query);
+  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.otpService.find(queryParams);
   }
 
   /**
    * Delete many by ids
+   *
    * @param ids
    * @returns
    */
@@ -127,7 +135,8 @@ export class OtpController {
   }
 
   /**
-   * Delete
+   * Delete by id
+   *
    * @param id
    * @returns
    */
@@ -139,17 +148,19 @@ export class OtpController {
 
   /**
    * paginate
-   * @param query
+   *
+   * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('paginate')
-  async paginate(@ApiQueryParams() query: ApiQueryParamsDto) {
-    return this.otpService.paginate(query);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.otpService.paginate(queryParams);
   }
 
   /**
    * Count
+   *
    * @param query
    * @returns
    */
@@ -160,7 +171,7 @@ export class OtpController {
   }
 
   /**
-   * findOneById
+   * Find by id
    * @param id
    * @returns
    */

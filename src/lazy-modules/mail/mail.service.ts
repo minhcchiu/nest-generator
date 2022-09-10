@@ -1,27 +1,31 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MailerConfig } from '~config/enviroment';
 import { Logger } from '~lazy-modules/logger/logger.service';
 // import { MailerEnv } from '~interface/mailer.interface';
 // import * as SendGrid from '@sendgrid/mail';
 
 @Injectable()
 export class MailService {
+  private _mailConfig;
   constructor(
     private mailerService: MailerService,
     private config: ConfigService,
     private readonly logger: Logger,
   ) {
     logger.setContext(MailerService.name);
+    this._mailConfig = config.get<MailerConfig>('mailter');
   }
 
   /**
    * Send mail
-   * @param params
+   *
+   * @param options
    * @returns
    */
-  sendMail(params: any) {
-    return this.mailerService.sendMail(params);
+  sendMail(options: any) {
+    return this.mailerService.sendMail(options);
     // const mailerConfig = this.config.get<MailerEnv>("mailer")
 
     // const isGmailServer = mailerConfig.isGmailServer
@@ -39,6 +43,7 @@ export class MailService {
 
   /**
    * Send OTP
+   *
    * @param verificationCode
    * @param to
    * @param subject
@@ -50,27 +55,28 @@ export class MailService {
     subject: string,
     from?: string,
   ) {
-    try {
-      const mailer = this.config.get('mailer');
+    const params = {
+      from:
+        from ??
+        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      to,
+      subject,
+      template: './otp/otp.template.hbs',
+      context: { verificationCode },
+    };
 
-      const params = {
-        from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
-        to, // list of receivers like "bar@example.com, baz@example.com"
-        subject, // Subject line
-        template: './otp/otp.template.hbs',
-        context: { verificationCode },
-      };
-
-      await this.sendMail(params);
-
-      this.logger.log('SEND OTP TO EMAIL SUCCESS!');
-    } catch (e) {
-      this.logger.error((e as any).toString());
-    }
+    // send mail
+    return this.sendMail(params)
+      .then((result) => {
+        this.logger.log('SEND OTP TO EMAIL SUCCESS!');
+        return result;
+      })
+      .catch((error) => this.logger.error((error as any).toString()));
   }
 
   /**
    * Send verify
+   *
    * @param verificationLink
    * @param to
    * @param subject
@@ -82,25 +88,29 @@ export class MailService {
     subject: string,
     from?: string,
   ) {
-    const mailer = this.config.get('mailer');
-
-    const params = {
-      from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
+    // options
+    const options = {
+      from:
+        from ??
+        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
       to,
       subject,
       template: './verify/verify.template.hbs',
       context: { verificationLink },
     };
 
-    const result = await this.sendMail(params);
-
-    this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
-
-    return result;
+    // Send
+    return this.sendMail(options)
+      .then((result) => {
+        this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
+        return result;
+      })
+      .catch((error) => this.logger.error((error as any).toString()));
   }
 
   /**
    * Send verify
+   *
    * @param resetPasswordLink
    * @param to
    * @param subject
@@ -112,20 +122,23 @@ export class MailService {
     subject: string,
     from?: string,
   ) {
-    const mailer = this.config.get('mailer');
-
-    const params = {
-      from: from ?? `"${mailer.name} ⭐" <${mailer.defaults.from}>`,
+    // options
+    const options = {
+      from:
+        from ??
+        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
       to,
       subject,
       template: './verify/reset-password.template.hbs',
       context: { resetPasswordLink },
     };
 
-    const result = await this.sendMail(params);
-
-    this.logger.log('SEND RESET PASSWORD TOKEN SUCCESS!');
-
-    return result;
+    // Send
+    return this.sendMail(options)
+      .then((result) => {
+        this.logger.log('SEND RESET PASSWORD TOKEN SUCCESS!');
+        return result;
+      })
+      .catch((error) => this.logger.error((error as any).toString()));
   }
 }

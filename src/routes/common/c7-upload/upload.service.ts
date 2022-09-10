@@ -15,6 +15,7 @@ export class UploadService {
 
   /**
    * Save file to local
+   *
    * @param filePath
    * @returns
    */
@@ -48,6 +49,7 @@ export class UploadService {
 
   /**
    * Save file to Cloudinary
+   *
    * @param filePath
    * @returns
    */
@@ -91,6 +93,7 @@ export class UploadService {
 
   /**
    * Save file to S3
+   *
    * @param filePath
    * @returns
    */

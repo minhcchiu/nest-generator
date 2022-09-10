@@ -30,6 +30,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Send opt by email
+   *
    * @param email
    * @returns
    */
@@ -54,6 +55,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Send otp by phone
+   *
    * @param data
    * @returns
    */
@@ -83,8 +85,9 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Refresh otp by phone
-   * @param phone: string
-   * @returns OtpDocument
+   *
+   * @param phone
+   * @returns
    */
   async refreshOtpByPhone(phone: string) {
     const otpDoc = await this.otpModel.findOne({ phone });
@@ -113,8 +116,9 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Refresh otp by email
-   * @param email: email
-   * @returns OtpDocument
+   *
+   * @param email
+   * @returns
    */
   async refreshOtpByEmail(email: string) {
     const otpDoc = await this.otpModel.findOne({ email });
@@ -139,6 +143,7 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Verify otp
+   *
    * @param filter
    * @param otpCode
    */
@@ -162,9 +167,10 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Send otp to phone
-   * @param phone: string
-   * @param otp: string
-   * @returns Promise<Otp>
+   *
+   * @param phone
+   * @param otp
+   * @returns
    */
   // private async sendPhoneVerify(
   //   phone: string,
@@ -178,9 +184,10 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Send otp to email
-   * @param email: string
-   * @param otp: string
-   * @returns Promise<Otp>
+   *
+   * @param email
+   * @param otp
+   * @returns
    */
   private async sendEmailVerify(email: string, otp: string): Promise<boolean> {
     // TODO: Implement send OTP service
@@ -192,8 +199,9 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Verify otp by phone
-   * @param data VerifyOtpPhoneDto
-   * @returns Promise<OtpDocument>
+   *
+   * @param data
+   * @returns
    */
   async verifyOtpPhone(data: VerifyOtpPhoneDto): Promise<OtpDocument> {
     const { otpCode, phone } = data;
@@ -222,8 +230,9 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Verify otp by email
-   * @param data VerifyOtpEmailDto
-   * @returns Promise<OtpDocument>
+   *
+   * @param data
+   * @returns
    */
   async verifyOtpEmail(data: VerifyOtpEmailDto): Promise<OtpDocument> {
     const { email, otpCode } = data;
@@ -244,8 +253,9 @@ export class OtpService extends BaseService<OtpDocument> {
   }
 
   /**
-   * generate otp code
-   * @returns String
+   * Generate otp code
+   *
+   * @returns
    */
   private generateOTPCode(length = 4) {
     const digits = '0123456789';
@@ -263,9 +273,10 @@ export class OtpService extends BaseService<OtpDocument> {
 
   /**
    * Validate time send otp
-   * @param updatedAt datetime
-   * @param maximunSecond number
-   * @returns Boolean
+   *
+   * @param updatedAt
+   * @param maximunSecond
+   * @returns
    */
   private validateTimeSendOtp(updatedAt: string, maximunSecond = 30) {
     const secondsLeft = dayjs().diff(dayjs(updatedAt), 'second');

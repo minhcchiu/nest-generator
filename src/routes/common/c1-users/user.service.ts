@@ -22,6 +22,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Create User
+   *
    * @param data
    * @returns
    */
@@ -46,6 +47,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Validate create user
+   *
    * @param filter
    * @returns
    */
@@ -69,6 +71,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * check password by id
+   *
    * @param id
    * @param password
    * @returns
@@ -89,6 +92,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Update password
+   *
    * @param id
    * @param newPassword
    * @returns
@@ -108,6 +112,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Add device ID
+   *
    * @param id
    * @param deviceID
    * @returns
@@ -123,6 +128,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Remove device ID
+   *
    * @param id
    * @param deviceID
    * @returns
@@ -144,6 +150,7 @@ export class UserService extends BaseService<UserDocument> {
 
   /**
    * Validate user
+   *
    * @param data
    * @returns
    */

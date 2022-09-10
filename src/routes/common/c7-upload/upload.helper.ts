@@ -11,6 +11,7 @@ export class UploadHelper {
 
   /**
    * Get file realpath exist
+   *
    * @param filePath
    */
   async getRealpathOfFile(filePath: string) {

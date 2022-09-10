@@ -31,6 +31,7 @@ export class AuthService {
 
   /**
    * Sign in with email/phone and password
+   *
    * @param data
    * @returns
    */
@@ -64,6 +65,7 @@ export class AuthService {
 
   /**
    * Sign in with social
+   *
    * @param data
    * @returns
    */
@@ -95,7 +97,8 @@ export class AuthService {
   }
 
   /**
-   * Sign in with email and password
+   * Signup with otp
+   *
    * @param data
    * @returns
    */
@@ -136,7 +139,9 @@ export class AuthService {
 
   /**
    * Sign up with token
+   *
    * @param data
+   * @returns
    */
   async signupSendTokenLink(data: SignupSendTokenDto) {
     // check email
@@ -169,8 +174,65 @@ export class AuthService {
   }
 
   /**
-   * Sign up with token
+   * Activate signupToken
+   *
+   * @param token
+   * @return
+   */
+  async activateSignupToken(token: string) {
+    const decoded = await this.tokenService.verifySignupToken(token);
+
+    // delete key of token
+    delete decoded.iat;
+    delete decoded.exp;
+
+    // validate user
+    const userExist = await this.userService.findOne({ email: decoded.email });
+
+    // check user exist
+    if (userExist) {
+      if (!userExist.deleted)
+        throw new BadRequestException('Account already exists in the system.');
+
+      // Delete old email
+      await this.userService.updateById(userExist._id, { email: '' });
+    }
+
+    // create user
+    const user = await this.userService.create(decoded);
+
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
+  }
+
+  /**
+   * Refresh token
+   *
+   * @param token
+   * @return
+   */
+  async refreshToken(token: string) {
+    // decoded data
+    const decoded = await this.tokenService.verifyRefreshToken(token);
+
+    // find user
+    const user = await this.userService.findById(decoded._id);
+
+    // check user
+    if (!user) throw new NotFoundException('Invalid refreshToken');
+
+    // return new tokens
+    return this.generateAuthTokens({ _id: user._id, role: user.role });
+  }
+
+  /**
+   * Forgot password send token link
+   *
    * @param email
+   * @returns
    */
   async forgotPasswordSendTokenLink(email: string) {
     // check email
@@ -212,11 +274,12 @@ export class AuthService {
   }
 
   /**
-   * Activation account
+   * Reset password by otp
+   *
    * @param data
    * @return
    */
-  async resetPassword(data: ResetPasswordDto) {
+  async resetPasswordByOtp(data: ResetPasswordDto) {
     const { email, phone } = data;
 
     const filter = phone ? { phone } : { email };
@@ -254,7 +317,8 @@ export class AuthService {
   }
 
   /**
-   * Activation account
+   * Reset password by token
+   *
    * @param token
    * @return
    */
@@ -293,63 +357,12 @@ export class AuthService {
   }
 
   /**
-   * Activation account
-   * @param token
-   * @return
-   */
-  async verifySignupToken(token: string) {
-    const decoded = await this.tokenService.verifySignupToken(token);
-
-    // delete key of token
-    delete decoded.iat;
-    delete decoded.exp;
-
-    // validate user
-    const userExist = await this.userService.findOne({ email: decoded.email });
-
-    // check user exist
-    if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
-
-      // Delete old email
-      await this.userService.updateById(userExist._id, { email: '' });
-    }
-
-    // create user
-    const user = await this.userService.create(decoded);
-
-    // generate tokens
-    const tokens = await this.generateAuthTokens(user);
-
-    // success
-    return { ...tokens, user };
-  }
-
-  /**
-   * Refresh token
-   * @param token
-   */
-  async refreshToken(token: string) {
-    // decoded data
-    const decoded = await this.tokenService.verifyRefreshToken(token);
-
-    // find user
-    const user = await this.userService.findById(decoded._id);
-
-    // check user
-    if (!user) throw new NotFoundException('Invalid refreshToken');
-
-    // return new tokens
-    return this.generateAuthTokens({ _id: user._id, role: user.role });
-  }
-
-  /**
    * Generate auth tokens
+   *
    * @param user
    * @returns
    */
-  async generateAuthTokens(user: any): Promise<AuthTokenPayload> {
+  private async generateAuthTokens(user: any): Promise<AuthTokenPayload> {
     const payload: TokenPayload = {
       _id: user._id,
       role: user.role,

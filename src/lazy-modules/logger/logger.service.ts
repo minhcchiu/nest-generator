@@ -8,6 +8,7 @@ export class Logger implements LoggerService {
 
   /**
    * Log info
+   *
    * @param message
    * @param optionalParams
    */
@@ -17,6 +18,7 @@ export class Logger implements LoggerService {
 
   /**
    * Log error
+   *
    * @param message
    * @param optionalParams
    */
@@ -26,6 +28,7 @@ export class Logger implements LoggerService {
 
   /**
    * Log warning
+   *
    * @param message
    * @param optionalParams
    */
@@ -35,6 +38,7 @@ export class Logger implements LoggerService {
 
   /**
    * Log debug
+   *
    * @param message
    * @param optionalParams
    */
@@ -44,6 +48,7 @@ export class Logger implements LoggerService {
 
   /**
    * Log verbose
+   *
    * @param message
    * @param optionalParams
    */
@@ -53,6 +58,7 @@ export class Logger implements LoggerService {
 
   /**
    * Set log levels
+   *
    * @param levels
    */
   setLogLevels?(levels: LogLevel[]) {
@@ -61,6 +67,7 @@ export class Logger implements LoggerService {
 
   /**
    * Set conext
+   *
    * @param context
    */
   setContext(context: string) {
