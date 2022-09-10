@@ -1,7 +1,8 @@
+import { join } from 'path';
+import { close, open, read, renameSync, unlinkSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { filetypemime } from 'magic-bytes.js';
-import { close, open, read, renameSync, unlinkSync } from 'fs';
-import { join } from 'path';
+
 import { resizeJPG, resizePNG } from '~helper/resize-image.helper';
 
 @Injectable()

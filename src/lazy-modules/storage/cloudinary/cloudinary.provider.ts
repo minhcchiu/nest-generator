@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { v2 } from 'cloudinary';
+
 import { CloudinaryConfig } from '~config/enviroment';
 
 export const CloudinaryProvider = {

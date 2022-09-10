@@ -1,3 +1,4 @@
+import { unlinkSync } from 'fs';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -6,7 +7,7 @@ import {
   UploadApiResponse,
   v2,
 } from 'cloudinary';
-import { unlinkSync } from 'fs';
+
 import { CloudinaryConfig } from '~config/enviroment';
 
 @Injectable()

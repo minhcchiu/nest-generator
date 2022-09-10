@@ -1,6 +1,7 @@
+import { statSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { statSync } from 'fs';
+
 import { LocalStorageHelper } from './local-storage.helper';
 
 @Injectable()

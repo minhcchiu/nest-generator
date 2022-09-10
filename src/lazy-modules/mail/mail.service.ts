@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { MailerConfig } from '~config/enviroment';
 import { Logger } from '~lazy-modules/logger/logger.service';
 // import { MailerEnv } from '~interface/mailer.interface';
@@ -8,14 +9,13 @@ import { Logger } from '~lazy-modules/logger/logger.service';
 
 @Injectable()
 export class MailService {
-  private _mailConfig;
+  private _mailConfig: MailerConfig;
   constructor(
     private mailerService: MailerService,
     private config: ConfigService,
     private readonly logger: Logger,
   ) {
-    logger.setContext(MailerService.name);
-    this._mailConfig = config.get<MailerConfig>('mailter');
+    this._mailConfig = config.get<MailerConfig>('mailer');
   }
 
   /**
@@ -75,7 +75,7 @@ export class MailService {
   }
 
   /**
-   * Send verify
+   * Send signupToken
    *
    * @param verificationLink
    * @param to
@@ -105,7 +105,10 @@ export class MailService {
         this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
         return result;
       })
-      .catch((error) => this.logger.error((error as any).toString()));
+      .catch((error) => {
+        console.log({ error });
+        this.logger.error((error as any).toString());
+      });
   }
 
   /**

@@ -6,10 +6,16 @@ cd src/routes/common/c8-notifications/ && perl-rename -v 's/ward/notification'/g
 # UPLOAD FILE
 
 # TODO: NEXT
+# Upload video
 # Template email
 # Delete uploaded file
 # Update name path
 # Update folder struture
 # Update crud file
+# Add authorization
 # Update authorization
-# Upload video
+# Add block select fields in api query params
+# Add push fcm notification
+# Add upload to s3
+# Implement send otp to phone
+# Send mail by sendgrid account
