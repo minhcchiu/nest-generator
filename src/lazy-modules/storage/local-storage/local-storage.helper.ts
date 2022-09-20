@@ -1,7 +1,8 @@
+import { join } from 'path';
+import { close, open, read, renameSync, unlinkSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { filetypemime } from 'magic-bytes.js';
-import { close, open, read, renameSync, unlinkSync } from 'fs';
-import { join } from 'path';
+
 import { resizeJPG, resizePNG } from '~helper/resize-image.helper';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class LocalStorageHelper {
 
   /**
    * Get type file need resize
+   *
    * @param filePath
    * @returns
    */
@@ -33,6 +35,7 @@ export class LocalStorageHelper {
 
   /**
    * Get buffer from file
+   *
    * @param filePath
    * @param maxLength
    * @returns
@@ -59,6 +62,7 @@ export class LocalStorageHelper {
 
   /**
    * Compress image
+   *
    * @param filePath
    * @param imageType
    * @returns
@@ -76,6 +80,7 @@ export class LocalStorageHelper {
 
   /**
    * Compress JPG LocalStorage
+   *
    * @param filePath
    * @returns
    */
@@ -106,6 +111,7 @@ export class LocalStorageHelper {
 
   /**
    * compress PNG LocalStorage
+   *
    * @param filePath
    * @returns
    */
@@ -137,6 +143,7 @@ export class LocalStorageHelper {
 
   /**
    * Genrate size path
+   *
    * @param filePath
    * @param options
    * @returns
@@ -155,6 +162,7 @@ export class LocalStorageHelper {
 
   /**
    * Movie file from temp to uploadFiles
+   *
    * @param filePath
    * @returns
    */
@@ -168,7 +176,23 @@ export class LocalStorageHelper {
   }
 
   /**
-   * get fileName from filePath
+   * Movie file from temp to uploadFiles
+   *
+   * @param filePath
+   * @returns
+   */
+  async moveVideoToDiskStorage(filePath: string) {
+    const newPath = filePath.replace('/uploads/tmp/', '/uploads/videos/');
+
+    // move file
+    renameSync(filePath, newPath);
+
+    return newPath;
+  }
+
+  /**
+   * Get fileName from filePath
+   *
    * @param filePath
    * @returns
    */

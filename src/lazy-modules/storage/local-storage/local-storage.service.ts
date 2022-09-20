@@ -1,17 +1,29 @@
+import { statSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { statSync } from 'fs';
+
 import { LocalStorageHelper } from './local-storage.helper';
+import { AppConfig } from '~config/enviroment';
 
 @Injectable()
 export class LocalStorageService {
+  private folderStoreFile:
+    | 'uploads/images'
+    | 'uploads/files'
+    | 'uploads/videos';
+
+  private appUrl: string;
+
   constructor(
     private readonly localDiskHelper: LocalStorageHelper,
     private configService: ConfigService,
-  ) {}
+  ) {
+    this.appUrl = this.configService.get<AppConfig>('app').appUrl;
+  }
 
   /**
-   * Upload
+   * Upload file/images
+   *
    * @param filePath
    * @returns
    */
@@ -23,25 +35,51 @@ export class LocalStorageService {
     const isFileImage = fileMime && fileMime.split('/')[0] === 'image';
 
     let files = [];
-    let uploadDir: 'uploads/images' | 'uploads/files';
 
     // upload image
     if (isFileImage) {
       const imageType = fileMime.split('/')[1];
-      uploadDir = 'uploads/images';
+
+      this.folderStoreFile = 'uploads/images';
+
       files = await this.localDiskHelper.compressImage(filePath, imageType);
     } else {
       // upload file
-      uploadDir = 'uploads/files';
+      this.folderStoreFile = 'uploads/files';
+
       files = [await this.localDiskHelper.moveFileToDiskStorage(filePath)];
     }
 
-    const appURL = this.configService.get<string>('clientURL');
     // replace path
     for (let i = 0; i < files.length; i += 1) {
-      files[i] = appURL + files[i].slice(files[i].indexOf('/uploads'));
+      files[i] = this.appUrl + files[i].slice(files[i].indexOf('/uploads'));
     }
 
-    return { type: fileMime, files, size: fileSize, folder: uploadDir };
+    return {
+      type: fileMime,
+      files,
+      size: fileSize,
+      folder: this.folderStoreFile,
+    };
+  }
+
+  /**
+   * Upload video
+   *
+   * @param filePath
+   * @returns
+   */
+  async uploadVideo(filePath: string) {
+    // get fileSize and fileMine
+    const fileSize = statSync(filePath).size || 0;
+    this.folderStoreFile = 'uploads/videos';
+
+    const file = await this.localDiskHelper.moveVideoToDiskStorage(filePath);
+
+    return {
+      files: [this.appUrl + file.slice(file.indexOf('/uploads'))],
+      size: fileSize,
+      folder: this.folderStoreFile,
+    };
   }
 }

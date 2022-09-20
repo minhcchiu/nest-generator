@@ -2,7 +2,7 @@ export const defaultEnv = {
   app: {
     env: 'development',
     port: 8888,
-    clientUrl: 'http://localhost:8888',
+    appUrl: 'http://localhost:8888',
   },
 
   database: {
@@ -16,15 +16,21 @@ export const defaultEnv = {
     api_secret: 'PfIbFwRWDOiNlDd_E_XENdKyNsA',
   },
 
+  otp: {
+    maximunSecondSendOtp: 10,
+  },
+
   upload: {
     uploadFileName: 'file',
     uploadFilesName: 'files',
-    maxSize: 2,
-    maxFile: 25,
+    maxSize: 25,
+    maxFile: 2,
     extImages: 'jpg|jpeg|png|gif',
     extRawFile: 'txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
     extFiles: 'jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
     extVideo: 'mp4|mkv',
+    maxVideoSize: 40,
+    maxVideoFile: 4,
   },
 
   jwt: {

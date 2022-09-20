@@ -1,8 +1,9 @@
+import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import * as path from 'path';
-import { ProvinceService } from '~common/c3-provinces/province.service';
-import { DistrictService } from '~common/c4-districts/district.service';
-import { WardService } from '~common/c5-wards/ward.service';
+
+import { ProvinceService } from '~common/c2-provinces/province.service';
+import { DistrictService } from '~common/c3-districts/district.service';
+import { WardService } from '~common/c4-wards/ward.service';
 import { FileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
@@ -13,12 +14,11 @@ export class SeedService {
     private districtService: DistrictService,
     private wardService: WardService,
     private logger: Logger,
-  ) {
-    this.logger.setContext(SeedService.name);
-  }
+  ) {}
 
   /**
    * Delete all provinces districs wards
+   *
    * @returns
    */
   async deleteAllProvincesDistrictWard() {
@@ -39,10 +39,11 @@ export class SeedService {
 
   /**
    * Seed data for provinces, district, ward
+   *
    * @returns
    */
   async seedProvincesDistrictWard() {
-    const jsonPath = path.join(__dirname, '../../utils/json/dvhcvn.json');
+    const jsonPath = join(__dirname, '../../utils/json/dvhcvn.json');
 
     const isFileExist = FileHelper.isFileExist(jsonPath);
 

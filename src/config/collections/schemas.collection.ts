@@ -6,8 +6,7 @@ type CollectionConfig = {
   };
 };
 
-export const schemas: CollectionConfig = {
-  // manager
+export const dbCollections: CollectionConfig = {
   user: {
     path: 'users',
     name: 'users',
@@ -92,7 +91,6 @@ export const schemas: CollectionConfig = {
     ref: 'AccountBank',
   },
 
-  // manager authorizations
   auth: {
     path: 'auth',
     name: 'auth',
@@ -140,7 +138,6 @@ export const schemas: CollectionConfig = {
     ref: 'Historyaccessapi',
   },
 
-  // features
   post: {
     path: 'posts',
     name: 'posts',

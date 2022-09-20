@@ -9,7 +9,7 @@ import {
 import { NotFoundException } from '@nestjs/common';
 
 import { BaseInterface } from './base.interface';
-import { ApiQueryParamsDto } from 'src/utils/interceptor/api-query-params.dto';
+import { ApiQueryParamsDto } from '~middlewares/dto';
 
 export class BaseService<T> implements BaseInterface<T> {
   private model: PaginateModel<T>;
@@ -20,6 +20,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find all
+   *
    * @param queryParams
    * @returns
    */
@@ -31,6 +32,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find by ID
+   *
    * @param id
    * @param options
    * @returns
@@ -44,6 +46,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find one
+   *
    * @param filter
    * @param options
    * @returns
@@ -57,6 +60,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Create new
+   *
    * @param data
    * @returns
    */
@@ -66,6 +70,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find by ID and update
+   *
    * @param id
    * @param data
    * @param options
@@ -87,6 +92,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find one and update
+   *
    * @param query
    * @param data
    * @param options
@@ -106,6 +112,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Update many
+   *
    * @param query
    * @param data
    * @param options
@@ -121,6 +128,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find by id and delete
+   *
    * @param id
    * @param options
    * @returns
@@ -138,6 +146,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find one and delete
+   *
    * @param query
    * @param options
    * @returns
@@ -155,6 +164,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Delete many
+   *
    * @param query
    * @param options
    * @returns
@@ -168,6 +178,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Find and paginate
+   *
    * @param queryParams
    * @returns
    */
@@ -198,6 +209,7 @@ export class BaseService<T> implements BaseInterface<T> {
 
   /**
    * Count
+   *
    * @param query
    * @returns number
    */

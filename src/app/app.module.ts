@@ -1,3 +1,4 @@
+import { join } from 'path';
 import {
   MiddlewareConsumer,
   Module,
@@ -5,22 +6,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ApiQueryParamsMiddleware } from 'src/utils/interceptor/api-query-params.middleware';
-import { DatabaseModule } from '~config/database/database.module';
-import { UserModule } from '~common/c1-users/user.module';
-import { ProvinceModule } from '~common/c3-provinces/province.module';
-import { MailModule } from '~lazy-modules/mail/mail.module';
-import { OtpModule } from '~common/c2-otp/otp.module';
-import { AuthModule } from '~authorizations/a1-auth/auth.module';
-import { SeedModule } from '~lazy-modules/seed/seed.module';
-import { LoggerModule } from '~lazy-modules/logger/logger.module';
-import { FileModule } from '~common/c6-files/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-import { UploadModule } from '~common/c7-upload/upload.module';
-import { NotificationModule } from '~common/c8-notifications/notification.module';
 
 import {
   appCofig,
@@ -30,6 +16,21 @@ import {
   mailerConfig,
   uploadConfig,
 } from '~config/enviroment';
+import { DatabaseModule } from '~config/database/database.module';
+import { MailModule } from '~lazy-modules/mail/mail.module';
+import { SeedModule } from '~lazy-modules/seed/seed.module';
+import { LoggerModule } from '~lazy-modules/logger/logger.module';
+import { AuthModule } from '~authentications/a1-auth/auth.module';
+import { OtpModule } from '~authentications/a2-otp/otp.module';
+import { UserModule } from '~common/c1-users/user.module';
+import { ProvinceModule } from '~common/c2-provinces/province.module';
+import { UploadModule } from '~common/c6-upload/upload.module';
+import { FileModule } from '~common/c5-files/file.module';
+import { NotificationModule } from '~common/c7-notifications/notification.module';
+import { ApiQueryParamsMiddleware } from '~middlewares/api-query-params.middleware';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { otpCofig } from '~config/enviroment/otp.env';
 
 @Module({
   imports: [
@@ -39,12 +40,13 @@ import {
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        cloudinaryCofig,
+        appCofig,
         databaseCofig,
+        cloudinaryCofig,
         jwtCofig,
         mailerConfig,
         uploadConfig,
-        appCofig,
+        otpCofig,
       ],
     }),
     DatabaseModule,

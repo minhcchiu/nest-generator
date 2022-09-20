@@ -27,26 +27,35 @@
       "~lazy-modules/*": [
         "./src/lazy-modules/*"
       ],
+      "~authentications/*": [
+        "src/resources/authentications/*"
+      ],
       "~authorizations/*": [
-        "./src/routes/authorizations/*"
+        "./src/resources/authorizations/*"
       ],
       "~common/*": [
-        "./src/routes/common/*"
+        "./src/resources/common/*"
       ],
       "~features/*": [
-        "./src/routes/features/*"
+        "./src/resources/features/*"
       ],
       "~decorators/*": [
         "./src/utils/decorators/*"
       ],
       "~exception/*": [
-        "./src/utils/exception/*"
+        "src/utils/exceptions/*"
       ],
       "~helper/*": [
         "./src/utils/helper/*"
       ],
-      "~interface/*": [
-        "./src/utils/interface/*"
+      "~interceptors/*": [
+        "src/utils/interceptors/*"
+      ],
+      "~pipe/*": [
+        "./src/utils/pipe/*"
+      ],
+      "~middlewares/*": [
+        "./src/utils/middlewares/*"
       ],
     }
   },
