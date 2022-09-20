@@ -6,7 +6,7 @@ type CollectionConfig = {
   };
 };
 
-export const schemas: CollectionConfig = {
+export const dbCollections: CollectionConfig = {
   user: {
     path: 'users',
     name: 'users',

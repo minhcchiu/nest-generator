@@ -32,11 +32,15 @@ export class AuthService {
   /**
    * Sign in with email/phone and password
    *
-   * @param data
+   * @param { phone, email, password, deviceID, }
    * @returns
    */
-  async signin(data: SigninDto): Promise<AuthResponse> {
-    const { password, email, deviceID, phone } = data;
+  async signin({
+    phone,
+    email,
+    password,
+    deviceID,
+  }: SigninDto): Promise<AuthResponse> {
     const filter = phone ? { phone } : { email };
 
     const user = await this.userService.findOne(filter);
@@ -121,11 +125,13 @@ export class AuthService {
         [filterKey]: '',
       });
     }
+
     // verify otpCode
-    await this.otpService.verifyOtp(
-      { [filterKey]: data[filterKey] },
-      data.otpCode,
-    );
+    await this.otpService.verifyOtp({
+      [filterKey]: data[filterKey],
+      otpType: data.otpType,
+      otpCode: data.otpCode,
+    });
 
     // create user
     const user = await this.userService.create(data);
@@ -159,8 +165,8 @@ export class AuthService {
     // generate sugnup token
     const token = await this.tokenService.generateSignupToken(data);
 
-    const clientUrl = this.configService.get('app.clientUrl');
-    const verificationLink = `${clientUrl}/auth/verify-signup-token/${token}`;
+    const appUrl = this.configService.get('app.appUrl');
+    const verificationLink = `${appUrl}/auth/verify-signup-token/${token}`;
 
     // send mail
     await this.mailService.sendSignupToken(
@@ -256,8 +262,8 @@ export class AuthService {
         expireTime,
       );
 
-      const clientUrl = this.configService.get('app.clientUrl');
-      const resetPasswordLink = `${clientUrl}/auth/reset-password/${token}`;
+      const appUrl = this.configService.get('app.appUrl');
+      const resetPasswordLink = `${appUrl}/auth/reset-password/${token}`;
 
       // send mail
       await this.mailService.sendResetPasswordToken(
@@ -283,6 +289,7 @@ export class AuthService {
     const { email, phone } = data;
 
     const filter = phone ? { phone } : { email };
+    const filterKey = phone ? 'phone' : 'email';
 
     const user = await this.userService.findOne(filter);
 
@@ -300,8 +307,12 @@ export class AuthService {
         user.deviceID = data.deviceID;
       }
 
-      // verify otp
-      await this.otpService.verifyOtp(filter, data.otpCode);
+      // verify otpCode
+      await this.otpService.verifyOtp({
+        [filterKey]: filter[filterKey],
+        otpType: data.otpType,
+        otpCode: data.otpCode,
+      });
 
       // update password
       await this.userService.updatePasswordById(user._id, data.password);

@@ -1,20 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as argon2 from 'argon2';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { OtpType } from '../enum/otp-type.enum';
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  collection: dbCollections.otp.name,
+})
 export class Otp {
   @Prop({ type: String })
-  phone: string;
+  readonly phone: string;
 
   @Prop({ type: String })
-  email: string;
+  readonly email: string;
 
-  @Prop({ type: String, default: '+84' })
-  zipCode = '+84';
-
-  @Prop({ type: String, default: 'VN' })
-  country = 'VN';
+  @Prop({ type: String, enum: OtpType, default: OtpType.PHONE })
+  otpType: OtpType;
 
   @Prop({ type: String, required: true })
   otpCode: string;

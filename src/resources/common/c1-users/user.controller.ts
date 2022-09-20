@@ -14,7 +14,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { ApiQueryParamsDto } from '~middlewares/dto';
 
 import { UserService } from './user.service';
@@ -22,8 +22,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password';
 
-@ApiTags(schemas.user.path)
-@Controller(schemas.user.path)
+@ApiTags(dbCollections.user.path)
+@Controller(dbCollections.user.path)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

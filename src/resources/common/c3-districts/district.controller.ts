@@ -15,12 +15,12 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { DistrictService } from './district.service';
 import { ApiQueryParamsDto } from '~middlewares/dto';
 
-@ApiTags(schemas.district.path)
-@Controller(schemas.district.path)
+@ApiTags(dbCollections.district.path)
+@Controller(dbCollections.district.path)
 export class DistrictController {
   constructor(private readonly districtService: DistrictService) {}
 

@@ -2,7 +2,7 @@ import { Body, Controller, Post, Put } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { UserService } from '~common/c1-users/user.service';
 import {
   ResetPasswordByTokenDto,
@@ -16,7 +16,7 @@ import {
 import { AuthService } from './auth.service';
 
 @ApiTags('auth')
-@Controller(schemas.auth.path)
+@Controller(dbCollections.auth.path)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

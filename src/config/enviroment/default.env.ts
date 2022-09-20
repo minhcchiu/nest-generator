@@ -2,7 +2,7 @@ export const defaultEnv = {
   app: {
     env: 'development',
     port: 8888,
-    clientUrl: 'http://localhost:8888',
+    appUrl: 'http://localhost:8888',
   },
 
   database: {
@@ -14,6 +14,10 @@ export const defaultEnv = {
     cloud_name: 'dvnmolznq',
     api_key: '974881534354895',
     api_secret: 'PfIbFwRWDOiNlDd_E_XENdKyNsA',
+  },
+
+  otp: {
+    maximunSecondSendOtp: 10,
   },
 
   upload: {

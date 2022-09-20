@@ -30,6 +30,7 @@ import { NotificationModule } from '~common/c7-notifications/notification.module
 import { ApiQueryParamsMiddleware } from '~middlewares/api-query-params.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { otpCofig } from '~config/enviroment/otp.env';
 
 @Module({
   imports: [
@@ -39,12 +40,13 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        cloudinaryCofig,
+        appCofig,
         databaseCofig,
+        cloudinaryCofig,
         jwtCofig,
         mailerConfig,
         uploadConfig,
-        appCofig,
+        otpCofig,
       ],
     }),
     DatabaseModule,

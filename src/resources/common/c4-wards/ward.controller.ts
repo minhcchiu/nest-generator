@@ -15,12 +15,12 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { WardService } from './ward.service';
 import { ApiQueryParamsDto } from '~middlewares/dto';
 
-@ApiTags(schemas.ward.path)
-@Controller(schemas.ward.path)
+@ApiTags(dbCollections.ward.path)
+@Controller(dbCollections.ward.path)
 export class WardController {
   constructor(private readonly wardService: WardService) {}
 

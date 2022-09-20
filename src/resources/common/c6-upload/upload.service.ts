@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { FileService } from '~common/c5-files/file.service';
@@ -40,7 +41,7 @@ export class UploadService {
       files,
       folder,
       storage: 'LOCAL_DISK',
-      owner: userId,
+      // owner: userId,
     };
 
     await this.fileService.create(item);
@@ -60,23 +61,23 @@ export class UploadService {
 
     const result = await this.localStorageService.uploadVideo(realpathOfFile);
 
-    const { file, size, folder } = result;
+    const { files, size, folder } = result;
 
     // save file to database
     const item = {
-      resourceID: file,
+      resourceID: files[0],
       type: 'video',
       ext: realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1),
       size,
-      file,
+      files,
       folder,
       storage: 'LOCAL_DISK',
-      owner: userId,
+      // owner: userId,
     };
 
     await this.fileService.create(item);
 
-    return file;
+    return files;
   }
   /**
    * Save file to Cloudinary
@@ -86,7 +87,6 @@ export class UploadService {
    */
   async saveFileToCloudinary(filePath: string, userId?: Types.ObjectId) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
-    console.log(process.env.UPLOAD_IMAGE_FILE);
     const imageExpression = `.(${process.env.UPLOAD_IMAGE_FILE})$`;
 
     // check allow file
@@ -113,8 +113,8 @@ export class UploadService {
       files,
       secureUrl: result.secure_url,
       folder: result.folder,
-      storage: 'S3',
-      owner: userId,
+      storage: 'CLOUDINARY',
+      // owner: userId,
     };
 
     await this.fileService.create(item);

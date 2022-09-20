@@ -5,27 +5,85 @@ import * as dayjs from 'dayjs';
 
 import { BaseService } from '~base-inherit/base.service';
 import { UserService } from '~common/c1-users/user.service';
-import { PhoneHelper } from '~helper/phone.helper';
 import { MailService } from '~lazy-modules/mail/mail.service';
-import {
-  SendOtpToPhoneDto,
-  SendOtpToEmailDto,
-  VerifyOtpEmailDto,
-  VerifyOtpPhoneDto,
-  FilterVerifyOtpDto,
-} from './dto';
 import { Otp, OtpDocument } from './schemas/otp.schema';
+import { ConfigService } from '@nestjs/config';
+import { OtpConfig } from '~config/enviroment/otp.env';
+import { SendOtpDto } from './dto/send-otp.dto copy';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { OtpType } from './enum/otp-type.enum';
+import { AppConfig } from '~config/enviroment';
+import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
   private otpModel: PaginateModel<OtpDocument>;
+  private optConfig: OtpConfig;
+  private appConfig: AppConfig;
+
   constructor(
     @InjectModel(Otp.name) model: PaginateModel<OtpDocument>,
     private mailService: MailService,
     private userService: UserService,
+    private configService: ConfigService,
   ) {
     super(model);
+
     this.otpModel = model;
+    this.optConfig = this.configService.get<OtpConfig>('otp');
+    this.appConfig = this.configService.get<AppConfig>('app');
+  }
+
+  /**
+   * Send otp to email/phone
+   *
+   * @param { otpType, phone, email }
+   * @return
+   */
+  async sendOtp({ otpType, phone, email }: SendOtpDto) {
+    if (phone) return this._sendOtpToPhone(phone, otpType);
+
+    return this._sendOtpToEmail(email, otpType);
+  }
+
+  /**
+   * Send otp signup to email/phone
+   *
+   * @param {phone, email}
+   * @return
+   */
+  async sendOtpSignup({ phone, email }: SendOtpDto) {
+    const filter = phone ? { phone } : { email };
+
+    await this.userService.validateCreateUser(filter);
+
+    if (phone) return this._sendOtpToPhone(phone, OtpType.SIGNUP);
+
+    return this._sendOtpToEmail(email, OtpType.SIGNUP);
+  }
+
+  /**
+   * Verify otp
+   *
+   * @param {phone, email, otpCode}
+   * @return
+   */
+  async verifyOtp({ email, phone, otpCode, otpType }: VerifyOtpDto) {
+    const filter = phone ? { phone, otpType } : { email, otpType };
+
+    // find otpDoc
+    const otpDoc = await this.otpModel.findOne(filter);
+
+    // check expired otp
+    if (!otpDoc)
+      throw new BadRequestException('OTP does not exist or has expired!');
+
+    // Check is valid otpCode
+    const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
+
+    if (isValidOtpCode) return this.deleteById(otpDoc._id);
+
+    throw new BadRequestException('Invalid otp code.');
   }
 
   /**
@@ -34,52 +92,45 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email
    * @returns
    */
-  async sendOtpToEmail({ email }: SendOtpToEmailDto) {
+  private async _sendOtpToEmail(email: string, otpType = OtpType.EMAIL) {
     // check email exist
-    const otp = await this.refreshOtpByEmail(email);
+    const otp = await this._refreshOtpByEmail(email);
 
     if (otp) return otp;
 
     // send otp to email
-    const otpCode = this.generateOTPCode();
-    await this.sendEmailVerify(email, otpCode);
+    const otpCode = this._generateOTPCode();
+    await this._sendEmailVerify(email, otpCode);
 
     // create new otp doc
-    // FIXME [PRODUCTION]: Remove comment
-    // return this.otpRepository.create({ email, otpCode });
+    if (this.appConfig.env === appEnvEnum.PRODUCTION)
+      return this.create({ email, otpCode, otpType });
 
-    // FIXME [DEVELOPMENT]: comment
-    await this.create({ email, otpCode });
+    await this.create({ email, otpCode, otpType });
     return { otpCode };
   }
 
   /**
    * Send otp by phone
    *
-   * @param data
+   * @param phone
    * @returns
    */
-  async sendOtpToPhone(data: SendOtpToPhoneDto) {
-    const { zipCode, phone, country } = data;
-
-    // validate phone number
-    PhoneHelper.validatePhone(phone, zipCode, country);
-
+  private async _sendOtpToPhone(phone: string, otpType = OtpType.PHONE) {
     // Check can refresh otp
-    const otpRefresh = await this.refreshOtpByPhone(phone);
+    const otpRefresh = await this._refreshOtpByPhone(phone, otpType);
 
     if (otpRefresh) return otpRefresh;
 
     // send otp to phone number
-    const otpCode = this.generateOTPCode();
+    const otpCode = this._generateOTPCode();
     // await this.sendPhoneVerify(phone, otpCode);
 
     // create new otp doc
-    // FIXME [PRODUCTION]: Remove comment
-    // return this.otpRepository.create({ ...data, otpCode });
+    if (this.appConfig.env === appEnvEnum.PRODUCTION)
+      return this.create({ phone, otpCode, otpType });
 
-    // FIXME [DEVELOPMENT]: comment
-    await this.create({ ...data, otpCode });
+    await this.create({ phone, otpCode, otpType });
     return { otpCode };
   }
 
@@ -89,27 +140,27 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param phone
    * @returns
    */
-  async refreshOtpByPhone(phone: string) {
-    const otpDoc = await this.otpModel.findOne({ phone });
+  private async _refreshOtpByPhone(phone: string, otpType = OtpType.PHONE) {
+    const otpDoc = await this.otpModel.findOne({ phone, otpType });
 
     if (!otpDoc) return null;
 
     // check time send otp
-    const MAXIMUN_SECOND_SEND_OTP = 10;
-    this.validateTimeSendOtp((<any>otpDoc).updatedAt, MAXIMUN_SECOND_SEND_OTP);
+    const { maximunSecondSendOtp } = this.optConfig;
+
+    this._validateTimeSendOtp((<any>otpDoc).updatedAt, maximunSecondSendOtp);
 
     // update otpCode
-    const otpCode = this.generateOTPCode();
-
-    // Send otp to phone
-    // await this.sendPhoneVerify(phone, otpCode);
+    const otpCode = this._generateOTPCode();
 
     // save
-    // FIXME [PRODUCTION]: Remove comment
-    otpDoc.otpCode = otpCode;
-    // return otpDoc.save();
+    if (this.appConfig.env === appEnvEnum.PRODUCTION) {
+      otpDoc.otpCode = otpCode;
+      otpDoc.otpType = otpType;
 
-    // FIXME [DEVELOPMENT]: Comment
+      return otpDoc.save();
+    }
+
     await otpDoc.save();
     return { otpCode };
   }
@@ -120,49 +171,27 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param email
    * @returns
    */
-  async refreshOtpByEmail(email: string) {
-    const otpDoc = await this.otpModel.findOne({ email });
+  private async _refreshOtpByEmail(email: string, otpType = OtpType.EMAIL) {
+    const otpDoc = await this.otpModel.findOne({ email, otpType });
 
     if (!otpDoc) return null;
 
     // generate otpCode
-    const otpCode = this.generateOTPCode();
+    const otpCode = this._generateOTPCode();
 
     // send otp to email
-    await this.sendEmailVerify(email, otpCode);
+    await this._sendEmailVerify(email, otpCode);
 
     // save
-    // FIXME [PRODUCTION]: remove comment
-    otpDoc.otpCode = otpCode;
-    // return otpDoc.save();
+    if (this.appConfig.env === appEnvEnum.PRODUCTION) {
+      otpDoc.otpCode = otpCode;
+      otpDoc.otpType = otpType;
 
-    // FIXME [DEVELOPMENT]: comment
+      return otpDoc.save();
+    }
+
     await otpDoc.save();
     return { otpCode };
-  }
-
-  /**
-   * Verify otp
-   *
-   * @param filter
-   * @param otpCode
-   */
-  async verifyOtp(filter: FilterVerifyOtpDto, otpCode: string) {
-    const otpDoc = await this.otpModel.findOne(filter);
-
-    // check expired otp
-    if (!otpDoc)
-      throw new BadRequestException('Phone does not exist or OTP has expired!');
-
-    // Check is valid otpCode
-    const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
-
-    if (!isValidOtpCode) throw new BadRequestException('Invalid otp code.');
-
-    // delete otp doc
-    const deletedOpt = await this.deleteById(otpDoc._id);
-
-    return deletedOpt;
   }
 
   /**
@@ -189,67 +218,8 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param otp
    * @returns
    */
-  private async sendEmailVerify(email: string, otp: string): Promise<boolean> {
-    // TODO: Implement send OTP service
-    // call api sent otp to phone
-    await this.mailService.sendOTP(otp, email, 'Verify OTP');
-
-    return true;
-  }
-
-  /**
-   * Verify otp by phone
-   *
-   * @param data
-   * @returns
-   */
-  async verifyOtpPhone(data: VerifyOtpPhoneDto): Promise<OtpDocument> {
-    const { otpCode, phone } = data;
-
-    // validate phone
-    PhoneHelper.validatePhone(phone);
-
-    const otpDoc = await this.otpModel.findOne({ phone });
-
-    // check expired otp
-    if (!otpDoc)
-      throw new BadRequestException('Phone does not exist or OTP has expired!');
-
-    // Check is valid otpCode
-    const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
-
-    if (!isValidOtpCode) throw new BadRequestException('Invalid otp code.');
-
-    // delete otp doc
-    const deletedOpt = await this.deleteOne({
-      phone: otpDoc.phone,
-    });
-
-    return deletedOpt;
-  }
-
-  /**
-   * Verify otp by email
-   *
-   * @param data
-   * @returns
-   */
-  async verifyOtpEmail(data: VerifyOtpEmailDto): Promise<OtpDocument> {
-    const { email, otpCode } = data;
-    const otpDoc = await this.otpModel.findOne({ email });
-
-    // check expired otp
-    if (!otpDoc)
-      throw new BadRequestException('Email does not exist or OTP has expired!');
-
-    // check is valid otpCode
-    const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
-
-    if (!isValidOtpCode) throw new BadRequestException('Invalid otp code.');
-
-    // delete otp doc
-    const deletedOpt = await this.deleteOne({ email });
-    return deletedOpt;
+  private async _sendEmailVerify(email: string, otp: string): Promise<boolean> {
+    return this.mailService.sendOTP(otp, email, 'Verify OTP');
   }
 
   /**
@@ -257,7 +227,7 @@ export class OtpService extends BaseService<OtpDocument> {
    *
    * @returns
    */
-  private generateOTPCode(length = 4) {
+  private _generateOTPCode(length = 4) {
     const digits = '0123456789';
 
     let otp = '';
@@ -278,7 +248,7 @@ export class OtpService extends BaseService<OtpDocument> {
    * @param maximunSecond
    * @returns
    */
-  private validateTimeSendOtp(updatedAt: string, maximunSecond = 30) {
+  private _validateTimeSendOtp(updatedAt: string, maximunSecond = 30) {
     const secondsLeft = dayjs().diff(dayjs(updatedAt), 'second');
     const isValidTime = secondsLeft < maximunSecond;
 

@@ -1,17 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: schemas.notification.name,
+  collection: dbCollections.notification.name,
 })
 export class Notification {
-  @Prop({ type: Types.ObjectId, ref: schemas.user.ref, required: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: dbCollections.user.ref,
+    required: true,
+  })
   readonly userTo: string;
 
-  @Prop({ type: Types.ObjectId, ref: schemas.user.ref, required: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: dbCollections.user.ref,
+    required: true,
+  })
   readonly userFrom: string;
 
   @Prop({ type: String, required: true })

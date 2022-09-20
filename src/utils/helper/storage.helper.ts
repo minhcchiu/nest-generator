@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { BadRequestException } from '@nestjs/common';
+import { toSlug } from './slug.helper';
 
 /**
  * Edit file name
@@ -14,7 +15,7 @@ export const editFileName = (req: any, file: any, cb: any) => {
     .map(() => Math.round(Math.random() * 16).toString(16))
     .join('');
 
-  cb(null, `${Date.now()}-${randomNamePre}-${file.originalname}`);
+  cb(null, `${Date.now()}-${randomNamePre}-${toSlug(file.originalname)}`);
 };
 
 /**

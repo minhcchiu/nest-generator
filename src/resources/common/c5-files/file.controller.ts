@@ -15,12 +15,12 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { FileService } from './file.service';
 import { ApiQueryParamsDto } from '~middlewares/dto';
 
-@ApiTags(schemas.file.path)
-@Controller(schemas.file.path)
+@ApiTags(dbCollections.file.path)
+@Controller(dbCollections.file.path)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
   /**

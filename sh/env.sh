@@ -1,9 +1,10 @@
 # Config app environment variable
-export NODE_ENV=development
-export PORT=8888
+# DEVELOPMENT | PRODUCTION
+export APP_ENV=DEVELOPMENT
+export APP_PORT=8888
 
 # CLIENT URL
-export CLIENT_URL=http://localhost:8888 
+export APP_URL=http://localhost:8888 
 
 # URL of the Mongo DB
 # export MONGODB_URL="mongodb://127.0.0.1:27017/node-boilerplate"
@@ -58,6 +59,9 @@ export MAILER_NAME_NAME=minhchiu
 # OAuth client
 export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.googleusercontent.com
 export OAUTH_CLIENT_SECRET=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
+
+# OTP
+export MAXIMUN_SECOND_SEND_OTP=10
 
 # UPLOAD
 export UPLOAD_MAX_SIZE=25 #MB  

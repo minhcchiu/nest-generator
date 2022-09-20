@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { LocalStorageHelper } from './local-storage.helper';
+import { AppConfig } from '~config/enviroment';
 
 @Injectable()
 export class LocalStorageService {
@@ -11,10 +12,14 @@ export class LocalStorageService {
     | 'uploads/files'
     | 'uploads/videos';
 
+  private appUrl: string;
+
   constructor(
     private readonly localDiskHelper: LocalStorageHelper,
     private configService: ConfigService,
-  ) {}
+  ) {
+    this.appUrl = this.configService.get<AppConfig>('app').appUrl;
+  }
 
   /**
    * Upload file/images
@@ -45,11 +50,9 @@ export class LocalStorageService {
       files = [await this.localDiskHelper.moveFileToDiskStorage(filePath)];
     }
 
-    const appURL = this.configService.get<string>('clientURL');
-
     // replace path
     for (let i = 0; i < files.length; i += 1) {
-      files[i] = appURL + files[i].slice(files[i].indexOf('/uploads'));
+      files[i] = this.appUrl + files[i].slice(files[i].indexOf('/uploads'));
     }
 
     return {
@@ -73,10 +76,8 @@ export class LocalStorageService {
 
     const file = await this.localDiskHelper.moveVideoToDiskStorage(filePath);
 
-    const appURL = this.configService.get<string>('clientURL');
-    console.log({ appURL });
     return {
-      file: appURL + file.slice(file.indexOf('/uploads')),
+      files: [this.appUrl + file.slice(file.indexOf('/uploads'))],
       size: fileSize,
       folder: this.folderStoreFile,
     };

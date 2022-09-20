@@ -11,35 +11,18 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
+import { StorageVideoInterceptor } from '~interceptors/storage-video.interceptor';
 import { StorageVideosInterceptor } from '~interceptors/storage-videos.interceptor';
 import { UploadService } from './upload.service';
 
-@ApiTags(schemas.upload.path)
-@Controller(schemas.upload.path)
+@ApiTags(dbCollections.upload.path)
+@Controller(dbCollections.upload.path)
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
-
-  /**
-   * Upload single file to tmp
-   *
-   * @param videos
-   * @returns
-   */
-  @UseInterceptors(StorageVideosInterceptor('videos'))
-  @HttpCode(201)
-  @Post('videos')
-  async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
-    // check file exist
-    if (!videos) throw new BadRequestException('Video is required!');
-
-    return {
-      files: videos.map((file: any) => file.path.replace('public/', '')),
-    };
-  }
 
   /**
    * Upload single file to tmp
@@ -69,6 +52,40 @@ export class UploadController {
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
     return {
       files: files.map((file: any) => file.path.replace('public/', '')),
+    };
+  }
+
+  /**
+   * Upload many videos to tmp
+   *
+   * @param video
+   * @returns
+   */
+  @UseInterceptors(StorageVideoInterceptor('file'))
+  @HttpCode(201)
+  @Post('video')
+  async uploadVideosToLocal(@UploadedFile() video: Express.Multer.File) {
+    // check file exist
+    if (!video) throw new BadRequestException('Video is required!');
+
+    return { file: video.path.replace('public/', '') };
+  }
+
+  /**
+   * Upload single video to tmp
+   *
+   * @param videos
+   * @returns
+   */
+  @UseInterceptors(StorageVideosInterceptor('files'))
+  @HttpCode(201)
+  @Post('videos')
+  async uploadVideoToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
+    // check file exist
+    if (!videos) throw new BadRequestException('Video is required!');
+
+    return {
+      files: videos.map((file: any) => file.path.replace('public/', '')),
     };
   }
 
@@ -114,11 +131,30 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_video_to_local')
-  async saveVideosToLocal(
+  async saveVideoToLocal(
     // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: { file: string },
   ) {
     return this.uploadService.saveVideoToLocal(body.file);
+  }
+
+  /**
+   * Save files to local
+   *
+   * @param body
+   * @returns
+   */
+  @HttpCode(200)
+  @Post('save_videos_to_local')
+  async saveVideosToLocal(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { files: string[] },
+  ) {
+    const videosUploadedPromise = body.files.map((file: string) =>
+      this.uploadService.saveVideoToLocal(file),
+    );
+
+    return Promise.all(videosUploadedPromise);
   }
 
   /**

@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: schemas.province.name,
+  collection: dbCollections.province.name,
 })
 export class Province {
   @Prop({ type: String, required: true })

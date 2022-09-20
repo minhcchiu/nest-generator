@@ -13,26 +13,18 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { schemas } from '~config/collections/schemas.collection';
-import { UserService } from '~common/c1-users/user.service';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from '~middlewares/dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import {
-  SendOtpToPhoneDto,
-  SendOtpToEmailDto,
-  VerifyOtpEmailDto,
-  VerifyOtpPhoneDto,
-} from './dto';
 import { OtpService } from './otp.service';
+import { SendOtpDto } from './dto/send-otp.dto copy';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
-@ApiTags(schemas.otp.path)
-@Controller(schemas.otp.path)
+@ApiTags(dbCollections.otp.path)
+@Controller(dbCollections.otp.path)
 export class OtpController {
-  constructor(
-    private readonly otpService: OtpService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly otpService: OtpService) {}
 
   /**
    * Send otp to phone
@@ -41,73 +33,33 @@ export class OtpController {
    * @returns
    */
   @HttpCode(201)
-  @Post('send_otp')
-  async sendOtpToPhone(@Body() body: SendOtpToPhoneDto) {
-    return this.otpService.sendOtpToPhone(body);
+  @Post('send')
+  async sendOtp(@Body() body: SendOtpDto) {
+    return this.otpService.sendOtp(body);
   }
 
   /**
-   * Send otp to email
+   * Send otp signup to emai/phone
    *
    * @param body
    * @returns
    */
   @HttpCode(201)
-  @Post('send_otp_to_email')
-  async sendOtpToEmail(@Body() body: SendOtpToEmailDto) {
-    return this.otpService.sendOtpToEmail(body);
+  @Post('send_signup')
+  async sendOtpSignup(@Body() body: SendOtpDto) {
+    return this.otpService.sendOtpSignup(body);
   }
 
   /**
-   * Send otp signup to phone
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(201)
-  @Post('send_otp_signup')
-  async sendOtpSignupToPhone(@Body() body: SendOtpToPhoneDto) {
-    await this.userService.validateCreateUser({ phone: body.phone });
-
-    return this.otpService.sendOtpToPhone(body);
-  }
-
-  /**
-   * Send otp signup to email
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(201)
-  @Post('send_otp_signup_to_email')
-  async sendOtpSignupSignup(@Body() body: SendOtpToEmailDto) {
-    await this.userService.validateCreateUser({ email: body.email });
-
-    return this.otpService.sendOtpToEmail(body);
-  }
-
-  /**
-   * Verify Otp Phone
-   *
-   * @param body
-   * @returns: Boolean
-   */
-  @HttpCode(200)
-  @Put('verify_otp')
-  async verifyOtpPhone(@Body() body: VerifyOtpPhoneDto) {
-    return this.otpService.verifyOtpPhone(body);
-  }
-
-  /**
-   * veirfy otp email
+   * Verify Otp by phone/email
    *
    * @param body
    * @returns
    */
   @HttpCode(200)
-  @Put('verify_otp_email')
-  async verifyOtpEmail(@Body() body: VerifyOtpEmailDto) {
-    return this.otpService.verifyOtpEmail(body);
+  @Put('verify')
+  async verifyOtp(@Body() body: VerifyOtpDto) {
+    return this.otpService.verifyOtp(body);
   }
 
   /**

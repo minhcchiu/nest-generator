@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 import { StorageServiceEnum } from '../enum/storage-service.enum';
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: schemas.file.name,
+  collection: dbCollections.file.name,
 })
 export class File {
-  @Prop({ type: Types.ObjectId, ref: schemas.user.ref })
+  @Prop({ type: Types.ObjectId, ref: dbCollections.user.ref })
   readonly owner: string;
 
   @Prop({

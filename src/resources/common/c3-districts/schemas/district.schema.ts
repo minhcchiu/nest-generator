@@ -1,16 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { schemas } from '~config/collections/schemas.collection';
+import { dbCollections } from '~config/collections/schemas.collection';
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: schemas.district.name,
+  collection: dbCollections.district.name,
 })
 export class District {
   @Prop({
     type: Types.ObjectId,
-    ref: schemas.province.ref,
+    ref: dbCollections.province.ref,
     required: true,
   })
   readonly idProvince: string;
