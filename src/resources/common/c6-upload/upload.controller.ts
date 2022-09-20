@@ -10,15 +10,36 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { schemas } from '~config/collections/schemas.collection';
+import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
+import { StorageVideosInterceptor } from '~interceptors/storage-videos.interceptor';
 import { UploadService } from './upload.service';
 
 @ApiTags(schemas.upload.path)
 @Controller(schemas.upload.path)
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
+
+  /**
+   * Upload single file to tmp
+   *
+   * @param videos
+   * @returns
+   */
+  @UseInterceptors(StorageVideosInterceptor('videos'))
+  @HttpCode(201)
+  @Post('videos')
+  async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
+    // check file exist
+    if (!videos) throw new BadRequestException('Video is required!');
+
+    return {
+      files: videos.map((file: any) => file.path.replace('public/', '')),
+    };
+  }
 
   /**
    * Upload single file to tmp
@@ -59,7 +80,10 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_file_to_local')
-  async saveFileToLocal(@Body() body: { file: string }) {
+  async saveFileToLocal(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { file: string },
+  ) {
     return this.uploadService.saveFileToLocal(body.file);
   }
 
@@ -71,12 +95,30 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_files_to_local')
-  async saveFilesToLocal(@Body() body: { files: string[] }) {
+  async saveFilesToLocal(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { files: string[] },
+  ) {
     const filesUploadedPromise = body.files.map((file) =>
       this.uploadService.saveFileToLocal(file),
     );
 
     return Promise.all(filesUploadedPromise);
+  }
+
+  /**
+   * Save files to local
+   *
+   * @param body
+   * @returns
+   */
+  @HttpCode(200)
+  @Post('save_video_to_local')
+  async saveVideosToLocal(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { file: string },
+  ) {
+    return this.uploadService.saveVideoToLocal(body.file);
   }
 
   /**
@@ -87,8 +129,11 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_file_to_s3')
-  async saveFileToS3(@Body() body: { file: string }) {
-    return body;
+  async saveFileToS3(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { file: string },
+  ) {
+    return this.uploadService.saveFileToS3(body.file);
   }
 
   /**
@@ -99,8 +144,15 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_files_to_s3')
-  async saveFilesToS3(@Body() body: { files: string[] }) {
-    return body;
+  async saveFilesToS3(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { files: string[] },
+  ) {
+    const filesUploadedPromise = body.files.map((file) =>
+      this.uploadService.saveFileToS3(file),
+    );
+
+    return Promise.all(filesUploadedPromise);
   }
 
   /**
@@ -111,8 +163,11 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_file_to_cloudinary')
-  async saveFileToCloudinary(@Body() body: { file: string }) {
-    return this.uploadService.saveFileToCloudinary(body.file);
+  async saveFileToCloudinary(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { file: string },
+  ) {
+    return this.uploadService.saveFileToCloudinary(body.file, userId);
   }
 
   /**
@@ -123,9 +178,12 @@ export class UploadController {
    */
   @HttpCode(200)
   @Post('save_files_to_cloudinary')
-  async saveToCloudinary(@Body() body: { files: string[] }) {
+  async saveToCloudinary(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: { files: string[] },
+  ) {
     const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToLocal(file),
+      this.uploadService.saveFileToCloudinary(file, userId),
     );
 
     return Promise.all(filesUploadedPromise);

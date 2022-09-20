@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
@@ -18,7 +19,7 @@ export class UploadService {
    * @param filePath
    * @returns
    */
-  async saveFileToLocal(filePath: string) {
+  async saveFileToLocal(filePath: string, userId?: Types.ObjectId) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
 
@@ -39,20 +40,51 @@ export class UploadService {
       files,
       folder,
       storage: 'LOCAL_DISK',
+      owner: userId,
     };
 
     await this.fileService.create(item);
 
-    return result;
+    return item.files;
   }
 
+  /**
+   * Save video to local
+   *
+   * @param filePath
+   * @returns
+   */
+  async saveVideoToLocal(filePath: string, userId?: Types.ObjectId) {
+    // check file
+    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+
+    const result = await this.localStorageService.uploadVideo(realpathOfFile);
+
+    const { file, size, folder } = result;
+
+    // save file to database
+    const item = {
+      resourceID: file,
+      type: 'video',
+      ext: realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1),
+      size,
+      file,
+      folder,
+      storage: 'LOCAL_DISK',
+      owner: userId,
+    };
+
+    await this.fileService.create(item);
+
+    return file;
+  }
   /**
    * Save file to Cloudinary
    *
    * @param filePath
    * @returns
    */
-  async saveFileToCloudinary(filePath: string) {
+  async saveFileToCloudinary(filePath: string, userId?: Types.ObjectId) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
     console.log(process.env.UPLOAD_IMAGE_FILE);
     const imageExpression = `.(${process.env.UPLOAD_IMAGE_FILE})$`;
@@ -82,12 +114,13 @@ export class UploadService {
       secureUrl: result.secure_url,
       folder: result.folder,
       storage: 'S3',
+      owner: userId,
     };
 
-    const file = await this.fileService.create(item);
+    await this.fileService.create(item);
 
     // success
-    return file.files;
+    return files;
   }
 
   /**
@@ -96,7 +129,7 @@ export class UploadService {
    * @param filePath
    * @returns
    */
-  async saveFileToS3(filePath: string) {
-    return filePath;
+  async saveFileToS3(filePath: string, userId?: Types.ObjectId) {
+    return { filePath, userId };
   }
 }

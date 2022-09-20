@@ -66,3 +66,5 @@ export UPLOAD_EXT_IMAGE="jpg|jpeg|png|gif"
 export UPLOAD_EXT_RAW="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
 export UPLOAD_EXT_FILES='jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json'
 export UPLOAD_EXT_VIDEO='mp4|mkv'
+export UPLOAD_MAX_VIDEO_SIZE=40 #MB  
+export UPLOAD_MAX_VIDEO_FILE=4

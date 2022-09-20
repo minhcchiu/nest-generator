@@ -176,6 +176,21 @@ export class LocalStorageHelper {
   }
 
   /**
+   * Movie file from temp to uploadFiles
+   *
+   * @param filePath
+   * @returns
+   */
+  async moveVideoToDiskStorage(filePath: string) {
+    const newPath = filePath.replace('/uploads/tmp/', '/uploads/videos/');
+
+    // move file
+    renameSync(filePath, newPath);
+
+    return newPath;
+  }
+
+  /**
    * Get fileName from filePath
    *
    * @param filePath

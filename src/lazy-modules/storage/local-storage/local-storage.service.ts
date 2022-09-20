@@ -6,7 +6,10 @@ import { LocalStorageHelper } from './local-storage.helper';
 
 @Injectable()
 export class LocalStorageService {
-  private folderStoreFile: 'uploads/images' | 'uploads/files';
+  private folderStoreFile:
+    | 'uploads/images'
+    | 'uploads/files'
+    | 'uploads/videos';
 
   constructor(
     private readonly localDiskHelper: LocalStorageHelper,
@@ -14,7 +17,7 @@ export class LocalStorageService {
   ) {}
 
   /**
-   * Upload
+   * Upload file/images
    *
    * @param filePath
    * @returns
@@ -52,6 +55,28 @@ export class LocalStorageService {
     return {
       type: fileMime,
       files,
+      size: fileSize,
+      folder: this.folderStoreFile,
+    };
+  }
+
+  /**
+   * Upload video
+   *
+   * @param filePath
+   * @returns
+   */
+  async uploadVideo(filePath: string) {
+    // get fileSize and fileMine
+    const fileSize = statSync(filePath).size || 0;
+    this.folderStoreFile = 'uploads/videos';
+
+    const file = await this.localDiskHelper.moveVideoToDiskStorage(filePath);
+
+    const appURL = this.configService.get<string>('clientURL');
+    console.log({ appURL });
+    return {
+      file: appURL + file.slice(file.indexOf('/uploads')),
       size: fileSize,
       folder: this.folderStoreFile,
     };
