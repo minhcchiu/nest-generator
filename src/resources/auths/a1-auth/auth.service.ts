@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { JWTConfig } from '~config/enviroment';
 import { MailService } from '~lazy-modules/mail/mail.service';
-import { OtpService } from '~authentications/a2-otp/otp.service';
+import { OtpService } from '~auths/a2-otp/otp.service';
 import { UserService } from '~common/c1-users/user.service';
 import {
   ResetPasswordDto,
@@ -18,6 +18,7 @@ import {
 } from './dto';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
+import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -252,6 +253,7 @@ export class AuthService {
         throw new BadRequestException(`Account deleted on ${deletedAt}`);
       }
 
+      // create expireTime
       const expireTime =
         this.configService.get<JWTConfig>('jwt').expirationTime
           .resetPasswordToken;
@@ -262,8 +264,8 @@ export class AuthService {
         expireTime,
       );
 
-      const appUrl = this.configService.get('app.appUrl');
-      const resetPasswordLink = `${appUrl}/auth/reset-password/${token}`;
+      const appUrl = this.configService.get<string>('app.appUrl');
+      const resetPasswordLink = `${appUrl}/auth/reset-password?token=${token}`;
 
       // send mail
       await this.mailService.sendResetPasswordToken(
@@ -310,7 +312,7 @@ export class AuthService {
       // verify otpCode
       await this.otpService.verifyOtp({
         [filterKey]: filter[filterKey],
-        otpType: data.otpType,
+        otpType: OtpType.RESET_PASSWORD,
         otpCode: data.otpCode,
       });
 
@@ -378,12 +380,14 @@ export class AuthService {
       _id: user._id,
       role: user.role,
     };
+
     // Generate ac_token and rf_token
     const [ac_token, rf_token] = await Promise.all([
       this.tokenService.generateAccessToken(payload),
       this.tokenService.generateRefreshToken(payload),
     ]);
 
+    // Success
     return { ac_token, rf_token };
   }
 }

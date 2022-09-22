@@ -3,12 +3,12 @@ import { PaginateModel } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { BaseService } from '~base-inherit/base.service';
-import { Province, ProvinceDocument } from './schemas/province.schema';
+import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 
 @Injectable()
-export class ProvinceService extends BaseService<ProvinceDocument> {
+export class TransactionService extends BaseService<TransactionDocument> {
   constructor(
-    @InjectModel(Province.name) model: PaginateModel<ProvinceDocument>,
+    @InjectModel(Transaction.name) model: PaginateModel<TransactionDocument>,
   ) {
     super(model);
   }

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-import { ParseObjectIdPipe } from 'src/utils/pipe/parse-object-id.pipe';
+import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 import { ApiQueryParams } from '~decorators/api-query-params.decorator';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { DistrictService } from './district.service';

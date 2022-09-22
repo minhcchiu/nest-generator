@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
@@ -9,7 +8,6 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { OtpType } from '~authentications/a2-otp/enum/otp-type.enum';
 
 export class ResetPasswordDto {
   @ValidateIf((object) => !object.phone)
@@ -26,10 +24,6 @@ export class ResetPasswordDto {
   @IsString()
   @Length(6, 50)
   readonly password: string;
-
-  @IsNotEmpty()
-  @IsEnum(OtpType)
-  readonly otpType: OtpType;
 
   @IsNotEmpty()
   @IsString()

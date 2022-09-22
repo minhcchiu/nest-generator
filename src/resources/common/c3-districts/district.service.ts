@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PaginateModel } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { BaseService } from 'src/base-inherit/base.service';
+import { BaseService } from '~base-inherit/base.service';
 import { District, DistrictDocument } from './schemas/district.schema';
 
 @Injectable()

@@ -13,23 +13,32 @@ export class Notification {
     ref: dbCollections.user.ref,
     required: true,
   })
-  readonly userTo: string;
+  readonly userFrom: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: dbCollections.user.ref,
     required: true,
   })
-  readonly userFrom: string;
+  readonly userTo: string;
 
   @Prop({ type: String, required: true })
   readonly type: string;
 
-  @Prop({ type: Boolean, default: false })
-  opened: boolean;
-
   @Prop({ type: Types.ObjectId, required: true })
-  entityId: string;
+  readonly entityId: string;
+
+  @Prop({ type: String, required: true })
+  readonly title: string;
+
+  @Prop({ type: String, default: '' })
+  readonly description?: string;
+
+  @Prop({ type: String, default: '' })
+  readonly thumbnail?: string;
+
+  @Prop({ type: Boolean, default: false })
+  readonly opened?: boolean;
 }
 
 export type NotificationDocument = Notification & Document;

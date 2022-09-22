@@ -5,9 +5,9 @@ import { dbCollections } from '~config/collections/schemas.collection';
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: dbCollections.notification.name,
+  collection: dbCollections.transaction.name,
 })
-export class Notification {
+export class Transaction {
   @Prop({
     type: Types.ObjectId,
     ref: dbCollections.user.ref,
@@ -26,11 +26,11 @@ export class Notification {
   readonly type: string;
 
   @Prop({ type: Boolean, default: false })
-  opened: boolean;
+  readonly opened: boolean;
 
   @Prop({ type: Types.ObjectId, required: true })
-  entityId: string;
+  readonly entityId: string;
 }
 
-export type NotificationDocument = Notification & Document;
-export const NotificationSchema = SchemaFactory.createForClass(Notification);
+export type TransactionDocument = Transaction & Document;
+export const TransactionSchema = SchemaFactory.createForClass(Transaction);

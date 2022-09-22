@@ -27,11 +27,8 @@
       "~lazy-modules/*": [
         "./src/lazy-modules/*"
       ],
-      "~authentications/*": [
-        "src/resources/authentications/*"
-      ],
-      "~authorizations/*": [
-        "./src/resources/authorizations/*"
+      "~auths/*": [
+        "./src/resources/auths/*"
       ],
       "~common/*": [
         "./src/resources/common/*"
@@ -43,13 +40,13 @@
         "./src/utils/decorators/*"
       ],
       "~exception/*": [
-        "src/utils/exceptions/*"
+        "./src/utils/exceptions/*"
       ],
       "~helper/*": [
         "./src/utils/helper/*"
       ],
       "~interceptors/*": [
-        "src/utils/interceptors/*"
+        "./src/utils/interceptors/*"
       ],
       "~pipe/*": [
         "./src/utils/pipe/*"

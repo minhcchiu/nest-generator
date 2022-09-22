@@ -10,7 +10,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { OtpType } from '~authentications/a2-otp/enum/otp-type.enum';
+import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 export class SignupDto extends PartialType(

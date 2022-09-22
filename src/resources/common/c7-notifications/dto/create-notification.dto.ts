@@ -1,13 +1,31 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateNotificationDto {
   @IsNotEmpty()
   @IsMongoId()
-  readonly idProvince: string;
+  readonly userFrom: string;
 
-  @IsString()
-  readonly name: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly userTo: string;
 
+  @IsNotEmpty()
   @IsString()
   readonly type: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly entityId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly title: string;
+
+  @IsOptional()
+  @IsString()
+  readonly description?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly thumbnail?: string;
 }

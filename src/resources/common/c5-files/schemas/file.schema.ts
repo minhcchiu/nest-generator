@@ -25,7 +25,7 @@ export class File {
   @Prop({ type: String, required: true })
   readonly ext: string;
 
-  @Prop({ type: [String], required: true })
+  @Prop({ type: [{ type: String }], required: true })
   readonly files: string[];
 
   @Prop({ type: String, default: 'Awesome-NestJS-generator-2023' })

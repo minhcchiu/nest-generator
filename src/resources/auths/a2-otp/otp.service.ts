@@ -102,12 +102,13 @@ export class OtpService extends BaseService<OtpDocument> {
     const otpCode = this._generateOTPCode();
     await this._sendEmailVerify(email, otpCode);
 
-    // create new otp doc
-    if (this.appConfig.env === appEnvEnum.PRODUCTION)
-      return this.create({ email, otpCode, otpType });
+    // Reponse otp
+    if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+      await this.create({ email, otpCode, otpType });
+      return { otpCode };
+    }
 
-    await this.create({ email, otpCode, otpType });
-    return { otpCode };
+    return this.create({ email, otpCode, otpType });
   }
 
   /**
@@ -126,12 +127,13 @@ export class OtpService extends BaseService<OtpDocument> {
     const otpCode = this._generateOTPCode();
     // await this.sendPhoneVerify(phone, otpCode);
 
-    // create new otp doc
-    if (this.appConfig.env === appEnvEnum.PRODUCTION)
-      return this.create({ phone, otpCode, otpType });
+    // Reponse otp
+    if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+      await this.create({ phone, otpCode, otpType });
+      return { otpCode };
+    }
 
-    await this.create({ phone, otpCode, otpType });
-    return { otpCode };
+    return this.create({ phone, otpCode, otpType });
   }
 
   /**
