@@ -13,15 +13,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
-import { StorageAudioInterceptor } from '~interceptors/storage-audio.interceptor';
-import { StorageAudiosInterceptor } from '~interceptors/storage-audios.interceptor';
-import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
-import { StorageVideoInterceptor } from '~interceptors/storage-video.interceptor';
-import { StorageVideosInterceptor } from '~interceptors/storage-videos.interceptor';
 import { SaveFileDto } from './dto/save-file.dto';
 import { SaveFilesDto } from './dto/save-files.dto';
+import { UploadTypeEnum } from './enum/upload-type.enum';
 import { UploadService } from './upload.service';
+import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
+import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)
@@ -34,14 +32,17 @@ export class UploadController {
    * @param file
    * @returns
    */
-  @UseInterceptors(StorageFileInterceptor('file'))
+  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
   @HttpCode(201)
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
     // check file exist
     if (!file) throw new BadRequestException('File is required!');
 
-    return { file: file.path.replace('public/', '') };
+    return {
+      file: file.path.replace('public/', ''),
+      uploadType: UploadTypeEnum.FILE,
+    };
   }
 
   /**
@@ -50,7 +51,7 @@ export class UploadController {
    * @param files
    * @returns
    */
-  @UseInterceptors(StorageFilesInterceptor('files'))
+  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
   @HttpCode(201)
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
@@ -58,6 +59,7 @@ export class UploadController {
 
     return {
       files: files.map((file: any) => file.path.replace('public/', '')),
+      uploadType: UploadTypeEnum.FILE,
     };
   }
 
@@ -67,14 +69,17 @@ export class UploadController {
    * @param video
    * @returns
    */
-  @UseInterceptors(StorageVideoInterceptor('video'))
+  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
   @HttpCode(201)
   @Post('video')
   async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
     // check file exist
     if (!video) throw new BadRequestException('Video is required!');
 
-    return { file: video.path.replace('public/', '') };
+    return {
+      file: video.path.replace('public/', ''),
+      uploadType: UploadTypeEnum.VIDEO,
+    };
   }
 
   /**
@@ -83,7 +88,7 @@ export class UploadController {
    * @param videos
    * @returns
    */
-  @UseInterceptors(StorageVideosInterceptor('videos'))
+  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
   @HttpCode(201)
   @Post('videos')
   async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
@@ -92,6 +97,7 @@ export class UploadController {
 
     return {
       files: videos.map((file: any) => file.path.replace('public/', '')),
+      uploadType: UploadTypeEnum.VIDEO,
     };
   }
 
@@ -101,14 +107,17 @@ export class UploadController {
    * @param audio
    * @returns
    */
-  @UseInterceptors(StorageAudioInterceptor('audio'))
+  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
   @HttpCode(201)
   @Post('audio')
   async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
     // check file exist
     if (!audio) throw new BadRequestException('Audio is required!');
 
-    return { file: audio.path.replace('public/', '') };
+    return {
+      file: audio.path.replace('public/', ''),
+      uploadType: UploadTypeEnum.AUDIO,
+    };
   }
 
   /**
@@ -117,7 +126,7 @@ export class UploadController {
    * @param audios
    * @returns
    */
-  @UseInterceptors(StorageAudiosInterceptor('audios'))
+  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
   @HttpCode(201)
   @Post('audios')
   async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
@@ -126,6 +135,7 @@ export class UploadController {
 
     return {
       files: audios.map((file: any) => file.path.replace('public/', '')),
+      uploadType: UploadTypeEnum.AUDIO,
     };
   }
 
@@ -141,7 +151,10 @@ export class UploadController {
     // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
-    const files = await this.uploadService.saveFileToLocal(body.file);
+    const files = await this.uploadService.saveFileToLocal(
+      body.file,
+      body.uploadType,
+    );
 
     return { files };
   }
@@ -159,65 +172,10 @@ export class UploadController {
     @Body() body: SaveFilesDto,
   ) {
     const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToLocal(file),
+      this.uploadService.saveFileToLocal(file, body.uploadType),
     );
 
     const files = await Promise.all(filesUploadedPromise);
-
-    return { files };
-  }
-
-  /**
-   * Save files to local
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_video_to_local')
-  async saveVideoToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
-  ) {
-    const files = await this.uploadService.saveVideoToLocal(body.file);
-
-    return { files };
-  }
-
-  /**
-   * Save files to local
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_videos_to_local')
-  async saveVideosToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
-  ) {
-    const videosUploadedPromise = body.files.map((file: string) =>
-      this.uploadService.saveVideoToLocal(file),
-    );
-
-    const files = await Promise.all(videosUploadedPromise);
-
-    return { files };
-  }
-
-  /**
-   * Save files to local
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_audio_to_local')
-  async saveAudioToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
-  ) {
-    const files = await this.uploadService.saveAudioToLocal(body.file);
 
     return { files };
   }
@@ -235,7 +193,7 @@ export class UploadController {
     @Body() body: SaveFilesDto,
   ) {
     const videosUploadedPromise = body.files.map((file: string) =>
-      this.uploadService.saveAudioToLocal(file),
+      this.uploadService.saveFileToLocal(file, UploadTypeEnum.AUDIO),
     );
 
     const files = await Promise.all(videosUploadedPromise);

@@ -4,13 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from '~helper/storage.helper';
 import { UploadConfig } from '~config/enviroment';
+import { FieldsNameEnum } from '~common/c6-upload/enum/field-name.enum';
 
 export const StorageFilesInterceptor = (
-  fieldName: string,
+  fieldName: FieldsNameEnum,
 ): Type<NestInterceptor> => {
   @Injectable()
   class Interceptor implements NestInterceptor {
-    fileInterceptor: NestInterceptor;
+    filesInterceptor: NestInterceptor;
     destination = 'public/uploads/tmp';
 
     /**
@@ -22,9 +23,21 @@ export const StorageFilesInterceptor = (
       const multerOption = this.getMulterOptions();
       const uploadConfig = this.configService.get<UploadConfig>('upload');
 
-      this.fileInterceptor = new (FilesInterceptor(
+      // init max files
+      let maxFiles = uploadConfig.maxFiles;
+
+      // set maxFile if fieldName is video
+      if (fieldName === FieldsNameEnum.VIDEOS)
+        maxFiles = uploadConfig.maxVideos;
+
+      // set maxFile if fieldName is audio
+      if (fieldName === FieldsNameEnum.AUDIOS)
+        maxFiles = uploadConfig.maxAudios;
+
+      //  init file interceptor
+      this.filesInterceptor = new (FilesInterceptor(
         fieldName,
-        uploadConfig.maxFiles,
+        maxFiles,
         multerOption,
       ))();
     }
@@ -36,7 +49,7 @@ export const StorageFilesInterceptor = (
      * @returns
      */
     intercept(...args: Parameters<NestInterceptor['intercept']>) {
-      return this.fileInterceptor.intercept(...args);
+      return this.filesInterceptor.intercept(...args);
     }
 
     /**
@@ -47,8 +60,25 @@ export const StorageFilesInterceptor = (
     private getMulterOptions() {
       const uploadConfig = this.configService.get<UploadConfig>('upload');
 
-      const fileSize = Math.pow(1024, uploadConfig.maxSize);
-      const extAllowed = uploadConfig.extFiles;
+      // options files
+      let options = {
+        fileSize: uploadConfig.maxSize,
+        extAllowed: uploadConfig.extFiles,
+      };
+
+      // Check upload video -> options upload video
+      if (fieldName === FieldsNameEnum.VIDEOS)
+        options = {
+          fileSize: uploadConfig.maxVideoSize,
+          extAllowed: uploadConfig.extVideo,
+        };
+
+      // Check upload audio -> options upload audio
+      if (fieldName === FieldsNameEnum.AUDIOS)
+        options = {
+          fileSize: uploadConfig.maxAudios,
+          extAllowed: uploadConfig.extAudio,
+        };
 
       return {
         storage: diskStorage({
@@ -56,10 +86,10 @@ export const StorageFilesInterceptor = (
           filename: editFileName,
         }),
 
-        limits: { fileSize },
+        limits: { fileSize: Math.pow(1024, options.fileSize) },
 
         fileFilter: (req: any, file: any, callback: any) => {
-          imageFileFilter(extAllowed, req, file, callback);
+          imageFileFilter(options.extAllowed, req, file, callback);
         },
       };
     }

@@ -6,12 +6,11 @@ export const uploadEnv = {
   maxFiles: +process.env.UPLOAD_MAX_FILE || defaultEnv.upload.maxFile,
   maxVideoSize:
     +process.env.UPLOAD_MAX_VIDEO_SIZE || defaultEnv.upload.maxVideoSize,
-  maxVideosFile:
+  maxVideos:
     +process.env.UPLOAD_MAX_VIDEO_FILE || defaultEnv.upload.maxVideoFile,
   maxAudioSize:
     +process.env.UPLOAD_MAX_AUDIO_SIZE || defaultEnv.upload.maxAudioSize,
-  maxAudioFile:
-    +process.env.UPLOAD_MAX_AUDIO_FILE || defaultEnv.upload.maxAudioFile,
+  maxAudios: +process.env.UPLOAD_MAX_AUDIO_FILE || defaultEnv.upload.maxAudios,
 
   extImages: process.env.UPLOAD_EXT_IMAGE || defaultEnv.upload.extImages,
   extRaw: process.env.UPLOAD_EXT_RAW || defaultEnv.upload.extRawFile,

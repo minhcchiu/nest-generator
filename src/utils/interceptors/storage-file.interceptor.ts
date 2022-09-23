@@ -4,9 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from '~helper/storage.helper';
 import { UploadConfig } from '~config/enviroment';
+import { FieldNameEnum } from '~common/c6-upload/enum/field-name.enum';
 
 export const StorageFileInterceptor = (
-  fieldName: string,
+  fieldName: FieldNameEnum,
 ): Type<NestInterceptor> => {
   @Injectable()
   class Interceptor implements NestInterceptor {
@@ -21,6 +22,7 @@ export const StorageFileInterceptor = (
     constructor(private configService: ConfigService) {
       const multerOption = this.getMulterOptions();
 
+      //  init file interceptor
       this.fileInterceptor = new (FileInterceptor(fieldName, multerOption))();
     }
 
@@ -42,8 +44,25 @@ export const StorageFileInterceptor = (
     private getMulterOptions() {
       const uploadConfig = this.configService.get<UploadConfig>('upload');
 
-      const fileSize = Math.pow(1024, uploadConfig.maxSize);
-      const extAllowed = uploadConfig.extFiles;
+      // options files
+      let options = {
+        fileSize: uploadConfig.maxSize,
+        extAllowed: uploadConfig.extFiles,
+      };
+
+      // Check upload video -> options upload video
+      if (fieldName === FieldNameEnum.VIDEO)
+        options = {
+          fileSize: uploadConfig.maxVideoSize,
+          extAllowed: uploadConfig.extVideo,
+        };
+
+      // Check upload audio -> options upload audio
+      if (fieldName === FieldNameEnum.AUDIO)
+        options = {
+          fileSize: uploadConfig.maxAudios,
+          extAllowed: uploadConfig.extAudio,
+        };
 
       return {
         storage: diskStorage({
@@ -51,10 +70,10 @@ export const StorageFileInterceptor = (
           filename: editFileName,
         }),
 
-        limits: { fileSize },
+        limits: { fileSize: Math.pow(1024, options.fileSize) },
 
         fileFilter: (req: any, file: any, callback: any) => {
-          imageFileFilter(extAllowed, req, file, callback);
+          imageFileFilter(options.extAllowed, req, file, callback);
         },
       };
     }
