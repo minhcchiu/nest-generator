@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { LocalStorageHelper } from './local-storage.helper';
 import { AppConfig } from '~config/enviroment';
+import { UploadTypeEnum } from '~common/c6-upload/enum/upload-type.enum';
 
 @Injectable()
 export class LocalStorageService {
@@ -23,12 +24,26 @@ export class LocalStorageService {
   }
 
   /**
+   * Upload
+   *
+   * @param filePath
+   * @returns
+   */
+  async upload(filePath: string, type: UploadTypeEnum) {
+    if (type === UploadTypeEnum.FILE) return this._uploadFile(filePath);
+
+    if (type === UploadTypeEnum.VIDEO) return this._uploadVideo(filePath);
+
+    return this._uploadFile(filePath);
+  }
+
+  /**
    * Upload file/images
    *
    * @param filePath
    * @returns
    */
-  async upload(filePath: string) {
+  private async _uploadFile(filePath: string) {
     // get fileSize and fileMine
     const fileSize = statSync(filePath).size || 0;
     const fileMime = await this.localDiskHelper.getTypeFileNeedResize(filePath);
@@ -75,7 +90,7 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  async uploadVideo(filePath: string) {
+  private async _uploadVideo(filePath: string) {
     // get fileSize and fileMine
     const fileSize = statSync(filePath).size || 0;
 
@@ -102,7 +117,7 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  async uploadAudio(filePath: string) {
+  private async _uploadAudio(filePath: string) {
     // get fileSize and fileMine
     const fileSize = statSync(filePath).size || 0;
 

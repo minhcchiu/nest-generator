@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { FileTypeEnum } from '~common/c5-files/enum/file-type';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
+import { UploadTypeEnum } from './enum/upload-type.enum';
 import { UploadHelper } from './upload.helper';
 @Injectable()
 export class UploadService {
@@ -21,11 +21,18 @@ export class UploadService {
    * @param filePath
    * @returns
    */
-  async saveFileToLocal(filePath: string, userId?: Types.ObjectId) {
+  async saveFileToLocal(
+    filePath: string,
+    uploadType: UploadTypeEnum,
+    userId?: Types.ObjectId,
+  ) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
 
-    const result = await this.localStorageService.upload(realpathOfFile);
+    const result = await this.localStorageService.upload(
+      realpathOfFile,
+      uploadType,
+    );
 
     const { files, size, folder, type } = result;
 
@@ -40,66 +47,6 @@ export class UploadService {
       // owner: userId,
     };
 
-    await this.fileService.create(item);
-
-    return files;
-  }
-
-  /**
-   * Save video to local
-   *
-   * @param filePath
-   * @returns
-   */
-  async saveVideoToLocal(filePath: string, userId?: Types.ObjectId) {
-    // check file
-    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
-
-    const result = await this.localStorageService.uploadVideo(realpathOfFile);
-
-    const { files, size, folder, type } = result;
-
-    // save file to database
-    const item = {
-      resourceID: files[0],
-      type,
-      size,
-      files,
-      folder,
-      storage: 'LOCAL_DISK',
-      // owner: userId,
-    };
-
-    await this.fileService.create(item);
-
-    return files;
-  }
-
-  /**
-   * Save video to local
-   *
-   * @param filePath
-   * @returns
-   */
-  async saveAudioToLocal(filePath: string, userId?: Types.ObjectId) {
-    // check file
-    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
-
-    const result = await this.localStorageService.uploadAudio(realpathOfFile);
-
-    const { files, size, folder, type } = result;
-
-    // save file to database
-    const item = {
-      resourceID: files[0],
-      type,
-      size,
-      files,
-      folder,
-      storage: 'LOCAL_DISK',
-      // owner: userId,
-    };
-    console.log({ item });
     await this.fileService.create(item);
 
     return files;

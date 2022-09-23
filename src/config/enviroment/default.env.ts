@@ -26,7 +26,7 @@ export const defaultEnv = {
     maxVideoSize: 40,
     maxVideoFile: 10,
     maxAudioSize: 10,
-    maxAudioFile: 10,
+    maxAudios: 10,
 
     extImages: 'jpg|jpeg|png|gif',
     extRawFile: 'txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
