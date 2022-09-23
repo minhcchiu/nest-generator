@@ -15,12 +15,14 @@ import {
 } from './dto';
 import { AuthService } from './auth.service';
 import { EmailDto } from '~common/c1-users/dto';
+import { Logger } from '~lazy-modules/logger/logger.service';
 @ApiTags('auth')
 @Controller(dbCollections.auth.path)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly logger: Logger,
   ) {}
 
   /**
@@ -92,7 +94,7 @@ export class AuthController {
   ) {
     // Remove deviceID and pop fcm token
     await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
-      console.log({ error });
+      this.logger.warn(error);
     });
 
     return { success: true };
@@ -112,7 +114,7 @@ export class AuthController {
   /**
    * Forgot password
    *
-   * @param email
+   * @param body
    * @returns
    */
   @Put('forgot_password_send_token_link')

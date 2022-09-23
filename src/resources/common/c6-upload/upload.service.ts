@@ -42,7 +42,7 @@ export class UploadService {
 
     await this.fileService.create(item);
 
-    return item.files;
+    return files;
   }
 
   /**
@@ -99,7 +99,7 @@ export class UploadService {
       storage: 'LOCAL_DISK',
       // owner: userId,
     };
-
+    console.log({ item });
     await this.fileService.create(item);
 
     return files;

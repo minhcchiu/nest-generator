@@ -141,7 +141,9 @@ export class UploadController {
     // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
-    return this.uploadService.saveFileToLocal(body.file);
+    const files = await this.uploadService.saveFileToLocal(body.file);
+
+    return { files };
   }
 
   /**
@@ -160,7 +162,9 @@ export class UploadController {
       this.uploadService.saveFileToLocal(file),
     );
 
-    return Promise.all(filesUploadedPromise);
+    const files = await Promise.all(filesUploadedPromise);
+
+    return { files };
   }
 
   /**
@@ -175,7 +179,9 @@ export class UploadController {
     // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
-    return this.uploadService.saveVideoToLocal(body.file);
+    const files = await this.uploadService.saveVideoToLocal(body.file);
+
+    return { files };
   }
 
   /**
@@ -194,7 +200,9 @@ export class UploadController {
       this.uploadService.saveVideoToLocal(file),
     );
 
-    return Promise.all(videosUploadedPromise);
+    const files = await Promise.all(videosUploadedPromise);
+
+    return { files };
   }
 
   /**
@@ -209,7 +217,9 @@ export class UploadController {
     // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
-    return this.uploadService.saveAudioToLocal(body.file);
+    const files = await this.uploadService.saveAudioToLocal(body.file);
+
+    return { files };
   }
 
   /**
@@ -228,41 +238,9 @@ export class UploadController {
       this.uploadService.saveAudioToLocal(file),
     );
 
-    return Promise.all(videosUploadedPromise);
-  }
+    const files = await Promise.all(videosUploadedPromise);
 
-  /**
-   * Save file to S3
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_file_to_s3')
-  async saveFileToS3(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
-  ) {
-    return this.uploadService.saveFileToS3(body.file);
-  }
-
-  /**
-   * Save files to S3
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_files_to_s3')
-  async saveFilesToS3(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
-  ) {
-    const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToS3(file),
-    );
-
-    return Promise.all(filesUploadedPromise);
+    return { files };
   }
 
   /**
@@ -277,7 +255,12 @@ export class UploadController {
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
-    return this.uploadService.saveFileToCloudinary(body.file, userId);
+    const files = await this.uploadService.saveFileToCloudinary(
+      body.file,
+      userId,
+    );
+
+    return { files };
   }
 
   /**
@@ -296,6 +279,46 @@ export class UploadController {
       this.uploadService.saveFileToCloudinary(file, userId),
     );
 
-    return Promise.all(filesUploadedPromise);
+    const files = await Promise.all(filesUploadedPromise);
+
+    return { files };
+  }
+
+  /**
+   * Save file to S3
+   *
+   * @param body
+   * @returns
+   */
+  @HttpCode(200)
+  @Post('save_file_to_s3')
+  async saveFileToS3(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: SaveFileDto,
+  ) {
+    const files = await this.uploadService.saveFileToS3(body.file);
+
+    return { files };
+  }
+
+  /**
+   * Save files to S3
+   *
+   * @param body
+   * @returns
+   */
+  @HttpCode(200)
+  @Post('save_files_to_s3')
+  async saveFilesToS3(
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: SaveFilesDto,
+  ) {
+    const filesUploadedPromise = body.files.map((file) =>
+      this.uploadService.saveFileToS3(file),
+    );
+
+    const files = await Promise.all(filesUploadedPromise);
+
+    return { files };
   }
 }

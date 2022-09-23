@@ -9,12 +9,16 @@ import {
 } from 'cloudinary';
 
 import { CloudinaryConfig } from '~config/enviroment';
+import { Logger } from '~lazy-modules/logger/logger.service';
 
 @Injectable()
 export class CloudinaryService {
   private readonly cloudinaryConfig: CloudinaryConfig;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: Logger,
+  ) {
     this.cloudinaryConfig = configService.get<CloudinaryConfig>('cloudinary');
   }
 
@@ -101,7 +105,7 @@ export class CloudinaryService {
     try {
       return await v2.uploader.destroy(resourceId);
     } catch (error) {
-      console.log({ error });
+      this.logger.warn(error);
     }
   }
 }

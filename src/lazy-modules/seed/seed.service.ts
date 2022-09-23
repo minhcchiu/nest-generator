@@ -48,7 +48,7 @@ export class SeedService {
     const isFileExist = FileHelper.isFileExist(jsonPath);
 
     if (!isFileExist)
-      console.error(`${jsonPath} was not found, cannot seed province`);
+      this.logger.error(`${jsonPath} was not found, cannot seed province`);
 
     const dataString = FileHelper.readFileSync(jsonPath).toString();
 

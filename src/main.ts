@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
+import { Logger } from '~lazy-modules/logger/logger.service';
 import { AppModule } from './app/app.module';
 import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
 
@@ -38,7 +39,7 @@ async function bootstrap() {
   const port = configService.get('app.port');
 
   await app.listen(port, () => {
-    console.log(`The server is running on: http://localhost:${port}/api`);
+    new Logger().log(`The server is running on: http://localhost:${port}/api`);
   });
 }
 
