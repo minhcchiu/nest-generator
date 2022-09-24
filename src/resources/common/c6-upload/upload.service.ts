@@ -34,22 +34,17 @@ export class UploadService {
       uploadType,
     );
 
-    const { files, size, folder, type } = result;
-
     // save file to database
     const item = {
-      resourceID: files[0],
-      type,
-      size,
-      files,
-      folder,
+      resourceID: result.files[0],
       storage: 'LOCAL_DISK',
+      ...result,
       // owner: userId,
     };
 
     await this.fileService.create(item);
 
-    return files;
+    return result.files;
   }
 
   /**

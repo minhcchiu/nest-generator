@@ -2,21 +2,27 @@ import { registerAs } from '@nestjs/config';
 import { defaultEnv } from './default.env';
 
 export const uploadEnv = {
-  maxSize: +process.env.UPLOAD_MAX_SIZE || defaultEnv.upload.maxSize,
-  maxFiles: +process.env.UPLOAD_MAX_FILE || defaultEnv.upload.maxFile,
-  maxVideoSize:
-    +process.env.UPLOAD_MAX_VIDEO_SIZE || defaultEnv.upload.maxVideoSize,
-  maxVideos:
-    +process.env.UPLOAD_MAX_VIDEO_FILE || defaultEnv.upload.maxVideoFile,
-  maxAudioSize:
-    +process.env.UPLOAD_MAX_AUDIO_SIZE || defaultEnv.upload.maxAudioSize,
-  maxAudios: +process.env.UPLOAD_MAX_AUDIO_FILE || defaultEnv.upload.maxAudios,
+  imageMaxSize:
+    +process.env.UPLOAD_IMAGE_MAX_SIZE || defaultEnv.upload.imageMaxSize,
+  rawMaxSize: +process.env.UPLOAD_RAW_MAX_SIZE || defaultEnv.upload.rawMaxSize,
+  videoMaxSize:
+    +process.env.UPLOAD_VIDEO_MAX_SIZE || defaultEnv.upload.videoMaxSize,
+  audioMaxSize:
+    +process.env.UPLOAD_AUDIO_MAX_SIZE || defaultEnv.upload.audioMaxSize,
 
-  extImages: process.env.UPLOAD_EXT_IMAGE || defaultEnv.upload.extImages,
-  extRaw: process.env.UPLOAD_EXT_RAW || defaultEnv.upload.extRawFile,
-  extFiles: process.env.UPLOAD_EXT_FILES || defaultEnv.upload.extFiles,
-  extVideo: process.env.UPLOAD_EXT_VIDEO || defaultEnv.upload.extVideo,
-  extAudio: process.env.UPLOAD_EXT_AUDIO || defaultEnv.upload.extAudio,
+  imageMaxFiles:
+    +process.env.UPLOAD_IMAGE_MAX_FILE || defaultEnv.upload.imageMaxFiles,
+  rawMaxFiles:
+    +process.env.UPLOAD_RAW_MAX_FILE || defaultEnv.upload.rawMaxFiles,
+  videoMaxFiles:
+    +process.env.UPLOAD_VIDEO_MAX_FILE || defaultEnv.upload.videoMaxFiles,
+  audioMaxFiles:
+    +process.env.UPLOAD_AUDIO_MAX_FILE || defaultEnv.upload.audioMaxFiles,
+
+  imagesExt: process.env.UPLOAD_IMAGE_EXT || defaultEnv.upload.imagesExt,
+  rawExt: process.env.UPLOAD_RAW_EXT || defaultEnv.upload.rawExt,
+  videoExt: process.env.UPLOAD_VIDEO_EXT || defaultEnv.upload.videoExt,
+  audioExt: process.env.UPLOAD_AUDIO_EXT || defaultEnv.upload.audioExt,
 };
 
 export type UploadConfig = typeof uploadEnv;

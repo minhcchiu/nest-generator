@@ -24,15 +24,19 @@ export const StorageFilesInterceptor = (
       const uploadConfig = this.configService.get<UploadConfig>('upload');
 
       // init max files
-      let maxFiles = uploadConfig.maxFiles;
+      let maxFiles = uploadConfig.imageMaxFiles;
+
+      // set maxFile if fieldName is file
+      if (fieldName === FieldsNameEnum.FILES)
+        maxFiles = uploadConfig.rawMaxFiles;
 
       // set maxFile if fieldName is video
       if (fieldName === FieldsNameEnum.VIDEOS)
-        maxFiles = uploadConfig.maxVideos;
+        maxFiles = uploadConfig.videoMaxFiles;
 
       // set maxFile if fieldName is audio
       if (fieldName === FieldsNameEnum.AUDIOS)
-        maxFiles = uploadConfig.maxAudios;
+        maxFiles = uploadConfig.audioMaxFiles;
 
       //  init file interceptor
       this.filesInterceptor = new (FilesInterceptor(
@@ -59,25 +63,31 @@ export const StorageFilesInterceptor = (
      */
     private getMulterOptions() {
       const uploadConfig = this.configService.get<UploadConfig>('upload');
-
       // options files
       let options = {
-        fileSize: uploadConfig.maxSize,
-        extAllowed: uploadConfig.extFiles,
+        fileSize: uploadConfig.imageMaxSize,
+        extAllowed: uploadConfig.imagesExt,
       };
+
+      // Check upload video -> options upload video
+      if (fieldName === FieldsNameEnum.FILES)
+        options = {
+          fileSize: uploadConfig.rawMaxSize,
+          extAllowed: uploadConfig.rawExt,
+        };
 
       // Check upload video -> options upload video
       if (fieldName === FieldsNameEnum.VIDEOS)
         options = {
-          fileSize: uploadConfig.maxVideoSize,
-          extAllowed: uploadConfig.extVideo,
+          fileSize: uploadConfig.videoMaxSize,
+          extAllowed: uploadConfig.videoExt,
         };
 
       // Check upload audio -> options upload audio
       if (fieldName === FieldsNameEnum.AUDIOS)
         options = {
-          fileSize: uploadConfig.maxAudios,
-          extAllowed: uploadConfig.extAudio,
+          fileSize: uploadConfig.audioMaxSize,
+          extAllowed: uploadConfig.audioExt,
         };
 
       return {

@@ -15,8 +15,6 @@ export const editFileName = (req: any, file: any, cb: any) => {
     .map(() => Math.round(Math.random() * 16).toString(16))
     .join('');
 
-  console.log({ file });
-
   const fileName = toSlug(file.originalname.split('.').slice(0, -1).join(''));
   const fileExt = file.originalname.split('.').pop();
 

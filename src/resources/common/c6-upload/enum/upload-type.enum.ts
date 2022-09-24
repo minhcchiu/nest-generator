@@ -1,5 +1,6 @@
 export enum UploadTypeEnum {
-  FILE = 'FILE',
-  VIDEO = 'VIDEO',
-  AUDIO = 'AUDIO',
+  FILE = 'file',
+  IMAGE = 'image',
+  VIDEO = 'video',
+  AUDIO = 'audio',
 }

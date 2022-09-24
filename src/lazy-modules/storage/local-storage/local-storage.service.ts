@@ -5,22 +5,23 @@ import { ConfigService } from '@nestjs/config';
 import { LocalStorageHelper } from './local-storage.helper';
 import { AppConfig } from '~config/enviroment';
 import { UploadTypeEnum } from '~common/c6-upload/enum/upload-type.enum';
+import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
 
 @Injectable()
 export class LocalStorageService {
-  private folderStoreFile:
-    | '/uploads/images/'
-    | '/uploads/files/'
-    | '/uploads/videos/'
-    | '/uploads/audios/';
-
-  private appUrl: string;
+  private _appUrl: string;
+  private uploadOptions = {
+    [UploadTypeEnum.IMAGE]: this._uploadImage,
+    [UploadTypeEnum.FILE]: this._uploadFile,
+    [UploadTypeEnum.AUDIO]: this._uploadAudio,
+    [UploadTypeEnum.VIDEO]: this._uploadVideo,
+  };
 
   constructor(
     private readonly localDiskHelper: LocalStorageHelper,
     private configService: ConfigService,
   ) {
-    this.appUrl = this.configService.get<AppConfig>('app').appUrl;
+    this._appUrl = this.configService.get<AppConfig>('app').appUrl;
   }
 
   /**
@@ -30,11 +31,11 @@ export class LocalStorageService {
    * @returns
    */
   async upload(filePath: string, type: UploadTypeEnum) {
-    if (type === UploadTypeEnum.FILE) return this._uploadFile(filePath);
-
-    if (type === UploadTypeEnum.VIDEO) return this._uploadVideo(filePath);
-
-    return this._uploadFile(filePath);
+    return this.uploadOptions[type](
+      this.localDiskHelper,
+      filePath,
+      this._appUrl,
+    );
   }
 
   /**
@@ -43,45 +44,54 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadFile(filePath: string) {
-    // get fileSize and fileMine
-    const fileSize = statSync(filePath).size || 0;
-    const fileMime = await this.localDiskHelper.getTypeFileNeedResize(filePath);
+  private async _uploadFile(
+    localDisk: LocalStorageHelper,
+    filePath: string,
+    appUrl: string,
+  ) {
+    const uploadDir = StorageDirEnum.FILES;
+    const size = statSync(filePath).size || 0;
+    const folder = StorageDirEnum.FILES;
 
-    const isFileImage = fileMime && fileMime.split('/')[0] === 'image';
+    const filemime = await localDisk.getTypeFileTypemime(filePath);
+    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
 
-    let files = [];
+    const type = filemime || `application/${localDisk.getFileName(filePath)}`;
 
-    // upload image
-    if (isFileImage) {
-      const imageType = fileMime.split('/')[1];
+    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
 
-      this.folderStoreFile = '/uploads/images/';
+    return { type, files, size, folder };
+  }
 
-      files = await this.localDiskHelper.compressImage(filePath, imageType);
-    } else {
-      // upload file
-      this.folderStoreFile = '/uploads/files/';
+  /**
+   * Upload file/images
+   *
+   * @param filePath
+   * @returns
+   */
+  private async _uploadImage(
+    localDisk: LocalStorageHelper,
+    filePath: string,
+    appUrl: string,
+  ) {
+    const uploadDir = StorageDirEnum.IMAGES;
+    const size = statSync(filePath).size || 0;
 
-      files = [
-        await this.localDiskHelper.moveFileToDiskStorage(
-          filePath,
-          this.folderStoreFile,
-        ),
-      ];
-    }
+    const filemime = await localDisk.getTypeFileTypemime(filePath);
+
+    const imageType = filemime.split('/')[1];
+
+    // upload file to temp
+    const files = await localDisk.compressImage(filePath, imageType);
 
     // replace path
     for (let i = 0; i < files.length; i += 1) {
-      files[i] = this.appUrl + files[i].slice(files[i].indexOf('/uploads'));
+      files[i] = appUrl + files[i].slice(files[i].indexOf('/uploads'));
     }
 
-    return {
-      type: fileMime || 'application/unknown',
-      files,
-      size: fileSize,
-      folder: this.folderStoreFile,
-    };
+    const type = filemime || `image/${localDisk.getFileName(filePath)}`;
+
+    return { type, files, size, folder: uploadDir };
   }
 
   /**
@@ -90,25 +100,22 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadVideo(filePath: string) {
-    // get fileSize and fileMine
-    const fileSize = statSync(filePath).size || 0;
+  private async _uploadVideo(
+    localDisk: LocalStorageHelper,
+    filePath: string,
+    appUrl: string,
+  ) {
+    const uploadDir = StorageDirEnum.VIDEOS;
+    const size = statSync(filePath).size || 0;
 
-    this.folderStoreFile = '/uploads/videos/';
+    const filemime = await localDisk.getTypeFileTypemime(filePath);
+    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
 
-    const fileMime = await this.localDiskHelper.getTypeFileNeedResize(filePath);
+    const type = filemime || `video/${localDisk.getFileName(filePath)}`;
 
-    const file = await this.localDiskHelper.moveFileToDiskStorage(
-      filePath,
-      this.folderStoreFile,
-    );
+    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
 
-    return {
-      type: fileMime || 'video/unknown',
-      files: [this.appUrl + file.slice(file.indexOf('/uploads'))],
-      size: fileSize,
-      folder: this.folderStoreFile,
-    };
+    return { type, files, size, folder: uploadDir };
   }
 
   /**
@@ -117,24 +124,22 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadAudio(filePath: string) {
-    // get fileSize and fileMine
-    const fileSize = statSync(filePath).size || 0;
+  private async _uploadAudio(
+    localDisk: LocalStorageHelper,
+    filePath: string,
+    appUrl: string,
+  ) {
+    const uploadDir = StorageDirEnum.AUDIOS;
+    const size = statSync(filePath).size || 0;
 
-    this.folderStoreFile = '/uploads/audios/';
+    const filemime = await localDisk.getTypeFileTypemime(filePath);
 
-    const fileMime = await this.localDiskHelper.getTypeFileNeedResize(filePath);
+    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
 
-    const file = await this.localDiskHelper.moveFileToDiskStorage(
-      filePath,
-      this.folderStoreFile,
-    );
+    const type = filemime || `audio/${localDisk.getFileName(filePath)}`;
 
-    return {
-      type: fileMime || 'audio/unknown',
-      files: [this.appUrl + file.slice(file.indexOf('/uploads'))],
-      size: fileSize,
-      folder: this.folderStoreFile,
-    };
+    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
+
+    return { type, files, size, folder: uploadDir };
   }
 }
