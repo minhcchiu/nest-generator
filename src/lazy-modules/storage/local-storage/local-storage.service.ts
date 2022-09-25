@@ -4,17 +4,17 @@ import { ConfigService } from '@nestjs/config';
 
 import { LocalStorageHelper } from './local-storage.helper';
 import { AppConfig } from '~config/enviroment';
-import { UploadTypeEnum } from '~common/c6-upload/enum/upload-type.enum';
+import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
 
 @Injectable()
 export class LocalStorageService {
   private _appUrl: string;
   private uploadOptions = {
-    [UploadTypeEnum.IMAGE]: this._uploadImage,
-    [UploadTypeEnum.FILE]: this._uploadFile,
-    [UploadTypeEnum.AUDIO]: this._uploadAudio,
-    [UploadTypeEnum.VIDEO]: this._uploadVideo,
+    [ResourceTypeEnum.IMAGE]: this._uploadImage,
+    [ResourceTypeEnum.FILE]: this._uploadFile,
+    [ResourceTypeEnum.AUDIO]: this._uploadAudio,
+    [ResourceTypeEnum.VIDEO]: this._uploadVideo,
   };
 
   constructor(
@@ -30,7 +30,7 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  async upload(filePath: string, type: UploadTypeEnum) {
+  async upload(filePath: string, type: ResourceTypeEnum) {
     return this.uploadOptions[type](
       this.localDiskHelper,
       filePath,

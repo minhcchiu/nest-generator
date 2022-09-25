@@ -1,4 +1,4 @@
-export enum UploadTypeEnum {
+export enum ResourceTypeEnum {
   FILE = 'file',
   IMAGE = 'image',
   VIDEO = 'video',

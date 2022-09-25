@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { UploadTypeEnum } from '../enum/upload-type.enum';
+import { ResourceTypeEnum } from '../enum/resource-type.enum';
 
 export class SaveFileDto {
   @IsNotEmpty()
@@ -8,5 +8,5 @@ export class SaveFileDto {
 
   @IsNotEmpty()
   @IsString()
-  uploadType: UploadTypeEnum;
+  resourceType: ResourceTypeEnum;
 }
