@@ -16,7 +16,7 @@ import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
 import { SaveFileDto } from './dto/save-file.dto';
 import { SaveFilesDto } from './dto/save-files.dto';
-import { UploadTypeEnum } from './enum/upload-type.enum';
+import { ResourceTypeEnum } from './enum/resource-type.enum';
 import { UploadService } from './upload.service';
 import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
@@ -49,7 +49,7 @@ export class UploadController {
 
     return {
       file: this.appUrl + '/' + file.path.replace('public/', ''),
-      uploadType: UploadTypeEnum.FILE,
+      resourceType: ResourceTypeEnum.FILE,
     };
   }
 
@@ -69,7 +69,7 @@ export class UploadController {
       files: files.map(
         (file: any) => this.appUrl + '/' + file.path.replace('public/', ''),
       ),
-      uploadType: UploadTypeEnum.FILE,
+      resourceType: ResourceTypeEnum.FILE,
     };
   }
 
@@ -88,7 +88,7 @@ export class UploadController {
 
     return {
       file: this.appUrl + '/' + image.path.replace('public/', ''),
-      uploadType: UploadTypeEnum.IMAGE,
+      resourceType: ResourceTypeEnum.IMAGE,
     };
   }
 
@@ -108,7 +108,7 @@ export class UploadController {
       files: images.map(
         (image: any) => this.appUrl + '/' + image.path.replace('public/', ''),
       ),
-      uploadType: UploadTypeEnum.IMAGE,
+      resourceType: ResourceTypeEnum.IMAGE,
     };
   }
 
@@ -127,7 +127,7 @@ export class UploadController {
 
     return {
       file: this.appUrl + '/' + video.path.replace('public/', ''),
-      uploadType: UploadTypeEnum.VIDEO,
+      resourceType: ResourceTypeEnum.VIDEO,
     };
   }
 
@@ -148,7 +148,7 @@ export class UploadController {
       files: videos.map(
         (video: any) => this.appUrl + '/' + video.path.replace('public/', ''),
       ),
-      uploadType: UploadTypeEnum.VIDEO,
+      resourceType: ResourceTypeEnum.VIDEO,
     };
   }
 
@@ -167,7 +167,7 @@ export class UploadController {
 
     return {
       file: this.appUrl + '/' + audio.path.replace('public/', ''),
-      uploadType: UploadTypeEnum.AUDIO,
+      resourceType: ResourceTypeEnum.AUDIO,
     };
   }
 
@@ -188,7 +188,7 @@ export class UploadController {
       files: audios.map(
         (audio: any) => this.appUrl + '/' + audio.path.replace('public/', ''),
       ),
-      uploadType: UploadTypeEnum.AUDIO,
+      resourceType: ResourceTypeEnum.AUDIO,
     };
   }
 
@@ -206,7 +206,7 @@ export class UploadController {
   ) {
     const files = await this.uploadService.saveFileToLocal(
       body.file.replace(this.appUrl, ''),
-      body.uploadType,
+      body.resourceType,
     );
 
     return { files };
@@ -227,7 +227,7 @@ export class UploadController {
     const filesUploadedPromise = body.files.map((file) =>
       this.uploadService.saveFileToLocal(
         file.replace(this.appUrl, ''),
-        body.uploadType,
+        body.resourceType,
       ),
     );
 

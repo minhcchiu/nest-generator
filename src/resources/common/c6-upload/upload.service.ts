@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
-import { UploadTypeEnum } from './enum/upload-type.enum';
+import { ResourceTypeEnum } from './enum/resource-type.enum';
 import { UploadHelper } from './upload.helper';
 @Injectable()
 export class UploadService {
@@ -23,7 +23,7 @@ export class UploadService {
    */
   async saveFileToLocal(
     filePath: string,
-    uploadType: UploadTypeEnum,
+    resourceType: ResourceTypeEnum,
     userId?: Types.ObjectId,
   ) {
     // check file
@@ -31,7 +31,7 @@ export class UploadService {
 
     const result = await this.localStorageService.upload(
       realpathOfFile,
-      uploadType,
+      resourceType,
     );
 
     // save file to database
