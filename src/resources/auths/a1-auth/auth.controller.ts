@@ -94,7 +94,7 @@ export class AuthController {
   ) {
     // Remove deviceID and pop fcm token
     await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
-      this.logger.warn(error);
+      this.logger.warn(AuthController.name, error);
     });
 
     return { success: true };

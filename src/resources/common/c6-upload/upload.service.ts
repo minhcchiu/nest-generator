@@ -35,14 +35,10 @@ export class UploadService {
     );
 
     // save file to database
-    const item = {
-      resourceID: result.files[0],
-      storage: 'LOCAL_DISK',
+    await this.fileService.create({
       ...result,
       // owner: userId,
-    };
-
-    await this.fileService.create(item);
+    });
 
     return result.files;
   }
@@ -53,42 +49,28 @@ export class UploadService {
    * @param filePath
    * @returns
    */
-  async saveFileToCloudinary(filePath: string, userId?: Types.ObjectId) {
+  async saveFileToCloudinary(
+    filePath: string,
+    resourceType: ResourceTypeEnum,
+    userId?: Types.ObjectId,
+  ) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
-    const imageExpression = `.(${process.env.UPLOAD_IMAGE_FILE})$`;
-
-    // check allow file
-    const isUploadImage = filePath.match(new RegExp(imageExpression));
 
     // upload file to cloudinary
-    const result = await this.cloudinaryService.upload(realpathOfFile, {
-      resource_type: isUploadImage ? 'image' : 'raw',
-    });
-
-    const files = isUploadImage
-      ? this.cloudinaryService.getAllResizeImage(result.url, result.public_id)
-      : [result.url];
+    const result = await this.cloudinaryService.upload(
+      realpathOfFile,
+      resourceType,
+    );
 
     // save file to database
-    const item = {
-      resourceID: result.public_id,
-      ext:
-        result.format ||
-        realpathOfFile.slice(realpathOfFile.lastIndexOf('.') + 1),
-      type: result.resource_type,
-      createdAt: result.created_at,
-      size: result.bytes,
-      files,
-      secureUrl: result.secure_url,
-      folder: result.folder,
-      storage: 'CLOUDINARY',
-      // owner: userId,
-    };
 
-    await this.fileService.create(item);
+    await this.fileService.create({
+      ...result,
+      // owner:
+    });
 
     // success
-    return files;
+    return result.files;
   }
 
   /**

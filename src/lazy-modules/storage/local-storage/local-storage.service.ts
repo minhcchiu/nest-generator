@@ -1,11 +1,10 @@
-import { statSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { LocalStorageHelper } from './local-storage.helper';
 import { AppConfig } from '~config/enviroment';
 import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
+import { localStorageHelper } from './local-storage.helper';
 
 @Injectable()
 export class LocalStorageService {
@@ -17,10 +16,7 @@ export class LocalStorageService {
     [ResourceTypeEnum.VIDEO]: this._uploadVideo,
   };
 
-  constructor(
-    private readonly localDiskHelper: LocalStorageHelper,
-    private configService: ConfigService,
-  ) {
+  constructor(private configService: ConfigService) {
     this._appUrl = this.configService.get<AppConfig>('app').appUrl;
   }
 
@@ -31,10 +27,23 @@ export class LocalStorageService {
    * @returns
    */
   async upload(filePath: string, type: ResourceTypeEnum) {
-    return this.uploadOptions[type](
-      this.localDiskHelper,
+    return this.uploadOptions[type](filePath, this._appUrl);
+  }
+
+  /**
+   * Upload file/images
+   *
+   * @param filePath
+   * @returns
+   */
+  private async _uploadFile(filePath: string, appUrl: string) {
+    const uploadDir = StorageDirEnum.FILES;
+
+    return localStorageHelper.upload(
       filePath,
-      this._appUrl,
+      uploadDir,
+      appUrl,
+      ResourceTypeEnum.FILE,
     );
   }
 
@@ -44,54 +53,10 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadFile(
-    localDisk: LocalStorageHelper,
-    filePath: string,
-    appUrl: string,
-  ) {
-    const uploadDir = StorageDirEnum.FILES;
-    const size = statSync(filePath).size || 0;
-    const folder = StorageDirEnum.FILES;
-
-    const filemime = await localDisk.getTypeFileTypemime(filePath);
-    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
-
-    const type = filemime || `application/${localDisk.getFileName(filePath)}`;
-
-    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
-
-    return { type, files, size, folder };
-  }
-
-  /**
-   * Upload file/images
-   *
-   * @param filePath
-   * @returns
-   */
-  private async _uploadImage(
-    localDisk: LocalStorageHelper,
-    filePath: string,
-    appUrl: string,
-  ) {
+  private async _uploadImage(filePath: string, appUrl: string) {
     const uploadDir = StorageDirEnum.IMAGES;
-    const size = statSync(filePath).size || 0;
 
-    const filemime = await localDisk.getTypeFileTypemime(filePath);
-
-    const imageType = filemime.split('/')[1];
-
-    // upload file to temp
-    const files = await localDisk.compressImage(filePath, imageType);
-
-    // replace path
-    for (let i = 0; i < files.length; i += 1) {
-      files[i] = appUrl + files[i].slice(files[i].indexOf('/uploads'));
-    }
-
-    const type = filemime || `image/${localDisk.getFileName(filePath)}`;
-
-    return { type, files, size, folder: uploadDir };
+    return localStorageHelper.uploadImage(filePath, uploadDir, appUrl);
   }
 
   /**
@@ -100,22 +65,15 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadVideo(
-    localDisk: LocalStorageHelper,
-    filePath: string,
-    appUrl: string,
-  ) {
+  private async _uploadVideo(filePath: string, appUrl: string) {
     const uploadDir = StorageDirEnum.VIDEOS;
-    const size = statSync(filePath).size || 0;
 
-    const filemime = await localDisk.getTypeFileTypemime(filePath);
-    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
-
-    const type = filemime || `video/${localDisk.getFileName(filePath)}`;
-
-    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
-
-    return { type, files, size, folder: uploadDir };
+    return localStorageHelper.upload(
+      filePath,
+      uploadDir,
+      appUrl,
+      ResourceTypeEnum.VIDEO,
+    );
   }
 
   /**
@@ -124,22 +82,14 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadAudio(
-    localDisk: LocalStorageHelper,
-    filePath: string,
-    appUrl: string,
-  ) {
+  private async _uploadAudio(filePath: string, appUrl: string) {
     const uploadDir = StorageDirEnum.AUDIOS;
-    const size = statSync(filePath).size || 0;
 
-    const filemime = await localDisk.getTypeFileTypemime(filePath);
-
-    const file = await localDisk.moveFileToDiskStorage(filePath, uploadDir);
-
-    const type = filemime || `audio/${localDisk.getFileName(filePath)}`;
-
-    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
-
-    return { type, files, size, folder: uploadDir };
+    return localStorageHelper.upload(
+      filePath,
+      uploadDir,
+      appUrl,
+      ResourceTypeEnum.AUDIO,
+    );
   }
 }

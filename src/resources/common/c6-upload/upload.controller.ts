@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+// import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
-import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
+// import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
 import { SaveFileDto } from './dto/save-file.dto';
 import { SaveFilesDto } from './dto/save-files.dto';
@@ -245,12 +245,13 @@ export class UploadController {
   @HttpCode(200)
   @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(
-    @GetCurrentUserId() userId: Types.ObjectId,
+    // @GetCurrentUserId() userId: Types.ObjectId,
     @Body() body: SaveFileDto,
   ) {
     const files = await this.uploadService.saveFileToCloudinary(
-      body.file,
-      userId,
+      body.file.replace(this.appUrl, ''),
+      body.resourceType,
+      // userId,
     );
 
     return { files };
@@ -265,11 +266,11 @@ export class UploadController {
   @HttpCode(200)
   @Post('save_files_to_cloudinary')
   async saveToCloudinary(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: { files: string[] },
+    // @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() body: SaveFilesDto,
   ) {
     const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToCloudinary(file, userId),
+      this.uploadService.saveFileToCloudinary(file, body.resourceType),
     );
 
     const files = await Promise.all(filesUploadedPromise);

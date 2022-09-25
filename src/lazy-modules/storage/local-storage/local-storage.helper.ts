@@ -1,17 +1,85 @@
 import { join } from 'path';
-import { close, open, read, renameSync, unlinkSync } from 'fs';
-import { Injectable } from '@nestjs/common';
+import { close, open, read, renameSync, statSync, unlinkSync } from 'fs';
 import { filetypemime } from 'magic-bytes.js';
 
 import { resizeGIF, resizeJPG, resizePNG } from '~helper/resize-image.helper';
 import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
+import { fileHelper } from '~helper/file.helper';
+import { StorageServiceEnum } from '~common/c5-files/enum/storage-service.enum';
+import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 
-@Injectable()
-export class LocalStorageHelper {
-  private publicDir: string;
-  constructor() {
-    this.publicDir = join(__dirname, '../../../../', 'public');
-  }
+export const localStorageHelper = {
+  publicDir: join(__dirname, '../../../../', 'public'),
+
+  /**
+   * Upload file
+   *
+   * @param filePath
+   * @param uploadDir
+   * @param appUrl
+   * @returns
+   */
+  async upload(
+    filePath: string,
+    uploadDir: StorageDirEnum,
+    appUrl: string,
+    resourceType: ResourceTypeEnum,
+  ) {
+    const size = statSync(filePath).size || 0;
+    const filemime = await this.getTypeFileTypemime(filePath);
+    const type =
+      filemime || `${resourceType}/${fileHelper.getFileName(filePath)}`;
+
+    const file = await this.moveFileToDiskStorage(filePath, uploadDir);
+    const files = [appUrl + file.slice(file.indexOf('/uploads'))];
+
+    return {
+      type,
+      files,
+      size,
+      folder: uploadDir,
+      secureUrl: file,
+      resourceID: file,
+      storage: StorageServiceEnum.LOCAL_DISK,
+    };
+  },
+
+  /**
+   * Upload Image
+   *
+   * @param filePath
+   * @param uploadDir
+   * @param appUrl
+   * @returns
+   */
+  async uploadImage(
+    filePath: string,
+    uploadDir: StorageDirEnum,
+    appUrl: string,
+    resourceType: ResourceTypeEnum = ResourceTypeEnum.IMAGE,
+  ) {
+    const size = statSync(filePath).size || 0;
+    const filemime = await this.getTypeFileTypemime(filePath);
+    const imageType = filemime.split('/')[1];
+    const files = await this.compressImage(filePath, imageType);
+    const type =
+      filemime || `${resourceType}/${fileHelper.getFileName(filePath)}`;
+
+    // replace path
+    for (let i = 0; i < files.length; i += 1) {
+      files[i] = appUrl + files[i].slice(files[i].indexOf('/uploads'));
+    }
+
+    return {
+      type,
+      files,
+      size,
+      folder: uploadDir,
+      secureUrl: files[0],
+      resourceID: files[0],
+      storage: StorageServiceEnum.LOCAL_DISK,
+    };
+  },
 
   /**
    * Get type file need resize
@@ -32,7 +100,7 @@ export class LocalStorageHelper {
     if (isValidTypemine) return result[0];
 
     return null;
-  }
+  },
 
   /**
    * Get buffer from file
@@ -59,7 +127,7 @@ export class LocalStorageHelper {
         });
       });
     });
-  }
+  },
 
   /**
    * Compress image
@@ -79,7 +147,7 @@ export class LocalStorageHelper {
     if (imageType === 'gif') return this.compressGIF(filePath);
 
     return [];
-  }
+  },
 
   /**
    * Compress JPG LocalStorage
@@ -87,7 +155,7 @@ export class LocalStorageHelper {
    * @param filePath
    * @returns
    */
-  private async compressJPG(filePath: string): Promise<any[]> {
+  async compressJPG(filePath: string): Promise<any[]> {
     const filePathOriginal = this.generateSizePath(filePath);
     const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
     const filePathLarge = this.generateSizePath(filePath, { width: 360 });
@@ -114,7 +182,7 @@ export class LocalStorageHelper {
       filePathSmall,
       filePathXSmall,
     ];
-  }
+  },
 
   /**
    * Compress JPG LocalStorage
@@ -122,7 +190,7 @@ export class LocalStorageHelper {
    * @param filePath
    * @returns
    */
-  private async compressGIF(filePath: string): Promise<any[]> {
+  async compressGIF(filePath: string): Promise<any[]> {
     const filePathOriginal = this.generateSizePath(filePath);
     const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
     const filePathLarge = this.generateSizePath(filePath, { width: 360 });
@@ -149,7 +217,7 @@ export class LocalStorageHelper {
       filePathSmall,
       filePathXSmall,
     ];
-  }
+  },
 
   /**
    * compress PNG LocalStorage
@@ -157,7 +225,7 @@ export class LocalStorageHelper {
    * @param filePath
    * @returns
    */
-  private async compressPNG(filePath: string): Promise<any[]> {
+  async compressPNG(filePath: string): Promise<any[]> {
     const filePathOriginal = this.generateSizePath(filePath);
     const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
     const filePathLarge = this.generateSizePath(filePath, { width: 360 });
@@ -184,7 +252,7 @@ export class LocalStorageHelper {
       filePathSmall,
       filePathXSmall,
     ];
-  }
+  },
 
   /**
    * Genrate size path
@@ -193,7 +261,7 @@ export class LocalStorageHelper {
    * @param options
    * @returns
    */
-  private generateSizePath(filePath: string, options = {}) {
+  generateSizePath(filePath: string, options = {}) {
     const keyName = Object.keys(options)
       .map((key) => {
         return `${key[0]}_${options[key]}`;
@@ -203,7 +271,7 @@ export class LocalStorageHelper {
     const fileName = this.generateFileNameResize(filePath, keyName);
 
     return join(this.publicDir, 'uploads', 'images', fileName);
-  }
+  },
 
   /**
    * Movie file from temp to uploadFiles
@@ -218,20 +286,7 @@ export class LocalStorageHelper {
     renameSync(filePath, newPath);
 
     return newPath;
-  }
-
-  /**
-   * Get fileName from filePath
-   *
-   * @param filePath
-   * @returns
-   */
-  public getFileName(filePath: string) {
-    const lastIndexOfSlash = filePath.lastIndexOf('/');
-    const fileName = filePath.slice(lastIndexOfSlash + 1);
-
-    return fileName;
-  }
+  },
 
   /**
    * Generate file name resize
@@ -240,13 +295,12 @@ export class LocalStorageHelper {
    * @param keyName
    * @returns
    */
-
-  private generateFileNameResize(filePath: string, keyName: string) {
-    const fileName = this.getFileName(filePath);
+  generateFileNameResize(filePath: string, keyName: string) {
+    const fileName = fileHelper.getFileName(filePath);
 
     const fileExt = fileName.split('.').pop();
     const originname = fileName.slice(0, -fileExt.length - 1);
 
     return `${originname}_${keyName}.${fileExt}`;
-  }
-}
+  },
+};
