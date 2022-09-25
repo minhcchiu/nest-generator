@@ -123,10 +123,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const exceptionResponse = this._getExceptionResponse(
-      errorResponse,
-      request,
-    );
+    const exceptionResponse = {
+      ...errorResponse,
+      path: request.url,
+      method: request.method,
+      timeStamp: new Date(),
+    };
 
     // get log message string
     const errorLog = this._getErrorLog(exceptionResponse, request, exception);
@@ -139,25 +141,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // response
     return response.status(errorResponse.statusCode).json(exceptionResponse);
-  }
-
-  /**
-   * Get http exception response
-   *
-   * @param errorResponse
-   * @param request
-   * @returns
-   */
-  private _getExceptionResponse(
-    errorResponse: ErrorResponse,
-    request: Request,
-  ): HttpExceptionResponse {
-    return {
-      ...errorResponse,
-      path: request.url,
-      method: request.method,
-      timeStamp: new Date(),
-    };
   }
 
   /**
