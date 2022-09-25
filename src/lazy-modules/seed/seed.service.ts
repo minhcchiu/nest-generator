@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ProvinceService } from '~common/c2-provinces/province.service';
 import { DistrictService } from '~common/c3-districts/district.service';
 import { WardService } from '~common/c4-wards/ward.service';
-import { FileHelper } from '~helper/file.helper';
+import { fileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
 @Injectable()
@@ -45,12 +45,15 @@ export class SeedService {
   async seedProvincesDistrictWard() {
     const jsonPath = join(__dirname, '../../utils/json/dvhcvn.json');
 
-    const isFileExist = FileHelper.isFileExist(jsonPath);
+    const isFileExist = fileHelper.isFileExist(jsonPath);
 
     if (!isFileExist)
-      this.logger.error(`${jsonPath} was not found, cannot seed province`);
+      this.logger.error(
+        SeedService.name,
+        `${jsonPath} was not found, cannot seed province`,
+      );
 
-    const dataString = FileHelper.readFileSync(jsonPath).toString();
+    const dataString = fileHelper.readFileSync(jsonPath).toString();
 
     const { data } = JSON.parse(dataString);
 

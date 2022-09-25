@@ -1,19 +1,24 @@
 import { unlinkSync } from 'fs';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  UploadApiErrorResponse,
-  UploadApiOptions,
-  UploadApiResponse,
-  v2,
-} from 'cloudinary';
+import { UploadApiOptions, v2 } from 'cloudinary';
 
 import { CloudinaryConfig } from '~config/enviroment';
 import { Logger } from '~lazy-modules/logger/logger.service';
+import { fileHelper } from '~helper/file.helper';
+import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
+import { cloudinaryHelper } from './cloudinary.helper';
 
 @Injectable()
 export class CloudinaryService {
   private readonly cloudinaryConfig: CloudinaryConfig;
+
+  private uploadOptions = {
+    [ResourceTypeEnum.IMAGE]: this._uploadImage,
+    [ResourceTypeEnum.FILE]: this._uploadFile,
+    [ResourceTypeEnum.AUDIO]: this._uploadAudio,
+    [ResourceTypeEnum.VIDEO]: this._uploadVideo,
+  };
 
   constructor(
     private readonly configService: ConfigService,
@@ -21,68 +26,22 @@ export class CloudinaryService {
   ) {
     this.cloudinaryConfig = configService.get<CloudinaryConfig>('cloudinary');
   }
-
   /**
    * Upload
    *
    * @param filePath
-   * @param options
+   * @param resourceType
    * @returns
    */
-  async upload(
-    filePath: string,
-    options?: UploadApiOptions,
-  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
-    return new Promise((resolve, reject) => {
-      options = {
-        ...this.cloudinaryConfig.options,
-        ...options,
-      };
+  async upload(filePath: string, resourceType: ResourceTypeEnum): Promise<any> {
+    const fName = fileHelper.getFileName(filePath);
 
-      v2.uploader.upload(filePath, options, (err, result) => {
-        if (err) return reject(new BadRequestException(err.message));
+    const options = {
+      folder: this.cloudinaryConfig.options.folder,
+      public_id: `${resourceType}s/${fName}`,
+    };
 
-        // remove file in temp
-        unlinkSync(filePath);
-
-        resolve(result);
-      });
-    });
-  }
-
-  /**
-   * Resize image
-   *
-   * @param id
-   * @param width
-   * @returns
-   */
-  private resizeImage(id: string, width: number) {
-    return v2.url(id, {
-      width,
-      opacity: 80,
-      // crop: 'scale',
-      format: 'jpeg',
-    });
-  }
-
-  /**
-   * Get all resize image
-   *
-   * @param url
-   * @param public_id
-   * @returns
-   */
-  async getAllResizeImage(url: string, public_id: string) {
-    return [
-      url,
-      this.resizeImage(public_id, 1080),
-      this.resizeImage(public_id, 720),
-      this.resizeImage(public_id, 360),
-      this.resizeImage(public_id, 480),
-      this.resizeImage(public_id, 360),
-      this.resizeImage(public_id, 150),
-    ];
+    return this.uploadOptions[resourceType](filePath, options);
   }
 
   /**
@@ -105,7 +64,125 @@ export class CloudinaryService {
     try {
       return await v2.uploader.destroy(resourceId);
     } catch (error) {
-      this.logger.warn(error);
+      this.logger.warn(CloudinaryService.name, error);
     }
+  }
+
+  /**
+   * Upload image
+   *
+   * @param filePath
+   * @param options
+   * @returns
+   */
+  private _uploadImage(filePath: string, options: UploadApiOptions): any {
+    options.resource_type = 'image';
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(filePath, options, (err, file) => {
+        if (err) return reject(new BadRequestException(err.message));
+
+        // remove file in temp
+        unlinkSync(filePath);
+
+        const files = cloudinaryHelper.generateImagesResize(
+          file.url,
+          file.public_id,
+        );
+
+        return resolve(cloudinaryHelper.getUploadResult({ ...file, files }));
+      });
+    });
+  }
+
+  /**
+   * Upload file
+   *
+   * @param filePath
+   * @param options
+   * @returns
+   */
+  private _uploadFile(filePath: string, options: UploadApiOptions): any {
+    options.resource_type = 'raw';
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(filePath, options, (err, file) => {
+        if (err) return reject(new BadRequestException(err.message));
+
+        // remove file in temp
+        unlinkSync(filePath);
+
+        return resolve(
+          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
+        );
+      });
+    });
+  }
+
+  /**
+   * Upload audio
+   *
+   * @param filePath
+   * @param options
+   * @returns
+   */
+  private _uploadAudio(filePath: string, options: UploadApiOptions): any {
+    options.resource_type = 'raw';
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(filePath, options, (err, file) => {
+        if (err) return reject(new BadRequestException(err.message));
+
+        // remove file in temp
+        unlinkSync(filePath);
+
+        return resolve(
+          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
+        );
+      });
+    });
+  }
+
+  /**
+   * Upload video
+   *
+   * @param filePath
+   * @param options
+   * @returns
+   */
+  private _uploadVideo(filePath: string, options?: UploadApiOptions): any {
+    const uploadOptions = {
+      ...options,
+      resource_type: 'video',
+      chunk_size: 6000000,
+      eager: [
+        {
+          width: 300,
+          height: 300,
+          crop: 'pad',
+          audio_codec: 'none',
+        },
+        {
+          width: 160,
+          height: 100,
+          crop: 'crop',
+          gravity: 'south',
+          audio_codec: 'none',
+        },
+      ],
+    };
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(filePath, uploadOptions, (err, file) => {
+        if (err) return reject(new BadRequestException(err.message));
+
+        // remove file in temp
+        unlinkSync(filePath);
+
+        return resolve(
+          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
+        );
+      });
+    });
   }
 }

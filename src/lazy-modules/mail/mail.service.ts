@@ -71,7 +71,9 @@ export class MailService {
         this.logger.log(MailService.name, 'SEND OTP TO EMAIL SUCCESS!');
         return result;
       })
-      .catch((error) => this.logger.error((error as any).toString()));
+      .catch((error) =>
+        this.logger.error(MailService.name, (error as any).toString()),
+      );
   }
 
   /**
@@ -106,7 +108,7 @@ export class MailService {
         return result;
       })
       .catch((error) => {
-        this.logger.error((error as any).toString());
+        this.logger.error(MailerService.name, (error as any).toString());
       });
   }
 
@@ -141,6 +143,8 @@ export class MailService {
         this.logger.log(MailService.name, 'SEND RESET PASSWORD TOKEN SUCCESS!');
         return result;
       })
-      .catch((error) => this.logger.error((error as any).toString()));
+      .catch((error) =>
+        this.logger.error(MailerService.name, (error as any).toString()),
+      );
   }
 }

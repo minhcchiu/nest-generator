@@ -9,52 +9,82 @@ export class Logger implements LoggerService {
   /**
    * Log info
    *
-   * @param message
-   * @param optionalParams
+   * @param context
+   * @param messages
    */
-  log(context: string, message: any, ...optionalParams: any[]) {
+  log(context: string, ...messages: any[]) {
+    const _names = messages.map((item: any) =>
+      JSON.stringify(item, null, '\t'),
+    );
+
+    const messageFinal = `${_names.join('\n')}`;
+
     this.logger.setContext(context);
-    this.logger.log([message, optionalParams]);
+    this.logger.log(messageFinal);
   }
 
   /**
    * Log error
    *
-   * @param message
-   * @param optionalParams
+   * @param context
+   * @param messages
    */
-  error(message: any, ...optionalParams: any[]) {
-    this.logger.error([message, optionalParams]);
+  error(context: string, ...messages: any[]) {
+    const _names = messages.map((item: any) =>
+      JSON.stringify(item, null, '\t'),
+    );
+    const messageFinal = `${_names.join('\n')}`;
+
+    this.logger.setContext(context);
+    this.logger.error(messageFinal);
   }
 
   /**
    * Log warning
    *
-   * @param message
-   * @param optionalParams
+   * @param context
+   * @param messages
    */
-  warn(message: any, ...optionalParams: any[]) {
-    this.logger.warn([message, optionalParams]);
+  warn(context: string, ...messages: any[]) {
+    const _names = messages.map((item: any) =>
+      JSON.stringify(item, null, '\t'),
+    );
+    const messageFinal = `${_names.join('\n')}`;
+
+    this.logger.setContext(context);
+    this.logger.warn(messageFinal);
   }
 
   /**
    * Log debug
    *
-   * @param message
-   * @param optionalParams
+   * @param context
+   * @param messages
    */
-  debug?(message: any, ...optionalParams: any[]) {
-    this.logger.debug([message, optionalParams]);
+  debug(context: string, ...messages: any[]) {
+    const _names = messages.map((item: any) =>
+      JSON.stringify(item, null, '\t'),
+    );
+    const messageFinal = `${_names.join('\n')}`;
+
+    this.logger.setContext(context);
+    this.logger.debug(messageFinal);
   }
 
   /**
    * Log verbose
    *
-   * @param message
-   * @param optionalParams
+   * @param context
+   * @param messages
    */
-  verbose?(message: any, ...optionalParams: any[]) {
-    this.logger.verbose([message, optionalParams]);
+  verbose(context: string, ...messages: any[]) {
+    const _names = messages.map((item: any) =>
+      JSON.stringify(item, null, '\t'),
+    );
+    const messageFinal = `${_names.join('\n')}`;
+
+    this.logger.setContext(context);
+    this.logger.verbose(messageFinal);
   }
 
   /**

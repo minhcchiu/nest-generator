@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-export const FileHelper = {
+export const fileHelper = {
   /**
    * Check filepath exist
    * @param filePath
@@ -17,5 +17,18 @@ export const FileHelper = {
    */
   readFileSync(filePath: string): any {
     return fs.readFileSync(filePath);
+  },
+
+  /**
+   * Get fileName from filePath
+   *
+   * @param filePath
+   * @returns
+   */
+  getFileName(filePath: string) {
+    const lastIndexOfSlash = filePath.lastIndexOf('/');
+    const fileName = filePath.slice(lastIndexOfSlash + 1);
+
+    return fileName;
   },
 };
