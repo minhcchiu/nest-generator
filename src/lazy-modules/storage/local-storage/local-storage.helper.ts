@@ -4,12 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { filetypemime } from 'magic-bytes.js';
 
 import { resizeGIF, resizeJPG, resizePNG } from '~helper/resize-image.helper';
+import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
 
 @Injectable()
 export class LocalStorageHelper {
-  private uploadDir: string;
+  private publicDir: string;
   constructor() {
-    this.uploadDir = join(__dirname, '../../../../', 'public', 'uploads');
+    this.publicDir = join(__dirname, '../../../../', 'public');
   }
 
   /**
@@ -18,7 +19,7 @@ export class LocalStorageHelper {
    * @param filePath
    * @returns
    */
-  async getTypeFileNeedResize(filePath: string) {
+  async getTypeFileTypemime(filePath: string) {
     const maxLength = 4100;
 
     const buffer = await this.getBufferFromFile(filePath, maxLength);
@@ -87,27 +88,31 @@ export class LocalStorageHelper {
    * @returns
    */
   private async compressJPG(filePath: string): Promise<any[]> {
+    const filePathOriginal = this.generateSizePath(filePath);
+    const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
+    const filePathLarge = this.generateSizePath(filePath, { width: 360 });
+    const filePathMedium = this.generateSizePath(filePath, { width: 480 });
+    const filePathSmall = this.generateSizePath(filePath, { width: 720 });
+    const filePathXSmall = this.generateSizePath(filePath, { width: 1080 });
+
     await Promise.all([
-      resizeJPG(filePath, this.generateSizePath(filePath), null),
-      resizeJPG(
-        filePath,
-        this.generateSizePath(filePath, { width: 1080 }),
-        1080,
-      ),
-      resizeJPG(filePath, this.generateSizePath(filePath, { width: 720 }), 720),
-      resizeJPG(filePath, this.generateSizePath(filePath, { width: 480 }), 480),
-      resizeJPG(filePath, this.generateSizePath(filePath, { width: 360 }), 360),
-      resizeJPG(filePath, this.generateSizePath(filePath, { width: 150 }), 150),
+      resizeJPG(filePath, filePathOriginal, null),
+      resizeJPG(filePath, filePathXLarge, 150),
+      resizeJPG(filePath, filePathLarge, 360),
+      resizeJPG(filePath, filePathMedium, 480),
+      resizeJPG(filePath, filePathSmall, 720),
+      resizeJPG(filePath, filePathXSmall, 1080),
     ]);
 
     unlinkSync(filePath);
 
     return [
-      this.generateSizePath(filePath),
-      this.generateSizePath(filePath, { width: 720 }),
-      this.generateSizePath(filePath, { width: 480 }),
-      this.generateSizePath(filePath, { width: 360 }),
-      this.generateSizePath(filePath, { width: 150 }),
+      filePathOriginal,
+      filePathXLarge,
+      filePathLarge,
+      filePathMedium,
+      filePathSmall,
+      filePathXSmall,
     ];
   }
 
@@ -118,27 +123,31 @@ export class LocalStorageHelper {
    * @returns
    */
   private async compressGIF(filePath: string): Promise<any[]> {
+    const filePathOriginal = this.generateSizePath(filePath);
+    const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
+    const filePathLarge = this.generateSizePath(filePath, { width: 360 });
+    const filePathMedium = this.generateSizePath(filePath, { width: 480 });
+    const filePathSmall = this.generateSizePath(filePath, { width: 720 });
+    const filePathXSmall = this.generateSizePath(filePath, { width: 1080 });
+
     await Promise.all([
-      resizeGIF(filePath, this.generateSizePath(filePath), null),
-      resizeGIF(
-        filePath,
-        this.generateSizePath(filePath, { width: 1080 }),
-        1080,
-      ),
-      resizeGIF(filePath, this.generateSizePath(filePath, { width: 720 }), 720),
-      resizeGIF(filePath, this.generateSizePath(filePath, { width: 480 }), 480),
-      resizeGIF(filePath, this.generateSizePath(filePath, { width: 360 }), 360),
-      resizeGIF(filePath, this.generateSizePath(filePath, { width: 150 }), 150),
+      resizeGIF(filePath, filePathOriginal, null),
+      resizeGIF(filePath, filePathXLarge, 150),
+      resizeGIF(filePath, filePathLarge, 360),
+      resizeGIF(filePath, filePathMedium, 480),
+      resizeGIF(filePath, filePathSmall, 720),
+      resizeGIF(filePath, filePathXSmall, 1080),
     ]);
 
     unlinkSync(filePath);
 
     return [
-      this.generateSizePath(filePath),
-      this.generateSizePath(filePath, { width: 720 }),
-      this.generateSizePath(filePath, { width: 480 }),
-      this.generateSizePath(filePath, { width: 360 }),
-      this.generateSizePath(filePath, { width: 150 }),
+      filePathOriginal,
+      filePathXLarge,
+      filePathLarge,
+      filePathMedium,
+      filePathSmall,
+      filePathXSmall,
     ];
   }
 
@@ -149,28 +158,31 @@ export class LocalStorageHelper {
    * @returns
    */
   private async compressPNG(filePath: string): Promise<any[]> {
+    const filePathOriginal = this.generateSizePath(filePath);
+    const filePathXLarge = this.generateSizePath(filePath, { width: 150 });
+    const filePathLarge = this.generateSizePath(filePath, { width: 360 });
+    const filePathMedium = this.generateSizePath(filePath, { width: 480 });
+    const filePathSmall = this.generateSizePath(filePath, { width: 720 });
+    const filePathXSmall = this.generateSizePath(filePath, { width: 1080 });
+
     await Promise.all([
-      resizePNG(filePath, this.generateSizePath(filePath), null),
-      resizePNG(
-        filePath,
-        this.generateSizePath(filePath, { width: 1080 }),
-        1080,
-      ),
-      resizePNG(filePath, this.generateSizePath(filePath, { width: 720 }), 720),
-      resizePNG(filePath, this.generateSizePath(filePath, { width: 480 }), 480),
-      resizePNG(filePath, this.generateSizePath(filePath, { width: 360 }), 360),
-      resizePNG(filePath, this.generateSizePath(filePath, { width: 150 }), 150),
+      resizePNG(filePath, filePathOriginal, null),
+      resizePNG(filePath, filePathXLarge, 150),
+      resizePNG(filePath, filePathLarge, 360),
+      resizePNG(filePath, filePathMedium, 480),
+      resizePNG(filePath, filePathSmall, 720),
+      resizePNG(filePath, filePathXSmall, 1080),
     ]);
 
     unlinkSync(filePath);
 
     return [
-      this.generateSizePath(filePath),
-      this.generateSizePath(filePath, { width: 1080 }),
-      this.generateSizePath(filePath, { width: 720 }),
-      this.generateSizePath(filePath, { width: 480 }),
-      this.generateSizePath(filePath, { width: 360 }),
-      this.generateSizePath(filePath, { width: 150 }),
+      filePathOriginal,
+      filePathXLarge,
+      filePathLarge,
+      filePathMedium,
+      filePathSmall,
+      filePathXSmall,
     ];
   }
 
@@ -182,15 +194,15 @@ export class LocalStorageHelper {
    * @returns
    */
   private generateSizePath(filePath: string, options = {}) {
-    const fileName = `${this.getFileName(filePath)}`;
-
     const keyName = Object.keys(options)
       .map((key) => {
         return `${key[0]}_${options[key]}`;
       })
       .join(',');
 
-    return join(this.uploadDir, 'images', `${keyName}_${fileName}`);
+    const fileName = this.generateFileNameResize(filePath, keyName);
+
+    return join(this.publicDir, 'uploads', 'images', fileName);
   }
 
   /**
@@ -199,10 +211,7 @@ export class LocalStorageHelper {
    * @param filePath
    * @returns
    */
-  async moveFileToDiskStorage(
-    filePath: string,
-    newFolder: '/uploads/files/' | '/uploads/audios/' | '/uploads/videos/',
-  ) {
+  async moveFileToDiskStorage(filePath: string, newFolder: StorageDirEnum) {
     const newPath = filePath.replace('/uploads/tmp/', newFolder);
 
     // move file
@@ -222,5 +231,22 @@ export class LocalStorageHelper {
     const fileName = filePath.slice(lastIndexOfSlash + 1);
 
     return fileName;
+  }
+
+  /**
+   * Generate file name resize
+   *
+   * @param filePath
+   * @param keyName
+   * @returns
+   */
+
+  private generateFileNameResize(filePath: string, keyName: string) {
+    const fileName = this.getFileName(filePath);
+
+    const fileExt = fileName.split('.').pop();
+    const originname = fileName.slice(0, -fileExt.length - 1);
+
+    return `${originname}_${keyName}.${fileExt}`;
   }
 }

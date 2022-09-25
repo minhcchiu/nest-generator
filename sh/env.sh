@@ -64,15 +64,17 @@ export OAUTH_CLIENT_SECRET=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
 export MAXIMUN_SECOND_SEND_OTP=10
 
 # UPLOAD
-export UPLOAD_MAX_SIZE=25 #MB  
-export UPLOAD_MAX_FILE=10
-export UPLOAD_MAX_VIDEO_SIZE=40 #MB  
-export UPLOAD_MAX_VIDEO_FILE=4
-export UPLOAD_MAX_AUDIO_SIZE=10 #MB  
-export UPLOAD_MAX_AUDIO_FILE=10
+export UPLOAD_IMAGE_MAX_SIZE=25 #MB  
+export UPLOAD_RAW_MAX_SIZE=25 #MB  
+export UPLOAD_VIDEO_MAX_SIZE=25 #MB  
+export UPLOAD_AUDIO_MAX_SIZE=25 #MB  
 
-export UPLOAD_EXT_IMAGE="jpg|jpeg|png|gif"
-export UPLOAD_EXT_RAW="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
-export UPLOAD_EXT_FILES='jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json'
-export UPLOAD_EXT_VIDEO='mp4|mkv|webm|mov|flv'
-export UPLOAD_EXT_AUDIO='mp3|aac|wav|flac'
+export UPLOAD_IMAGE_MAX_FILE=10
+export UPLOAD_RAW_MAX_FILE=10
+export UPLOAD_VIDEO_MAX_FILE=4
+export UPLOAD_AUDIO_MAX_FILE=10
+
+export UPLOAD_IMAGE_EXT="jpg|jpeg|png|gif"
+export UPLOAD_RAW_EXT="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
+export UPLOAD_VIDEO_EXT='mp4|mkv|webm|mov|flv'
+export UPLOAD_AUDIO_EXT='mp3|aac|wav|flac'

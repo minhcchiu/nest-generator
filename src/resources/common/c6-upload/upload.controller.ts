@@ -20,11 +20,19 @@ import { UploadTypeEnum } from './enum/upload-type.enum';
 import { UploadService } from './upload.service';
 import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '~config/enviroment';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)
 export class UploadController {
-  constructor(private readonly uploadService: UploadService) {}
+  private appUrl: string;
+  constructor(
+    private readonly uploadService: UploadService,
+    private readonly configService: ConfigService,
+  ) {
+    this.appUrl = configService.get<AppConfig>('app').appUrl;
+  }
 
   /**
    * Upload single file to tmp
@@ -40,7 +48,7 @@ export class UploadController {
     if (!file) throw new BadRequestException('File is required!');
 
     return {
-      file: file.path.replace('public/', ''),
+      file: this.appUrl + '/' + file.path.replace('public/', ''),
       uploadType: UploadTypeEnum.FILE,
     };
   }
@@ -55,11 +63,52 @@ export class UploadController {
   @HttpCode(201)
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
-    if (!files) throw new BadRequestException('Files is required!');
+    if (!files) throw new BadRequestException('Files are required!');
 
     return {
-      files: files.map((file: any) => file.path.replace('public/', '')),
+      files: files.map(
+        (file: any) => this.appUrl + '/' + file.path.replace('public/', ''),
+      ),
       uploadType: UploadTypeEnum.FILE,
+    };
+  }
+
+  /**
+   * Upload single image to tmp
+   *
+   * @param image
+   * @returns
+   */
+  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
+  @HttpCode(201)
+  @Post('image')
+  async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
+    // check image exist
+    if (!image) throw new BadRequestException('Image is required!');
+
+    return {
+      file: this.appUrl + '/' + image.path.replace('public/', ''),
+      uploadType: UploadTypeEnum.IMAGE,
+    };
+  }
+
+  /**
+   * Upload many images to tmp
+   *
+   * @param images
+   * @returns
+   */
+  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
+  @HttpCode(201)
+  @Post('images')
+  async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
+    if (!images) throw new BadRequestException('Images are required!');
+
+    return {
+      files: images.map(
+        (image: any) => this.appUrl + '/' + image.path.replace('public/', ''),
+      ),
+      uploadType: UploadTypeEnum.IMAGE,
     };
   }
 
@@ -77,7 +126,7 @@ export class UploadController {
     if (!video) throw new BadRequestException('Video is required!');
 
     return {
-      file: video.path.replace('public/', ''),
+      file: this.appUrl + '/' + video.path.replace('public/', ''),
       uploadType: UploadTypeEnum.VIDEO,
     };
   }
@@ -93,10 +142,12 @@ export class UploadController {
   @Post('videos')
   async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
     // check file exist
-    if (!videos) throw new BadRequestException('Video is required!');
+    if (!videos) throw new BadRequestException('Videos are required!');
 
     return {
-      files: videos.map((file: any) => file.path.replace('public/', '')),
+      files: videos.map(
+        (video: any) => this.appUrl + '/' + video.path.replace('public/', ''),
+      ),
       uploadType: UploadTypeEnum.VIDEO,
     };
   }
@@ -115,7 +166,7 @@ export class UploadController {
     if (!audio) throw new BadRequestException('Audio is required!');
 
     return {
-      file: audio.path.replace('public/', ''),
+      file: this.appUrl + '/' + audio.path.replace('public/', ''),
       uploadType: UploadTypeEnum.AUDIO,
     };
   }
@@ -131,10 +182,12 @@ export class UploadController {
   @Post('audios')
   async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
     // check file exist
-    if (!audios) throw new BadRequestException('Video is required!');
+    if (!audios) throw new BadRequestException('Audios is required!');
 
     return {
-      files: audios.map((file: any) => file.path.replace('public/', '')),
+      files: audios.map(
+        (audio: any) => this.appUrl + '/' + audio.path.replace('public/', ''),
+      ),
       uploadType: UploadTypeEnum.AUDIO,
     };
   }
@@ -152,7 +205,7 @@ export class UploadController {
     @Body() body: SaveFileDto,
   ) {
     const files = await this.uploadService.saveFileToLocal(
-      body.file,
+      body.file.replace(this.appUrl, ''),
       body.uploadType,
     );
 
@@ -172,31 +225,13 @@ export class UploadController {
     @Body() body: SaveFilesDto,
   ) {
     const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToLocal(file, body.uploadType),
+      this.uploadService.saveFileToLocal(
+        file.replace(this.appUrl, ''),
+        body.uploadType,
+      ),
     );
 
     const files = await Promise.all(filesUploadedPromise);
-
-    return { files };
-  }
-
-  /**
-   * Save files to local
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('save_audios_to_local')
-  async saveAudiosToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
-  ) {
-    const videosUploadedPromise = body.files.map((file: string) =>
-      this.uploadService.saveFileToLocal(file, UploadTypeEnum.AUDIO),
-    );
-
-    const files = await Promise.all(videosUploadedPromise);
 
     return { files };
   }

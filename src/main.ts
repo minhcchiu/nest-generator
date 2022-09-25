@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
+import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
 import { Logger } from '~lazy-modules/logger/logger.service';
 import { AppModule } from './app/app.module';
 import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
@@ -27,6 +28,9 @@ async function bootstrap() {
     }),
   );
 
+  // Catch all Exceptions
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   // Config swagger
   const config = new DocumentBuilder()
     .setTitle('Awesome NestJS Generator 2023')
@@ -39,7 +43,10 @@ async function bootstrap() {
   const port = configService.get('app.port');
 
   await app.listen(port, () => {
-    new Logger().log(`The server is running on: http://localhost:${port}/api`);
+    new Logger().log(
+      'Main',
+      `The server is running on: http://localhost:${port}/api`,
+    );
   });
 }
 

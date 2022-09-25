@@ -21,18 +21,21 @@ export const defaultEnv = {
   },
 
   upload: {
-    maxSize: 25,
-    maxFile: 10,
-    maxVideoSize: 40,
-    maxVideoFile: 10,
-    maxAudioSize: 10,
-    maxAudios: 10,
+    imageMaxSize: 10,
+    rawMaxSize: 10,
+    videoMaxSize: 10,
+    audioMaxSize: 10,
 
-    extImages: 'jpg|jpeg|png|gif',
-    extRawFile: 'txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
-    extFiles: 'jpg|jpeg|png|gif|txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
-    extVideo: 'mp4|mkv',
-    extAudio: 'mp3|aac|wav|flac',
+    imageMaxFiles: 10,
+    rawMaxFiles: 10,
+    videoMaxFiles: 10,
+    audioMaxFiles: 10,
+
+    imagesExt: 'jpg|jpeg|png|gif',
+    rawExt: 'txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json',
+    videoExt: 'mp4|mkv',
+    audioExt: 'mp3|aac|wav|flac',
+    // UPLOAD_IMAGE_QUALITY_COMPRESS
   },
 
   jwt: {

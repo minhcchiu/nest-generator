@@ -68,7 +68,7 @@ export class MailService {
     // send mail
     return this.sendMail(params)
       .then((result) => {
-        this.logger.log('SEND OTP TO EMAIL SUCCESS!');
+        this.logger.log(MailService.name, 'SEND OTP TO EMAIL SUCCESS!');
         return result;
       })
       .catch((error) => this.logger.error((error as any).toString()));
@@ -102,7 +102,7 @@ export class MailService {
     // Send
     return this.sendMail(options)
       .then((result) => {
-        this.logger.log('SEND SIGNUP TOKEN SUCCESS!');
+        this.logger.log(MailService.name, 'SEND SIGNUP TOKEN SUCCESS!');
         return result;
       })
       .catch((error) => {
@@ -138,7 +138,7 @@ export class MailService {
     // Send
     return this.sendMail(options)
       .then((result) => {
-        this.logger.log('SEND RESET PASSWORD TOKEN SUCCESS!');
+        this.logger.log(MailService.name, 'SEND RESET PASSWORD TOKEN SUCCESS!');
         return result;
       })
       .catch((error) => this.logger.error((error as any).toString()));

@@ -46,22 +46,29 @@ export const StorageFileInterceptor = (
 
       // options files
       let options = {
-        fileSize: uploadConfig.maxSize,
-        extAllowed: uploadConfig.extFiles,
+        fileSize: uploadConfig.imageMaxSize,
+        extAllowed: uploadConfig.imagesExt,
       };
+
+      // Check upload video -> options upload video
+      if (fieldName === FieldNameEnum.FILE)
+        options = {
+          fileSize: uploadConfig.rawMaxSize,
+          extAllowed: uploadConfig.rawExt,
+        };
 
       // Check upload video -> options upload video
       if (fieldName === FieldNameEnum.VIDEO)
         options = {
-          fileSize: uploadConfig.maxVideoSize,
-          extAllowed: uploadConfig.extVideo,
+          fileSize: uploadConfig.videoMaxSize,
+          extAllowed: uploadConfig.videoExt,
         };
 
       // Check upload audio -> options upload audio
       if (fieldName === FieldNameEnum.AUDIO)
         options = {
-          fileSize: uploadConfig.maxAudios,
-          extAllowed: uploadConfig.extAudio,
+          fileSize: uploadConfig.audioMaxSize,
+          extAllowed: uploadConfig.audioExt,
         };
 
       return {

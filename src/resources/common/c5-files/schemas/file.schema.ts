@@ -15,7 +15,8 @@ export class File {
   @Prop({
     type: String,
     enum: StorageServiceEnum,
-    default: StorageServiceEnum.LOCAL_DISK,
+    unique: true,
+    required: true,
   })
   readonly storage: StorageServiceEnum;
 
@@ -36,6 +37,12 @@ export class File {
 
   @Prop({ type: Number, required: true })
   readonly size: number;
+
+  @Prop({ unique: true, type: Number, required: true })
+  readonly sizes: number;
+
+  @Prop({ unique: true, type: Number, required: true })
+  readonly list: number;
 }
 
 export type FileDocument = File & Document;
