@@ -9,6 +9,8 @@ export const DatabaseModule = MongooseModule.forRootAsync({
   useFactory: async (config: ConfigService) => ({
     uri: config.get<DatabaseConfig>('database').uri,
     retryWrites: true,
+    useNewUrlParser: true,
+    autoIndex: true,
 
     connectionFactory: (connection: any) => {
       connection.plugin(mongoosePaginateV2);

@@ -3,7 +3,7 @@ import { ConsoleLogger, LoggerService, LogLevel } from '@nestjs/common';
 export class Logger implements LoggerService {
   constructor(private readonly logger?: ConsoleLogger) {
     this.logger = new ConsoleLogger();
-    this.log('CustomLoggerModule init success');
+    this.log('Logger', 'CustomLoggerModule init success');
   }
 
   /**
@@ -12,7 +12,8 @@ export class Logger implements LoggerService {
    * @param message
    * @param optionalParams
    */
-  log(message: any, ...optionalParams: any[]) {
+  log(context: string, message: any, ...optionalParams: any[]) {
+    this.logger.setContext(context);
     this.logger.log([message, optionalParams]);
   }
 

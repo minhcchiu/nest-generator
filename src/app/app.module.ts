@@ -31,6 +31,7 @@ import { ApiQueryParamsMiddleware } from '~middlewares/api-query-params.middlewa
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { otpCofig } from '~config/enviroment/otp.env';
+import { LoggerMiddleware } from '~middlewares/logger.middelware';
 
 @Module({
   imports: [
@@ -69,5 +70,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(ApiQueryParamsMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.GET });
+
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
