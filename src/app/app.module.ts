@@ -37,6 +37,7 @@ import { LoggerMiddleware } from 'src/middlewares/logger.middelware';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../', 'public'),
+      serveRoot: '/',
     }),
     ConfigModule.forRoot({
       isGlobal: true,

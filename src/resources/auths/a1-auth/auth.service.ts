@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { JWTConfig } from '~config/enviroment';
+import { AppConfig, JWTConfig } from '~config/enviroment';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { OtpService } from '~auths/a2-otp/otp.service';
 import { UserService } from '~common/c1-users/user.service';
@@ -20,16 +20,23 @@ import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
 import { Types } from 'mongoose';
+import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
 
 @Injectable()
 export class AuthService {
+  private appConfig: AppConfig;
+  private jwtConfig: JWTConfig;
+
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly otpService: OtpService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.appConfig = this.configService.get<AppConfig>('app');
+    this.jwtConfig = this.configService.get<JWTConfig>('jwt');
+  }
 
   /**
    * Sign in with email/phone and password
@@ -131,7 +138,7 @@ export class AuthService {
     // verify otpCode
     await this.otpService.verifyOtp({
       [filterKey]: data[filterKey],
-      otpType: data.otpType,
+      otpType: OtpType.SIGNUP,
       otpCode: data.otpCode,
     });
 
@@ -167,8 +174,7 @@ export class AuthService {
     // generate sugnup token
     const token = await this.tokenService.generateSignupToken(data);
 
-    const appUrl = this.configService.get('app.appUrl');
-    const verificationLink = `${appUrl}/auth/verify-signup-token/${token}`;
+    const verificationLink = `${this.appConfig.appUrl}/auth/verify-signup-token?token=${token}`;
 
     // send mail
     await this.mailService.sendSignupToken(
@@ -178,7 +184,7 @@ export class AuthService {
     );
 
     // success
-    return verificationLink;
+    return { verificationLink, token };
   }
 
   /**
@@ -232,8 +238,11 @@ export class AuthService {
     // check user
     if (!user) throw new NotFoundException('Invalid refresh');
 
-    // return new tokens
-    return this.generateAuthTokens({ _id: user._id, role: user.role });
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
@@ -255,8 +264,7 @@ export class AuthService {
       }
 
       // create expireTime
-      const expireTime =
-        this.configService.get<JWTConfig>('jwt').expirationTime.resetPassword;
+      const expireTime = this.jwtConfig.expirationTime.resetPassword;
 
       // generate accessToken
       const token = await this.tokenService.generateAccessToken(
@@ -264,8 +272,7 @@ export class AuthService {
         expireTime,
       );
 
-      const appUrl = this.configService.get<string>('app.appUrl');
-      const resetPasswordLink = `${appUrl}/auth/reset-password?token=${token}`;
+      const resetPasswordLink = `${this.appConfig.appUrl}/auth/reset-password?token=${token}`;
 
       // send mail
       await this.mailService.sendResetPasswordToken(
@@ -274,8 +281,11 @@ export class AuthService {
         'Reset password.',
       );
 
+      // Reponse otp
+      if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+        return { resetPasswordLink, token };
+      }
       // success
-      return { resetPasswordLink };
     }
 
     throw new NotFoundException('Email not found.');

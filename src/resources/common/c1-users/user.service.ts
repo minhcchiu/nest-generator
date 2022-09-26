@@ -27,11 +27,13 @@ export class UserService extends BaseService<UserDocument> {
    * @returns
    */
   async create(data: any) {
-    let filterValidate: any;
+    const filterValidate: any = {};
 
     if (data.phone) filterValidate['phone'] = data.phone;
 
     if (data.email) filterValidate['email'] = data.email;
+
+    if (data.authKey) filterValidate['authKey'] = data.authKey;
 
     // validate unquie key
     if (filterValidate) await this.validateCreateUser(filterValidate);

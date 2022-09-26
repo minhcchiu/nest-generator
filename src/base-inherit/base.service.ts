@@ -185,15 +185,6 @@ export class BaseService<T> implements BaseInterface<T> {
   async paginate(
     queryParams: ApiQueryParamsDto,
   ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>> {
-    const customLabels = {
-      docs: 'docs',
-      limit: 'limit',
-      page: 'page',
-      totalPages: 'totalPages',
-      totalDocs: 'totalDocs',
-      meta: 'pageInfo',
-    };
-
     const pageInfo = {
       lean: true,
       page: queryParams.skip || 1,
@@ -201,7 +192,6 @@ export class BaseService<T> implements BaseInterface<T> {
       sort: queryParams.sort || '-updatedAt',
       populate: queryParams.population || [],
       projection: queryParams.projection || {},
-      customLabels,
     };
 
     return this.model.paginate(queryParams.filter, pageInfo);
@@ -216,8 +206,8 @@ export class BaseService<T> implements BaseInterface<T> {
   async count(
     query = {},
     options: QueryOptions = {},
-  ): Promise<{ totalDocs: number }> {
-    const totalDocs = await this.model.countDocuments(query, options).lean();
-    return { totalDocs };
+  ): Promise<{ totalData: number }> {
+    const totalData = await this.model.countDocuments(query, options).lean();
+    return { totalData };
   }
 }

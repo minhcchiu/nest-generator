@@ -1,12 +1,5 @@
 import { PartialType, OmitType } from '@nestjs/mapped-types';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 export class SignupSendTokenDto extends PartialType(
@@ -24,13 +17,4 @@ export class SignupSendTokenDto extends PartialType(
   @Length(6, 50)
   @IsString()
   readonly password: string;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(12)
-  readonly deviceID?: string;
-
-  @IsNotEmpty()
-  @Length(4)
-  readonly otpCode: string;
 }

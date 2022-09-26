@@ -25,15 +25,43 @@ export class ProvinceController {
   constructor(private readonly provinceService: ProvinceService) {}
 
   /**
-   * Find all
+   * Paginate
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.provinceService.find(queryParams);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.provinceService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.provinceService.count(query);
+  }
+
+  /**
+   * Find by id
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.provinceService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 
   /**
@@ -86,45 +114,5 @@ export class ProvinceController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.provinceService.deleteById(id);
-  }
-
-  /**
-   * Paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.provinceService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.provinceService.count(query);
-  }
-
-  /**
-   * Find by id
-   *
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.provinceService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }

@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
-import { ResourceTypeEnum } from './enum/resource-type.enum';
+import { SaveFileDto } from './dto/save-file.dto';
 import { UploadHelper } from './upload.helper';
 @Injectable()
 export class UploadService {
@@ -18,16 +18,16 @@ export class UploadService {
   /**
    * Save file to local
    *
-   * @param filePath
+   * @param data
+   * @param owner
    * @returns
    */
   async saveFileToLocal(
-    filePath: string,
-    resourceType: ResourceTypeEnum,
-    userId?: Types.ObjectId,
+    { file, resourceType }: SaveFileDto,
+    owner: Types.ObjectId,
   ) {
     // check file
-    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
     const result = await this.localStorageService.upload(
       realpathOfFile,
@@ -35,10 +35,7 @@ export class UploadService {
     );
 
     // save file to database
-    await this.fileService.create({
-      ...result,
-      // owner: userId,
-    });
+    await this.fileService.create({ ...result, owner });
 
     return result.files;
   }
@@ -46,15 +43,15 @@ export class UploadService {
   /**
    * Save file to Cloudinary
    *
-   * @param filePath
+   * @param data
+   * @param owner
    * @returns
    */
   async saveFileToCloudinary(
-    filePath: string,
-    resourceType: ResourceTypeEnum,
-    userId?: Types.ObjectId,
+    { file, resourceType }: SaveFileDto,
+    owner: Types.ObjectId,
   ) {
-    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(filePath);
+    const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
     // upload file to cloudinary
     const result = await this.cloudinaryService.upload(
@@ -64,10 +61,7 @@ export class UploadService {
 
     // save file to database
 
-    await this.fileService.create({
-      ...result,
-      // owner:
-    });
+    await this.fileService.create({ ...result, owner });
 
     // success
     return result.files;
@@ -76,10 +70,14 @@ export class UploadService {
   /**
    * Save file to S3
    *
-   * @param filePath
+   * @param data
+   * @param owner
    * @returns
    */
-  async saveFileToS3(filePath: string, userId?: Types.ObjectId) {
-    return { filePath, userId };
+  async saveFileToS3(
+    { file, resourceType }: SaveFileDto,
+    owner: Types.ObjectId,
+  ) {
+    return { file, resourceType, owner };
   }
 }

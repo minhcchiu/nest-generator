@@ -39,17 +39,6 @@ export class AuthController {
   }
 
   /**
-   * Signin with social
-   *
-   * @param body
-   * @returns
-   */
-  @Post('signin_social')
-  async signinWithSocial(@Body() body: SigninSocialDto) {
-    return this.authService.signinWithSocial(body);
-  }
-
-  /**
    * Signup with otp
    *
    * @param body
@@ -58,6 +47,17 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
+  }
+
+  /**
+   * Signin with social
+   *
+   * @param body
+   * @returns
+   */
+  @Post('signin_social')
+  async signinWithSocial(@Body() body: SigninSocialDto) {
+    return this.authService.signinWithSocial(body);
   }
 
   /**
@@ -114,6 +114,17 @@ export class AuthController {
   }
 
   /**
+   * Reset password by otp
+   *
+   * @param body
+   * @returns
+   */
+  @Put('reset_password_by_otp')
+  async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPasswordByOtp(body);
+  }
+
+  /**
    * Forgot password
    *
    * @param email
@@ -125,17 +136,6 @@ export class AuthController {
   }
 
   /**
-   * Reset password by otp
-   *
-   * @param body
-   * @returns
-   */
-  @Post('reset_password_by_otp')
-  async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
-    return this.authService.resetPasswordByOtp(body);
-  }
-
-  /**
    * Reset password
    *
    * @param userId
@@ -143,7 +143,7 @@ export class AuthController {
    * @returns
    */
   @UseGuards(AtGuard)
-  @Post('reset_password')
+  @Put('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() { password }: PasswordDto,

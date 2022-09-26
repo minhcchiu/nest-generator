@@ -25,15 +25,43 @@ export class WardController {
   constructor(private readonly wardService: WardService) {}
 
   /**
-   * Find all
+   * Paginate
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.wardService.find(queryParams);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.wardService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.wardService.count(query);
+  }
+
+  /**
+   * Find by id
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.wardService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 
   /**
@@ -86,45 +114,5 @@ export class WardController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.wardService.deleteById(id);
-  }
-
-  /**
-   * Paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.wardService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.wardService.count(query);
-  }
-
-  /**
-   * Find by id
-   *
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.wardService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }

@@ -23,7 +23,6 @@ export class ATStrategy extends PassportStrategy(Strategy, 'ac_token') {
    */
 
   validate(payload: any) {
-    console.log({ payload });
     return payload;
   }
 }

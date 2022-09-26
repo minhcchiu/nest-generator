@@ -6,13 +6,14 @@ import {
   Post,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
-// import { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
-// import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
+import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
 import { SaveFileDto } from './dto/save-file.dto';
 import { SaveFilesDto } from './dto/save-files.dto';
@@ -22,6 +23,7 @@ import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from '~config/enviroment';
+import { AtGuard } from 'src/common/guards';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)
@@ -40,6 +42,7 @@ export class UploadController {
    * @param file
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
   @HttpCode(201)
   @Post('file')
@@ -59,6 +62,7 @@ export class UploadController {
    * @param files
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
   @HttpCode(201)
   @Post('files')
@@ -79,6 +83,7 @@ export class UploadController {
    * @param image
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
   @HttpCode(201)
   @Post('image')
@@ -98,6 +103,7 @@ export class UploadController {
    * @param images
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
   @HttpCode(201)
   @Post('images')
@@ -118,6 +124,7 @@ export class UploadController {
    * @param video
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
   @HttpCode(201)
   @Post('video')
@@ -137,6 +144,7 @@ export class UploadController {
    * @param videos
    * @returns
    */
+  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
   @HttpCode(201)
   @Post('videos')
@@ -195,18 +203,19 @@ export class UploadController {
   /**
    * Save file to local
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
   @Post('save_file_to_local')
   async saveFileToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
   ) {
     const files = await this.uploadService.saveFileToLocal(
-      body.file.replace(this.appUrl, ''),
-      body.resourceType,
+      { file: file.replace(this.appUrl, ''), resourceType },
+      userId,
     );
 
     return { files };
@@ -215,43 +224,46 @@ export class UploadController {
   /**
    * Save files to local
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Post('save_files_to_local')
   async saveFilesToLocal(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
   ) {
-    const filesUploadedPromise = body.files.map((file) =>
+    const filesUploadedPromise = files.map((file) =>
       this.uploadService.saveFileToLocal(
-        file.replace(this.appUrl, ''),
-        body.resourceType,
+        { file: file.replace(this.appUrl, ''), resourceType },
+        userId,
       ),
     );
 
-    const files = await Promise.all(filesUploadedPromise);
+    const result = await Promise.all(filesUploadedPromise);
 
-    return { files };
+    return { files: result };
   }
 
   /**
    * Save file to Cloudinary
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
   ) {
     const files = await this.uploadService.saveFileToCloudinary(
-      body.file.replace(this.appUrl, ''),
-      body.resourceType,
-      // userId,
+      { file, resourceType },
+      userId,
     );
 
     return { files };
@@ -260,37 +272,44 @@ export class UploadController {
   /**
    * Save files to Cloudinary
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Post('save_files_to_cloudinary')
   async saveToCloudinary(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
   ) {
-    const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToCloudinary(file, body.resourceType),
+    const filesUploadedPromise = files.map((file) =>
+      this.uploadService.saveFileToCloudinary({ file, resourceType }, userId),
     );
 
-    const files = await Promise.all(filesUploadedPromise);
+    const result = await Promise.all(filesUploadedPromise);
 
-    return { files };
+    return { files: result };
   }
 
   /**
    * Save file to S3
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Post('save_file_to_s3')
   async saveFileToS3(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFileDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
   ) {
-    const files = await this.uploadService.saveFileToS3(body.file);
+    const files = await this.uploadService.saveFileToS3(
+      { file, resourceType },
+      userId,
+    );
 
     return { files };
   }
@@ -298,21 +317,23 @@ export class UploadController {
   /**
    * Save files to S3
    *
+   * @param userId
    * @param body
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Post('save_files_to_s3')
   async saveFilesToS3(
-    // @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() body: SaveFilesDto,
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
   ) {
-    const filesUploadedPromise = body.files.map((file) =>
-      this.uploadService.saveFileToS3(file),
+    const filesUploadedPromise = files.map((file) =>
+      this.uploadService.saveFileToS3({ file, resourceType }, userId),
     );
 
-    const files = await Promise.all(filesUploadedPromise);
+    const result = await Promise.all(filesUploadedPromise);
 
-    return { files };
+    return { files: result };
   }
 }

@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
@@ -22,6 +23,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
+import { AtGuard } from 'src/common/guards';
 
 @ApiTags(dbCollections.user.path)
 @Controller(dbCollections.user.path)
@@ -29,15 +31,43 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /**
-   * Find all
+   * Paginate
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.userService.find(queryParams);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.userService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.userService.count(query);
+  }
+
+  /**
+   * Find by id
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.userService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 
   /**
@@ -60,6 +90,7 @@ export class UserController {
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Put(':id/password')
   async resetPassword(
     @GetCurrentUserId() id: Types.ObjectId,
@@ -78,6 +109,7 @@ export class UserController {
    * @returns
    */
   @HttpCode(200)
+  @UseGuards(AtGuard)
   @Put(':id')
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
@@ -92,18 +124,6 @@ export class UserController {
     await this.userService.validateCreateUser(filterValidate);
 
     return this.userService.updateById(id, body);
-  }
-
-  /**
-   * Delete by ID
-   *
-   * @param id
-   * @returns
-   */
-  // @HttpCode(204)
-  @Delete(':id/soft')
-  async deleteSoft(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.userService.updateById(id, { deleted: true });
   }
 
   /**
@@ -140,48 +160,20 @@ export class UserController {
    * @returns
    */
   // @HttpCode(204)
-  @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.userService.deleteById(id);
+  @Delete(':id/soft')
+  async deleteSoft(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userService.updateById(id, { deleted: true });
   }
 
   /**
-   * Paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.userService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.userService.count(query);
-  }
-
-  /**
-   * Find by id
+   * Delete by ID
    *
    * @param id
    * @returns
    */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.userService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
+  // @HttpCode(204)
+  @Delete(':id')
+  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userService.deleteById(id);
   }
 }

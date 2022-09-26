@@ -27,6 +27,45 @@ export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 
   /**
+   * paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('')
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.otpService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.otpService.count(query);
+  }
+
+  /**
+   * Find by id
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.otpService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
+  }
+
+  /**
    * Send otp to phone
    *
    * @param body
@@ -63,18 +102,6 @@ export class OtpController {
   }
 
   /**
-   * Find all
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.otpService.find(queryParams);
-  }
-
-  /**
    * Delete many by ids
    *
    * @param ids
@@ -96,44 +123,5 @@ export class OtpController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.otpService.deleteById(id);
-  }
-
-  /**
-   * paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.otpService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.otpService.count(query);
-  }
-
-  /**
-   * Find by id
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.otpService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }
