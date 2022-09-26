@@ -1,16 +1,13 @@
 import { PartialType, OmitType } from '@nestjs/mapped-types';
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   Length,
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 export class SignupDto extends PartialType(
@@ -23,7 +20,6 @@ export class SignupDto extends PartialType(
 
   @ValidateIf((object) => !object.email)
   @IsNotEmpty()
-  @IsPhoneNumber('VN')
   readonly phone: string;
 
   @IsNotEmpty()
@@ -43,8 +39,4 @@ export class SignupDto extends PartialType(
   @IsNotEmpty()
   @Length(4)
   readonly otpCode: string;
-
-  @IsNotEmpty()
-  @IsEnum(OtpType)
-  readonly otpType: OtpType;
 }

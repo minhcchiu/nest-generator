@@ -15,6 +15,7 @@ export class SigninSocialDto extends PartialType(
 ) {
   @IsNotEmpty()
   @IsString()
+  @MinLength(15)
   readonly authKey: string;
 
   @IsNotEmpty()

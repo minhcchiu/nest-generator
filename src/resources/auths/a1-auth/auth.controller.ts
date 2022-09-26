@@ -1,21 +1,23 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { ApiTags } from '@nestjs/swagger';
 
 import { dbCollections } from '~config/collections/schemas.collection';
 import { UserService } from '~common/c1-users/user.service';
 import {
-  ResetPasswordByTokenDto,
   ResetPasswordDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
   SignupSendTokenDto,
   TokenDto,
+  PasswordDto,
 } from './dto';
 import { AuthService } from './auth.service';
 import { EmailDto } from '~common/c1-users/dto';
 import { Logger } from '~lazy-modules/logger/logger.service';
+import { AtGuard } from 'src/common/guards/at.guard';
+import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 @ApiTags('auth')
 @Controller(dbCollections.auth.path)
 export class AuthController {
@@ -37,17 +39,6 @@ export class AuthController {
   }
 
   /**
-   * Signin with social
-   *
-   * @param body
-   * @returns
-   */
-  @Post('signin_social')
-  async signinWithSocial(@Body() body: SigninSocialDto) {
-    return this.authService.signinWithSocial(body);
-  }
-
-  /**
    * Signup with otp
    *
    * @param body
@@ -56,6 +47,17 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
+  }
+
+  /**
+   * Signin with social
+   *
+   * @param body
+   * @returns
+   */
+  @Post('signin_social')
+  async signinWithSocial(@Body() body: SigninSocialDto) {
+    return this.authService.signinWithSocial(body);
   }
 
   /**
@@ -103,46 +105,49 @@ export class AuthController {
   /**
    * Refresh token
    *
-   * @param {refreshToken}
+   * @param token
    * @returns
    */
   @Put('refresh_token')
-  async refreshToken(@Body() { token }: TokenDto) {
-    return this.authService.refreshToken(token);
+  async refresh(@Body() { token }: TokenDto) {
+    return this.authService.refresh(token);
+  }
+
+  /**
+   * Reset password by otp
+   *
+   * @param body
+   * @returns
+   */
+  @Put('reset_password_by_otp')
+  async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPasswordByOtp(body);
   }
 
   /**
    * Forgot password
    *
-   * @param body
+   * @param email
    * @returns
    */
-  @Put('forgot_password_send_token_link')
-  async forgotPassword(@Body() body: EmailDto) {
-    return this.authService.forgotPasswordSendTokenLink(body.email);
+  @Put('send_reset_password_link')
+  async forgotPassword(@Body() { email }: EmailDto) {
+    return this.authService.forgotPasswordSendTokenLink(email);
   }
 
   /**
    * Reset password
    *
-   * @param body
+   * @param userId
+   * @param password
    * @returns
    */
-  @Post('reset_password_by_otp')
-  async resetPassword(@Body() body: ResetPasswordDto) {
-    return this.authService.resetPasswordByOtp(body);
-  }
-
-  /**
-   * Reset password by token
-   *
-   * @param body
-   * @returns
-   */
-  @Post('reset_password_by_token')
-  async resetPasswordByToken(
-    @Body() { token, password }: ResetPasswordByTokenDto,
+  @UseGuards(AtGuard)
+  @Put('reset_password')
+  async resetPassword(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { password }: PasswordDto,
   ) {
-    return this.authService.resetPasswordByToken(token, password);
+    return this.authService.resetPassword(userId, password);
   }
 }

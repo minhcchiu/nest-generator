@@ -27,16 +27,17 @@ import { ProvinceModule } from '~common/c2-provinces/province.module';
 import { UploadModule } from '~common/c6-upload/upload.module';
 import { FileModule } from '~common/c5-files/file.module';
 import { NotificationModule } from '~common/c7-notifications/notification.module';
-import { ApiQueryParamsMiddleware } from '~middlewares/api-query-params.middleware';
+import { ApiQueryParamsMiddleware } from 'src/middlewares/api-query-params.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { otpCofig } from '~config/enviroment/otp.env';
-import { LoggerMiddleware } from '~middlewares/logger.middelware';
+import { LoggerMiddleware } from 'src/middlewares/logger.middelware';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../', 'public'),
+      serveRoot: '/',
     }),
     ConfigModule.forRoot({
       isGlobal: true,

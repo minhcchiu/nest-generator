@@ -9,7 +9,7 @@ import { StorageServiceEnum } from '../enum/storage-service.enum';
   collection: dbCollections.file.name,
 })
 export class File {
-  @Prop({ type: Types.ObjectId, ref: dbCollections.user.ref })
+  @Prop({ type: Types.ObjectId, ref: dbCollections.user.ref, required: true })
   readonly owner: string;
 
   @Prop({

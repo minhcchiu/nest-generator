@@ -37,7 +37,7 @@
         "./src/resources/features/*"
       ],
       "~decorators/*": [
-        "./src/utils/decorators/*"
+        "src/common/decorators/*"
       ],
       "~exception/*": [
         "./src/utils/exceptions/*"
@@ -52,7 +52,7 @@
         "./src/utils/pipe/*"
       ],
       "~middlewares/*": [
-        "./src/utils/middlewares/*"
+        "src/middlewares/*"
       ],
     }
   },

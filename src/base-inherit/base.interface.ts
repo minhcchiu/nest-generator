@@ -117,5 +117,5 @@ export interface BaseInterface<T> {
    *
    * @param query
    */
-  count(query: object, options: QueryOptions): Promise<{ totalDocs: number }>;
+  count(query: object, options: QueryOptions): Promise<{ totalData: number }>;
 }

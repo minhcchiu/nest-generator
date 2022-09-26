@@ -14,8 +14,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 import { dbCollections } from '~config/collections/schemas.collection';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 import { OtpService } from './otp.service';
 import { SendOtpDto } from './dto/send-otp.dto copy';
@@ -25,6 +25,45 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 @Controller(dbCollections.otp.path)
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
+
+  /**
+   * paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('')
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.otpService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.otpService.count(query);
+  }
+
+  /**
+   * Find by id
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.otpService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
+  }
 
   /**
    * Send otp to phone
@@ -63,18 +102,6 @@ export class OtpController {
   }
 
   /**
-   * Find all
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.otpService.find(queryParams);
-  }
-
-  /**
    * Delete many by ids
    *
    * @param ids
@@ -96,44 +123,5 @@ export class OtpController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.otpService.deleteById(id);
-  }
-
-  /**
-   * paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.otpService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.otpService.count(query);
-  }
-
-  /**
-   * Find by id
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.otpService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }

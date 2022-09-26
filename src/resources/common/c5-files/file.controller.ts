@@ -14,25 +14,54 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { FileService } from './file.service';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 @ApiTags(dbCollections.file.path)
 @Controller(dbCollections.file.path)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
+
   /**
-   * Find all
+   * Paginate
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.fileService.find(queryParams);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.fileService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.fileService.count(query);
+  }
+
+  /**
+   * Find by id
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.fileService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 
   /**
@@ -85,45 +114,5 @@ export class FileController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.fileService.deleteById(id);
-  }
-
-  /**
-   * Paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.fileService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.fileService.count(query);
-  }
-
-  /**
-   * Find by id
-   *
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.fileService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }

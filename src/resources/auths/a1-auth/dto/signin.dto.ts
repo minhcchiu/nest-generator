@@ -2,7 +2,6 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   Length,
   MinLength,
@@ -17,7 +16,7 @@ export class SigninDto {
 
   @ValidateIf((object) => !object.email)
   @IsNotEmpty()
-  @IsPhoneNumber('VN')
+  @IsString()
   readonly phone: string;
 
   @IsNotEmpty()

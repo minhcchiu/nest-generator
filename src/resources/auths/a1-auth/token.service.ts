@@ -29,7 +29,7 @@ export class TokenService {
   }
 
   /**
-   * Generate accessToken
+   * Generate access
    *
    * @param payload
    * @param atSecret
@@ -38,8 +38,8 @@ export class TokenService {
    */
   async generateAccessToken(
     payload: TokenPayload,
-    atExpire = this.config.get('jwt').expirationTime.accessToken,
-    atSecret = this.config.get('jwt').secrets.accessToken,
+    atExpire = this.config.get('jwt').expirationTime.access,
+    atSecret = this.config.get('jwt').secrets.access,
   ): Promise<string> {
     return this.generateToken(payload, atSecret, atExpire);
   }
@@ -54,8 +54,8 @@ export class TokenService {
    */
   async generateRefreshToken(
     payload: TokenPayload,
-    rtSecret = this.config.get('jwt').secrets.refreshToken,
-    rtExpire = this.config.get('jwt').expirationTime.refreshToken,
+    rtSecret = this.config.get('jwt').secrets.refresh,
+    rtExpire = this.config.get('jwt').expirationTime.refresh,
   ): Promise<string> {
     return this.generateToken(payload, rtSecret, rtExpire);
   }
@@ -70,8 +70,8 @@ export class TokenService {
    */
   async generateSignupToken(
     payload: any,
-    suSecret = this.config.get('jwt').secrets.signupToken,
-    suExpire = this.config.get('jwt').expirationTime.signupToken,
+    suSecret = this.config.get('jwt').secrets.signup,
+    suExpire = this.config.get('jwt').expirationTime.signup,
   ): Promise<string> {
     return this.generateToken(payload, suSecret, suExpire);
   }
@@ -97,7 +97,7 @@ export class TokenService {
   }
 
   /**
-   * Verify accessToken
+   * Verify access
    *
    * @param token
    * @param secret
@@ -105,13 +105,13 @@ export class TokenService {
    */
   async verifyAccessToken(
     token: string,
-    secret = this.config.get('jwt').secrets.accessToken,
+    secret = this.config.get('jwt').secrets.access,
   ): Promise<DecodedToken> {
     return this.verifyToken(token, secret);
   }
 
   /**
-   * Verify refreshToken
+   * Verify refresh
    *
    * @param rfToken
    * @param rtSecret
@@ -119,13 +119,13 @@ export class TokenService {
    */
   async verifyRefreshToken(
     rfToken: string,
-    rtSecret = this.config.get('jwt').secrets.refreshToken,
+    rtSecret = this.config.get('jwt').secrets.refresh,
   ): Promise<DecodedToken> {
     return this.verifyToken(rfToken, rtSecret);
   }
 
   /**
-   * Verify refreshToken
+   * Verify refresh
    *
    * @param token
    * @param secret
@@ -133,7 +133,7 @@ export class TokenService {
    */
   async verifySignupToken(
     token: string,
-    secret = this.config.get('jwt').secrets.signupToken,
+    secret = this.config.get('jwt').secrets.signup,
   ): Promise<any> {
     return this.verifyToken(token, secret);
   }

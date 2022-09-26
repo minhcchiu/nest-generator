@@ -1,6 +1,7 @@
 import {
   ArgumentsHost,
   Catch,
+  ConsoleLogger,
   ExceptionFilter,
   HttpException,
   HttpStatus,
@@ -96,12 +97,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return this._responseException(errorResponse, ctx, exception);
     }
 
-    const errorResponse = {
-      title: 'Internal Server Error',
-      error: 'Critical internal server error occurred!',
-      errors: null,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    };
+    const error =
+      exception?.message || 'Critical internal server error occurred!';
+
+    const title = exception.getResponse
+      ? exception.getResponse()['error']
+      : 'Internal Server Error';
+
+    const statusCode = exception.getStatus
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const errorResponse = { title, error, errors: null, statusCode };
 
     // response error
     return this._responseException(errorResponse, ctx, exception);
@@ -122,12 +129,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
   ) {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const { error, errors, title, statusCode } = errorResponse;
 
     const exceptionResponse = {
-      ...errorResponse,
+      error,
+      errors,
+      title,
+      statusCode,
       path: request.url,
       method: request.method,
       timeStamp: new Date(),
+    };
+
+    const prodErrorResponse = {
+      title,
+      error,
+      errors,
     };
 
     // get log message string
@@ -135,12 +152,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // Log in terminal
     new Logger().error(AllExceptionsFilter.name, exceptionResponse);
+    new ConsoleLogger().error(exception?.stack);
 
     // write log
     this._writeErrorLogToFile(errorLog);
 
     // response
-    return response.status(errorResponse.statusCode).json(exceptionResponse);
+    return response.status(errorResponse.statusCode).json(prodErrorResponse);
   }
 
   /**

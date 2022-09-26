@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   Length,
   MinLength,
@@ -35,7 +34,7 @@ export class CreateUserDto {
   readonly email?: string;
 
   @ValidateIf((object) => !object.email)
-  @IsPhoneNumber('VN')
+  @IsString()
   readonly phone?: string;
 
   @IsOptional()

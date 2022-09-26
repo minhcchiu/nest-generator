@@ -14,10 +14,10 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { DistrictService } from './district.service';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 @ApiTags(dbCollections.district.path)
 @Controller(dbCollections.district.path)
@@ -25,15 +25,43 @@ export class DistrictController {
   constructor(private readonly districtService: DistrictService) {}
 
   /**
-   * Find all
+   * Paginate
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
-  async findAll(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.districtService.find(queryParams);
+  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.districtService.paginate(queryParams);
+  }
+
+  /**
+   * Count
+   *
+   * @param query
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('count')
+  async count(@Query() query: any) {
+    return this.districtService.count(query);
+  }
+
+  /**
+   * Find by id
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @Get(':id')
+  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const result = await this.districtService.findById(id);
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 
   /**
@@ -86,45 +114,5 @@ export class DistrictController {
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.districtService.deleteById(id);
-  }
-
-  /**
-   * Paginate
-   *
-   * @param queryParams
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('paginate')
-  async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
-    return this.districtService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.districtService.count(query);
-  }
-
-  /**
-   * Find by id
-   *
-   * @param id
-   * @returns
-   */
-  @HttpCode(200)
-  @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.districtService.findById(id);
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
   }
 }

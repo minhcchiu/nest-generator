@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { JWTConfig } from '~config/enviroment';
+import { AppConfig, JWTConfig } from '~config/enviroment';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { OtpService } from '~auths/a2-otp/otp.service';
 import { UserService } from '~common/c1-users/user.service';
@@ -19,16 +19,24 @@ import {
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
+import { Types } from 'mongoose';
+import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
 
 @Injectable()
 export class AuthService {
+  private appConfig: AppConfig;
+  private jwtConfig: JWTConfig;
+
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly otpService: OtpService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.appConfig = this.configService.get<AppConfig>('app');
+    this.jwtConfig = this.configService.get<JWTConfig>('jwt');
+  }
 
   /**
    * Sign in with email/phone and password
@@ -130,7 +138,7 @@ export class AuthService {
     // verify otpCode
     await this.otpService.verifyOtp({
       [filterKey]: data[filterKey],
-      otpType: data.otpType,
+      otpType: OtpType.SIGNUP,
       otpCode: data.otpCode,
     });
 
@@ -166,8 +174,7 @@ export class AuthService {
     // generate sugnup token
     const token = await this.tokenService.generateSignupToken(data);
 
-    const appUrl = this.configService.get('app.appUrl');
-    const verificationLink = `${appUrl}/auth/verify-signup-token/${token}`;
+    const verificationLink = `${this.appConfig.appUrl}/auth/verify-signup-token?token=${token}`;
 
     // send mail
     await this.mailService.sendSignupToken(
@@ -177,11 +184,11 @@ export class AuthService {
     );
 
     // success
-    return verificationLink;
+    return { verificationLink, token };
   }
 
   /**
-   * Activate signupToken
+   * Activate signup
    *
    * @param token
    * @return
@@ -221,7 +228,7 @@ export class AuthService {
    * @param token
    * @return
    */
-  async refreshToken(token: string) {
+  async refresh(token: string) {
     // decoded data
     const decoded = await this.tokenService.verifyRefreshToken(token);
 
@@ -229,10 +236,13 @@ export class AuthService {
     const user = await this.userService.findById(decoded._id);
 
     // check user
-    if (!user) throw new NotFoundException('Invalid refreshToken');
+    if (!user) throw new NotFoundException('Invalid refresh');
 
-    // return new tokens
-    return this.generateAuthTokens({ _id: user._id, role: user.role });
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
+
+    // success
+    return { ...tokens, user };
   }
 
   /**
@@ -254,9 +264,7 @@ export class AuthService {
       }
 
       // create expireTime
-      const expireTime =
-        this.configService.get<JWTConfig>('jwt').expirationTime
-          .resetPasswordToken;
+      const expireTime = this.jwtConfig.expirationTime.resetPassword;
 
       // generate accessToken
       const token = await this.tokenService.generateAccessToken(
@@ -264,8 +272,7 @@ export class AuthService {
         expireTime,
       );
 
-      const appUrl = this.configService.get<string>('app.appUrl');
-      const resetPasswordLink = `${appUrl}/auth/reset-password?token=${token}`;
+      const resetPasswordLink = `${this.appConfig.appUrl}/auth/reset-password?token=${token}`;
 
       // send mail
       await this.mailService.sendResetPasswordToken(
@@ -274,8 +281,11 @@ export class AuthService {
         'Reset password.',
       );
 
+      // Reponse otp
+      if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+        return { resetPasswordLink, token };
+      }
       // success
-      return { resetPasswordLink };
     }
 
     throw new NotFoundException('Email not found.');
@@ -330,43 +340,20 @@ export class AuthService {
   }
 
   /**
-   * Reset password by token
+   * Reset password
    *
-   * @param token
+   * @param userId
+   * @param password
    * @return
    */
-  async resetPasswordByToken(token: string, password: string) {
-    const decoded = await this.tokenService.verifyAccessToken(token);
+  async resetPassword(userId: Types.ObjectId, password: string) {
+    const user = await this.userService.updatePasswordById(userId, password);
 
-    // delete key of token
-    delete decoded.iat;
-    delete decoded.exp;
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
 
-    // validate user
-    const user = await this.userService.findById(decoded._id);
-
-    // check user exist
-    if (user) {
-      if (user.deleted) {
-        const deletedAt = new Date(user.updatedAt).toLocaleString();
-
-        throw new BadRequestException(`Account deleted on ${deletedAt}`);
-      }
-
-      // Update password
-      const userUpdated = await this.userService.updatePasswordById(
-        user._id,
-        password,
-      );
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens(userUpdated);
-
-      // success
-      return { ...tokens, user };
-    }
-
-    throw new NotFoundException('Email not found.');
+    // success
+    return { ...tokens, user };
   }
 
   /**
