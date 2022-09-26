@@ -19,6 +19,7 @@ import {
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -181,7 +182,7 @@ export class AuthService {
   }
 
   /**
-   * Activate signupToken
+   * Activate signup
    *
    * @param token
    * @return
@@ -221,7 +222,7 @@ export class AuthService {
    * @param token
    * @return
    */
-  async refreshToken(token: string) {
+  async refresh(token: string) {
     // decoded data
     const decoded = await this.tokenService.verifyRefreshToken(token);
 
@@ -229,7 +230,7 @@ export class AuthService {
     const user = await this.userService.findById(decoded._id);
 
     // check user
-    if (!user) throw new NotFoundException('Invalid refreshToken');
+    if (!user) throw new NotFoundException('Invalid refresh');
 
     // return new tokens
     return this.generateAuthTokens({ _id: user._id, role: user.role });
@@ -255,8 +256,7 @@ export class AuthService {
 
       // create expireTime
       const expireTime =
-        this.configService.get<JWTConfig>('jwt').expirationTime
-          .resetPasswordToken;
+        this.configService.get<JWTConfig>('jwt').expirationTime.resetPassword;
 
       // generate accessToken
       const token = await this.tokenService.generateAccessToken(
@@ -330,43 +330,20 @@ export class AuthService {
   }
 
   /**
-   * Reset password by token
+   * Reset password
    *
-   * @param token
+   * @param userId
+   * @param password
    * @return
    */
-  async resetPasswordByToken(token: string, password: string) {
-    const decoded = await this.tokenService.verifyAccessToken(token);
+  async resetPassword(userId: Types.ObjectId, password: string) {
+    const user = await this.userService.updatePasswordById(userId, password);
 
-    // delete key of token
-    delete decoded.iat;
-    delete decoded.exp;
+    // generate tokens
+    const tokens = await this.generateAuthTokens(user);
 
-    // validate user
-    const user = await this.userService.findById(decoded._id);
-
-    // check user exist
-    if (user) {
-      if (user.deleted) {
-        const deletedAt = new Date(user.updatedAt).toLocaleString();
-
-        throw new BadRequestException(`Account deleted on ${deletedAt}`);
-      }
-
-      // Update password
-      const userUpdated = await this.userService.updatePasswordById(
-        user._id,
-        password,
-      );
-
-      // generate tokens
-      const tokens = await this.generateAuthTokens(userUpdated);
-
-      // success
-      return { ...tokens, user };
-    }
-
-    throw new NotFoundException('Email not found.');
+    // success
+    return { ...tokens, user };
   }
 
   /**

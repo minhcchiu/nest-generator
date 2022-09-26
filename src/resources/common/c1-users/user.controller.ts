@@ -13,14 +13,15 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
 import { dbCollections } from '~config/collections/schemas.collection';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password';
+import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 
 @ApiTags(dbCollections.user.path)
 @Controller(dbCollections.user.path)
@@ -52,7 +53,7 @@ export class UserController {
   }
 
   /**
-   * Reset password
+   * Update password
    *
    * @param id
    * @param body
@@ -61,7 +62,7 @@ export class UserController {
   @HttpCode(200)
   @Put(':id/password')
   async resetPassword(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @GetCurrentUserId() id: Types.ObjectId,
     @Body() body: UpdatePasswordDto,
   ) {
     await this.userService.checkPasswordById(id, body.password);

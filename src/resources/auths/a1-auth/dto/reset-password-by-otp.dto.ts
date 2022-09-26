@@ -17,7 +17,7 @@ export class ResetPasswordDto {
 
   @ValidateIf((object) => !object.email)
   @IsNotEmpty()
-  @IsPhoneNumber('VN')
+  @IsPhoneNumber()
   readonly phone: string;
 
   @IsNotEmpty()

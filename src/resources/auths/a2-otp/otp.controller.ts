@@ -14,8 +14,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 import { dbCollections } from '~config/collections/schemas.collection';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 import { OtpService } from './otp.service';
 import { SendOtpDto } from './dto/send-otp.dto copy';

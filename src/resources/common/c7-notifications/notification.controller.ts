@@ -14,10 +14,10 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { ApiQueryParams } from '~decorators/api-query-params.decorator';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { NotificationService } from './notification.service';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 @ApiTags(dbCollections.notification.path)
 @Controller(dbCollections.notification.path)

@@ -77,7 +77,7 @@ export class MailService {
   }
 
   /**
-   * Send signupToken
+   * Send signup
    *
    * @param verificationLink
    * @param to

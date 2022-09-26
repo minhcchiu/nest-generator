@@ -9,7 +9,7 @@ import {
 import { NotFoundException } from '@nestjs/common';
 
 import { BaseInterface } from './base.interface';
-import { ApiQueryParamsDto } from '~middlewares/dto';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 export class BaseService<T> implements BaseInterface<T> {
   private model: PaginateModel<T>;
