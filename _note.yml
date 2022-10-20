@@ -6,11 +6,6 @@ cd src/routes/common/c8-notifications/ && perl-rename -v 's/ward/notification'/g
 # UPLOAD FILE
 
 # TODO: NEXT
-# Upload video ==> done
-# Add logging ==> done
-# Update folder struture ==> done
-# Update name path ==> done
-
 # Template email
 # Delete uploaded file
 # Update crud file

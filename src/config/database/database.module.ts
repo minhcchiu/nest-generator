@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseConfig } from '~config/enviroment';
@@ -13,7 +14,13 @@ export const DatabaseModule = MongooseModule.forRootAsync({
     autoIndex: true,
 
     connectionFactory: (connection: any) => {
+      // Plugin
       connection.plugin(mongoosePaginateV2);
+
+      // Check connect success
+      if (connection.readyState === 1) {
+        Logger.log(`MongDB Connected: ${connection.host}`, 'MongoDBConnection');
+      }
 
       return connection;
     },

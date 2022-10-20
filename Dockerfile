@@ -1,6 +1,6 @@
 FROM node:16.17.0
 
-EXPOSE 3000
+EXPOSE 8888
 
 WORKDIR /app
 
@@ -8,9 +8,10 @@ RUN npm i npm@latest -g
 
 COPY package.json ./
 
-RUN npm install
+COPY yarn.lock ./
+
+RUN yarn install
 
 COPY . .
 
-
-CMD [ "npm", "run", "start" ]
+CMD [ "yarn", "start" ]
