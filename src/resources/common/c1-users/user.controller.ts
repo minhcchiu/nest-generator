@@ -31,13 +31,25 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /**
-   * Paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.userService.find(queryParams);
+  }
+
+  /**
+   * Paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.userService.paginate(queryParams);
   }

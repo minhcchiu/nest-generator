@@ -25,13 +25,25 @@ export class DistrictController {
   constructor(private readonly districtService: DistrictService) {}
 
   /**
-   * Paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.districtService.find(queryParams);
+  }
+
+  /**
+   * Paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.districtService.paginate(queryParams);
   }

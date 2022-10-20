@@ -25,13 +25,25 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   /**
-   * Paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.fileService.find(queryParams);
+  }
+
+  /**
+   * Paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.fileService.paginate(queryParams);
   }

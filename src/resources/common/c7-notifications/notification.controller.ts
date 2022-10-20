@@ -25,13 +25,25 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   /**
-   * Paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.notificationService.find(queryParams);
+  }
+
+  /**
+   * Paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.notificationService.paginate(queryParams);
   }

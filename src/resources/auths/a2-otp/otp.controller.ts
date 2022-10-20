@@ -27,13 +27,25 @@ export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 
   /**
-   * paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.otpService.find(queryParams);
+  }
+
+  /**
+   * paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.otpService.paginate(queryParams);
   }

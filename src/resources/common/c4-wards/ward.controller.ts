@@ -25,13 +25,25 @@ export class WardController {
   constructor(private readonly wardService: WardService) {}
 
   /**
-   * Paginate
+   * Find all docs
    *
    * @param queryParams
    * @returns
    */
   @HttpCode(200)
   @Get('')
+  async find(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
+    return this.wardService.find(queryParams);
+  }
+
+  /**
+   * Paginate
+   *
+   * @param queryParams
+   * @returns
+   */
+  @HttpCode(200)
+  @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.wardService.paginate(queryParams);
   }
