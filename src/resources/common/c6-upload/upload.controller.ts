@@ -42,9 +42,9 @@ export class UploadController {
    * @param file
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
-  @HttpCode(201)
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
     // check file exist
@@ -62,9 +62,9 @@ export class UploadController {
    * @param files
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
-  @HttpCode(201)
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() files: Express.Multer.File[]) {
     if (!files) throw new BadRequestException('Files are required!');
@@ -83,9 +83,9 @@ export class UploadController {
    * @param image
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
-  @HttpCode(201)
   @Post('image')
   async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
     // check image exist
@@ -103,9 +103,9 @@ export class UploadController {
    * @param images
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
-  @HttpCode(201)
   @Post('images')
   async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
     if (!images) throw new BadRequestException('Images are required!');
@@ -124,9 +124,9 @@ export class UploadController {
    * @param video
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
-  @HttpCode(201)
   @Post('video')
   async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
     // check file exist
@@ -144,9 +144,9 @@ export class UploadController {
    * @param videos
    * @returns
    */
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
-  @HttpCode(201)
   @Post('videos')
   async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
     // check file exist
@@ -166,8 +166,9 @@ export class UploadController {
    * @param audio
    * @returns
    */
-  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
   @HttpCode(201)
+  @UseGuards(AtGuard)
+  @UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
   @Post('audio')
   async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
     // check file exist
@@ -185,8 +186,9 @@ export class UploadController {
    * @param audios
    * @returns
    */
-  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
   @HttpCode(201)
+  @UseGuards(AtGuard)
+  @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
   @Post('audios')
   async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
     // check file exist
@@ -207,14 +209,17 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
+  @UseGuards(AtGuard)
   @Post('save_file_to_local')
   async saveFileToLocal(
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() { file, resourceType }: SaveFileDto,
   ) {
+    file = file.replace(this.appUrl, '');
+
     const files = await this.uploadService.saveFileToLocal(
-      { file: file.replace(this.appUrl, ''), resourceType },
+      { file, resourceType },
       userId,
     );
 
@@ -228,19 +233,18 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_local')
   async saveFilesToLocal(
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() { files, resourceType }: SaveFilesDto,
   ) {
-    const filesUploadedPromise = files.map((file) =>
-      this.uploadService.saveFileToLocal(
-        { file: file.replace(this.appUrl, ''), resourceType },
-        userId,
-      ),
-    );
+    const filesUploadedPromise = files.map((file) => {
+      file = file.replace(this.appUrl, '');
+
+      return this.uploadService.saveFileToLocal({ file, resourceType }, userId);
+    });
 
     const result = await Promise.all(filesUploadedPromise);
 
@@ -254,13 +258,15 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() { file, resourceType }: SaveFileDto,
   ) {
+    file = file.replace(this.appUrl, '');
+
     const files = await this.uploadService.saveFileToCloudinary(
       { file, resourceType },
       userId,
@@ -276,16 +282,21 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_cloudinary')
   async saveToCloudinary(
     @GetCurrentUserId() userId: Types.ObjectId,
     @Body() { files, resourceType }: SaveFilesDto,
   ) {
-    const filesUploadedPromise = files.map((file) =>
-      this.uploadService.saveFileToCloudinary({ file, resourceType }, userId),
-    );
+    const filesUploadedPromise = files.map((file) => {
+      file = file.replace(this.appUrl, '');
+
+      return this.uploadService.saveFileToCloudinary(
+        { file, resourceType },
+        userId,
+      );
+    });
 
     const result = await Promise.all(filesUploadedPromise);
 
@@ -299,7 +310,7 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_s3')
   async saveFileToS3(
@@ -321,7 +332,7 @@ export class UploadController {
    * @param body
    * @returns
    */
-  @HttpCode(200)
+  @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_s3')
   async saveFilesToS3(
