@@ -138,6 +138,12 @@ export const dbCollections: CollectionConfig = {
     ref: 'Historyaccessapi',
   },
 
+  banner: {
+    path: 'banners',
+    name: 'banners',
+    ref: 'Banner',
+  },
+
   post: {
     path: 'posts',
     name: 'posts',

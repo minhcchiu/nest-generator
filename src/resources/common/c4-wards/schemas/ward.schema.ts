@@ -14,14 +14,13 @@ export class Ward {
     ref: dbCollections.province.ref,
     required: true,
   })
-  readonly idProvince: string;
+  readonly idProvince: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
     ref: dbCollections.district.ref,
-    required: true,
   })
-  readonly idDistrict: string;
+  readonly idDistrict: Types.ObjectId;
 
   @Prop({ type: String, required: true })
   readonly name: string;

@@ -14,7 +14,7 @@ export class District {
     ref: dbCollections.province.ref,
     required: true,
   })
-  readonly idProvince: string;
+  readonly idProvince: Types.ObjectId;
 
   @Prop({ type: String, required: true })
   readonly name: string;

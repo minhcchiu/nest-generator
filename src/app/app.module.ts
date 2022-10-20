@@ -33,6 +33,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BannerModule } from '~features/f1-banners/banner.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { AppService } from './app.service';
     FileModule,
     UploadModule,
     NotificationModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
