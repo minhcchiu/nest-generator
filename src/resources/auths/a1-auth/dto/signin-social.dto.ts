@@ -1,5 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { OmitType } from '@nestjs/swagger';
 import {
   IsEnum,
   IsNotEmpty,
@@ -9,6 +7,9 @@ import {
 } from 'class-validator';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 import { AccountTypeEnum } from '~common/c1-users/enums/account-type.enum';
+
+import { PartialType } from '@nestjs/mapped-types';
+import { OmitType } from '@nestjs/swagger';
 
 export class SigninSocialDto extends PartialType(
   OmitType(CreateUserDto, ['accountType', 'role']),

@@ -1,5 +1,4 @@
 import { v2 } from 'cloudinary';
-
 import { StorageServiceEnum } from '~common/c5-files/enum/storage-service.enum';
 
 export const cloudinaryHelper = {

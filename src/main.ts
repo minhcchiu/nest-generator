@@ -1,9 +1,11 @@
+import { ValidationError } from 'class-validator';
+import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
+
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationError } from 'class-validator';
-import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
+
 import { AppModule } from './app/app.module';
 import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
 

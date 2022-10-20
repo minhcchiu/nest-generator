@@ -1,23 +1,25 @@
-import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
+import { AtGuard } from 'src/common/guards/at.guard';
+import { EmailDto } from '~common/c1-users/dto';
+import { UserService } from '~common/c1-users/user.service';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { Logger } from '~lazy-modules/logger/logger.service';
+
+import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { dbCollections } from '~config/collections/schemas.collection';
-import { UserService } from '~common/c1-users/user.service';
+import { AuthService } from './auth.service';
 import {
+  PasswordDto,
   ResetPasswordDto,
   SigninDto,
   SigninSocialDto,
   SignupDto,
   SignupSendTokenDto,
   TokenDto,
-  PasswordDto,
 } from './dto';
-import { AuthService } from './auth.service';
-import { EmailDto } from '~common/c1-users/dto';
-import { Logger } from '~lazy-modules/logger/logger.service';
-import { AtGuard } from 'src/common/guards/at.guard';
-import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
+
 @ApiTags('auth')
 @Controller(dbCollections.auth.path)
 export class AuthController {

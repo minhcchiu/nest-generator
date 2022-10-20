@@ -6,10 +6,11 @@ import {
   QueryOptions,
   Types,
 } from 'mongoose';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
+
 import { NotFoundException } from '@nestjs/common';
 
 import { BaseInterface } from './base.interface';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 export class BaseService<T> implements BaseInterface<T> {
   private model: PaginateModel<T>;

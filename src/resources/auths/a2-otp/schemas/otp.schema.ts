@@ -1,7 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import * as argon2 from 'argon2';
+import { Document } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 import { OtpType } from '../enum/otp-type.enum';
 
 @Schema({

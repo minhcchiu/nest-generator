@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateIf,
 } from 'class-validator';
+
 import { OtpType } from '../enum/otp-type.enum';
 
 export class VerifyOtpDto {

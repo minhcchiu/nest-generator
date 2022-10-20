@@ -1,8 +1,9 @@
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { JWTConfig } from '~config/enviroment';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JWTConfig } from '~config/enviroment';
 
 @Injectable()
 export class ATStrategy extends PassportStrategy(Strategy, 'ac_token') {

@@ -1,5 +1,7 @@
-import { BadRequestException } from '@nestjs/common';
 import { phone } from 'phone';
+
+import { BadRequestException } from '@nestjs/common';
+
 /**
  * Validate phone
  *

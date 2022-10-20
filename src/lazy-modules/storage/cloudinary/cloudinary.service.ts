@@ -1,12 +1,13 @@
+import { UploadApiOptions, v2 } from 'cloudinary';
 import { unlinkSync } from 'fs';
+import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
+import { CloudinaryConfig } from '~config/enviroment';
+import { fileHelper } from '~helper/file.helper';
+import { Logger } from '~lazy-modules/logger/logger.service';
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UploadApiOptions, v2 } from 'cloudinary';
 
-import { CloudinaryConfig } from '~config/enviroment';
-import { Logger } from '~lazy-modules/logger/logger.service';
-import { fileHelper } from '~helper/file.helper';
-import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 import { cloudinaryHelper } from './cloudinary.helper';
 
 @Injectable()

@@ -1,11 +1,14 @@
-/* eslint-disable */
-import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
+
+/* eslint-disable */
+import { Injectable } from '@nestjs/common';
+
 import { SaveFileDto } from './dto/save-file.dto';
 import { UploadHelper } from './upload.helper';
+
 @Injectable()
 export class UploadService {
   constructor(

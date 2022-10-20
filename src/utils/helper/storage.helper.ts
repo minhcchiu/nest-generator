@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { BadRequestException } from '@nestjs/common';
+
 import { toSlug } from './slug.helper';
 
 /**

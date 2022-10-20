@@ -1,5 +1,6 @@
 import { Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
 import { SeedService } from './seed.service';
 
 @ApiTags('seeder')

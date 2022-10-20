@@ -1,3 +1,11 @@
+import { Types } from 'mongoose';
+import { AtGuard } from 'src/common/guards';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { AppConfig } from '~config/enviroment';
+import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
+import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
+import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
+
 import {
   BadRequestException,
   Body,
@@ -9,21 +17,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { Types } from 'mongoose';
-import { dbCollections } from '~config/collections/schemas.collection';
-import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
-import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';
+
 import { SaveFileDto } from './dto/save-file.dto';
 import { SaveFilesDto } from './dto/save-files.dto';
+import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
 import { ResourceTypeEnum } from './enum/resource-type.enum';
 import { UploadService } from './upload.service';
-import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
-import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
-import { ConfigService } from '@nestjs/config';
-import { AppConfig } from '~config/enviroment';
-import { AtGuard } from 'src/common/guards';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)

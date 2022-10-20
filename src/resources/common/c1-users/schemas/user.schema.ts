@@ -1,11 +1,12 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
 import * as argon2 from 'argon2';
-
+import { Document, Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { AccountTypeEnum } from '../enums/account-type.enum';
 import { GenderEnum } from '../enums/gender.enum';
 import { RoleEnum } from '../enums/role.enum';
-import { AccountTypeEnum } from '../enums/account-type.enum';
 
 @Schema({
   timestamps: true,

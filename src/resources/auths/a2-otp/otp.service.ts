@@ -1,19 +1,20 @@
-import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel } from 'mongoose';
-import { BadRequestException, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-
+import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
 import { UserService } from '~common/c1-users/user.service';
-import { MailService } from '~lazy-modules/mail/mail.service';
-import { Otp, OtpDocument } from './schemas/otp.schema';
-import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '~config/enviroment';
+import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
 import { OtpConfig } from '~config/enviroment/otp.env';
+import { MailService } from '~lazy-modules/mail/mail.service';
+
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+
 import { SendOtpDto } from './dto/send-otp.dto copy';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { OtpType } from './enum/otp-type.enum';
-import { AppConfig } from '~config/enviroment';
-import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
+import { Otp, OtpDocument } from './schemas/otp.schema';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {

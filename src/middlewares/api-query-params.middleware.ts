@@ -1,11 +1,12 @@
+import * as aqp from 'api-query-params';
+import { NextFunction, Request, Response } from 'express';
+
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   BadRequestException,
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import * as aqp from 'api-query-params';
 
 import { ApiQueryParamsDto } from './dto/api-query-params.dto';
 import { queryParamValidatorDto } from './validator/api-query-params.validator';

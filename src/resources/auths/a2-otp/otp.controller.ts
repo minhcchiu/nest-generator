@@ -1,4 +1,9 @@
 import { Types } from 'mongoose';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
+
 import {
   Body,
   Controller,
@@ -13,13 +18,9 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { dbCollections } from '~config/collections/schemas.collection';
-import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
-import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { OtpService } from './otp.service';
 import { SendOtpDto } from './dto/send-otp.dto copy';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { OtpService } from './otp.service';
 
 @ApiTags(dbCollections.otp.path)
 @Controller(dbCollections.otp.path)

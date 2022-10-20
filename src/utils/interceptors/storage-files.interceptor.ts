@@ -1,10 +1,11 @@
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { FieldsNameEnum } from '~common/c6-upload/enum/field-name.enum';
+import { UploadConfig } from '~config/enviroment';
+import { editFileName, imageFileFilter } from '~helper/storage.helper';
+
 import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { diskStorage } from 'multer';
-import { editFileName, imageFileFilter } from '~helper/storage.helper';
-import { UploadConfig } from '~config/enviroment';
-import { FieldsNameEnum } from '~common/c6-upload/enum/field-name.enum';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 export const StorageFilesInterceptor = (
   fieldName: FieldsNameEnum,

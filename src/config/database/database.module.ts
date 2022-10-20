@@ -1,7 +1,9 @@
+import { DatabaseConfig } from '~config/enviroment';
+
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseConfig } from '~config/enviroment';
+
 import { mongoosePaginateV2 } from './mongoose-paginate.config';
 
 export const DatabaseModule = MongooseModule.forRootAsync({

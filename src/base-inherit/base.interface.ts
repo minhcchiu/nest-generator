@@ -1,9 +1,9 @@
 import {
-  Types,
-  PaginateResult,
   PaginateDocument,
   PaginateOptions,
+  PaginateResult,
   QueryOptions,
+  Types,
 } from 'mongoose';
 
 export interface BaseInterface<T> {

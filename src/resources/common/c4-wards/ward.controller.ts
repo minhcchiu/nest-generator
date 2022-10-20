@@ -1,4 +1,9 @@
 import { Types } from 'mongoose';
+import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
+import { ApiQueryParamsDto } from 'src/middlewares/dto';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
+
 import {
   Body,
   Controller,
@@ -11,13 +16,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-
 import { ApiTags } from '@nestjs/swagger';
-import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
-import { dbCollections } from '~config/collections/schemas.collection';
+
 import { WardService } from './ward.service';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
 
 @ApiTags(dbCollections.ward.path)
 @Controller(dbCollections.ward.path)
