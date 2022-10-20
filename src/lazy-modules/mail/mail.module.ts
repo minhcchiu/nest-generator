@@ -1,6 +1,6 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import { Global, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
@@ -11,16 +11,21 @@ import { MailerConfig } from '~config/enviroment';
   imports: [
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => {
-        const mailerConfig = config.get<MailerConfig>('mailer');
-        // const transport = mailerConfig.isGmailServer
-        //   ? mailerConfig.transport.gmail
-        //   : mailerConfig.transport.sendgrid;
+        const { transport, defaults, isGmailServer } =
+          config.get<MailerConfig>('mailer');
 
-        // console.log({ transport });
+        // Message log for test
+        const msgLog = isGmailServer
+          ? 'MailerModule GMAIL init'
+          : 'MailerModule SENDGRID init';
 
+        // Log
+        Logger.log(`${msgLog}`, 'MailModule');
+
+        // return options
         return {
-          transport: mailerConfig.transport.gmail,
-          defaults: mailerConfig.defaults,
+          transport: isGmailServer ? transport.gmail : transport.sendgrid,
+          defaults: defaults,
 
           template: {
             dir: join(__dirname, 'templates'),

@@ -3,7 +3,8 @@ import { defaultEnv } from './default.env';
 
 export const mailerEnv = {
   isGmailServer:
-    process.env.MAIL_SERVER || defaultEnv.mailer.mailServer === 'gmail',
+    process.env.MAIL_SERVER === 'gmail' ||
+    defaultEnv.mailer.mailServer === 'gmail',
 
   transport: {
     // send by gmail
@@ -19,13 +20,17 @@ export const mailerEnv = {
     },
 
     // send by sendgrid
-    // sendgrid: {
-    //   host: process.env.SMTP_SENDGRID_HOST || defaultEnv.mailer.sendgridHost,
-    //   auth: {
-    //     user: process.env.SMTP_SENDGRID_USERNAME || defaultEnv.mailer.sendgridUsername,
-    //     pass: process.env.SMTP_SENDGRID_PASSWORD || defaultEnv.mailer.sendgridUsername,
-    //   },
-    // },
+    sendgrid: {
+      host: process.env.SMTP_SENDGRID_HOST || defaultEnv.mailer.sendgridHost,
+      auth: {
+        user:
+          process.env.SMTP_SENDGRID_USERNAME ||
+          defaultEnv.mailer.sendgridUsername,
+        pass:
+          process.env.SMTP_SENDGRID_PASSWORD ||
+          defaultEnv.mailer.sendgridUsername,
+      },
+    },
   },
 
   defaults: {

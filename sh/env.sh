@@ -38,22 +38,21 @@ export CLOUDINARY_URL=cloudinary://236314377993875:-1rxbgLl9lrsB9wap9nTSQDNpwc@h
 
 
 # CONFIG MAIL_SERVER: gmail|sendgrid
-export MAIL_SERVER=sendgrid
+export MAIL_SERVER=gmail
 
 # CONFIG GMAIL
 export SMTP_GMAIL_HOST=smtp.gmail.com
 export SMTP_GMAIL_PORT=587
-export SMTP_GMAIL_USERNAME=minhcc01.vn@gmail.com
-export SMTP_GMAIL_PASSWORD=alvewqcllxfpbitk
+export SMTP_GMAIL_USERNAME=himinhchiu@gmail.com
+export SMTP_GMAIL_PASSWORD=lnhucyaruvqjkssp
 
 # CONFIG SENDGRID 
 export SMTP_SENDGRID_HOST=smtp.sendgrid.net
-export SMTP_SENDGRID_PORT=587
 export SMTP_SENDGRID_USERNAME=apikey
 export SMTP_SENDGRID_PASSWORD=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 #SENDGRID_API_KEY
 
 # CONFIG EMAIL FROM
-export MAILER_FROM_EMAIL=minhcc01.vn@gmail.com
+export MAILER_FROM_EMAIL=himinhchiu@gmail.com
 export MAILER_NAME_NAME=minhchiu
 
 # OAuth client

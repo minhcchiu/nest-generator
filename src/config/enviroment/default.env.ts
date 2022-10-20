@@ -55,15 +55,15 @@ export const defaultEnv = {
 
     gmailHost: 'smtp.gmail.com',
     gmailPort: 587,
-    gmailUsername: 'minhcc01.vn@gmail.com',
-    gmailPassword: 'alvewqcllxfpbitk',
+    gmailUsername: 'himinhchiu@gmail.com',
+    gmailPassword: 'lnhucyaruvqjkssp',
 
     sendgridHost: 'smtp.sendgrid.net',
     sendgridUsername: 'apikey',
     sendgridPassword:
       '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',
 
-    fromEmail: 'minhcc01.vn@gmail.com',
+    fromEmail: 'himinhchiu@gmail.com',
     name: 'minhchiu',
   },
 };

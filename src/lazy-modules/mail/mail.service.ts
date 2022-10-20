@@ -4,8 +4,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { MailerConfig } from '~config/enviroment';
 import { Logger } from '~lazy-modules/logger/logger.service';
-// import { MailerEnv } from '~interface/mailer.interface';
-// import * as SendGrid from '@sendgrid/mail';
 
 @Injectable()
 export class MailService {
@@ -26,19 +24,6 @@ export class MailService {
    */
   sendMail(options: any) {
     return this.mailerService.sendMail(options);
-    // const mailerConfig = this.config.get<MailerEnv>("mailer")
-
-    // const isGmailServer = mailerConfig.isGmailServer
-
-    // console.log({ isGmailServer })
-
-    // if (isGmailServer) {
-    //   return this.mailerService.sendMail(params);
-    // }
-
-    // SendGrid.setApiKey(mailerConfig.transport.sendgrid.auth.pass)
-
-    // return SendGrid.send(params)
   }
 
   /**
@@ -66,14 +51,13 @@ export class MailService {
     };
 
     // send mail
-    return this.sendMail(params)
-      .then((result) => {
-        this.logger.log(MailService.name, 'SEND OTP TO EMAIL SUCCESS!');
-        return result;
-      })
-      .catch((error) =>
-        this.logger.error(MailService.name, (error as any).toString()),
+    return this.sendMail(params).then((result) => {
+      this.logger.log(
+        MailService.name,
+        `Send a OTP to email:"${to}" successfully!`,
       );
+      return result;
+    });
   }
 
   /**
@@ -102,14 +86,13 @@ export class MailService {
     };
 
     // Send
-    return this.sendMail(options)
-      .then((result) => {
-        this.logger.log(MailService.name, 'SEND SIGNUP TOKEN SUCCESS!');
-        return result;
-      })
-      .catch((error) => {
-        this.logger.error(MailerService.name, (error as any).toString());
-      });
+    return this.sendMail(options).then((result) => {
+      this.logger.log(
+        MailService.name,
+        `Send a SIGNUP_TOKEN to email:"${to}" successfully!`,
+      );
+      return result;
+    });
   }
 
   /**
@@ -138,13 +121,12 @@ export class MailService {
     };
 
     // Send
-    return this.sendMail(options)
-      .then((result) => {
-        this.logger.log(MailService.name, 'SEND RESET PASSWORD TOKEN SUCCESS!');
-        return result;
-      })
-      .catch((error) =>
-        this.logger.error(MailerService.name, (error as any).toString()),
+    return this.sendMail(options).then((result) => {
+      this.logger.log(
+        MailService.name,
+        `Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`,
       );
+      return result;
+    });
   }
 }
