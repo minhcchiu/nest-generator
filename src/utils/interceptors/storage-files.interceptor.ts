@@ -1,6 +1,6 @@
 import { diskStorage } from 'multer';
 import { FieldsNameEnum } from '~common/c6-upload/enum/field-name.enum';
-import { UploadConfig } from '~config/enviroment';
+import { UploadConfig } from '~config/environment';
 import { editFileName, imageFileFilter } from '~helper/storage.helper';
 
 import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';

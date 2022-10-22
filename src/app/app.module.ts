@@ -16,8 +16,8 @@ import {
   jwtCofig,
   mailerConfig,
   uploadConfig,
-} from '~config/enviroment';
-import { otpCofig } from '~config/enviroment/otp.env';
+} from '~config/environment';
+import { otpCofig } from '~config/environment/otp.env';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
 import { MailModule } from '~lazy-modules/mail/mail.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';

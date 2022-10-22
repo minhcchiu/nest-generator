@@ -1,4 +1,4 @@
-import { MailerConfig } from '~config/enviroment';
+import { MailerConfig } from '~config/environment';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
 import { MailerService } from '@nestjs-modules/mailer';

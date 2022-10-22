@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { AtGuard } from 'src/common/guards';
 import { dbCollections } from '~config/collections/schemas.collection';
-import { AppConfig } from '~config/enviroment';
+import { AppConfig } from '~config/environment';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFileInterceptor } from '~interceptors/storage-file.interceptor';
 import { StorageFilesInterceptor } from '~interceptors/storage-files.interceptor';

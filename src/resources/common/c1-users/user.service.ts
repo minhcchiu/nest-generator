@@ -28,16 +28,8 @@ export class UserService extends BaseService<UserDocument> {
    * @returns
    */
   async create(data: any) {
-    const filterValidate: any = {};
-
-    if (data.phone) filterValidate['phone'] = data.phone;
-
-    if (data.email) filterValidate['email'] = data.email;
-
-    if (data.authKey) filterValidate['authKey'] = data.authKey;
-
-    // validate unquie key
-    if (filterValidate) await this.validateCreateUser(filterValidate);
+    // validate unique key
+    await this.validateCreateUser(data);
 
     const userItem = {
       ...data,
@@ -51,22 +43,32 @@ export class UserService extends BaseService<UserDocument> {
   /**
    * Validate create user
    *
-   * @param filter
+   * @param data
    * @returns
    */
-  async validateCreateUser(filter: object) {
+  async validateCreateUser(data: any) {
+    const { phone, email, authKey } = data;
+
+    const filter: any = {};
+
+    if (phone) filter['phone'] = phone;
+
+    if (email) filter['email'] = email;
+
+    if (authKey) filter['authKey'] = authKey;
+
     // validate user
     const userExist = await this.findOne(filter);
 
     // check user exist
     if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
-
       // Delete old filter key
-      await this.updateById(userExist._id, {
-        [Object.keys(filter)[0]]: '',
-      });
+      if (userExist.deleted)
+        await this.updateById(userExist._id, {
+          [Object.keys(filter)[0]]: '',
+        });
+
+      throw new BadRequestException('Account already exists in the system.');
     }
 
     return true;

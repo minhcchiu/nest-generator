@@ -2,9 +2,9 @@ import * as dayjs from 'dayjs';
 import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
 import { UserService } from '~common/c1-users/user.service';
-import { AppConfig } from '~config/enviroment';
-import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
-import { OtpConfig } from '~config/enviroment/otp.env';
+import { AppConfig } from '~config/environment';
+import { appEnvEnum } from '~config/environment/enums/app_env.enum';
+import { OtpConfig } from '~config/environment/otp.env';
 import { MailService } from '~lazy-modules/mail/mail.service';
 
 import { BadRequestException, Injectable } from '@nestjs/common';

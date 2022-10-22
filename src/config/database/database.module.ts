@@ -1,4 +1,4 @@
-import { DatabaseConfig } from '~config/enviroment';
+import { DatabaseConfig } from '~config/environment';
 
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

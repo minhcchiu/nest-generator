@@ -1,5 +1,5 @@
 import { v2 } from 'cloudinary';
-import { CloudinaryConfig } from '~config/enviroment';
+import { CloudinaryConfig } from '~config/environment';
 
 import { ConfigService } from '@nestjs/config';
 

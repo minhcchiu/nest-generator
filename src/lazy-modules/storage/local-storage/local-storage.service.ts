@@ -1,6 +1,6 @@
 import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
-import { AppConfig } from '~config/enviroment';
+import { AppConfig } from '~config/environment';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

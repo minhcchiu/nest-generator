@@ -1,7 +1,7 @@
 import { UploadApiOptions, v2 } from 'cloudinary';
 import { unlinkSync } from 'fs';
 import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
-import { CloudinaryConfig } from '~config/enviroment';
+import { CloudinaryConfig } from '~config/environment';
 import { fileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
 

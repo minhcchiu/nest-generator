@@ -2,8 +2,8 @@ import { Types } from 'mongoose';
 import { OtpType } from '~auths/a2-otp/enum/otp-type.enum';
 import { OtpService } from '~auths/a2-otp/otp.service';
 import { UserService } from '~common/c1-users/user.service';
-import { AppConfig, JWTConfig } from '~config/enviroment';
-import { appEnvEnum } from '~config/enviroment/enums/app_env.enum';
+import { AppConfig, JWTConfig } from '~config/environment';
+import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { MailService } from '~lazy-modules/mail/mail.service';
 
 import {
@@ -127,13 +127,13 @@ export class AuthService {
 
     // check user exist
     if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
+      if (userExist.deleted)
+        // Delete old email
+        await this.userService.updateById(userExist._id, {
+          [filterKey]: '',
+        });
 
-      // Delete old email
-      await this.userService.updateById(userExist._id, {
-        [filterKey]: '',
-      });
+      throw new BadRequestException('Account already exists in the system.');
     }
 
     // verify otpCode
@@ -165,11 +165,11 @@ export class AuthService {
 
     // check user exist
     if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
+      if (userExist.deleted)
+        // Delete old email
+        await this.userService.updateById(userExist._id, { email: '' });
 
-      // Delete old email
-      await this.userService.updateById(userExist._id, { email: '' });
+      throw new BadRequestException('Account already exists in the system.');
     }
 
     // generate sugnup token
@@ -206,11 +206,11 @@ export class AuthService {
 
     // check user exist
     if (userExist) {
-      if (!userExist.deleted)
-        throw new BadRequestException('Account already exists in the system.');
+      if (userExist.deleted)
+        // Delete old email
+        await this.userService.updateById(userExist._id, { email: '' });
 
-      // Delete old email
-      await this.userService.updateById(userExist._id, { email: '' });
+      throw new BadRequestException('Account already exists in the system.');
     }
 
     // create user
