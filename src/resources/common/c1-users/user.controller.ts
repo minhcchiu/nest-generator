@@ -75,8 +75,14 @@ export class UserController {
    */
   @HttpCode(200)
   @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.userService.findById(id);
+  async findOneById(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @ApiQueryParams() { population, projection }: ApiQueryParamsDto,
+  ) {
+    const result = await this.userService.findById(id, {
+      population,
+      projection,
+    });
 
     if (!result) throw new NotFoundException('The item does not exist');
 

@@ -12,7 +12,7 @@ import { DatabaseModule } from '~config/database/database.module';
 import {
   appCofig,
   cloudinaryCofig,
-  databaseCofig,
+  databaseConfig,
   jwtCofig,
   mailerConfig,
   uploadConfig,
@@ -45,7 +45,7 @@ import { BannerModule } from '~features/f1-banners/banner.module';
       isGlobal: true,
       load: [
         appCofig,
-        databaseCofig,
+        databaseConfig,
         cloudinaryCofig,
         jwtCofig,
         mailerConfig,

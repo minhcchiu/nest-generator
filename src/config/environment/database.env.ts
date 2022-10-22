@@ -9,4 +9,4 @@ const databaseEnv = {
 
 export type DatabaseConfig = typeof databaseEnv;
 
-export const databaseCofig = registerAs('database', () => databaseEnv);
+export const databaseConfig = registerAs('database', () => databaseEnv);

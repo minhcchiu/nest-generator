@@ -69,8 +69,14 @@ export class TransactionController {
    */
   @HttpCode(200)
   @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const result = await this.transactionService.findById(id);
+  async findOneById(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @ApiQueryParams() { population, projection }: ApiQueryParamsDto,
+  ) {
+    const result = await this.transactionService.findById(id, {
+      population,
+      projection,
+    });
 
     if (!result) throw new NotFoundException('The item does not exist');
 
