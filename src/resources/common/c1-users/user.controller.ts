@@ -68,6 +68,19 @@ export class UserController {
   }
 
   /**
+   * Get user logged in
+   *
+   * @param id
+   * @returns
+   */
+  @HttpCode(200)
+  @UseGuards(AtGuard)
+  @Get('me')
+  async getMe(@GetCurrentUserId() id: Types.ObjectId) {
+    return this.userService.findById(id);
+  }
+
+  /**
    * Find by id
    *
    * @param id
@@ -110,7 +123,7 @@ export class UserController {
    */
   @HttpCode(200)
   @UseGuards(AtGuard)
-  @Put(':id/password')
+  @Put('password')
   async resetPassword(
     @GetCurrentUserId() id: Types.ObjectId,
     @Body() body: UpdatePasswordDto,

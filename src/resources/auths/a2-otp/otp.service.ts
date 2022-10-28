@@ -11,7 +11,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { SendOtpDto } from './dto/send-otp.dto copy';
+import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { OtpType } from './enum/otp-type.enum';
 import { Otp, OtpDocument } from './schemas/otp.schema';
@@ -106,7 +106,7 @@ export class OtpService extends BaseService<OtpDocument> {
     // Reponse otp
     if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
       await this.create({ email, otpCode, otpType });
-      return { otpCode };
+      return { otpCode, otpType };
     }
 
     return this.create({ email, otpCode, otpType });
@@ -131,7 +131,7 @@ export class OtpService extends BaseService<OtpDocument> {
     // Reponse otp
     if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
       await this.create({ phone, otpCode, otpType });
-      return { otpCode };
+      return { otpCode, otpType };
     }
 
     return this.create({ phone, otpCode, otpType });
@@ -165,7 +165,7 @@ export class OtpService extends BaseService<OtpDocument> {
     }
 
     await otpDoc.save();
-    return { otpCode };
+    return { otpCode, otpType };
   }
 
   /**
@@ -194,7 +194,7 @@ export class OtpService extends BaseService<OtpDocument> {
     }
 
     await otpDoc.save();
-    return { otpCode };
+    return { otpCode, otpType };
   }
 
   /**
