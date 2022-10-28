@@ -6,7 +6,14 @@ import { UserService } from '~common/c1-users/user.service';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
-import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -35,6 +42,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(200)
   @Post('signin')
   async signin(@Body() body: SigninDto) {
     return this.authService.signin(body);
@@ -46,6 +54,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(201)
   @Post('signup')
   async signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
@@ -57,6 +66,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(200)
   @Post('signin_social')
   async signinWithSocial(@Body() body: SigninSocialDto) {
     return this.authService.signinWithSocial(body);
@@ -68,6 +78,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(201)
   @Post('signup_send_token_link')
   async signupSendTokenLink(@Body() body: SignupSendTokenDto) {
     return this.authService.signupSendTokenLink(body);
@@ -79,6 +90,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(201)
   @Post('activate_signup_token')
   async activateSignupToken(@Body() { token }: TokenDto) {
     return this.authService.activateSignupToken(token);
@@ -91,6 +103,7 @@ export class AuthController {
    * @param deviceID
    * @returns
    */
+  @HttpCode(200)
   @Post('sign_out')
   async signout(
     @Body('_id') idUser: Types.ObjectId,
@@ -110,6 +123,7 @@ export class AuthController {
    * @param token
    * @returns
    */
+  @HttpCode(200)
   @Put('refresh_token')
   async refresh(@Body() { token }: TokenDto) {
     return this.authService.refresh(token);
@@ -121,6 +135,7 @@ export class AuthController {
    * @param body
    * @returns
    */
+  @HttpCode(200)
   @Put('reset_password_by_otp')
   async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
     return this.authService.resetPasswordByOtp(body);
@@ -132,6 +147,7 @@ export class AuthController {
    * @param email
    * @returns
    */
+  @HttpCode(200)
   @Put('send_reset_password_link')
   async forgotPassword(@Body() { email }: EmailDto) {
     return this.authService.forgotPasswordSendTokenLink(email);
@@ -145,6 +161,7 @@ export class AuthController {
    * @returns
    */
   @UseGuards(AtGuard)
+  @HttpCode(200)
   @Put('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: Types.ObjectId,
