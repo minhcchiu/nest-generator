@@ -25,22 +25,15 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToLocal(
-    { file, resourceType }: SaveFileDto,
-    owner: Types.ObjectId,
-  ) {
+  async saveFileToLocal({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
-    const result = await this.localStorageService.upload(
-      realpathOfFile,
-      resourceType,
-    );
+    const result = await this.localStorageService.upload(realpathOfFile, resourceType);
 
     // save file to database
-    await this.fileService.create({ ...result, owner });
-
-    return result.files;
+    const fileItem = { ...result, owner, secureUrl: result.files[0], resourceID: result.files[0] };
+    return this.fileService.create(fileItem);
   }
 
   /**
@@ -50,17 +43,11 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToCloudinary(
-    { file, resourceType }: SaveFileDto,
-    owner: Types.ObjectId,
-  ) {
+  async saveFileToCloudinary({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
     // upload file to cloudinary
-    const result = await this.cloudinaryService.upload(
-      realpathOfFile,
-      resourceType,
-    );
+    const result = await this.cloudinaryService.upload(realpathOfFile, resourceType);
 
     // save file to database
 
@@ -77,10 +64,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToS3(
-    { file, resourceType }: SaveFileDto,
-    owner: Types.ObjectId,
-  ) {
+  async saveFileToS3({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
     return { file, resourceType, owner };
   }
 }

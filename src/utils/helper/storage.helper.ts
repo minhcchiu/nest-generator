@@ -16,10 +16,9 @@ export const editFileName = (req: any, file: any, cb: any) => {
     .map(() => Math.round(Math.random() * 16).toString(16))
     .join('');
 
-  const fileName = toSlug(file.originalname.split('.').slice(0, -1).join(''));
   const fileExt = file.originalname.split('.').pop();
 
-  cb(null, `${Date.now()}-${randomNamePre}-${fileName}.${fileExt}`);
+  cb(null, `${Date.now()}-${randomNamePre}.${fileExt}`);
 };
 
 /**
@@ -31,12 +30,7 @@ export const editFileName = (req: any, file: any, cb: any) => {
  * @param callback
  * @returns
  */
-export const imageFileFilter = (
-  extAllowed: string,
-  req: any,
-  file: any,
-  callback: any,
-) => {
+export const imageFileFilter = (extAllowed: string, req: any, file: any, callback: any) => {
   const expression = `.(${extAllowed})$`;
 
   // check allow file

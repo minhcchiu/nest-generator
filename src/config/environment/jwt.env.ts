@@ -25,4 +25,4 @@ const jwtEnv = {
 
 export type JWTConfig = typeof jwtEnv;
 
-export const jwtCofig = registerAs('jwt', () => jwtEnv);
+export const jwtConfig = registerAs('jwt', () => jwtEnv);

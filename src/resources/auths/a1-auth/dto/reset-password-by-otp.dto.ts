@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -7,17 +8,17 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { AuthKeyEnum } from '../enums/auth-key.enum';
 
 export class ResetPasswordDto {
-  @ValidateIf((object) => !object.phone)
-  @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
-
-  @ValidateIf((object) => !object.email)
   @IsNotEmpty()
   @IsString()
-  readonly phone: string;
+  readonly authValue: string;
+
+  @IsNotEmpty()
+  @IsEnum(AuthKeyEnum)
+  @IsString({ each: true })
+  readonly authKey: string;
 
   @IsNotEmpty()
   @IsString()

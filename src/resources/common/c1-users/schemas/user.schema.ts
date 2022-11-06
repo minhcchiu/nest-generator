@@ -78,6 +78,7 @@ export class User {
 type UserDocument = User & Document;
 const UserSchema = SchemaFactory.createForClass(User);
 
+// Pre save
 UserSchema.pre('save', async function (next: any) {
   const user = this as UserDocument;
 

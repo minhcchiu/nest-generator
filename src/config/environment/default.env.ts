@@ -1,6 +1,6 @@
 export const defaultEnv = {
   app: {
-    env: 'development',
+    env: 'DEVELOPMENT',
     port: 8888,
     appUrl: 'http://localhost:8888',
   },

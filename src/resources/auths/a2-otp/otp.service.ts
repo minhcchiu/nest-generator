@@ -15,6 +15,7 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { OtpType } from './enum/otp-type.enum';
 import { Otp, OtpDocument } from './schemas/otp.schema';
+import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
@@ -38,43 +39,44 @@ export class OtpService extends BaseService<OtpDocument> {
   /**
    * Send otp to email/phone
    *
-   * @param { otpType, phone, email }
+   * @param { otpType, authKey, authValue }
    * @return
    */
-  async sendOtp({ otpType, phone, email }: SendOtpDto) {
-    if (phone) return this._sendOtpToPhone(phone, otpType);
+  async sendOtp({ otpType, authKey, authValue }: SendOtpDto) {
+    if (authKey === AuthKeyEnum.PHONE)
+      return this._sendOtpToPhone(authValue, otpType);
 
-    return this._sendOtpToEmail(email, otpType);
+    if (authKey === AuthKeyEnum.EMAIL)
+      return this._sendOtpToEmail(authValue, otpType);
+
+    throw new BadRequestException('Invalid authKey.');
   }
 
   /**
    * Send otp signup to email/phone
    *
-   * @param {phone, email}
+   * @param {authKey, authValue}
    * @return
    */
-  async sendOtpSignup({ phone, email }: SendOtpDto) {
-    const filter = phone ? { phone } : { email };
+  async sendOtpSignup({ authKey, authValue }: SendOtpDto) {
+    const filter = { [authKey]: authValue };
 
     await this.userService.validateCreateUser(filter);
 
-    if (phone) return this._sendOtpToPhone(phone, OtpType.SIGNUP);
-
-    return this._sendOtpToEmail(email, OtpType.SIGNUP);
+    return this.sendOtp({ otpType: OtpType.SIGNUP, authKey, authValue });
   }
 
   /**
    * Verify otp
    *
-   * @param {phone, email, otpCode}
+   * @param { authKey, authValue, otpCode, otpType }
    * @return
    */
-  async verifyOtp({ email, phone, otpCode, otpType }: VerifyOtpDto) {
-    const filter = phone ? { phone, otpType } : { email, otpType };
+  async verifyOtp({ authKey, authValue, otpCode, otpType }: VerifyOtpDto) {
+    const filter = { [authKey]: authValue, otpType };
 
     // find otpDoc
     const otpDoc = await this.otpModel.findOne(filter);
-
     // check expired otp
     if (!otpDoc)
       throw new BadRequestException('OTP does not exist or has expired!');
@@ -103,7 +105,7 @@ export class OtpService extends BaseService<OtpDocument> {
     const otpCode = this._generateOTPCode();
     await this._sendEmailVerify(email, otpCode);
 
-    // Reponse otp
+    // Response otp
     if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
       await this.create({ email, otpCode, otpType });
       return { otpCode, otpType };

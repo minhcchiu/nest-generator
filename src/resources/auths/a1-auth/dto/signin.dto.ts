@@ -1,23 +1,22 @@
 import {
-  IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   Length,
   MinLength,
-  ValidateIf,
 } from 'class-validator';
+import { AuthKeyEnum } from '../enums/auth-key.enum';
 
-export class SigninDto {
-  @ValidateIf((object) => !object.phone)
-  @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
-
-  @ValidateIf((object) => !object.email)
+export class SignInDto {
   @IsNotEmpty()
   @IsString()
-  readonly phone: string;
+  readonly authValue: string;
+
+  @IsNotEmpty()
+  @IsEnum(AuthKeyEnum)
+  @IsString({ each: true })
+  readonly authKey: string;
 
   @IsNotEmpty()
   @Length(6, 50)

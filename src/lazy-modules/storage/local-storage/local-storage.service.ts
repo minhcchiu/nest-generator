@@ -1,25 +1,18 @@
 import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
 import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
-import { AppConfig } from '~config/environment';
 
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { localStorageHelper } from './local-storage.helper';
 
 @Injectable()
 export class LocalStorageService {
-  private _appUrl: string;
   private uploadOptions = {
     [ResourceTypeEnum.IMAGE]: this._uploadImage,
     [ResourceTypeEnum.FILE]: this._uploadFile,
     [ResourceTypeEnum.AUDIO]: this._uploadAudio,
     [ResourceTypeEnum.VIDEO]: this._uploadVideo,
   };
-
-  constructor(private configService: ConfigService) {
-    this._appUrl = this.configService.get<AppConfig>('app').appUrl;
-  }
 
   /**
    * Upload
@@ -28,7 +21,7 @@ export class LocalStorageService {
    * @returns
    */
   async upload(filePath: string, type: ResourceTypeEnum) {
-    return this.uploadOptions[type](filePath, this._appUrl);
+    return this.uploadOptions[type](filePath);
   }
 
   /**
@@ -37,15 +30,10 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadFile(filePath: string, appUrl: string) {
+  private async _uploadFile(filePath: string) {
     const uploadDir = StorageDirEnum.FILES;
 
-    return localStorageHelper.upload(
-      filePath,
-      uploadDir,
-      appUrl,
-      ResourceTypeEnum.FILE,
-    );
+    return localStorageHelper.upload(filePath, uploadDir, ResourceTypeEnum.FILE);
   }
 
   /**
@@ -54,10 +42,10 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadImage(filePath: string, appUrl: string) {
+  private async _uploadImage(filePath: string) {
     const uploadDir = StorageDirEnum.IMAGES;
 
-    return localStorageHelper.uploadImage(filePath, uploadDir, appUrl);
+    return localStorageHelper.uploadImage(filePath, uploadDir);
   }
 
   /**
@@ -66,15 +54,10 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadVideo(filePath: string, appUrl: string) {
+  private async _uploadVideo(filePath: string) {
     const uploadDir = StorageDirEnum.VIDEOS;
 
-    return localStorageHelper.upload(
-      filePath,
-      uploadDir,
-      appUrl,
-      ResourceTypeEnum.VIDEO,
-    );
+    return localStorageHelper.upload(filePath, uploadDir, ResourceTypeEnum.VIDEO);
   }
 
   /**
@@ -83,14 +66,9 @@ export class LocalStorageService {
    * @param filePath
    * @returns
    */
-  private async _uploadAudio(filePath: string, appUrl: string) {
+  private async _uploadAudio(filePath: string) {
     const uploadDir = StorageDirEnum.AUDIOS;
 
-    return localStorageHelper.upload(
-      filePath,
-      uploadDir,
-      appUrl,
-      ResourceTypeEnum.AUDIO,
-    );
+    return localStorageHelper.upload(filePath, uploadDir, ResourceTypeEnum.AUDIO);
   }
 }

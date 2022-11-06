@@ -10,14 +10,14 @@ import { UploadModule } from '~common/c6-upload/upload.module';
 import { NotificationModule } from '~common/c7-notifications/notification.module';
 import { DatabaseModule } from '~config/database/database.module';
 import {
-  appCofig,
-  cloudinaryCofig,
+  appConfig,
+  cloudinaryConfig,
   databaseConfig,
-  jwtCofig,
+  jwtConfig,
   mailerConfig,
   uploadConfig,
 } from '~config/environment';
-import { otpCofig } from '~config/environment/otp.env';
+import { otpConfig } from '~config/environment/otp.env';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
 import { MailModule } from '~lazy-modules/mail/mail.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
@@ -44,13 +44,13 @@ import { BannerModule } from '~features/f1-banners/banner.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        appCofig,
+        appConfig,
         databaseConfig,
-        cloudinaryCofig,
-        jwtCofig,
+        cloudinaryConfig,
+        jwtConfig,
         mailerConfig,
         uploadConfig,
-        otpCofig,
+        otpConfig,
       ],
     }),
     DatabaseModule,

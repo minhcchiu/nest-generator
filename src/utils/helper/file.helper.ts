@@ -26,8 +26,10 @@ export const fileHelper = {
    * @returns
    */
   getFileName(filePath: string) {
-    const lastIndexOfSlash = filePath.lastIndexOf('/');
-    const fileName = filePath.slice(lastIndexOfSlash + 1);
+    const lastIndexOfSlash = filePath.lastIndexOf('-');
+    const dateTimeLength = 13;
+
+    const fileName = filePath.slice(lastIndexOfSlash - dateTimeLength);
 
     return fileName;
   },

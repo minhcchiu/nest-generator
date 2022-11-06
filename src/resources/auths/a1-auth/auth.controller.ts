@@ -20,8 +20,8 @@ import { AuthService } from './auth.service';
 import {
   PasswordDto,
   ResetPasswordDto,
-  SigninDto,
-  SigninSocialDto,
+  SignInDto,
+  SignInSocialDto,
   SignupDto,
   SignupSendTokenDto,
   TokenDto,
@@ -37,14 +37,14 @@ export class AuthController {
   ) {}
 
   /**
-   * Signin with email/phone and password
+   * Sign-In with email/phone and password
    *
    * @param body
    * @returns
    */
   @HttpCode(200)
   @Post('signin')
-  async signin(@Body() body: SigninDto) {
+  async signin(@Body() body: SignInDto) {
     return this.authService.signin(body);
   }
 
@@ -61,14 +61,14 @@ export class AuthController {
   }
 
   /**
-   * Signin with social
+   * SignIn with social
    *
    * @param body
    * @returns
    */
   @HttpCode(200)
   @Post('signin_social')
-  async signinWithSocial(@Body() body: SigninSocialDto) {
+  async signinWithSocial(@Body() body: SignInSocialDto) {
     return this.authService.signinWithSocial(body);
   }
 

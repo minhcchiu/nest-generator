@@ -33,7 +33,6 @@ export const OtpSchema = SchemaFactory.createForClass(Otp);
 // create index expires
 OtpSchema.index({ updatedAt: 1 }, { expires: '5m' }); // Automatically delete documents after 5 minutes
 
-/* eslint func-names: 0 */
 // Pre save
 OtpSchema.pre('save', async function (next: any) {
   const otp = this as OtpDocument;

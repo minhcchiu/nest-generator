@@ -1,7 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
-
-import { OtpType } from '../enum/otp-type.enum';
 
 export class SendOtpDto {
   @IsNotEmpty()
@@ -12,8 +10,4 @@ export class SendOtpDto {
   @IsEnum(AuthKeyEnum)
   @IsString({ each: true })
   readonly authKey: string;
-
-  @IsOptional()
-  @IsEnum(OtpType)
-  otpType: OtpType;
 }

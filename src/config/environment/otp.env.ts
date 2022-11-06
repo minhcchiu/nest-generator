@@ -9,4 +9,4 @@ const otpEnv = {
 
 export type OtpConfig = typeof otpEnv;
 
-export const otpCofig = registerAs('otp', () => otpEnv);
+export const otpConfig = registerAs('otp', () => otpEnv);

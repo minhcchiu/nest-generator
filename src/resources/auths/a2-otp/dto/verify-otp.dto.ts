@@ -1,23 +1,17 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
 
 import { OtpType } from '../enum/otp-type.enum';
 
 export class VerifyOtpDto {
-  @ValidateIf((o) => !o.email)
   @IsNotEmpty()
   @IsString()
-  phone?: string;
+  readonly authValue: string;
 
-  @ValidateIf((o) => !o.phone)
   @IsNotEmpty()
-  @IsEmail()
-  email?: string;
+  @IsEnum(AuthKeyEnum)
+  @IsString({ each: true })
+  readonly authKey: string;
 
   @IsNotEmpty()
   @IsEnum(OtpType)

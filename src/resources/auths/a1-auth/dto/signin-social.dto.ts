@@ -11,7 +11,7 @@ import { AccountTypeEnum } from '~common/c1-users/enums/account-type.enum';
 import { PartialType } from '@nestjs/mapped-types';
 import { OmitType } from '@nestjs/swagger';
 
-export class SigninSocialDto extends PartialType(
+export class SignInSocialDto extends PartialType(
   OmitType(CreateUserDto, ['accountType', 'role']),
 ) {
   @IsNotEmpty()

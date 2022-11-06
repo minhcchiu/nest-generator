@@ -52,18 +52,6 @@ export class OtpController {
   }
 
   /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.otpService.count(query);
-  }
-
-  /**
    * Find by id
    * @param id
    * @returns

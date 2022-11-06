@@ -10,4 +10,4 @@ const appEnv = {
 
 export type AppConfig = typeof appEnv;
 
-export const appCofig = registerAs('app', () => appEnv);
+export const appConfig = registerAs('app', () => appEnv);

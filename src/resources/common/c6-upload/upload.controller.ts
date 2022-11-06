@@ -25,15 +25,13 @@ import { SaveFilesDto } from './dto/save-files.dto';
 import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
 import { ResourceTypeEnum } from './enum/resource-type.enum';
 import { UploadService } from './upload.service';
+import { File } from '~common/c5-files/schemas/file.schema';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)
 export class UploadController {
   private appUrl: string;
-  constructor(
-    private readonly uploadService: UploadService,
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private readonly uploadService: UploadService, private readonly configService: ConfigService) {
     this.appUrl = configService.get<AppConfig>('app').appUrl;
   }
 
@@ -71,9 +69,7 @@ export class UploadController {
     if (!files) throw new BadRequestException('Files are required!');
 
     return {
-      files: files.map(
-        (file: any) => this.appUrl + '/' + file.path.replace('public/', ''),
-      ),
+      files: files.map((file: any) => this.appUrl + '/' + file.path.replace('public/', '')),
       resourceType: ResourceTypeEnum.FILE,
     };
   }
@@ -92,8 +88,10 @@ export class UploadController {
     // check image exist
     if (!image) throw new BadRequestException('Image is required!');
 
+    const path = image.destination.replace('public/', '') + `/${image.filename}`;
+
     return {
-      file: this.appUrl + '/' + image.path.replace('public/', ''),
+      file: `${this.appUrl}/${path}`,
       resourceType: ResourceTypeEnum.IMAGE,
     };
   }
@@ -112,9 +110,11 @@ export class UploadController {
     if (!images) throw new BadRequestException('Images are required!');
 
     return {
-      files: images.map(
-        (image: any) => this.appUrl + '/' + image.path.replace('public/', ''),
-      ),
+      files: images.map((image: any) => {
+        const path = image.destination.replace('public', '') + `/${image.filename}`;
+
+        return `${this.appUrl}/${path}`;
+      }),
       resourceType: ResourceTypeEnum.IMAGE,
     };
   }
@@ -154,9 +154,7 @@ export class UploadController {
     if (!videos) throw new BadRequestException('Videos are required!');
 
     return {
-      files: videos.map(
-        (video: any) => this.appUrl + '/' + video.path.replace('public/', ''),
-      ),
+      files: videos.map((video: any) => this.appUrl + '/' + video.path.replace('public/', '')),
       resourceType: ResourceTypeEnum.VIDEO,
     };
   }
@@ -196,9 +194,7 @@ export class UploadController {
     if (!audios) throw new BadRequestException('Audios is required!');
 
     return {
-      files: audios.map(
-        (audio: any) => this.appUrl + '/' + audio.path.replace('public/', ''),
-      ),
+      files: audios.map((audio: any) => this.appUrl + '/' + audio.path.replace('public/', '')),
       resourceType: ResourceTypeEnum.AUDIO,
     };
   }
@@ -213,18 +209,12 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_local')
-  async saveFileToLocal(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { file, resourceType }: SaveFileDto,
-  ) {
+  async saveFileToLocal(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
     file = file.replace(this.appUrl, '');
 
-    const files = await this.uploadService.saveFileToLocal(
-      { file, resourceType },
-      userId,
-    );
+    const { files, folder } = await this.uploadService.saveFileToLocal({ file, resourceType }, userId);
 
-    return { files };
+    return files.map((fileName: File) => `${this.appUrl}${folder}${fileName}`);
   }
 
   /**
@@ -237,10 +227,7 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_local')
-  async saveFilesToLocal(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { files, resourceType }: SaveFilesDto,
-  ) {
+  async saveFilesToLocal(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
     const filesUploadedPromise = files.map((file) => {
       file = file.replace(this.appUrl, '');
 
@@ -262,16 +249,10 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_cloudinary')
-  async saveFileToCloudinary(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { file, resourceType }: SaveFileDto,
-  ) {
+  async saveFileToCloudinary(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
     file = file.replace(this.appUrl, '');
 
-    const files = await this.uploadService.saveFileToCloudinary(
-      { file, resourceType },
-      userId,
-    );
+    const files = await this.uploadService.saveFileToCloudinary({ file, resourceType }, userId);
 
     return { files };
   }
@@ -286,17 +267,11 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_cloudinary')
-  async saveToCloudinary(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { files, resourceType }: SaveFilesDto,
-  ) {
+  async saveToCloudinary(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
     const filesUploadedPromise = files.map((file) => {
       file = file.replace(this.appUrl, '');
 
-      return this.uploadService.saveFileToCloudinary(
-        { file, resourceType },
-        userId,
-      );
+      return this.uploadService.saveFileToCloudinary({ file, resourceType }, userId);
     });
 
     const result = await Promise.all(filesUploadedPromise);
@@ -314,14 +289,8 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_s3')
-  async saveFileToS3(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { file, resourceType }: SaveFileDto,
-  ) {
-    const files = await this.uploadService.saveFileToS3(
-      { file, resourceType },
-      userId,
-    );
+  async saveFileToS3(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
+    const files = await this.uploadService.saveFileToS3({ file, resourceType }, userId);
 
     return { files };
   }
@@ -336,13 +305,8 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_s3')
-  async saveFilesToS3(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { files, resourceType }: SaveFilesDto,
-  ) {
-    const filesUploadedPromise = files.map((file) =>
-      this.uploadService.saveFileToS3({ file, resourceType }, userId),
-    );
+  async saveFilesToS3(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
+    const filesUploadedPromise = files.map((file) => this.uploadService.saveFileToS3({ file, resourceType }, userId));
 
     const result = await Promise.all(filesUploadedPromise);
 

@@ -17,4 +17,4 @@ const cloudinaryEnv = {
 
 export type CloudinaryConfig = typeof cloudinaryEnv;
 
-export const cloudinaryCofig = registerAs('cloudinary', () => cloudinaryEnv);
+export const cloudinaryConfig = registerAs('cloudinary', () => cloudinaryEnv);
