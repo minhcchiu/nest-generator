@@ -11,9 +11,9 @@ export const defaultEnv = {
   },
 
   cloudinary: {
-    cloud_name: 'dvnmolznq',
-    api_key: '974881534354895',
-    api_secret: 'PfIbFwRWDOiNlDd_E_XENdKyNsA',
+    cloud_name: 'himin',
+    api_key: '236314377993875',
+    api_secret: '-1rxbgLl9lrsB9wap9nTSQDNpwc',
   },
 
   otp: {
@@ -60,8 +60,7 @@ export const defaultEnv = {
 
     sendgridHost: 'smtp.sendgrid.net',
     sendgridUsername: 'apikey',
-    sendgridPassword:
-      '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',
+    sendgridPassword: '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',
 
     fromEmail: 'himinhchiu@gmail.com',
     name: 'minhchiu',

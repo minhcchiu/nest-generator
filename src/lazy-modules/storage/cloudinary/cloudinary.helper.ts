@@ -13,7 +13,8 @@ export const cloudinaryHelper = {
     return v2.url(id, {
       width,
       opacity: 80,
-      // crop: 'scale',
+      crop: 'fill',
+      format: 'jpg',
     });
   },
 
@@ -43,16 +44,7 @@ export const cloudinaryHelper = {
    * @returns
    */
   getUploadResult(file: any) {
-    const {
-      bytes,
-      format,
-      resource_type,
-      folder,
-      public_id,
-      created_at,
-      secure_url,
-      files,
-    } = file;
+    const { bytes, format, resource_type, folder, public_id, created_at, secure_url, files } = file;
 
     return {
       type: `${resource_type}/${format}`,

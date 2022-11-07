@@ -1,7 +1,6 @@
 import { existsSync } from 'fs';
-import { join } from 'path';
-
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { join } from 'path';
 
 @Injectable()
 export class UploadHelper {

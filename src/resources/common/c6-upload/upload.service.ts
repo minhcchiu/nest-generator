@@ -1,13 +1,12 @@
+import { Injectable } from '@nestjs/common';
+import { SaveFileDto } from './dto/save-file.dto';
 import { Types } from 'mongoose';
+import { UploadHelper } from './upload.helper';
 import { FileService } from '~common/c5-files/file.service';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
 
 /* eslint-disable */
-import { Injectable } from '@nestjs/common';
-
-import { SaveFileDto } from './dto/save-file.dto';
-import { UploadHelper } from './upload.helper';
 
 @Injectable()
 export class UploadService {
@@ -50,7 +49,6 @@ export class UploadService {
     const result = await this.cloudinaryService.upload(realpathOfFile, resourceType);
 
     // save file to database
-
     await this.fileService.create({ ...result, owner });
 
     // success

@@ -21,13 +21,11 @@ export const localStorageHelper = {
     const size = statSync(filePath).size || 0;
     const filemime = await this.getTypeFileTypemime(filePath);
     const type = filemime || `${resourceType}/${fileHelper.getFileName(filePath)}`;
-
-    const file = await this.moveFileToDiskStorage(filePath, uploadDir);
-    const files = [file.slice(file.indexOf('/uploads'))];
+    const file = await this.moveFileToDiskStorage(filePath, uploadDir.split('/')[2]);
 
     return {
       type,
-      files,
+      files: [fileHelper.getFileName(file)],
       size,
       folder: uploadDir,
       secureUrl: file,
@@ -263,7 +261,7 @@ export const localStorageHelper = {
    * @returns
    */
   async moveFileToDiskStorage(filePath: string, newFolder: StorageDirEnum) {
-    const newPath = filePath.replace('/uploads/tmp/', newFolder);
+    const newPath = filePath.replace('tmp', newFolder);
 
     // move file
     renameSync(filePath, newPath);
