@@ -7,10 +7,7 @@ import { DecodedToken, TokenPayload } from './interface';
 @Global()
 @Injectable()
 export class TokenService {
-  constructor(
-    private readonly jwtService: JwtService,
-    private config: ConfigService,
-  ) {}
+  constructor(private readonly jwtService: JwtService, private config: ConfigService) {}
 
   /**
    * Generate token
@@ -83,10 +80,7 @@ export class TokenService {
    * @param secret
    * @returns
    */
-  async verifyToken(
-    token: string,
-    secret = this.config.get('jwt').secret,
-  ): Promise<DecodedToken> {
+  async verifyToken(token: string, secret = this.config.get('jwt').secret): Promise<DecodedToken> {
     try {
       const decoded = await this.jwtService.verifyAsync(token, { secret });
 
@@ -103,10 +97,7 @@ export class TokenService {
    * @param secret
    * @returns
    */
-  async verifyAccessToken(
-    token: string,
-    secret = this.config.get('jwt').secrets.access,
-  ): Promise<DecodedToken> {
+  async verifyAccessToken(token: string, secret = this.config.get('jwt').secrets.access): Promise<DecodedToken> {
     return this.verifyToken(token, secret);
   }
 
@@ -117,10 +108,7 @@ export class TokenService {
    * @param rtSecret
    * @returns
    */
-  async verifyRefreshToken(
-    rfToken: string,
-    rtSecret = this.config.get('jwt').secrets.refresh,
-  ): Promise<DecodedToken> {
+  async verifyRefreshToken(rfToken: string, rtSecret = this.config.get('jwt').secrets.refresh): Promise<DecodedToken> {
     return this.verifyToken(rfToken, rtSecret);
   }
 
@@ -131,10 +119,7 @@ export class TokenService {
    * @param secret
    * @returns
    */
-  async verifySignupToken(
-    token: string,
-    secret = this.config.get('jwt').secrets.signup,
-  ): Promise<any> {
+  async verifySignupToken(token: string, secret = this.config.get('jwt').secrets.signup): Promise<any> {
     return this.verifyToken(token, secret);
   }
 }

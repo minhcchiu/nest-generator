@@ -1,10 +1,4 @@
-import {
-  PaginateDocument,
-  PaginateOptions,
-  PaginateResult,
-  QueryOptions,
-  Types,
-} from 'mongoose';
+import { PaginateDocument, PaginateOptions, PaginateResult, QueryOptions, Types } from 'mongoose';
 
 export interface BaseInterface<T> {
   /**
@@ -14,6 +8,19 @@ export interface BaseInterface<T> {
    * @param paginateOpts
    */
   find(query: object, paginateOpts?: PaginateOptions): Promise<any[]>;
+
+  /**
+   * Paginate
+   *
+   * @param query
+   * @param paginateOpts
+   * @param args
+   */
+  paginate(
+    query: object,
+    paginateOpts?: PaginateOptions,
+    ...args: any[]
+  ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>>;
 
   /**
    * Find by id
@@ -30,6 +37,21 @@ export interface BaseInterface<T> {
   findOne(query: object): Promise<any>;
 
   /**
+   * Count
+   *
+   * @param query
+   */
+  count(query: object, options: QueryOptions): Promise<{ totalData: number }>;
+
+  /**
+   * Distinct
+   *
+   * @param field
+   * @returns
+   */
+  distinct(field: string): Promise<any>;
+
+  /**
    * Create
    *
    * @param payload
@@ -43,11 +65,7 @@ export interface BaseInterface<T> {
    * @param payload
    * @param options
    */
-  updateById(
-    id: Types.ObjectId,
-    payload: any,
-    options?: QueryOptions<T>,
-  ): Promise<any>;
+  updateById(id: Types.ObjectId, payload: any, options?: QueryOptions<T>): Promise<any>;
 
   /**
    * Find one and update
@@ -56,11 +74,7 @@ export interface BaseInterface<T> {
    * @param payload
    * @param options
    */
-  updateOne(
-    query: object,
-    payload: any,
-    options?: QueryOptions<T>,
-  ): Promise<any>;
+  updateOne(query: object, payload: any, options?: QueryOptions<T>): Promise<any>;
 
   /**
    * Update many
@@ -69,11 +83,7 @@ export interface BaseInterface<T> {
    * @param payload
    * @param options
    */
-  updateMany(
-    query: object,
-    payload: any,
-    options?: QueryOptions<T>,
-  ): Promise<any>;
+  updateMany(query: object, payload: any, options?: QueryOptions<T>): Promise<any>;
 
   /**
    * Find by id and delete
@@ -98,24 +108,4 @@ export interface BaseInterface<T> {
    * @param options
    */
   deleteMany(query?: object, options?: QueryOptions<T>): Promise<any>;
-
-  /**
-   * Paginate
-   *
-   * @param query
-   * @param paginateOpts
-   * @param args
-   */
-  paginate(
-    query: object,
-    paginateOpts?: PaginateOptions,
-    ...args: any[]
-  ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>>;
-
-  /**
-   * Count
-   *
-   * @param query
-   */
-  count(query: object, options: QueryOptions): Promise<{ totalData: number }>;
 }

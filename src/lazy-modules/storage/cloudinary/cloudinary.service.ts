@@ -21,10 +21,7 @@ export class CloudinaryService {
     [ResourceTypeEnum.VIDEO]: this._uploadVideo,
   };
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly logger: Logger,
-  ) {
+  constructor(private readonly configService: ConfigService, private readonly logger: Logger) {
     this.cloudinaryConfig = configService.get<CloudinaryConfig>('cloudinary');
   }
   /**
@@ -86,10 +83,7 @@ export class CloudinaryService {
         // remove file in temp
         unlinkSync(filePath);
 
-        const files = cloudinaryHelper.generateImagesResize(
-          file.url,
-          file.public_id,
-        );
+        const files = cloudinaryHelper.generateImagesResize(file.url, file.public_id);
 
         return resolve(cloudinaryHelper.getUploadResult({ ...file, files }));
       });
@@ -113,9 +107,7 @@ export class CloudinaryService {
         // remove file in temp
         unlinkSync(filePath);
 
-        return resolve(
-          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
-        );
+        return resolve(cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }));
       });
     });
   }
@@ -137,9 +129,7 @@ export class CloudinaryService {
         // remove file in temp
         unlinkSync(filePath);
 
-        return resolve(
-          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
-        );
+        return resolve(cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }));
       });
     });
   }
@@ -180,9 +170,7 @@ export class CloudinaryService {
         // remove file in temp
         unlinkSync(filePath);
 
-        return resolve(
-          cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }),
-        );
+        return resolve(cloudinaryHelper.getUploadResult({ ...file, files: [file.url] }));
       });
     });
   }

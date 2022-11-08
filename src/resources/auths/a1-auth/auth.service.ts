@@ -6,20 +6,10 @@ import { AppConfig, JWTConfig } from '~config/environment';
 import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { MailService } from '~lazy-modules/mail/mail.service';
 
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import {
-  ResetPasswordDto,
-  SignInDto,
-  SignInSocialDto,
-  SignupDto,
-  SignupSendTokenDto,
-} from './dto';
+import { ResetPasswordDto, SignInDto, SignInSocialDto, SignupDto, SignupSendTokenDto } from './dto';
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { TokenService } from './token.service';
 
@@ -168,11 +158,7 @@ export class AuthService {
     const verificationLink = `${this.appConfig.appUrl}/auth/verify-signup-token?token=${token}`;
 
     // send mail
-    await this.mailService.sendSignupToken(
-      verificationLink,
-      'data.email',
-      'Register account.',
-    );
+    await this.mailService.sendSignupToken(verificationLink, 'data.email', 'Register account.');
 
     // success
     return { verificationLink, token };
@@ -247,19 +233,12 @@ export class AuthService {
       const expireTime = this.jwtConfig.expirationTime.resetPassword;
 
       // Generate accessToken
-      const token = await this.tokenService.generateAccessToken(
-        { _id: user._id, role: user.role },
-        expireTime,
-      );
+      const token = await this.tokenService.generateAccessToken({ _id: user._id, role: user.role }, expireTime);
 
       const resetPasswordLink = `${this.appConfig.appUrl}/auth/reset-password?token=${token}`;
 
       // Send mail
-      await this.mailService.sendResetPasswordToken(
-        resetPasswordLink,
-        'data.email',
-        'Reset password.',
-      );
+      await this.mailService.sendResetPasswordToken(resetPasswordLink, 'data.email', 'Reset password.');
 
       // Response otp
       if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {

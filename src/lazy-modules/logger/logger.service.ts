@@ -13,9 +13,7 @@ export class Logger implements LoggerService {
    * @param messages
    */
   log(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) =>
-      JSON.stringify(item, null, '\t'),
-    );
+    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
 
     const messageFinal = `${_names.join('\n')}`;
 
@@ -30,9 +28,7 @@ export class Logger implements LoggerService {
    * @param messages
    */
   error(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) =>
-      JSON.stringify(item, null, '\t'),
-    );
+    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
     const messageFinal = `${_names.join('\n')}`;
 
     this.logger.setContext(context);
@@ -46,9 +42,7 @@ export class Logger implements LoggerService {
    * @param messages
    */
   warn(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) =>
-      JSON.stringify(item, null, '\t'),
-    );
+    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
     const messageFinal = `${_names.join('\n')}`;
 
     this.logger.setContext(context);
@@ -62,9 +56,7 @@ export class Logger implements LoggerService {
    * @param messages
    */
   debug(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) =>
-      JSON.stringify(item, null, '\t'),
-    );
+    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
     const messageFinal = `${_names.join('\n')}`;
 
     this.logger.setContext(context);
@@ -78,9 +70,7 @@ export class Logger implements LoggerService {
    * @param messages
    */
   verbose(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) =>
-      JSON.stringify(item, null, '\t'),
-    );
+    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
     const messageFinal = `${_names.join('\n')}`;
 
     this.logger.setContext(context);

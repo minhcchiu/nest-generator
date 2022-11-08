@@ -7,9 +7,7 @@ import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-export const StorageFilesInterceptor = (
-  fieldName: FieldsNameEnum,
-): Type<NestInterceptor> => {
+export const StorageFilesInterceptor = (fieldName: FieldsNameEnum): Type<NestInterceptor> => {
   @Injectable()
   class Interceptor implements NestInterceptor {
     filesInterceptor: NestInterceptor;
@@ -28,23 +26,16 @@ export const StorageFilesInterceptor = (
       let maxFiles = uploadConfig.imageMaxFiles;
 
       // set maxFile if fieldName is file
-      if (fieldName === FieldsNameEnum.FILES)
-        maxFiles = uploadConfig.rawMaxFiles;
+      if (fieldName === FieldsNameEnum.FILES) maxFiles = uploadConfig.rawMaxFiles;
 
       // set maxFile if fieldName is video
-      if (fieldName === FieldsNameEnum.VIDEOS)
-        maxFiles = uploadConfig.videoMaxFiles;
+      if (fieldName === FieldsNameEnum.VIDEOS) maxFiles = uploadConfig.videoMaxFiles;
 
       // set maxFile if fieldName is audio
-      if (fieldName === FieldsNameEnum.AUDIOS)
-        maxFiles = uploadConfig.audioMaxFiles;
+      if (fieldName === FieldsNameEnum.AUDIOS) maxFiles = uploadConfig.audioMaxFiles;
 
       //  init file interceptor
-      this.filesInterceptor = new (FilesInterceptor(
-        fieldName,
-        maxFiles,
-        multerOption,
-      ))();
+      this.filesInterceptor = new (FilesInterceptor(fieldName, maxFiles, multerOption))();
     }
 
     /**

@@ -1,11 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 import { OmitType, PartialType } from '@nestjs/mapped-types';

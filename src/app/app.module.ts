@@ -22,12 +22,7 @@ import { LoggerModule } from '~lazy-modules/logger/logger.module';
 import { MailModule } from '~lazy-modules/mail/mail.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
 
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -43,15 +38,7 @@ import { BannerModule } from '~features/f1-banners/banner.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        appConfig,
-        databaseConfig,
-        cloudinaryConfig,
-        jwtConfig,
-        mailerConfig,
-        uploadConfig,
-        otpConfig,
-      ],
+      load: [appConfig, databaseConfig, cloudinaryConfig, jwtConfig, mailerConfig, uploadConfig, otpConfig],
     }),
     DatabaseModule,
     UserModule,
@@ -71,9 +58,7 @@ import { BannerModule } from '~features/f1-banners/banner.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ApiQueryParamsMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.GET });
+    consumer.apply(ApiQueryParamsMiddleware).forRoutes({ path: '*', method: RequestMethod.GET });
 
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }

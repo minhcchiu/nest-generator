@@ -7,9 +7,7 @@ import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-export const StorageFileInterceptor = (
-  fieldName: FieldNameEnum,
-): Type<NestInterceptor> => {
+export const StorageFileInterceptor = (fieldName: FieldNameEnum): Type<NestInterceptor> => {
   @Injectable()
   class Interceptor implements NestInterceptor {
     fileInterceptor: NestInterceptor;

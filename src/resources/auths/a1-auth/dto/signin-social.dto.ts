@@ -1,19 +1,11 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 import { AccountTypeEnum } from '~common/c1-users/enums/account-type.enum';
 
 import { PartialType } from '@nestjs/mapped-types';
 import { OmitType } from '@nestjs/swagger';
 
-export class SignInSocialDto extends PartialType(
-  OmitType(CreateUserDto, ['accountType', 'role']),
-) {
+export class SignInSocialDto extends PartialType(OmitType(CreateUserDto, ['accountType', 'role'])) {
   @IsNotEmpty()
   @IsString()
   @MinLength(15)

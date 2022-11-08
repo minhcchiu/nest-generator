@@ -183,7 +183,6 @@ export class UploadController {
   async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
     if (!audio) throw new BadRequestException('Audio is required!');
 
-    console.log({ audio });
     const path = audio.destination.replace('public/', '') + `/${audio.filename}`;
 
     return {

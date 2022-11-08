@@ -4,18 +4,7 @@ import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  NotFoundException,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { BannerService } from './banner.service';
@@ -104,10 +93,7 @@ export class BannerController {
    */
   @HttpCode(200)
   @Put(':id')
-  async update(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: any,
-  ) {
+  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: any) {
     return this.bannerService.updateById(id, body);
   }
 

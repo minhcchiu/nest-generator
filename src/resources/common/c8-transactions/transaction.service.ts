@@ -8,9 +8,7 @@ import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 
 @Injectable()
 export class TransactionService extends BaseService<TransactionDocument> {
-  constructor(
-    @InjectModel(Transaction.name) model: PaginateModel<TransactionDocument>,
-  ) {
+  constructor(@InjectModel(Transaction.name) model: PaginateModel<TransactionDocument>) {
     super(model);
   }
 }

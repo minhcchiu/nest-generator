@@ -1,24 +1,12 @@
-import { Types } from 'mongoose';
 import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
 import { ApiQueryParamsDto } from 'src/middlewares/dto';
+import { ApiTags } from '@nestjs/swagger';
+import { FileService } from './file.service';
+import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  NotFoundException,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-
-import { FileService } from './file.service';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put } from '@nestjs/common';
 
 @ApiTags(dbCollections.file.path)
 @Controller(dbCollections.file.path)
@@ -47,18 +35,6 @@ export class FileController {
   @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.fileService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.fileService.count(query);
   }
 
   /**
@@ -104,10 +80,7 @@ export class FileController {
    */
   @HttpCode(200)
   @Put(':id')
-  async update(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: any,
-  ) {
+  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: any) {
     return this.fileService.updateById(id, body);
   }
 

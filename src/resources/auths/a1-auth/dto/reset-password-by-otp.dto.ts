@@ -1,13 +1,4 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  MinLength,
-  ValidateIf,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
 import { AuthKeyEnum } from '../enums/auth-key.enum';
 
 export class ResetPasswordDto {

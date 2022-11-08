@@ -24,8 +24,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      exceptionFactory: (errors: ValidationError[]) =>
-        new ValidationExceptions(errors),
+      exceptionFactory: (errors: ValidationError[]) => new ValidationExceptions(errors),
     }),
   );
 
@@ -33,10 +32,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   // Config swagger
-  const config = new DocumentBuilder()
-    .setTitle('Awesome NestJS Generator 2023')
-    .setVersion('1.0')
-    .build();
+  const config = new DocumentBuilder().setTitle('Awesome NestJS Generator 2023').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
@@ -44,10 +40,7 @@ async function bootstrap() {
   const port = configService.get('app.port');
 
   await app.listen(port, () => {
-    Logger.log(
-      `The server is running on: http://localhost:${port}/api`,
-      'Main',
-    );
+    Logger.log(`The server is running on: http://localhost:${port}/api`, 'Main');
   });
 }
 

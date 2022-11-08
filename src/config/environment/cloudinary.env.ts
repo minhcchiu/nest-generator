@@ -7,8 +7,7 @@ const cloudinaryEnv = {
   config: {
     cloud_name: process.env.CLOUD_NAME || defaultEnv.cloudinary.cloud_name,
     api_key: process.env.CLOUD_API_KEY || defaultEnv.cloudinary.api_key,
-    api_secret:
-      process.env.CLOUD_API_SECRET || defaultEnv.cloudinary.api_secret,
+    api_secret: process.env.CLOUD_API_SECRET || defaultEnv.cloudinary.api_secret,
   },
   options: {
     folder: 'Awesome-NestJS-generator-2023',

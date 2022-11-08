@@ -43,11 +43,9 @@ export class OtpService extends BaseService<OtpDocument> {
    * @return
    */
   async sendOtp({ otpType, authKey, authValue }: SendOtpDto) {
-    if (authKey === AuthKeyEnum.PHONE)
-      return this._sendOtpToPhone(authValue, otpType);
+    if (authKey === AuthKeyEnum.PHONE) return this._sendOtpToPhone(authValue, otpType);
 
-    if (authKey === AuthKeyEnum.EMAIL)
-      return this._sendOtpToEmail(authValue, otpType);
+    if (authKey === AuthKeyEnum.EMAIL) return this._sendOtpToEmail(authValue, otpType);
 
     throw new BadRequestException('Invalid authKey.');
   }
@@ -78,8 +76,7 @@ export class OtpService extends BaseService<OtpDocument> {
     // find otpDoc
     const otpDoc = await this.otpModel.findOne(filter);
     // check expired otp
-    if (!otpDoc)
-      throw new BadRequestException('OTP does not exist or has expired!');
+    if (!otpDoc) throw new BadRequestException('OTP does not exist or has expired!');
 
     // Check is valid otpCode
     const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
@@ -258,9 +255,7 @@ export class OtpService extends BaseService<OtpDocument> {
     const isValidTime = secondsLeft < maximunSecond;
 
     if (isValidTime) {
-      throw new BadRequestException(
-        `Please try again in ${maximunSecond - secondsLeft} seconds`,
-      );
+      throw new BadRequestException(`Please try again in ${maximunSecond - secondsLeft} seconds`);
     }
 
     return isValidTime;

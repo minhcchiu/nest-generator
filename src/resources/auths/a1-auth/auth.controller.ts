@@ -6,14 +6,7 @@ import { UserService } from '~common/c1-users/user.service';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -105,10 +98,7 @@ export class AuthController {
    */
   @HttpCode(200)
   @Post('sign_out')
-  async signout(
-    @Body('_id') idUser: Types.ObjectId,
-    @Body('deviceID') deviceID: string,
-  ) {
+  async signout(@Body('_id') idUser: Types.ObjectId, @Body('deviceID') deviceID: string) {
     // Remove deviceID and pop fcm token
     await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
       this.logger.warn(AuthController.name, error);
@@ -163,10 +153,7 @@ export class AuthController {
   @UseGuards(AtGuard)
   @HttpCode(200)
   @Put('reset_password')
-  async resetPassword(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { password }: PasswordDto,
-  ) {
+  async resetPassword(@GetCurrentUserId() userId: Types.ObjectId, @Body() { password }: PasswordDto) {
     return this.authService.resetPassword(userId, password);
   }
 }

@@ -8,11 +8,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class MailService {
   private _mailConfig: MailerConfig;
-  constructor(
-    private mailerService: MailerService,
-    private config: ConfigService,
-    private readonly logger: Logger,
-  ) {
+  constructor(private mailerService: MailerService, private config: ConfigService, private readonly logger: Logger) {
     this._mailConfig = config.get<MailerConfig>('mailer');
   }
 
@@ -34,16 +30,9 @@ export class MailService {
    * @param subject
    * @param from
    */
-  async sendOTP(
-    verificationCode: string,
-    to: string,
-    subject: string,
-    from?: string,
-  ) {
+  async sendOTP(verificationCode: string, to: string, subject: string, from?: string) {
     const params = {
-      from:
-        from ??
-        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
       to,
       subject,
       template: './otp/otp.template.hbs',
@@ -52,10 +41,7 @@ export class MailService {
 
     // send mail
     return this.sendMail(params).then((result) => {
-      this.logger.log(
-        MailService.name,
-        `Send a OTP to email:"${to}" successfully!`,
-      );
+      this.logger.log(MailService.name, `Send a OTP to email:"${to}" successfully!`);
       return result;
     });
   }
@@ -68,17 +54,10 @@ export class MailService {
    * @param subject
    * @param from
    */
-  async sendSignupToken(
-    verificationLink: string,
-    to: string,
-    subject: string,
-    from?: string,
-  ) {
+  async sendSignupToken(verificationLink: string, to: string, subject: string, from?: string) {
     // options
     const options = {
-      from:
-        from ??
-        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
       to,
       subject,
       template: './verify/verify.template.hbs',
@@ -87,10 +66,7 @@ export class MailService {
 
     // Send
     return this.sendMail(options).then((result) => {
-      this.logger.log(
-        MailService.name,
-        `Send a SIGNUP_TOKEN to email:"${to}" successfully!`,
-      );
+      this.logger.log(MailService.name, `Send a SIGNUP_TOKEN to email:"${to}" successfully!`);
       return result;
     });
   }
@@ -103,17 +79,10 @@ export class MailService {
    * @param subject
    * @param from
    */
-  async sendResetPasswordToken(
-    resetPasswordLink: string,
-    to: string,
-    subject: string,
-    from?: string,
-  ) {
+  async sendResetPasswordToken(resetPasswordLink: string, to: string, subject: string, from?: string) {
     // options
     const options = {
-      from:
-        from ??
-        `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
       to,
       subject,
       template: './verify/reset-password.template.hbs',
@@ -122,10 +91,7 @@ export class MailService {
 
     // Send
     return this.sendMail(options).then((result) => {
-      this.logger.log(
-        MailService.name,
-        `Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`,
-      );
+      this.logger.log(MailService.name, `Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`);
       return result;
     });
   }

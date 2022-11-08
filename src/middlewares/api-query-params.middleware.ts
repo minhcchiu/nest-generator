@@ -1,15 +1,11 @@
 import * as aqp from 'api-query-params';
-import { NextFunction, Request, Response } from 'express';
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import {
-  BadRequestException,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
-
 import { ApiQueryParamsDto } from './dto/api-query-params.dto';
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { queryParamValidatorDto } from './validator/api-query-params.validator';
+
+// BLACK LIST
+const blacklist = ['apiKey'];
 
 @Injectable()
 export class ApiQueryParamsMiddleware implements NestMiddleware {
@@ -20,8 +16,9 @@ export class ApiQueryParamsMiddleware implements NestMiddleware {
     }
 
     // Convert req.query to api-query-params
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const query: any = aqp(req.query, { skipKey: 'page' });
+    const query: any = aqp(req.query, { skipKey: 'page', blacklist });
 
     // Validate params
     try {
@@ -30,6 +27,7 @@ export class ApiQueryParamsMiddleware implements NestMiddleware {
       next(e);
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     req.aqp = query;
     next();

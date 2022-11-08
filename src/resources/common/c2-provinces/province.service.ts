@@ -8,9 +8,7 @@ import { Province, ProvinceDocument } from './schemas/province.schema';
 
 @Injectable()
 export class ProvinceService extends BaseService<ProvinceDocument> {
-  constructor(
-    @InjectModel(Province.name) model: PaginateModel<ProvinceDocument>,
-  ) {
+  constructor(@InjectModel(Province.name) model: PaginateModel<ProvinceDocument>) {
     super(model);
   }
 }

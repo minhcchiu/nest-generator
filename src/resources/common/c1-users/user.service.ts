@@ -2,11 +2,7 @@ import * as argon2 from 'argon2';
 import { PaginateModel, Types } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
 
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { ValidateUserDto } from './dto/validate-user.dto';
@@ -81,10 +77,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param password
    * @returns
    */
-  async checkPasswordById(
-    id: Types.ObjectId,
-    password: string,
-  ): Promise<boolean> {
+  async checkPasswordById(id: Types.ObjectId, password: string): Promise<boolean> {
     const user = await this.findById(id, { projection: '+password' });
 
     if (user) {
@@ -122,10 +115,7 @@ export class UserService extends BaseService<UserDocument> {
    * @param deviceID
    * @returns
    */
-  async addDeviceID(
-    id: Types.ObjectId,
-    deviceID: string,
-  ): Promise<UserDocument | null> {
+  async addDeviceID(id: Types.ObjectId, deviceID: string): Promise<UserDocument | null> {
     const updateData = { deviceID, $addToSet: { fcmTokens: deviceID } };
 
     return this.updateById(id, updateData);

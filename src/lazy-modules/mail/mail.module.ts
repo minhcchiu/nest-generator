@@ -13,13 +13,10 @@ import { MailService } from './mail.service';
   imports: [
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => {
-        const { transport, defaults, isGmailServer } =
-          config.get<MailerConfig>('mailer');
+        const { transport, defaults, isGmailServer } = config.get<MailerConfig>('mailer');
 
         // Message log for test
-        const msgLog = isGmailServer
-          ? 'MailerModule GMAIL init'
-          : 'MailerModule SENDGRID init';
+        const msgLog = isGmailServer ? 'MailerModule GMAIL init' : 'MailerModule SENDGRID init';
 
         // Log
         Logger.log(`${msgLog}`, 'MailModule');

@@ -16,7 +16,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -53,18 +52,6 @@ export class UserController {
   @Get('paginate')
   async paginate(@ApiQueryParams() queryParams: ApiQueryParamsDto) {
     return this.userService.paginate(queryParams);
-  }
-
-  /**
-   * Count
-   *
-   * @param query
-   * @returns
-   */
-  @HttpCode(200)
-  @Get('count')
-  async count(@Query() query: any) {
-    return this.userService.count(query);
   }
 
   /**
@@ -124,10 +111,7 @@ export class UserController {
   @HttpCode(200)
   @UseGuards(AtGuard)
   @Put('password')
-  async resetPassword(
-    @GetCurrentUserId() id: Types.ObjectId,
-    @Body() body: UpdatePasswordDto,
-  ) {
+  async resetPassword(@GetCurrentUserId() id: Types.ObjectId, @Body() body: UpdatePasswordDto) {
     await this.userService.checkPasswordById(id, body.password);
 
     return this.userService.updatePasswordById(id, body.newPassword);
@@ -143,10 +127,7 @@ export class UserController {
   @HttpCode(200)
   @UseGuards(AtGuard)
   @Put(':id')
-  async update(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateUserDto,
-  ) {
+  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateUserDto) {
     const filterValidate = {};
 
     if (body.phone) filterValidate['phone'] = body.phone;
@@ -167,10 +148,7 @@ export class UserController {
   // @HttpCode(204)
   @Delete(':ids/soft-ids')
   async deleteManySoftByIds(@Param('ids') ids: string) {
-    return this.userService.updateMany(
-      { _id: { $in: ids.split(',') } },
-      { deleted: true },
-    );
+    return this.userService.updateMany({ _id: { $in: ids.split(',') } }, { deleted: true });
   }
 
   /**

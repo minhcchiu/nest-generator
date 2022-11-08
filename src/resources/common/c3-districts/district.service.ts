@@ -8,9 +8,7 @@ import { District, DistrictDocument } from './schemas/district.schema';
 
 @Injectable()
 export class DistrictService extends BaseService<DistrictDocument> {
-  constructor(
-    @InjectModel(District.name) model: PaginateModel<DistrictDocument>,
-  ) {
+  constructor(@InjectModel(District.name) model: PaginateModel<DistrictDocument>) {
     super(model);
   }
 }
