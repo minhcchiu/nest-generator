@@ -21,7 +21,7 @@ export class User {
     type: [{ type: Types.ObjectId, ref: dbCollections.roleManager.ref }],
     default: [],
   })
-  readonly idRoleManager: Types.ObjectId[];
+  readonly idRightsGroup: Types.ObjectId[];
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: dbCollections.endpointAPI.ref }],
