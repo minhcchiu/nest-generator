@@ -31,7 +31,10 @@ import { File } from '~common/c5-files/schemas/file.schema';
 @Controller(dbCollections.upload.path)
 export class UploadController {
   private appUrl: string;
-  constructor(private readonly uploadService: UploadService, private readonly configService: ConfigService) {
+  constructor(
+    private readonly uploadService: UploadService,
+    private readonly configService: ConfigService,
+  ) {
     this.appUrl = configService.get<AppConfig>('app').appUrl;
   }
 
@@ -226,10 +229,16 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_local')
-  async saveFileToLocal(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
+  async saveFileToLocal(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
+  ) {
     file = file.replace(this.appUrl, '');
 
-    const { files, folder } = await this.uploadService.saveFileToLocal({ file, resourceType }, userId);
+    const { files, folder } = await this.uploadService.saveFileToLocal(
+      { file, resourceType },
+      userId,
+    );
 
     return files.map((fileName: File) => `${this.appUrl}${folder}${fileName}`);
   }
@@ -244,7 +253,10 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_local')
-  async saveFilesToLocal(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
+  async saveFilesToLocal(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
+  ) {
     const filesUploadedPromise = files.map((file) => {
       file = file.replace(this.appUrl, '');
 
@@ -269,7 +281,10 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_cloudinary')
-  async saveFileToCloudinary(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
+  async saveFileToCloudinary(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
+  ) {
     file = file.replace(this.appUrl, '');
 
     const files = await this.uploadService.saveFileToCloudinary({ file, resourceType }, userId);
@@ -287,7 +302,10 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_cloudinary')
-  async saveToCloudinary(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
+  async saveToCloudinary(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
+  ) {
     const filesUploadedPromise = files.map((file) => {
       file = file.replace(this.appUrl, '');
 
@@ -309,7 +327,10 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_file_to_s3')
-  async saveFileToS3(@GetCurrentUserId() userId: Types.ObjectId, @Body() { file, resourceType }: SaveFileDto) {
+  async saveFileToS3(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { file, resourceType }: SaveFileDto,
+  ) {
     const files = await this.uploadService.saveFileToS3({ file, resourceType }, userId);
 
     return { files };
@@ -325,8 +346,13 @@ export class UploadController {
   @HttpCode(201)
   @UseGuards(AtGuard)
   @Post('save_files_to_s3')
-  async saveFilesToS3(@GetCurrentUserId() userId: Types.ObjectId, @Body() { files, resourceType }: SaveFilesDto) {
-    const filesUploadedPromise = files.map((file) => this.uploadService.saveFileToS3({ file, resourceType }, userId));
+  async saveFilesToS3(
+    @GetCurrentUserId() userId: Types.ObjectId,
+    @Body() { files, resourceType }: SaveFilesDto,
+  ) {
+    const filesUploadedPromise = files.map((file) =>
+      this.uploadService.saveFileToS3({ file, resourceType }, userId),
+    );
 
     const result = await Promise.all(filesUploadedPromise);
 

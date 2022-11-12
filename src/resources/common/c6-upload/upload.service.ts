@@ -31,7 +31,12 @@ export class UploadService {
     const result = await this.localStorageService.upload(realpathOfFile, resourceType);
 
     // save file to database
-    const fileItem = { ...result, owner, secureUrl: result.files[0], resourceID: result.files[0] };
+    const fileItem = {
+      ...result,
+      owner,
+      secureUrl: result.files[0],
+      resourceID: result.files[0],
+    };
     return this.fileService.create(fileItem);
   }
 

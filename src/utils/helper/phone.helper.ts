@@ -1,6 +1,5 @@
-import { phone } from 'phone';
-
 import { BadRequestException } from '@nestjs/common';
+import { phone } from 'phone';
 
 /**
  * Validate phone
@@ -10,7 +9,11 @@ import { BadRequestException } from '@nestjs/common';
  * @param country
  * @returns
  */
-export const isPhoneValid = (zipCode: string, phoneNumber: string, country?: string | undefined) => {
+export const isPhoneValid = (
+  zipCode: string,
+  phoneNumber: string,
+  country?: string | undefined,
+) => {
   const resultPhoneValidate = phone(`${zipCode}${phoneNumber}`, { country });
 
   if (!resultPhoneValidate) return false;

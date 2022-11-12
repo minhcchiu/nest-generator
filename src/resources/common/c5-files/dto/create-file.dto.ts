@@ -1,5 +1,4 @@
 import { IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-
 import { StorageServiceEnum } from '../enum/storage-service.enum';
 
 export class CreateFileDto {

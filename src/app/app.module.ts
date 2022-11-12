@@ -1,6 +1,16 @@
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
-import { ApiQueryParamsMiddleware } from 'src/middlewares/api-query-params.middleware';
-import { LoggerMiddleware } from 'src/middlewares/logger.middelware';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ApiQueryParamsMiddleware } from '~middleware/api-query-params.middleware';
+import { LoggerMiddleware } from '~middleware/logger.middleware';
+import { ApiCollection } from '~authorizations/a2-api-collections/schemas/api-collection.schema';
+import { ApiResourceModule } from '~authorizations/a1-api-resources/api-resource.module';
+import { AuthAccessModule } from '~authorizations/a4-auth-accesses/auth-access.module';
+import { FreeApiModule } from '~authorizations/a3-free-apis/free-api.module';
+import { RightsGroup } from '~authorizations/a5-rights-groups/schemas/rights-group.schema';
 import { AuthModule } from '~auths/a1-auth/auth.module';
 import { OtpModule } from '~auths/a2-otp/otp.module';
 import { UserModule } from '~common/c1-users/user.module';
@@ -22,12 +32,6 @@ import { LoggerModule } from '~lazy-modules/logger/logger.module';
 import { MailModule } from '~lazy-modules/mail/mail.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
 
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { BannerModule } from '~features/f1-banners/banner.module';
 
 @Module({
@@ -38,8 +42,25 @@ import { BannerModule } from '~features/f1-banners/banner.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, cloudinaryConfig, jwtConfig, mailerConfig, uploadConfig, otpConfig],
+      load: [
+        appConfig,
+        databaseConfig,
+        cloudinaryConfig,
+        jwtConfig,
+        mailerConfig,
+        uploadConfig,
+        otpConfig,
+      ],
     }),
+
+    // Authorizations
+    ApiResourceModule,
+    ApiCollection,
+    FreeApiModule,
+    AuthAccessModule,
+    RightsGroup,
+
+    // Common
     DatabaseModule,
     UserModule,
     ProvinceModule,

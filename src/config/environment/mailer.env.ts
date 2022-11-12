@@ -1,6 +1,5 @@
-import { registerAs } from '@nestjs/config';
-
 import { defaultEnv } from './default.env';
+import { registerAs } from '@nestjs/config';
 
 export const mailerEnv = {
   isGmailServer: process.env.MAIL_SERVER === 'gmail' || defaultEnv.mailer.mailServer === 'gmail',

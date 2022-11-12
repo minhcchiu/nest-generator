@@ -1,12 +1,22 @@
 import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { ApiTags } from '@nestjs/swagger';
 import { FileService } from './file.service';
 import { Types } from 'mongoose';
+import { ApiQueryParamsDto } from '~middleware/dto';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 
 @ApiTags(dbCollections.file.path)
 @Controller(dbCollections.file.path)

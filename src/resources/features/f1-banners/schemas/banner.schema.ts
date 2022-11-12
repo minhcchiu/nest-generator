@@ -1,6 +1,5 @@
-import { dbCollections } from '~config/collections/schemas.collection';
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { dbCollections } from '~config/collections/schemas.collection';
 
 @Schema({
   timestamps: true,

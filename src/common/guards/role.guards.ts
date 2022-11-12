@@ -1,8 +1,6 @@
-import { RoleEnum } from '~common/c1-users/enums/role.enum';
-
-import { CanActivate, ExecutionContext, mixin, Type } from '@nestjs/common';
-
 import { AtGuard } from './at.guard';
+import { CanActivate, ExecutionContext, mixin, Type } from '@nestjs/common';
+import { RoleEnum } from '~common/c1-users/enums/role.enum';
 
 export const RoleGuard = (...roles: RoleEnum[]): Type<CanActivate> => {
   class RoleGuardMixin extends AtGuard {

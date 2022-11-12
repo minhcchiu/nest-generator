@@ -1,5 +1,12 @@
 import * as dayjs from 'dayjs';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { Otp, OtpDocument } from './schemas/otp.schema';
+import { OtpType } from './enum/otp-type.enum';
 import { PaginateModel } from 'mongoose';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { BaseService } from '~base-inherit/base.service';
 import { UserService } from '~common/c1-users/user.service';
 import { AppConfig } from '~config/environment';
@@ -7,14 +14,6 @@ import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { OtpConfig } from '~config/environment/otp.env';
 import { MailService } from '~lazy-modules/mail/mail.service';
 
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
-
-import { SendOtpDto } from './dto/send-otp.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
-import { OtpType } from './enum/otp-type.enum';
-import { Otp, OtpDocument } from './schemas/otp.schema';
 import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
 
 @Injectable()

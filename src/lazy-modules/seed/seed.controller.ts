@@ -1,6 +1,5 @@
-import { Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
+import { Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { SeedService } from './seed.service';
 
 @ApiTags('seeder')
@@ -15,18 +14,7 @@ export class SeedController {
    */
   @Post('provinces_districts_wards')
   @HttpCode(200)
-  async seedProvincesDistrictWard() {
-    return this.seedService.seedProvincesDistrictWard();
-  }
-
-  /**
-   * Seed data for provinces, district, ward
-   *
-   * @returns
-   */
-  @Delete('provinces_districts_wards')
-  @HttpCode(200)
-  async deleteAllProvincesDistrictWard() {
-    return this.seedService.deleteAllProvincesDistrictWard();
+  async seedProvincesDistrictsWards() {
+    return this.seedService.seedProvincesDistrictsWards();
   }
 }

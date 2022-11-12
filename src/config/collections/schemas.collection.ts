@@ -7,6 +7,34 @@ type CollectionConfig = {
 };
 
 export const dbCollections: CollectionConfig = {
+  // Authorizations
+  apiResource: {
+    path: 'api-resources',
+    name: 'apiresources',
+    ref: 'ApiResource',
+  },
+  apiCollection: {
+    path: 'api-collections',
+    name: 'apicollections',
+    ref: 'ApiCollection',
+  },
+  freeApi: {
+    path: 'free-apis',
+    name: 'freeapis',
+    ref: 'FreeApis',
+  },
+  authAccess: {
+    path: 'auth-accesses',
+    name: 'authAccesses',
+    ref: 'AuthAccesses',
+  },
+  rightsGroup: {
+    path: 'rights-group',
+    name: 'rightsgroups',
+    ref: 'RightsGroups',
+  },
+
+  // Common
   user: {
     path: 'users',
     name: 'users',
@@ -96,42 +124,6 @@ export const dbCollections: CollectionConfig = {
     name: 'auth',
     ref: 'Auth',
   },
-  freeApi: {
-    path: 'free-apis',
-    name: 'freeapis',
-    ref: 'FreeApi',
-  },
-
-  authUserAccess: {
-    path: 'auth-user-accesses',
-    name: 'authuseraccesses',
-    ref: 'AuthUserAccess',
-  },
-
-  authUserId: {
-    path: 'auth-user-ids',
-    name: 'authuserids',
-    ref: 'AuthUserId',
-  },
-
-  roleManager: {
-    path: 'role-manager',
-    name: 'rolemanager',
-    ref: 'Rolemanager',
-  },
-
-  collectionManager: {
-    path: 'collection-manager',
-    name: 'collectionmanager',
-    ref: 'Collectionmanager',
-  },
-
-  endpointAPI: {
-    path: 'endpoint-apis',
-    name: 'endpointapis',
-    ref: 'Endpointapi',
-  },
-
   historyAccessApi: {
     path: 'history-access-apis',
     name: 'historyaccessapis',

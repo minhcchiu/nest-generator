@@ -1,7 +1,14 @@
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { BaseInterface } from './base.interface';
 import { NotFoundException } from '@nestjs/common';
-import { PaginateDocument, PaginateModel, PaginateOptions, PaginateResult, QueryOptions, Types } from 'mongoose';
+import { ApiQueryParamsDto } from '~middleware/dto';
+import {
+  PaginateDocument,
+  PaginateModel,
+  PaginateOptions,
+  PaginateResult,
+  QueryOptions,
+  Types,
+} from 'mongoose';
 
 export class BaseService<T> implements BaseInterface<T> {
   private model: PaginateModel<T>;
@@ -10,6 +17,18 @@ export class BaseService<T> implements BaseInterface<T> {
     this.model = model;
   }
 
+  // ========== CREATE =================
+  /**
+   * Create new
+   *
+   * @param data
+   * @returns
+   */
+  async create(data: any): Promise<any> {
+    return this.model.create(data);
+  }
+
+  // ========== READ =================
   /**
    * Find all
    *
@@ -31,7 +50,9 @@ export class BaseService<T> implements BaseInterface<T> {
    * @param queryParams
    * @returns
    */
-  async paginate(queryParams: ApiQueryParamsDto): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>> {
+  async paginate(
+    queryParams: ApiQueryParamsDto,
+  ): Promise<PaginateResult<PaginateDocument<T, any, PaginateOptions>>> {
     const pageInfo = {
       lean: true,
       page: queryParams.skip || 1,
@@ -98,16 +119,7 @@ export class BaseService<T> implements BaseInterface<T> {
     return this.model.distinct(field);
   }
 
-  /**
-   * Create new
-   *
-   * @param data
-   * @returns
-   */
-  async create(data: any): Promise<any> {
-    return this.model.create(data);
-  }
-
+  // ========== UPDATE =================
   /**
    * Find by ID and update
    *
@@ -116,7 +128,11 @@ export class BaseService<T> implements BaseInterface<T> {
    * @param options
    * @returns
    */
-  async updateById(id: Types.ObjectId, data: any, options: QueryOptions = { new: true }): Promise<any | null> {
+  async updateById(
+    id: Types.ObjectId,
+    data: any,
+    options: QueryOptions = { new: true },
+  ): Promise<any | null> {
     const updated = await this.model.findByIdAndUpdate(id, data, options).lean();
 
     if (!updated) throw new NotFoundException('Item not found.');
@@ -132,8 +148,12 @@ export class BaseService<T> implements BaseInterface<T> {
    * @param options
    * @returns
    */
-  async updateOne(query: object, data: any, options: QueryOptions = { new: true }): Promise<any | null> {
-    const updated = await this.model.updateOne(query, data, options).lean();
+  async updateOne(
+    query: object,
+    data: any,
+    options: QueryOptions = { new: true },
+  ): Promise<any | null> {
+    const updated = await this.model.findOneAndUpdate(query, data, options).lean();
 
     if (!updated) throw new NotFoundException('Item not found.');
 
@@ -152,6 +172,7 @@ export class BaseService<T> implements BaseInterface<T> {
     return this.model.updateMany(query, data, options).lean();
   }
 
+  // ========== DELETE =================
   /**
    * Find by id and delete
    *

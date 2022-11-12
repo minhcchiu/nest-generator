@@ -1,7 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
-
 import { OtpType } from '../enum/otp-type.enum';
+import { AuthKeyEnum } from '~auths/a1-auth/enums/auth-key.enum';
 
 export class VerifyOtpDto {
   @IsNotEmpty()

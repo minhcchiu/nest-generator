@@ -1,10 +1,8 @@
-import { PaginateModel } from 'mongoose';
-import { BaseService } from '~base-inherit/base.service';
-
+import { Banner, BannerDocument } from './schemas/banner.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
-import { Banner, BannerDocument } from './schemas/banner.schema';
+import { PaginateModel } from 'mongoose';
+import { BaseService } from '~base-inherit/base.service';
 
 @Injectable()
 export class BannerService extends BaseService<BannerDocument> {

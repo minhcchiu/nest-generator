@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { Notification, NotificationSchema } from './schemas/notification.schema';
 import { NotificationController } from './notification.controller';
 import { NotificationService } from './notification.service';
-import { Notification, NotificationSchema } from './schemas/notification.schema';
 
 @Module({
   imports: [

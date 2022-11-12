@@ -1,3 +1,5 @@
+import { AccountTypeEnum } from '../enums/account-type.enum';
+import { Types } from 'mongoose';
 import {
   IsEmail,
   IsEnum,
@@ -10,11 +12,8 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { Types } from 'mongoose';
 import { GenderEnum } from '~common/c1-users/enums/gender.enum';
 import { RoleEnum } from '~common/c1-users/enums/role.enum';
-
-import { AccountTypeEnum } from '../enums/account-type.enum';
 
 export class CreateUserDto {
   @IsOptional()

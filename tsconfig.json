@@ -27,6 +27,9 @@
       "~lazy-modules/*": [
         "./src/lazy-modules/*"
       ],
+      "~authorizations/*": [
+        "./src/resources/authorizations/*"
+      ],
       "~auths/*": [
         "./src/resources/auths/*"
       ],
@@ -51,8 +54,8 @@
       "~pipe/*": [
         "./src/utils/pipe/*"
       ],
-      "~middlewares/*": [
-        "src/middlewares/*"
+      "~middleware/*": [
+        "src/middleware/*"
       ],
     }
   },

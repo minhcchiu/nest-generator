@@ -1,11 +1,9 @@
-import { UserModule } from '~common/c1-users/user.module';
-
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { Otp, OtpSchema } from './schemas/otp.schema';
 import { OtpController } from './otp.controller';
 import { OtpService } from './otp.service';
-import { Otp, OtpSchema } from './schemas/otp.schema';
+import { UserModule } from '~common/c1-users/user.module';
 
 @Module({
   imports: [

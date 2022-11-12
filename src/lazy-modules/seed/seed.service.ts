@@ -16,106 +16,88 @@ export class SeedService {
   ) {}
 
   /**
-   * Delete all provinces districs wards
-   *
-   * @returns
-   */
-  async deleteAllProvincesDistrictWard() {
-    const [provinces, districts, wards] = await Promise.all([
-      this.provinceService.deleteMany({}),
-      this.districtService.deleteMany({}),
-      this.wardService.deleteMany(),
-    ]);
-
-    this.logger.log('Delete all provinces, district, wards successfully!', {
-      provinces,
-      districts,
-      wards,
-    });
-
-    return { provinces, districts, wards };
-  }
-
-  /**
    * Seed data for provinces, district, ward
    *
    * @returns
    */
-  async seedProvincesDistrictWard() {
-    const jsonPath = join(__dirname, '../../utils/json/dvhcvn.json');
-
+  async seedProvincesDistrictsWards() {
+    const jsonPath = join(__dirname, '../../utils/json/provinces-districts-wards.json');
     const isFileExist = fileHelper.isFileExist(jsonPath);
-
-    if (!isFileExist) this.logger.error(SeedService.name, `${jsonPath} was not found, cannot seed province`);
-
-    const dataString = fileHelper.readFileSync(jsonPath).toString();
-
-    const { data } = JSON.parse(dataString);
-
     const counter = {
       totalProvince: 0,
       totalDistrict: 0,
       totalWard: 0,
     };
-    const resultPromise = data.map(async (province: any) => {
-      counter.totalProvince++;
 
-      // province item
+    //  check file exist
+    if (!isFileExist)
+      this.logger.error(SeedService.name, `${jsonPath} was not found, cannot seed provinces`);
+
+    //  Read data file
+    const dataString = fileHelper.readFileSync(jsonPath).toString().trim();
+
+    // Convert data string to JSON
+    const { data } = JSON.parse(dataString);
+
+    // Delete all provinces,district, wards
+    await Promise.all([
+      this.provinceService.deleteMany({}),
+      this.districtService.deleteMany({}),
+      this.wardService.deleteMany({}),
+    ]);
+
+    // Loop data
+    for await (const province of data) {
       const provinceItem = {
         name: province.name,
         type: province.type,
       };
 
-      // create promise
-      const provincePromise = this.provinceService.create(provinceItem);
+      // Save province
+      const provinceSaved = await this.provinceService.create(provinceItem);
+      counter.totalProvince++;
 
-      // get districtList from data
-      const districtList = province.level2s;
+      // Get idProvince
+      const idProvince = provinceSaved._id;
 
-      return provincePromise.then((rsProvince) => {
-        const idProvince = rsProvince._id;
+      // Loop level2s
+      for await (const district of province.districts) {
+        const districtItem = {
+          idProvince,
+          name: district.name,
+          type: district.type,
+        };
 
-        return districtList.map(async (district: any) => {
-          counter.totalDistrict++;
+        // Save district
+        const districtSaved = await this.districtService.create(districtItem);
+        counter.totalDistrict++;
 
-          // district item
-          const districtItem = {
-            name: district.name,
-            type: district.type,
-            idProvince: idProvince,
+        // Get idDistrict
+        const idDistrict = districtSaved._id;
+
+        // Store wards of districts
+        const wardSavedPromises = district.wards.map((ward: any) => {
+          const wardItem = {
+            idProvince,
+            idDistrict,
+            name: ward.name,
+            type: ward.type,
           };
 
-          // create district
-          const districtPromise = this.districtService.create(districtItem);
-
-          // get wardList from data
-          const wardList = district.level3s;
-
-          return districtPromise.then((rsDistrict) => {
-            return wardList.map((ward: any) => {
-              counter.totalWard++;
-
-              // ward item
-              const wardItem = {
-                name: ward.name,
-                type: ward.type,
-                idProvince: idProvince,
-                idDistrict: rsDistrict._id,
-              };
-
-              // create ward
-              const wardPromise = this.wardService.create(wardItem);
-
-              return wardPromise;
-            });
-          });
+          counter.totalWard++;
+          return this.districtService.create(wardItem);
         });
-      });
-    });
 
-    await Promise.all(resultPromise);
+        console.log({ counter });
 
-    this.logger.log('Seed data for all provinces, district, wards successfully!', {
+        // Save wards
+        await Promise.all(wardSavedPromises);
+      }
+    }
+
+    console.log({ counter });
+
+    this.logger.log('Seed data for all provinces, districts, wards successfully!', {
       ...counter,
     });
 

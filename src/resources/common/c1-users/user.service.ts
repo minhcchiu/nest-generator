@@ -1,12 +1,10 @@
 import * as argon2 from 'argon2';
-import { PaginateModel, Types } from 'mongoose';
-import { BaseService } from '~base-inherit/base.service';
-
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
-import { ValidateUserDto } from './dto/validate-user.dto';
+import { PaginateModel, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
+import { ValidateUserDto } from './dto/validate-user.dto';
+import { BaseService } from '~base-inherit/base.service';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {

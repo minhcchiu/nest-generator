@@ -1,9 +1,8 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-
+import { District, DistrictSchema } from './schemas/district.schema';
 import { DistrictController } from './district.controller';
 import { DistrictService } from './district.service';
-import { District, DistrictSchema } from './schemas/district.schema';
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [

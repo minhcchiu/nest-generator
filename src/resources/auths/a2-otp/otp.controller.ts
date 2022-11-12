@@ -1,11 +1,21 @@
 import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { OtpService } from './otp.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { Types } from 'mongoose';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ApiQueryParamsDto } from '~middleware/dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 

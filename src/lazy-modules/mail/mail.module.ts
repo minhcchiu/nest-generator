@@ -1,12 +1,10 @@
-import { join } from 'path';
-import { MailerConfig } from '~config/environment';
-
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
+import { Global, Logger, Module } from '@nestjs/common';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { join } from 'path';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { MailService } from './mail.service';
+import { MailerConfig } from '~config/environment';
 
 @Global()
 @Module({

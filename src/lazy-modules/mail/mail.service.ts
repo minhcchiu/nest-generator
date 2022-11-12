@@ -1,14 +1,17 @@
+import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
 import { MailerConfig } from '~config/environment';
 import { Logger } from '~lazy-modules/logger/logger.service';
-
-import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
   private _mailConfig: MailerConfig;
-  constructor(private mailerService: MailerService, private config: ConfigService, private readonly logger: Logger) {
+  constructor(
+    private mailerService: MailerService,
+    private config: ConfigService,
+    private readonly logger: Logger,
+  ) {
     this._mailConfig = config.get<MailerConfig>('mailer');
   }
 
@@ -79,7 +82,12 @@ export class MailService {
    * @param subject
    * @param from
    */
-  async sendResetPasswordToken(resetPasswordLink: string, to: string, subject: string, from?: string) {
+  async sendResetPasswordToken(
+    resetPasswordLink: string,
+    to: string,
+    subject: string,
+    from?: string,
+  ) {
     // options
     const options = {
       from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
@@ -91,7 +99,10 @@ export class MailService {
 
     // Send
     return this.sendMail(options).then((result) => {
-      this.logger.log(MailService.name, `Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`);
+      this.logger.log(
+        MailService.name,
+        `Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`,
+      );
       return result;
     });
   }

@@ -1,12 +1,10 @@
 import * as argon2 from 'argon2';
-import { Document, Types } from 'mongoose';
-import { dbCollections } from '~config/collections/schemas.collection';
-
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
 import { AccountTypeEnum } from '../enums/account-type.enum';
+import { Document, Types } from 'mongoose';
 import { GenderEnum } from '../enums/gender.enum';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { RoleEnum } from '../enums/role.enum';
+import { dbCollections } from '~config/collections/schemas.collection';
 
 @Schema({
   timestamps: true,
@@ -16,24 +14,6 @@ import { RoleEnum } from '../enums/role.enum';
 export class User {
   @Prop({ type: Types.ObjectId, ref: dbCollections.address.ref })
   readonly idAddress: Types.ObjectId;
-
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: dbCollections.roleManager.ref }],
-    default: [],
-  })
-  readonly idRightsGroup: Types.ObjectId[];
-
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: dbCollections.endpointAPI.ref }],
-    default: [],
-  })
-  readonly apiListAccess: Types.ObjectId[];
-
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: dbCollections.endpointAPI.ref }],
-    default: [],
-  })
-  readonly apiListNotAccess: Types.ObjectId[];
 
   @Prop({ type: String, required: true })
   readonly fullName: string;

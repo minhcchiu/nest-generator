@@ -44,7 +44,8 @@ export const cloudinaryHelper = {
    * @returns
    */
   getUploadResult(file: any) {
-    const { bytes, format, resource_type, folder, public_id, created_at, secure_url, files } = file;
+    const { bytes, format, resource_type, folder, public_id, created_at, secure_url, files } =
+      file;
 
     return {
       type: `${resource_type}/${format}`,

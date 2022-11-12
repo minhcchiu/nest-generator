@@ -1,8 +1,7 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
-import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
-
-import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { AuthKeyEnum } from '../enums/auth-key.enum';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 export class SignupDto extends PartialType(
   OmitType(CreateUserDto, ['email', 'phone', 'password', 'fullName'] as const),

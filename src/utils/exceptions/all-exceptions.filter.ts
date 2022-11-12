@@ -1,12 +1,17 @@
-import { Request, Response } from 'express';
 import * as fs from 'fs';
-import { join } from 'path';
-import { Logger } from '~lazy-modules/logger/logger.service';
-
-import { ArgumentsHost, Catch, ConsoleLogger, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-
+import {
+  ArgumentsHost,
+  Catch,
+  ConsoleLogger,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ErrorResponse, HttpExceptionResponse } from './http-exception-response.interface';
+import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { join } from 'path';
+import { Request, Response } from 'express';
+import { Logger } from '~lazy-modules/logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -89,9 +94,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const error = exception?.message || 'Critical internal server error occurred!';
 
-    const title = exception.getResponse ? exception.getResponse()['error'] : 'Internal Server Error';
+    const title = exception.getResponse
+      ? exception.getResponse()['error']
+      : 'Internal Server Error';
 
-    const statusCode = exception.getStatus ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    const statusCode = exception.getStatus
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const errorResponse = { title, error, errors: null, statusCode };
 
@@ -107,7 +116,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * @param exception
    * @returns
    */
-  private _responseException(errorResponse: ErrorResponse, ctx: HttpArgumentsHost, exception: any) {
+  private _responseException(
+    errorResponse: ErrorResponse,
+    ctx: HttpArgumentsHost,
+    exception: any,
+  ) {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const { error, errors, title, statusCode } = errorResponse;
@@ -150,7 +163,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * @param exception
    * @returns
    */
-  private _getErrorLog = (errorResponse: HttpExceptionResponse, request: Request, exception: unknown): string => {
+  private _getErrorLog = (
+    errorResponse: HttpExceptionResponse,
+    request: Request,
+    exception: unknown,
+  ): string => {
     const { statusCode, error, errors, method, path, title, timeStamp } = errorResponse;
 
     const errorLog = `Title: "${title}" - Code: ${statusCode} - Method: "${method}" - URL: "${path}"

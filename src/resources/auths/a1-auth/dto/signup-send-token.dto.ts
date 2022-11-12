@@ -1,7 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
-import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
-
 import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { CreateUserDto } from '~common/c1-users/dto/create-user.dto';
 
 export class SignupSendTokenDto extends PartialType(
   OmitType(CreateUserDto, ['email', 'password', 'fullName'] as const),

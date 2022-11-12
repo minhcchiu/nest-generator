@@ -1,5 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
 import { AuthKeyEnum } from '../enums/auth-key.enum';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
 
 export class SignInDto {
   @IsNotEmpty()

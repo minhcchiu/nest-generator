@@ -1,9 +1,7 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { StorageServiceEnum } from '../enum/storage-service.enum';
 import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
-
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
-import { StorageServiceEnum } from '../enum/storage-service.enum';
 
 @Schema({
   timestamps: true,

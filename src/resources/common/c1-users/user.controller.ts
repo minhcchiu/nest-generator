@@ -1,7 +1,12 @@
-import { Types } from 'mongoose';
 import { ApiQueryParams } from 'src/common/decorators/api-query-params.decorator';
+import { ApiTags } from '@nestjs/swagger';
 import { AtGuard } from 'src/common/guards';
-import { ApiQueryParamsDto } from 'src/middlewares/dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Types } from 'mongoose';
+import { UpdatePasswordDto } from './dto/update-password';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
+import { ApiQueryParamsDto } from '~middleware/dto';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
@@ -18,12 +23,6 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePasswordDto } from './dto/update-password';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserService } from './user.service';
 
 @ApiTags(dbCollections.user.path)
 @Controller(dbCollections.user.path)
