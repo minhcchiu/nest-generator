@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "~base-inherit/*": ["./src/base-inherit/*"],
+      "~config/*": ["./src/config/*"],
+      "~lazy-modules/*": ["./src/lazy-modules/*"],
+      "~authorizations/*": ["./src/resources/authorizations/*"],
+      "~auths/*": ["./src/resources/auths/*"],
+      "~common/*": ["./src/resources/common/*"],
+      "~features/*": ["./src/resources/features/*"],
+      "~decorators/*": ["src/common/decorators/*"],
+      "~exception/*": ["./src/utils/exceptions/*"],
+      "~helper/*": ["./src/utils/helper/*"],
+      "~interceptors/*": ["./src/utils/interceptors/*"],
+      "~pipe/*": ["./src/utils/pipe/*"],
+      "~middleware/*": ["src/middleware/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["tmp", "dist", "node_modules"]
+}
