@@ -5,7 +5,7 @@ type CollectionConfig = {
     ref: string;
   };
 };
-
+// block list, access
 export const dbCollections: CollectionConfig = {
   // Authorizations
   apiResource: {
