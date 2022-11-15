@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { localStorageHelper } from './local-storage.helper';
-import { ResourceTypeEnum } from '~common/c6-upload/enum/resource-type.enum';
-import { StorageDirEnum } from '~common/c6-upload/enum/storage-dir.enum';
+import { ResourceTypeEnum } from '~common/c4-upload/enum/resource-type.enum';
+import { StorageDirEnum } from '~common/c4-upload/enum/storage-dir.enum';
 
 @Injectable()
 export class LocalStorageService {

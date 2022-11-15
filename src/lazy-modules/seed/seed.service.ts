@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
-import { ProvinceService } from '~common/c2-provinces/province.service';
-import { DistrictService } from '~common/c3-districts/district.service';
-import { WardService } from '~common/c4-wards/ward.service';
+import { ProvinceService } from '~common/c6-provinces/province.service';
+import { DistrictService } from '~common/c7-districts/district.service';
+import { WardService } from '~common/c8-wards/ward.service';
 import { fileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
@@ -85,7 +85,7 @@ export class SeedService {
           };
 
           counter.totalWard++;
-          return this.districtService.create(wardItem);
+          return this.wardService.create(wardItem);
         });
 
         console.log({ counter });

@@ -11,13 +11,11 @@ import { ApiResourceModule } from '~authorizations/a1-api-resources/api-resource
 import { AuthAccessModule } from '~authorizations/a4-auth-accesses/auth-access.module';
 import { FreeApiModule } from '~authorizations/a3-free-apis/free-api.module';
 import { RightsGroup } from '~authorizations/a5-rights-groups/schemas/rights-group.schema';
-import { AuthModule } from '~auths/a1-auth/auth.module';
-import { OtpModule } from '~auths/a2-otp/otp.module';
 import { UserModule } from '~common/c1-users/user.module';
-import { ProvinceModule } from '~common/c2-provinces/province.module';
+import { ProvinceModule } from '~common/c6-provinces/province.module';
 import { FileModule } from '~common/c5-files/file.module';
-import { UploadModule } from '~common/c6-upload/upload.module';
-import { NotificationModule } from '~common/c7-notifications/notification.module';
+import { UploadModule } from '~common/c4-upload/upload.module';
+import { NotificationModule } from '~common/c11-notifications/notification.module';
 import { DatabaseModule } from '~config/database/database.module';
 import {
   appConfig,
@@ -33,6 +31,8 @@ import { MailModule } from '~lazy-modules/mail/mail.module';
 import { SeedModule } from '~lazy-modules/seed/seed.module';
 
 import { BannerModule } from '~features/f1-banners/banner.module';
+import { OtpModule } from '~common/c3-otp/otp.module';
+import { AuthModule } from '~common/c2-auth/auth.module';
 
 @Module({
   imports: [

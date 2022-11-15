@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { diskStorage } from 'multer';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';
-import { FieldsNameEnum } from '~common/c6-upload/enum/field-name.enum';
+import { FieldsNameEnum } from '~common/c4-upload/enum/field-name.enum';
 import { UploadConfig } from '~config/environment';
 import { editFileName, imageFileFilter } from '~helper/storage.helper';
 

@@ -22,7 +22,6 @@
       "~config/*": ["./src/config/*"],
       "~lazy-modules/*": ["./src/lazy-modules/*"],
       "~authorizations/*": ["./src/resources/authorizations/*"],
-      "~auths/*": ["./src/resources/auths/*"],
       "~common/*": ["./src/resources/common/*"],
       "~features/*": ["./src/resources/features/*"],
       "~decorators/*": ["src/common/decorators/*"],
