@@ -1,12 +1,5 @@
-import { ApiTags } from '@nestjs/swagger';
-import { AtGuard } from 'src/common/guards';
-import { ConfigService } from '@nestjs/config';
-import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
-import { ResourceTypeEnum } from './enum/resource-type.enum';
-import { SaveFileDto } from './dto/save-file.dto';
-import { SaveFilesDto } from './dto/save-files.dto';
 import { Types } from 'mongoose';
-import { UploadService } from './upload.service';
+import { AtGuard } from 'src/common/guards';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { AppConfig } from '~config/environment';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
@@ -24,6 +17,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
+
+import { SaveFileDto } from './dto/save-file.dto';
+import { SaveFilesDto } from './dto/save-files.dto';
+import { FieldNameEnum, FieldsNameEnum } from './enum/field-name.enum';
+import { ResourceTypeEnum } from './enum/resource-type.enum';
+import { UploadService } from './upload.service';
 
 @ApiTags(dbCollections.upload.path)
 @Controller(dbCollections.upload.path)

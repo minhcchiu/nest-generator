@@ -1,7 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-import { DecodedToken, TokenPayload } from './interface';
 import { ForbiddenException, Global, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+
+import { DecodedToken, TokenPayload } from './interface';
 
 @Global()
 @Injectable()

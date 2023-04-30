@@ -2,17 +2,17 @@ import { Types } from 'mongoose';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 import { AtGuard } from 'src/common/guards/at.guard';
 import { Logger } from '~lazy-modules/logger/logger.service';
+import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
 import { Body, Controller, HttpCode, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { AuthService } from './auth.service';
 import { UserService } from '../users/user.service';
+import { AuthService } from './auth.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { SignInDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 import { TokenDto } from './dto/token.dto';
-import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')

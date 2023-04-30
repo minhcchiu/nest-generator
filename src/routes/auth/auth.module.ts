@@ -1,11 +1,12 @@
-import { ATStrategy } from './strategies/at.strategy';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { TokenService } from './token.service';
+
 import { OtpModule } from '../c3-otp/otp.module';
 import { UserModule } from '../users/user.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { ATStrategy } from './strategies/at.strategy';
+import { TokenService } from './token.service';
 
 @Global()
 @Module({

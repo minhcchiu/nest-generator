@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { ResourceTypeEnum } from 'src/routes/c4-upload/enum/resource-type.enum';
 import { StorageDirEnum } from 'src/routes/c4-upload/enum/storage-dir.enum';
+
+import { Injectable } from '@nestjs/common';
+
 import { localStorageHelper } from './local-storage.helper';
 
 @Injectable()

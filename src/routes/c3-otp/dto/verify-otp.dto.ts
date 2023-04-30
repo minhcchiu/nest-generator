@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { AuthKeyType } from '~routes/auth/enums/auth-key.enum';
+
 import { OtpType } from '../enum/otp-type.enum';
 
 export class VerifyOtpDto {

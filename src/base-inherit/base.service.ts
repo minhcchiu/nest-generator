@@ -6,6 +6,7 @@ import {
   UpdateQuery,
   UpdateWithAggregationPipeline,
 } from 'mongoose';
+
 import { PaginateOptions } from './base.interface';
 
 export class BaseService<T> {

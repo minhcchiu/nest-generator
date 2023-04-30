@@ -1,5 +1,6 @@
-import { defaultEnv } from './default.env';
 import { registerAs } from '@nestjs/config';
+
+import { defaultEnv } from './default.env';
 
 const databaseEnv = {
   name: process.env.DATABASE_NAME || defaultEnv.database.name,

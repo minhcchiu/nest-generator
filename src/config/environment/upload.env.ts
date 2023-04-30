@@ -1,5 +1,6 @@
-import { defaultEnv } from './default.env';
 import { registerAs } from '@nestjs/config';
+
+import { defaultEnv } from './default.env';
 
 export const uploadEnv = {
   imageMaxSize: +process.env.UPLOAD_IMAGE_MAX_SIZE || defaultEnv.upload.imageMaxSize,

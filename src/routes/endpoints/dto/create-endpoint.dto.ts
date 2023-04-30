@@ -1,6 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Role } from 'src/routes/users/enums/role.enum';
+
+import { ApiProperty } from '@nestjs/swagger';
+
 import { HttpMethod } from '../enum/http-method';
 
 export class CreateEndpointDto {

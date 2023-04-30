@@ -1,18 +1,20 @@
-import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { TokenService } from './token.service';
 import { Types } from 'mongoose';
 import { AppConfig, JWTConfig } from '~config/environment';
 import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { MailService } from '~lazy-modules/mail/mail.service';
+import { CreateUserDto } from '~routes/users/dto/create-user.dto';
+
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import { OtpType } from '../c3-otp/enum/otp-type.enum';
 import { OtpService } from '../c3-otp/otp.service';
 import { UserService } from '../users/user.service';
-import { OtpType } from '../c3-otp/enum/otp-type.enum';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { SignInDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
-import { CreateUserDto } from '~routes/users/dto/create-user.dto';
+import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {

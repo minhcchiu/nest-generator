@@ -1,12 +1,13 @@
-import { ApiTags } from '@nestjs/swagger';
-import { DistrictService } from './district.service';
 import { Types } from 'mongoose';
 import { dbCollections } from '~config/collections/schemas.collection';
+import { GetAqp } from '~decorators/get-aqp.decorator';
+import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
-import { AqpDto } from '~dto/aqp.dto';
-import { GetAqp } from '~decorators/get-aqp.decorator';
+import { ApiTags } from '@nestjs/swagger';
+
+import { DistrictService } from './district.service';
 
 @ApiTags(dbCollections.district.path)
 @Controller(dbCollections.district.path)

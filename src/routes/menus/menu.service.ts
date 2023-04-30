@@ -1,8 +1,10 @@
-import { Menu } from './menu.schema';
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
+
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { Menu } from './menu.schema';
 
 @Injectable()
 export class MenuService extends BaseService<Menu> {
