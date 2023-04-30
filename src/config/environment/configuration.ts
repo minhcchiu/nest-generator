@@ -7,7 +7,7 @@ export * from './app.env';
 
 const env = process.env;
 
-export const EnvironmentConfig = {
+export const environmentConfig = {
   app: {
     env: env.APP_ENV,
     port: env.APP_PORT,
@@ -92,3 +92,5 @@ export const EnvironmentConfig = {
     name: env.EMAIL_NAME,
   },
 };
+
+export const configuration = () => environmentConfig;

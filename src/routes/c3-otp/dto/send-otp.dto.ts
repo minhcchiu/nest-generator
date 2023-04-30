@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { AuthKeyEnum } from 'src/routes/c2-auth/enums/auth-key.enum';
+import { AuthKeyType } from '~routes/auth/enums/auth-key.enum';
 import { OtpType } from '../enum/otp-type.enum';
 
 export class SendOtpDto {
@@ -8,7 +8,7 @@ export class SendOtpDto {
   readonly authValue: string;
 
   @IsNotEmpty()
-  @IsEnum(AuthKeyEnum)
+  @IsEnum(AuthKeyType)
   @IsString({ each: true })
   readonly authKey: string;
 

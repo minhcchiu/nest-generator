@@ -12,8 +12,8 @@ import { AppConfig } from '~config/environment';
 import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { OtpConfig } from '~config/environment/otp.env';
 import { MailService } from '~lazy-modules/mail/mail.service';
-import { AuthKeyEnum } from '../c2-auth/enums/auth-key.enum';
 import { UserService } from '../users/user.service';
+import { AuthKeyType } from '~routes/auth/enums/auth-key.enum';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
@@ -41,9 +41,9 @@ export class OtpService extends BaseService<OtpDocument> {
    * @return
    */
   async sendOtp({ otpType, authKey, authValue }: SendOtpDto) {
-    if (authKey === AuthKeyEnum.PHONE) return this._sendOtpToPhone(authValue, otpType);
+    if (authKey === AuthKeyType.PHONE) return this._sendOtpToPhone(authValue, otpType);
 
-    if (authKey === AuthKeyEnum.EMAIL) return this._sendOtpToEmail(authValue, otpType);
+    if (authKey === AuthKeyType.EMAIL) return this._sendOtpToEmail(authValue, otpType);
 
     throw new BadRequestException('Invalid authKey.');
   }

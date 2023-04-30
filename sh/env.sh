@@ -1,5 +1,6 @@
 # Config app environment variable
 # DEVELOPMENT | PRODUCTION
+export APP_NAME=NestA
 export APP_ENV=DEVELOPMENT
 export APP_PORT=8888
 
@@ -60,7 +61,7 @@ export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.google
 export OAUTH_CLIENT_SECRET=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
 
 # OTP
-export MAXIMUN_SECOND_SEND_OTP=10
+export MAXIMUM_SECOND_SEND_OTP=10
 
 # UPLOAD
 export UPLOAD_IMAGE_MAX_SIZE=25 #MB  

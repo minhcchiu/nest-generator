@@ -1,5 +1,5 @@
-import { AuthKeyEnum } from '../enums/auth-key.enum';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator';
+import { AuthKeyType } from '../enums/auth-key.enum';
 
 export class ResetPasswordDto {
   @IsNotEmpty()
@@ -7,7 +7,7 @@ export class ResetPasswordDto {
   readonly authValue: string;
 
   @IsNotEmpty()
-  @IsEnum(AuthKeyEnum)
+  @IsEnum(AuthKeyType)
   @IsString({ each: true })
   readonly authKey: string;
 

@@ -1,59 +1,61 @@
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { Types } from 'mongoose';
 import {
   IsEmail,
   IsEnum,
-  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  Length,
+  Max,
+  Min,
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { GenderEnum } from '../enums/gender.enum';
+
+import { AccountType } from '../enums/account-type.enum';
+import { Gender } from '../enums/gender.enum';
 import { Role } from '../enums/role.enum';
 
 export class CreateUserDto {
-  @IsOptional()
-  @IsMongoId()
-  readonly idAddress?: Types.ObjectId;
+  @ValidateIf((o) => !(o.phone || o.socialToken))
+  @IsEmail()
+  email: string;
+
+  @ValidateIf((o) => !(o.email || o.socialToken))
+  @IsString()
+  phone: string;
+
+  @ValidateIf((o) => !(o.email || o.phone))
+  @IsString()
+  socialToken: string;
+
+  @ValidateIf((o) => o.email || o.phone)
+  @IsString()
+  @Min(6)
+  @Max(50)
+  password: string;
 
   @IsNotEmpty()
   @IsString()
-  readonly fullName: string;
-
-  @IsOptional()
-  @IsEnum(AccountTypeEnum)
-  readonly accountType?: AccountTypeEnum;
-
-  @ValidateIf((object) => !object.phone)
-  @IsEmail()
-  readonly email?: string;
-
-  @ValidateIf((object) => !object.email)
-  @IsString()
-  readonly phone?: string;
+  @MinLength(2)
+  fullName: string;
 
   @IsOptional()
   @IsString()
-  @Length(6, 50)
-  readonly password?: string;
-
-  @IsOptional()
-  @IsEnum(GenderEnum)
-  readonly gender?: GenderEnum;
+  deviceID: string;
 
   @IsOptional()
   @IsNumber()
-  readonly dateOfBirth?: number;
+  dateOfBirth?: number;
+
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
+
+  @IsOptional()
+  @IsEnum(AccountType)
+  accountType?: AccountType;
 
   @IsOptional()
   @IsEnum(Role)
-  readonly role?: Role;
-
-  @IsOptional()
-  @MinLength(12)
-  readonly deviceID?: string;
+  role?: Role;
 }
