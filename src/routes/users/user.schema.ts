@@ -3,7 +3,7 @@ import { AccountTypeEnum } from './enums/account-type.enum';
 import { HydratedDocument, Types } from 'mongoose';
 import { GenderEnum } from './enums/gender.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { RoleEnum } from './enums/role.enum';
+import { Role } from './enums/role.enum';
 import { dbCollections } from '~config/collections/schemas.collection';
 
 type UserDocument = HydratedDocument<User>;
@@ -50,8 +50,8 @@ export class User {
   @Prop({ type: Number, default: 0 })
   readonly dateOfBirth: number;
 
-  @Prop({ type: String, enum: RoleEnum, default: RoleEnum.USER })
-  readonly role: RoleEnum;
+  @Prop({ type: String, enum: Role, default: Role.USER })
+  readonly role: Role;
 
   @Prop({ type: Boolean, default: false })
   readonly deleted: boolean;

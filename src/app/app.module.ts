@@ -20,6 +20,7 @@ import { otpConfig } from '~config/environment/otp.env';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
 
 import { EndpointModule } from 'src/routes/endpoints/endpoint.module';
+import { MenuModule } from 'src/routes/menus/menu.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { EndpointModule } from 'src/routes/endpoints/endpoint.module';
     // SeedModule,
     LoggerModule,
     EndpointModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
