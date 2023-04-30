@@ -19,16 +19,12 @@ export class EndpointController {
   @ApiQueryParams()
   @Get('')
   async find(@GetAqp() { filter, ...options }: AqpDto) {
-    const { page = 1, ...opts } = options;
-    opts.skip = (page - 1) * opts.limit;
-
-    return this.endpointService.find(filter, opts);
+    return this.endpointService.find(filter, options);
   }
 
   @ApiQueryParams()
   @Get('paginate')
   async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-    console.log({ filter, ...options });
     return this.endpointService.paginate(filter, options);
   }
 

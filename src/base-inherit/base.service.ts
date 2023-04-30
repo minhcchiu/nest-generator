@@ -1,15 +1,18 @@
 import {
   FilterQuery,
-  Model,
+  PaginateModel,
   QueryOptions,
   Types,
   UpdateQuery,
   UpdateWithAggregationPipeline,
 } from 'mongoose';
-import { PageInfo, PaginateOptions } from './base.interface';
+import { PaginateOptions } from './base.interface';
 
 export class BaseService<T> {
-  constructor(private model: Model<T>) {}
+  private model: PaginateModel<T>;
+  constructor(model: PaginateModel<T>) {
+    this.model = model;
+  }
 
   create(data: any) {
     return this.model.create(data);
@@ -28,7 +31,7 @@ export class BaseService<T> {
   }
 
   count(filter: FilterQuery<T> = {}, options: QueryOptions = {}) {
-    return this.model.countDocuments(filter, options).lean();
+    return this.model.countDocuments(filter, { ...options, lean: true });
   }
 
   distinct(field: string, filter?: FilterQuery<T>) {
@@ -71,31 +74,14 @@ export class BaseService<T> {
     const { projection, limit = 10, populate = [], page = 1, sort = '-updatedAt' } = pageOptions;
 
     const options = {
-      skip: (page - 1) * limit || 0,
+      page,
       limit,
       sort,
       populate,
+      projection,
       lean: true,
     };
 
-    // count documents
-    const countPromise = this.count(filter);
-    // find documents
-    const resultsPromise = this.model.find(filter, projection, options).lean();
-
-    const [count, data] = await Promise.all([countPromise, resultsPromise]);
-
-    // paginate info
-    const totalPages = limit > 0 ? Math.ceil(count / limit) || 1 : null;
-    const pageInfo: PageInfo = {
-      totalData: count,
-      limit,
-      totalPages,
-      page,
-      hasPrevPage: page > 1,
-      hasNextPage: page < totalPages,
-    };
-
-    return { data, pageInfo };
+    return this.model.paginate(filter, options);
   }
 }
