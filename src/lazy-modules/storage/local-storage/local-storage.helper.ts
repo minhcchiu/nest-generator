@@ -1,9 +1,8 @@
 import { close, open, read, renameSync, statSync, unlinkSync } from 'fs';
 import { filetypemime } from 'magic-bytes.js';
 import { join } from 'path';
-import { StorageServiceEnum } from '~common/c5-files/enum/storage-service.enum';
-import { ResourceTypeEnum } from '~common/c4-upload/enum/resource-type.enum';
-import { StorageDirEnum } from '~common/c4-upload/enum/storage-dir.enum';
+import { ResourceTypeEnum } from 'src/routes/c4-upload/enum/resource-type.enum';
+import { StorageDirEnum } from 'src/routes/c4-upload/enum/storage-dir.enum';
 import { fileHelper } from '~helper/file.helper';
 import { resizeGIF, resizeJPG, resizePNG } from '~helper/resize-image.helper';
 
@@ -30,7 +29,7 @@ export const localStorageHelper = {
       folder: uploadDir,
       secureUrl: file,
       resourceID: file,
-      storage: StorageServiceEnum.LOCAL_DISK,
+      // storage: StorageServiceEnum.LOCAL_DISK,
     };
   },
 
@@ -57,7 +56,7 @@ export const localStorageHelper = {
       files,
       size,
       folder: uploadDir,
-      storage: StorageServiceEnum.LOCAL_DISK,
+      // storage: StorageServiceEnum.LOCAL_DISK,
     };
   },
 

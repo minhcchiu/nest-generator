@@ -1,5 +1,4 @@
 import { v2 } from 'cloudinary';
-import { StorageServiceEnum } from '~common/c5-files/enum/storage-service.enum';
 
 export const cloudinaryHelper = {
   /**
@@ -55,7 +54,7 @@ export const cloudinaryHelper = {
       resourceID: public_id,
       created_at,
       secureUrl: secure_url,
-      storage: StorageServiceEnum.CLOUDINARY,
+      // storage: StorageServiceEnum.CLOUDINARY,
     };
   },
 };

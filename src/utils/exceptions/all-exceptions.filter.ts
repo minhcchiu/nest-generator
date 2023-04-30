@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import {
   ArgumentsHost,
   Catch,
@@ -7,190 +6,87 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { ErrorResponse, HttpExceptionResponse } from './http-exception-response.interface';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { join } from 'path';
+import { HttpExceptionResponse } from './http-exception-response.interface';
 import { Request, Response } from 'express';
-import { Logger } from '~lazy-modules/logger/logger.service';
+import { writeErrorLogToFile } from 'src/helpers/file.helper';
+
+enum ExceptionType {
+  ValidationExceptions = 'ValidationExceptions',
+  ValidationError = 'ValidationError',
+  CastError = 'CastError',
+}
+
+const MONGODB_CODES = {
+  BULK_WRITE_ERROR: 11000, // a duplicate error code in mongoose
+};
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private logsDir = join(__dirname, '../../../', 'public', 'logs');
-  private errorFilename = 'error.log';
-
-  /**
-   * Catch exception
-   *
-   * @param exception
-   * @param host
-   * @returns
-   */
   catch(exception: any, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
+    const httpHost = host.switchToHttp();
+    const response = httpHost.getResponse<Response>();
+    const request = httpHost.getRequest<Request>();
+    const url = request.url;
+    const method = request.method;
 
-    // Validation exceptions
-    if (exception.name === 'ValidationExceptions') {
-      const errorResponse = {
-        title: 'Validation Exceptions',
-        errors: exception.getResponse().errors,
-        error: null,
-        statusCode: HttpStatus.BAD_REQUEST,
-      };
+    const errorMessage = exception?.message || 'Critical internal server error occurred!';
+    const title =
+      exception instanceof HttpException
+        ? exception.getResponse()['error']
+        : 'Internal Server Error';
+    const statusCode =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-      return this._responseException(errorResponse, ctx, exception);
-    }
-
-    // Http exception
-    if (exception instanceof HttpException) {
-      const errorResponse = {
-        title: exception.getResponse()['error'],
-        error: exception.message,
-        errors: null,
-        statusCode: exception.getStatus(),
-      };
-
-      return this._responseException(errorResponse, ctx, exception);
-    }
-
-    // Mongodb validation error
-    if (exception.name === 'ValidationError') {
-      const errorResponse = {
-        title: 'Validation Error',
-        error: null,
-        errors: Object.values(exception.errors).map((val) => val['message']),
-        statusCode: HttpStatus.BAD_REQUEST,
-      };
-
-      return this._responseException(errorResponse, ctx, exception);
-    }
-
-    // Mongoose bad ObjectId
-    if (exception.name === 'CastError') {
-      const errorResponse = {
-        title: `Resource Not Found`,
-        error: exception.message,
-        errors: null,
-        statusCode: HttpStatus.NOT_FOUND,
-      };
-
-      return this._responseException(errorResponse, ctx, exception);
-    }
-
-    const mongodbCodes = {
-      bulkWriteError: 11000, // a duplicate error code in mongoose
-    };
-
-    // Mongoose duplicate key
-    if (exception.code === mongodbCodes.bulkWriteError) {
-      const errorResponse = {
-        title: 'Duplicate Field Value Entered',
-        error: exception.message,
-        errors: null,
-        statusCode: HttpStatus.CONFLICT,
-      };
-
-      return this._responseException(errorResponse, ctx, exception);
-    }
-
-    const error = exception?.message || 'Critical internal server error occurred!';
-
-    const title = exception.getResponse
-      ? exception.getResponse()['error']
-      : 'Internal Server Error';
-
-    const statusCode = exception.getStatus
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const errorResponse = { title, error, errors: null, statusCode };
-
-    // response error
-    return this._responseException(errorResponse, ctx, exception);
-  }
-
-  /**
-   * Response exception
-   *
-   * @param errorResponse
-   * @param ctx
-   * @param exception
-   * @returns
-   */
-  private _responseException(
-    errorResponse: ErrorResponse,
-    ctx: HttpArgumentsHost,
-    exception: any,
-  ) {
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const { error, errors, title, statusCode } = errorResponse;
-
-    const exceptionResponse = {
-      error,
-      errors,
+    const exceptionResponse: HttpExceptionResponse = {
       title,
       statusCode,
-      path: request.url,
-      method: request.method,
+      url,
+      method,
+      details: [errorMessage],
       timeStamp: new Date(),
+      user: JSON.stringify(request['user']) ?? 'Not signed in',
+      stack: exception?.stack,
     };
+
+    switch (exception.name) {
+      case ExceptionType.ValidationExceptions:
+        exceptionResponse.title = 'Validation Exceptions';
+        exceptionResponse.details = exception.getResponse().errors;
+        exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
+        break;
+
+      case ExceptionType.ValidationError:
+        exceptionResponse.title = 'Validation Error';
+        exceptionResponse.details = Object.values(exception.errors).map((val) => val['message']);
+        exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
+        break;
+
+      case ExceptionType.CastError:
+        exceptionResponse.title = `Resource Not Found`;
+        exceptionResponse.statusCode = HttpStatus.NOT_FOUND;
+        break;
+      default:
+        if (exception.code === MONGODB_CODES.BULK_WRITE_ERROR) {
+          exceptionResponse.title = 'Duplicate Field Value Entered';
+          exceptionResponse.statusCode = HttpStatus.CONFLICT;
+        }
+        break;
+    }
 
     const prodErrorResponse = {
-      title,
-      error,
-      errors,
+      title: exceptionResponse.title,
+      details: exceptionResponse.details,
     };
 
-    // get log message string
-    const errorLog = this._getErrorLog(exceptionResponse, request, exception);
+    this.logException(exceptionResponse?.stack);
+    writeErrorLogToFile(exceptionResponse);
 
-    // Log in terminal
-    new Logger().error(AllExceptionsFilter.name, exceptionResponse);
-    new ConsoleLogger().error(exception?.stack);
-
-    // write log
-    this._writeErrorLogToFile(errorLog);
-
-    // response
-    return response.status(errorResponse.statusCode).json(prodErrorResponse);
+    return response.status(exceptionResponse.statusCode).json(prodErrorResponse);
   }
 
-  /**
-   * Ger error log
-   *
-   * @param errorResponse
-   * @param request
-   * @param exception
-   * @returns
-   */
-  private _getErrorLog = (
-    errorResponse: HttpExceptionResponse,
-    request: Request,
-    exception: unknown,
-  ): string => {
-    const { statusCode, error, errors, method, path, title, timeStamp } = errorResponse;
-
-    const errorLog = `Title: "${title}" - Code: ${statusCode} - Method: "${method}" - URL: "${path}"
-    {
-      message: "${error || errors}"
-      timestamp: "${timeStamp}"
-      User: ${JSON.stringify(request['user'] ?? 'Not signed in')}
-    }
-    ${exception instanceof HttpException ? exception.stack : error || errors}\n\n\n\n`;
-
-    return errorLog;
-  };
-
-  /**
-   * Write error log to file
-   *
-   * @param errorLog
-   */
-  private _writeErrorLogToFile = (errorLog: string): void => {
-    const errorLogPath = `${this.logsDir}/${this.errorFilename}`;
-
-    fs.appendFile(errorLogPath, errorLog, 'utf8', (err) => {
-      if (err) throw err;
-    });
-  };
+  private logException(exceptionStack?: any) {
+    new ConsoleLogger().error(exceptionStack);
+  }
 }

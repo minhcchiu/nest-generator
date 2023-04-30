@@ -2,9 +2,9 @@ import { ConfigService } from '@nestjs/config';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Injectable, mixin, NestInterceptor, Type } from '@nestjs/common';
-import { FieldNameEnum } from '~common/c4-upload/enum/field-name.enum';
 import { UploadConfig } from '~config/environment';
 import { editFileName, imageFileFilter } from '~helper/storage.helper';
+import { FieldNameEnum } from 'src/routes/c4-upload/enum/field-name.enum';
 
 export const StorageFileInterceptor = (fieldName: FieldNameEnum): Type<NestInterceptor> => {
   @Injectable()

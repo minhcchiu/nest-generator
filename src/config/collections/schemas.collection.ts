@@ -8,30 +8,20 @@ type CollectionConfig = {
 // block list, access
 export const dbCollections: CollectionConfig = {
   // Authorizations
-  apiResource: {
-    path: 'api-resources',
-    name: 'apiresources',
-    ref: 'ApiResource',
+  menu: {
+    path: 'menus',
+    name: 'menus',
+    ref: 'Menu',
   },
-  apiCollection: {
-    path: 'api-collections',
-    name: 'apicollections',
-    ref: 'ApiCollection',
+  userRoleMenu: {
+    path: 'userRoleMenus',
+    name: 'userRoleMenus',
+    ref: 'UserRoleMenu',
   },
-  freeApi: {
-    path: 'free-apis',
-    name: 'freeapis',
-    ref: 'FreeApis',
-  },
-  authAccess: {
-    path: 'auth-accesses',
-    name: 'authAccesses',
-    ref: 'AuthAccesses',
-  },
-  rightsGroup: {
-    path: 'rights-group',
-    name: 'rightsgroups',
-    ref: 'RightsGroups',
+  endpoint: {
+    path: 'endpoints',
+    name: 'endpoints',
+    ref: 'Endpoint',
   },
 
   // Common

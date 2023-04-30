@@ -1,9 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 
 export interface ErrorResponse {
-  error: string | null;
-
-  errors: string[] | null;
+  details?: string[] | null;
 
   statusCode: HttpStatus;
 
@@ -11,9 +9,13 @@ export interface ErrorResponse {
 }
 
 export interface HttpExceptionResponse extends ErrorResponse {
-  path: string;
+  url: string;
 
   method: string;
 
   timeStamp: Date;
+
+  user?: string;
+
+  stack?: any;
 }

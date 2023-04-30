@@ -6,8 +6,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationError } from 'class-validator';
 import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
 import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
-import { fileHelper } from '~helper/file.helper';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,10 +30,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   // Config swagger
-  const config = new DocumentBuilder()
-    .setTitle('Awesome NestJS Generator 2023')
-    .setVersion('1.0')
-    .build();
+  const config = new DocumentBuilder().setTitle('NestA 2023').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
