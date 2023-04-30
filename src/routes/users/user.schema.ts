@@ -1,60 +1,52 @@
-import * as argon2 from 'argon2';
-import { AccountTypeEnum } from './enums/account-type.enum';
-import { HydratedDocument, Types } from 'mongoose';
-import { GenderEnum } from './enums/gender.enum';
+import argon2 from 'argon2';
+import { HydratedDocument } from 'mongoose';
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { AccountType } from './enums/account-type.enum';
+import { Gender } from './enums/gender.enum';
 import { Role } from './enums/role.enum';
-import { dbCollections } from '~config/collections/schemas.collection';
 
 type UserDocument = HydratedDocument<User>;
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: dbCollections.user.name,
+  collection: 'users',
 })
 export class User {
-  @Prop({ type: Types.ObjectId, ref: dbCollections.address.ref })
-  readonly idAddress: Types.ObjectId;
+  @Prop({ type: String })
+  email: string;
 
-  @Prop({ type: String, required: true })
-  readonly fullName: string;
+  @Prop({ type: String })
+  phone: string;
 
-  @Prop({ type: String, default: '' })
-  readonly email: string;
+  @Prop({ type: String, unique: true })
+  authKey: string;
 
-  @Prop({ type: String, default: '' })
-  readonly phone: string;
+  @Prop({ type: String, enum: AccountType, default: AccountType.LOCAL })
+  accountType: AccountType;
 
-  @Prop({ type: String, select: false })
-  readonly authKey: string;
-
-  @Prop({ type: String, select: false })
+  @Prop({ type: String, minlength: 6 })
   password: string;
 
-  @Prop({ type: String, enum: AccountTypeEnum, default: AccountTypeEnum.LOCAL })
-  readonly accountType: AccountTypeEnum;
+  @Prop({ type: String, default: '' })
+  fullName: string;
 
   @Prop({ type: String, default: '' })
   deviceID: string;
 
-  @Prop({ type: [{ type: String }], default: [] })
-  readonly fcmTokens: string[];
-
-  @Prop({ type: Boolean, default: true })
-  readonly enableFcm: boolean;
-
-  @Prop({ type: String, enum: GenderEnum, default: GenderEnum.FEMALE })
-  readonly gender: GenderEnum;
-
   @Prop({ type: Number, default: 0 })
-  readonly dateOfBirth: number;
+  dateOfBirth: number;
+
+  @Prop({ type: String, enum: Gender, default: Gender.OTHER })
+  gender: Gender;
 
   @Prop({ type: String, enum: Role, default: Role.USER })
-  readonly role: Role;
+  role: Role;
 
   @Prop({ type: Boolean, default: false })
-  readonly deleted: boolean;
+  deleted: boolean;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

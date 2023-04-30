@@ -8,19 +8,11 @@ import { AqpMiddleware } from '~middleware/aqp.middleware';
 import { LoggerMiddleware } from '~middleware/logger.middleware';
 
 import { DatabaseModule } from '~config/database/database.module';
-import {
-  appConfig,
-  cloudinaryConfig,
-  databaseConfig,
-  jwtConfig,
-  mailerConfig,
-  uploadConfig,
-} from '~config/environment';
-import { otpConfig } from '~config/environment/otp.env';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
-
 import { EndpointModule } from 'src/routes/endpoints/endpoint.module';
 import { MenuModule } from 'src/routes/menus/menu.module';
+import { UserModule } from '~routes/users/user.module';
+import { configuration } from '~config/environment/configuration';
 
 @Module({
   imports: [
@@ -28,26 +20,18 @@ import { MenuModule } from 'src/routes/menus/menu.module';
       rootPath: join(__dirname, '../../', 'public'),
       serveRoot: '/',
     }),
+
     ConfigModule.forRoot({
-      isGlobal: true,
-      load: [
-        appConfig,
-        databaseConfig,
-        cloudinaryConfig,
-        jwtConfig,
-        mailerConfig,
-        uploadConfig,
-        otpConfig,
-      ],
+      load: [configuration],
     }),
 
     // Authorizations
-    // Common
     DatabaseModule,
     // SeedModule,
     LoggerModule,
     EndpointModule,
     MenuModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

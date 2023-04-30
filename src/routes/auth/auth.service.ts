@@ -1,13 +1,6 @@
 import { AuthResponse, AuthTokenPayload, TokenPayload } from './interface';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  ResetPasswordDto,
-  SignInDto,
-  SignInSocialDto,
-  SignupDto,
-  SignupSendTokenDto,
-} from './dto';
 import { TokenService } from './token.service';
 import { Types } from 'mongoose';
 import { AppConfig, JWTConfig } from '~config/environment';
@@ -16,6 +9,10 @@ import { MailService } from '~lazy-modules/mail/mail.service';
 import { OtpService } from '../c3-otp/otp.service';
 import { UserService } from '../users/user.service';
 import { OtpType } from '../c3-otp/enum/otp-type.enum';
+import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
+import { SignInDto } from './dto/signin.dto';
+import { SignupDto } from './dto/signup.dto';
+import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +37,7 @@ export class AuthService {
    * @returns
    */
   async signin(data: SignInDto): Promise<AuthResponse> {
-    const { authKey, authValue, password, deviceID } = data;
+    const { authKey, authValue, deviceID } = data;
     const filter = { [authKey]: authValue };
 
     const user = await this.userService.findOne(filter);
@@ -52,12 +49,12 @@ export class AuthService {
       }
 
       // check password
-      await this.userService.checkPasswordById(user._id, password);
+      // await this.userService.checkPasswordById(user._id, password);
 
       // Add deviceID to fcmTokens
       if (deviceID) {
         await this.userService.addDeviceID(user._id, deviceID);
-        user.deviceID = deviceID;
+        // user.deviceID = deviceID;
       }
 
       // success
@@ -75,10 +72,8 @@ export class AuthService {
    * @param data
    * @returns
    */
-  async signinWithSocial(data: SignInSocialDto): Promise<AuthResponse> {
-    const { deviceID, accountType, authKey } = data;
-
-    let user = await this.userService.findOne({ authKey, accountType });
+  async signinWithSocial(data: CreateUserDto): Promise<AuthResponse> {
+    let user = await this.userService.findOne({ socialToken: data.socialToken });
 
     // check user not exist
     if (!user) user = await this.userService.create(data);
@@ -89,9 +84,9 @@ export class AuthService {
     }
 
     // Add deviceID
-    if (deviceID) {
-      await this.userService.addDeviceID(user._id, deviceID);
-      user.deviceID = deviceID;
+    if (data.deviceID) {
+      await this.userService.addDeviceID(user._id, data.deviceID);
+      user.deviceID = data.deviceID;
     }
 
     // success
@@ -106,31 +101,22 @@ export class AuthService {
    * @returns
    */
   async signup(data: SignupDto): Promise<AuthResponse> {
-    const { authKey, authValue, ...userItem } = data;
-    const filter = { [authKey]: authValue };
-
-    const userExist = await this.userService.findOne(filter);
-
-    // check user exist
-    if (userExist) {
-      if (userExist.deleted) {
-        throw new BadRequestException('The account has been removed.');
-      }
-
-      throw new BadRequestException('Account already exists in the system.');
-    }
-
-    // verify otpCode
-    await this.otpService.verifyOtp({
-      authKey,
-      authValue,
-      otpType: OtpType.SIGNUP,
-      otpCode: data.otpCode,
+    await this.userService.validateCreateUser({
+      phone: data.phone,
+      email: data.email,
     });
 
-    // create user
-    userItem[authKey] = authValue;
-    const user = await this.userService.create(userItem);
+    // verify otpCode
+    // await this.otpService.verifyOtp({
+    //   authKey,
+    //   authValue,
+    //   otpType: OtpType.SIGNUP,
+    //   otpCode: data.otpCode,
+    // });
+
+    // // create user
+    // userItem[authKey] = authValue;
+    const user = await this.userService.create(data);
 
     // success
     const tokens = await this.generateAuthTokens(user);
@@ -143,7 +129,7 @@ export class AuthService {
    * @param data
    * @returns
    */
-  async signupSendTokenLink(data: SignupSendTokenDto) {
+  async signupSendTokenLink(data: CreateUserDto) {
     // check email
     const user = await this.userService.findOne({ email: data.email });
 
@@ -234,13 +220,13 @@ export class AuthService {
       }
 
       // Create expireTime
-      const expireTime = this.jwtConfig.expirationTime.resetPassword;
+      // const expireTime = this.jwtConfig.expirationTime.resetPassword;
 
       // Generate accessToken
-      const token = await this.tokenService.generateaccessToken(
-        { _id: user._id, role: user.role },
-        expireTime,
-      );
+      const token = await this.tokenService.generateAccessToken({
+        _id: user._id,
+        role: user.role,
+      });
 
       const resetPasswordLink = `${this.appConfig.appUrl}/auth/reset-password?token=${token}`;
 
@@ -282,7 +268,7 @@ export class AuthService {
       // Add deviceID to fcmTokens
       if (data.deviceID) {
         await this.userService.addDeviceID(user._id, data.deviceID);
-        user.deviceID = data.deviceID;
+        // user.deviceID = data.deviceID;
       }
 
       // verify otpCode
@@ -294,7 +280,10 @@ export class AuthService {
       });
 
       // update password
-      await this.userService.updatePasswordById(user._id, data.password);
+      await this.userService.updatePasswordById(user._id, {
+        oldPassword: data.password,
+        newPassword: data.password,
+      });
 
       // success
       const tokens = await this.generateAuthTokens(user);
@@ -312,7 +301,10 @@ export class AuthService {
    * @return
    */
   async resetPassword(userId: Types.ObjectId, password: string) {
-    const user = await this.userService.updatePasswordById(userId, password);
+    const user = await this.userService.updatePasswordById(userId, {
+      oldPassword: '',
+      newPassword: password,
+    });
 
     // success
     const tokens = await this.generateAuthTokens(user);
@@ -333,7 +325,7 @@ export class AuthService {
 
     // Generate accessToken and refreshToken
     const [accessToken, refreshToken] = await Promise.all([
-      this.tokenService.generateaccessToken(payload),
+      this.tokenService.generateAccessToken(payload),
       this.tokenService.generateRefreshToken(payload),
     ]);
 

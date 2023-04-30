@@ -22,7 +22,7 @@
       "~config/*": ["./src/config/*"],
       "~lazy-modules/*": ["./src/lazy-modules/*"],
       "~authorizations/*": ["./src/routes/authorizations/*"],
-      "~routes/*": ["./src/routes/routes/*"],
+      "~routes/*": ["./src/routes/*"],
       "~features/*": ["./src/routes/features/*"],
       "~common/*": ["src/routes/common/*"],
       "~guards/*": ["src/common/guards/*"],

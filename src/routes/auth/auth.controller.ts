@@ -1,27 +1,21 @@
 import { Types } from 'mongoose';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 import { AtGuard } from 'src/common/guards/at.guard';
-import { dbCollections } from '~config/collections/schemas.collection';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
 import { Body, Controller, HttpCode, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import {
-  PasswordDto,
-  ResetPasswordDto,
-  SignInDto,
-  SignInSocialDto,
-  SignupDto,
-  SignupSendTokenDto,
-  TokenDto,
-} from './dto';
 import { UserService } from '../users/user.service';
-import { EmailDto } from '../users/dto';
+import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
+import { SignInDto } from './dto/signin.dto';
+import { SignupDto } from './dto/signup.dto';
+import { TokenDto } from './dto/token.dto';
+import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
-@ApiTags('auth')
-@Controller(dbCollections.auth.path)
+@ApiTags('Auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -61,7 +55,7 @@ export class AuthController {
    */
   @HttpCode(200)
   @Post('signin_social')
-  async signinWithSocial(@Body() body: SignInSocialDto) {
+  async signinWithSocial(@Body() body: CreateUserDto) {
     return this.authService.signinWithSocial(body);
   }
 
@@ -73,7 +67,7 @@ export class AuthController {
    */
   @HttpCode(201)
   @Post('signup_send_token_link')
-  async signupSendTokenLink(@Body() body: SignupSendTokenDto) {
+  async signupSendTokenLink(@Body() body: CreateUserDto) {
     return this.authService.signupSendTokenLink(body);
   }
 
@@ -139,7 +133,7 @@ export class AuthController {
    */
   @HttpCode(200)
   @Put('send_reset_password_link')
-  async forgotPassword(@Body() { email }: EmailDto) {
+  async forgotPassword(@Body() { email }: { email: string }) {
     return this.authService.forgotPasswordSendTokenLink(email);
   }
 
@@ -155,7 +149,7 @@ export class AuthController {
   @Put('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: Types.ObjectId,
-    @Body() { password }: PasswordDto,
+    @Body() { password }: { password: string },
   ) {
     return this.authService.resetPassword(userId, password);
   }

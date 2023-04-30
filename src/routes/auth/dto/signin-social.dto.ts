@@ -1,8 +1,8 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { OmitType } from '@nestjs/swagger';
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from 'src/routes/users/dto';
-import { AccountTypeEnum } from 'src/routes/users/enums/account-type.enum';
+import { AccountType } from '~routes/users/enums/account-type.enum';
+import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
 export class SignInSocialDto extends PartialType(
   OmitType(CreateUserDto, ['accountType', 'role']),
@@ -13,8 +13,8 @@ export class SignInSocialDto extends PartialType(
   readonly authKey: string;
 
   @IsNotEmpty()
-  @IsEnum(AccountTypeEnum)
-  readonly accountType: AccountTypeEnum;
+  @IsEnum(AccountType)
+  readonly accountType: AccountType;
 
   @IsOptional()
   @IsString()
