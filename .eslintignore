@@ -1,0 +1,5 @@
+.output
+.nuxt
+node_modules
+dist
+public
