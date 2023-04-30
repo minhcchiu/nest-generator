@@ -7,7 +7,7 @@ export const defaultEnv = {
 
   database: {
     name: 'awesome-nest-generator',
-    uri: 'mongodb+srv://minhchiu:Minhchiu.it.01@cluster0.llaipgz.mongodb.net',
+    uri: 'mongodb+srv://minh50133:CBBwfimHCQcfVkU9@cluster0.8cucnqb.mongodb.net/ecommerce?retryWrites=true&w=majority',
   },
 
   cloudinary: {

@@ -9,8 +9,8 @@ export APP_URL=http://localhost:8888
 # URL of the Mongo DB
 # export MONGODB_URL="mongodb://127.0.0.1:27017/node-boilerplate"
 # export MONGODB_URL="mongodb+srv://miniSocialNetwork:miniSocialNetwork@cluster0.3rkpg.mongodb.net/mini-social-network?retryWrites=true&w=majority"
-export DATABASE_NAME=awesome-nest-generator
-export DATABASE_URI="mongodb+srv://minhchiu:Minhchiu.it.01@cluster0.llaipgz.mongodb.net"
+export DATABASE_NAME=nest-a
+export DATABASE_URI=mongodb+srv://minh50133:nesta@cluster0.8cucnqb.mongodb.net/nesta
 
 
 # JWT

@@ -3,10 +3,10 @@ import { cloudinaryHelper } from './cloudinary.helper';
 import { ConfigService } from '@nestjs/config';
 import { unlinkSync } from 'fs';
 import { UploadApiOptions, v2 } from 'cloudinary';
-import { ResourceTypeEnum } from '~common/c4-upload/enum/resource-type.enum';
 import { CloudinaryConfig } from '~config/environment';
 import { fileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
+import { ResourceTypeEnum } from 'src/routes/c4-upload/enum/resource-type.enum';
 
 @Injectable()
 export class CloudinaryService {
