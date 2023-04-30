@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
@@ -27,7 +27,7 @@ export class MenuController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateMenuDto) {
+  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateMenuDto) {
     return this.menuService.updateById(id, body);
   }
 
@@ -39,7 +39,7 @@ export class MenuController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.menuService.deleteById(id);
   }
 
@@ -55,7 +55,7 @@ export class MenuController {
 
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Param('id', ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.menuService.findById(id, { projection, populate });

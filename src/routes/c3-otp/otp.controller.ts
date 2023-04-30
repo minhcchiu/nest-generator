@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { AqpDto } from '~dto/aqp.dto';
@@ -57,7 +57,7 @@ export class OtpController {
    */
   @HttpCode(200)
   @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async findOneById(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     const result = await this.otpService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
@@ -121,7 +121,7 @@ export class OtpController {
    */
   // @HttpCode(204)
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.otpService.deleteById(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { AtGuard } from 'src/common/guards';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
@@ -40,7 +40,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateUserDto) {
+  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateUserDto) {
     await this.userService.validateCreateUser({ phone: body.phone, email: body.email });
 
     return this.userService.updateById(id, body);
@@ -48,7 +48,7 @@ export class UserController {
 
   @UseGuards(AtGuard)
   @Patch('password')
-  async resetPassword(@GetCurrentUserId() id: Types.ObjectId, @Body() body: UpdatePasswordDto) {
+  async resetPassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
     return this.userService.updatePasswordById(id, body);
   }
 
@@ -65,13 +65,13 @@ export class UserController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.userService.deleteById(id);
   }
 
   @UseGuards(AtGuard)
   @Get('me')
-  async getMe(@GetCurrentUserId() id: Types.ObjectId) {
+  async getMe(@GetCurrentUserId() id: ObjectId) {
     return this.userService.findById(id);
   }
 
@@ -82,7 +82,7 @@ export class UserController {
 
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Param('id', ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.userService.findById(id, { projection, populate });

@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { AqpDto } from '~dto/aqp.dto';
@@ -69,7 +69,7 @@ export class WardController {
    */
   @HttpCode(200)
   @Get(':id')
-  async findOneById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async findOneById(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     const result = await this.wardService.findById(id);
 
     if (!result) throw new NotFoundException('The item does not exist');
@@ -98,7 +98,7 @@ export class WardController {
    */
   @HttpCode(200)
   @Put(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: any) {
+  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: any) {
     return this.wardService.updateById(id, body);
   }
 
@@ -122,7 +122,7 @@ export class WardController {
    */
   // @HttpCode(204)
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.wardService.deleteById(id);
   }
 }

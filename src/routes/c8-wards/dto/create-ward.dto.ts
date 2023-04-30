@@ -1,14 +1,14 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 export class CreateWardDto {
   @IsNotEmpty()
   @IsMongoId()
-  readonly idProvince: Types.ObjectId;
+  readonly idProvince: ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()
-  readonly idDistrict: Types.ObjectId;
+  readonly idDistrict: ObjectId;
 
   @IsNotEmpty()
   @IsString()

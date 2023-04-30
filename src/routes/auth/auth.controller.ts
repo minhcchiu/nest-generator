@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 import { AtGuard } from 'src/common/guards/at.guard';
 import { Logger } from '~lazy-modules/logger/logger.service';
@@ -92,7 +92,7 @@ export class AuthController {
    */
   @HttpCode(200)
   @Post('sign_out')
-  async signout(@Body('_id') idUser: Types.ObjectId, @Body('deviceID') deviceID: string) {
+  async signout(@Body('_id') idUser: ObjectId, @Body('deviceID') deviceID: string) {
     // Remove deviceID and pop fcm token
     await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
       this.logger.warn(AuthController.name, error);
@@ -148,7 +148,7 @@ export class AuthController {
   @HttpCode(200)
   @Put('reset_password')
   async resetPassword(
-    @GetCurrentUserId() userId: Types.ObjectId,
+    @GetCurrentUserId() userId: ObjectId,
     @Body() { password }: { password: string },
   ) {
     return this.authService.resetPassword(userId, password);

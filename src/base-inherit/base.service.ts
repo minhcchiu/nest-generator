@@ -1,8 +1,8 @@
+import { ObjectId } from 'mongodb';
 import {
   FilterQuery,
   PaginateModel,
   QueryOptions,
-  Types,
   UpdateQuery,
   UpdateWithAggregationPipeline,
 } from 'mongoose';
@@ -23,7 +23,7 @@ export class BaseService<T> {
     return this.model.find(filter, options.projection, options).lean();
   }
 
-  findById(id: Types.ObjectId, options?: QueryOptions<T>) {
+  findById(id: ObjectId, options?: QueryOptions<T>) {
     return this.model.findById(id, options.projection, options).lean();
   }
 
@@ -39,7 +39,7 @@ export class BaseService<T> {
     return this.model.distinct(field, filter).lean();
   }
 
-  updateById(id: Types.ObjectId, data: UpdateQuery<T>, options: QueryOptions<T> = { new: true }) {
+  updateById(id: ObjectId, data: UpdateQuery<T>, options: QueryOptions<T> = { new: true }) {
     return this.model.findByIdAndUpdate(id, data, options);
   }
 
@@ -59,7 +59,7 @@ export class BaseService<T> {
     return this.model.updateMany(filter, data, options);
   }
 
-  deleteById(id: Types.ObjectId, options?: QueryOptions<T>) {
+  deleteById(id: ObjectId, options?: QueryOptions<T>) {
     return this.model.findByIdAndDelete(id, options);
   }
 
