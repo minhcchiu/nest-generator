@@ -5,8 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Max,
-  Min,
+  MaxLength,
   MinLength,
   ValidateIf,
 } from 'class-validator';
@@ -30,8 +29,8 @@ export class CreateUserDto {
 
   @ValidateIf((o) => o.email || o.phone)
   @IsString()
-  @Min(6)
-  @Max(50)
+  @MinLength(6)
+  @MaxLength(50)
   password: string;
 
   @IsNotEmpty()

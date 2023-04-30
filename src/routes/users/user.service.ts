@@ -24,8 +24,8 @@ export class UserService extends BaseService<UserDocument> {
   }
 
   async create(data: CreateUserDto) {
-    await this.validateCreateUser(data);
-    return this.create(data);
+    await this.validateCreateUser({ phone: data.phone, email: data.email });
+    return this.userModel.create(data);
   }
 
   async validateCreateUser({ phone, email }: { phone?: string; email?: string }) {
