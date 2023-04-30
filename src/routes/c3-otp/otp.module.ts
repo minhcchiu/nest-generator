@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Otp, OtpSchema } from './schemas/otp.schema';
+
+import { UserModule } from '../users/user.module';
 import { OtpController } from './otp.controller';
 import { OtpService } from './otp.service';
-import { UserModule } from '../users/user.module';
+import { Otp, OtpSchema } from './schemas/otp.schema';
 
 @Module({
   imports: [

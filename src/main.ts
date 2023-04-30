@@ -1,11 +1,13 @@
-import { AppModule } from './app/app.module';
-import { ConfigService } from '@nestjs/config';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 import { ValidationError } from 'class-validator';
-import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
 import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
+
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { AppModule } from './app/app.module';
+import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

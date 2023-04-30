@@ -1,7 +1,7 @@
-import { ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { WardService } from './ward.service';
 import { dbCollections } from '~config/collections/schemas.collection';
+import { GetAqp } from '~decorators/get-aqp.decorator';
+import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
 import {
@@ -16,8 +16,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { AqpDto } from '~dto/aqp.dto';
-import { GetAqp } from '~decorators/get-aqp.decorator';
+import { ApiTags } from '@nestjs/swagger';
+
+import { WardService } from './ward.service';
 
 @ApiTags(dbCollections.ward.path)
 @Controller(dbCollections.ward.path)

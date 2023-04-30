@@ -1,7 +1,9 @@
 import aqp from 'api-query-params';
-import { AqpDto } from '../common/dto/aqp.dto';
-import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
+
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
+
+import { AqpDto } from '../common/dto/aqp.dto';
 import { aqpValidatorDto } from './validator/aqp.validator';
 
 // BLACK LIST

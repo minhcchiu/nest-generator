@@ -1,3 +1,6 @@
+import { Request, Response } from 'express';
+import { writeErrorLogToFile } from 'src/helpers/file.helper';
+
 import {
   ArgumentsHost,
   Catch,
@@ -6,9 +9,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+
 import { HttpExceptionResponse } from './http-exception-response.interface';
-import { Request, Response } from 'express';
-import { writeErrorLogToFile } from 'src/helpers/file.helper';
 
 enum ExceptionType {
   ValidationExceptions = 'ValidationExceptions',

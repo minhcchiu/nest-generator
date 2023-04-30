@@ -1,7 +1,8 @@
-import { AuthGuard } from '@nestjs/passport';
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Reflector } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
+
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class AtGuard extends AuthGuard('accessToken') {

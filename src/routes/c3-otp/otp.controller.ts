@@ -1,8 +1,9 @@
-import { ApiTags } from '@nestjs/swagger';
-import { OtpService } from './otp.service';
-import { SendOtpDto } from './dto/send-otp.dto';
 import { Types } from 'mongoose';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { dbCollections } from '~config/collections/schemas.collection';
+import { GetAqp } from '~decorators/get-aqp.decorator';
+import { AqpDto } from '~dto/aqp.dto';
+import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
+
 import {
   Body,
   Controller,
@@ -14,10 +15,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { dbCollections } from '~config/collections/schemas.collection';
-import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
-import { GetAqp } from '~decorators/get-aqp.decorator';
-import { AqpDto } from '~dto/aqp.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { OtpService } from './otp.service';
 
 @ApiTags(dbCollections.otp.path)
 @Controller(dbCollections.otp.path)

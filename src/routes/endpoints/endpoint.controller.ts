@@ -1,15 +1,16 @@
-import { ApiParam, ApiTags } from '@nestjs/swagger';
-import { EndpointService } from './endpoint.service';
 import { Types } from 'mongoose';
+import { ApiParamId } from '~decorators/api-param-id.swagger';
+import { ApiQueryParams } from '~decorators/aqp.swagger';
+import { GetAqp } from '~decorators/get-aqp.decorator';
+import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
-import { AqpDto } from '~dto/aqp.dto';
-import { GetAqp } from '~decorators/get-aqp.decorator';
 import { UpdateEndpointDto } from './dto/update-endpoint.dto';
-import { ApiQueryParams } from '~decorators/aqp.swagger';
-import { ApiParamId } from '~decorators/api-param-id.swagger';
+import { EndpointService } from './endpoint.service';
 
 @ApiTags('Endpoints')
 @Controller('endpoints')

@@ -1,8 +1,9 @@
-import { Endpoint, EndpointSchema } from './endpoint.schema';
-import { EndpointController } from './endpoint.controller';
-import { EndpointService } from './endpoint.service';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+
+import { EndpointController } from './endpoint.controller';
+import { Endpoint, EndpointSchema } from './endpoint.schema';
+import { EndpointService } from './endpoint.service';
 
 @Module({
   imports: [
