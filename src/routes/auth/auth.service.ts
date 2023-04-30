@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { AppConfig, JWTConfig } from '~config/environment';
 import { appEnvEnum } from '~config/environment/enums/app_env.enum';
 import { MailService } from '~lazy-modules/mail/mail.service';
@@ -302,7 +302,7 @@ export class AuthService {
    * @param password
    * @return
    */
-  async resetPassword(userId: Types.ObjectId, password: string) {
+  async resetPassword(userId: ObjectId, password: string) {
     const user = await this.userService.updatePasswordById(userId, {
       oldPassword: '',
       newPassword: password,

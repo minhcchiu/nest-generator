@@ -1,10 +1,10 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 export class CreateDistrictDto {
   @IsNotEmpty()
   @IsMongoId()
-  readonly idProvince: Types.ObjectId;
+  readonly idProvince: ObjectId;
 
   @IsNotEmpty()
   @IsString()

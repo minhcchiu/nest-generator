@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { AqpDto } from '~dto/aqp.dto';
@@ -59,7 +59,7 @@ export class DistrictController {
   @HttpCode(200)
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Param('id', ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.districtService.findById(id, { projection, populate });
@@ -86,7 +86,7 @@ export class DistrictController {
    */
   @HttpCode(200)
   @Put(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: any) {
+  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: any) {
     return this.districtService.updateById(id, body);
   }
 
@@ -110,7 +110,7 @@ export class DistrictController {
    */
   // @HttpCode(204)
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.districtService.deleteById(id);
   }
 }

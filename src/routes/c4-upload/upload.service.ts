@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { CloudinaryService } from '~lazy-modules/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~lazy-modules/storage/local-storage/local-storage.service';
 
@@ -24,7 +24,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToLocal({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
+  async saveFileToLocal({ file, resourceType }: SaveFileDto, owner: ObjectId) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
@@ -47,7 +47,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToCloudinary({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
+  async saveFileToCloudinary({ file, resourceType }: SaveFileDto, owner: ObjectId) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
     // upload file to cloudinary
@@ -67,7 +67,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToS3({ file, resourceType }: SaveFileDto, owner: Types.ObjectId) {
+  async saveFileToS3({ file, resourceType }: SaveFileDto, owner: ObjectId) {
     return { file, resourceType, owner };
   }
 }

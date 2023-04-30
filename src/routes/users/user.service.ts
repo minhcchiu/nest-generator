@@ -1,5 +1,6 @@
+import { ObjectId } from 'mongodb';
 import * as argon2 from 'argon2';
-import { PaginateModel, Types } from 'mongoose';
+import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
 
 import {
@@ -39,7 +40,7 @@ export class UserService extends BaseService<UserDocument> {
     return true;
   }
 
-  async updatePasswordById(id: Types.ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
+  async updatePasswordById(id: ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
     const user = await this.userModel.findById(id).select('password');
 
     if (!user) throw new NotFoundException('User not found.');
@@ -52,13 +53,13 @@ export class UserService extends BaseService<UserDocument> {
     return user.save();
   }
 
-  async addDeviceID(id: Types.ObjectId, deviceID: string): Promise<UserDocument | null> {
+  async addDeviceID(id: ObjectId, deviceID: string): Promise<UserDocument | null> {
     const updateData = { deviceID, $addToSet: { fcmTokens: deviceID } };
 
     return this.updateById(id, updateData);
   }
 
-  async removeDeviceID(id: Types.ObjectId, deviceID: string) {
+  async removeDeviceID(id: ObjectId, deviceID: string) {
     const updateData = { deviceID: '', $pull: { fcmTokens: deviceID } };
 
     return this.updateById(id, updateData);
