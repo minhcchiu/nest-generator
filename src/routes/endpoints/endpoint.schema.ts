@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { RoleEnum } from '../users/enums/role.enum';
+import { Role } from '../users/enums/role.enum';
 import { HttpMethod } from './enum/http-method';
 
 @Schema({
@@ -24,8 +24,8 @@ export class Endpoint {
   @Prop({ type: String, default: '' })
   readonly description?: string;
 
-  @Prop({ type: [{ type: String, enum: RoleEnum }], default: [] })
-  readonly userRoles: RoleEnum[];
+  @Prop({ type: [{ type: String, enum: Role }], default: [] })
+  readonly userRoles: Role[];
 }
 
 export type EndpointDocument = HydratedDocument<Endpoint>;

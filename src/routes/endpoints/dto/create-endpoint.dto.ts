@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { RoleEnum } from 'src/routes/users/enums/role.enum';
+import { Role } from 'src/routes/users/enums/role.enum';
 import { HttpMethod } from '../enum/http-method';
 
 export class CreateEndpointDto {
@@ -29,11 +29,11 @@ export class CreateEndpointDto {
   readonly description?: string;
 
   @ApiProperty({
-    enum: RoleEnum,
+    enum: Role,
     isArray: true,
     required: false,
   })
   @IsArray()
-  @IsEnum(RoleEnum, { each: true })
-  readonly userRoles: RoleEnum[];
+  @IsEnum(Role, { each: true })
+  readonly userRoles: Role[];
 }

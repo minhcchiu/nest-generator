@@ -13,7 +13,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { GenderEnum } from '../enums/gender.enum';
-import { RoleEnum } from '../enums/role.enum';
+import { Role } from '../enums/role.enum';
 
 export class CreateUserDto {
   @IsOptional()
@@ -50,8 +50,8 @@ export class CreateUserDto {
   readonly dateOfBirth?: number;
 
   @IsOptional()
-  @IsEnum(RoleEnum)
-  readonly role?: RoleEnum;
+  @IsEnum(Role)
+  readonly role?: Role;
 
   @IsOptional()
   @MinLength(12)
