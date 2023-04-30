@@ -106,7 +106,7 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "**/*.{js,ts,vue,html}": [
+    "**/*.{js,ts}": [
       "yarn lint:fix"
     ]
   }

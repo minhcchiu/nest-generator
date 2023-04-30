@@ -35,6 +35,6 @@
       "~middleware/*": ["src/middleware/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "commitlint.config.js"],
   "exclude": ["tmp", "dist", "node_modules"]
 }
