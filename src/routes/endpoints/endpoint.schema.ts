@@ -28,11 +28,14 @@ export class Endpoint {
 
   @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
   readonly userRoles: Role[];
+
+  @Prop({ type: Boolean, default: false })
+  readonly isPublic: boolean;
 }
 
 type EndpointDocument = HydratedDocument<Endpoint>;
 const EndpointSchema = SchemaFactory.createForClass(Endpoint);
 
-EndpointSchema.index({ path: 1, method: 1, userRoles: 1 }, { unique: true });
+EndpointSchema.index({ path: 1, method: 1 }, { unique: true });
 
 export { EndpointDocument, EndpointSchema };
