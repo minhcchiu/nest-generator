@@ -1,21 +1,10 @@
 import { ObjectId } from 'mongodb';
-import { AtGuard } from 'src/common/guards';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -46,7 +35,6 @@ export class UserController {
     return this.userService.updateById(id, body);
   }
 
-  @UseGuards(AtGuard)
   @Patch('password')
   async resetPassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
     return this.userService.updatePasswordById(id, body);
@@ -69,7 +57,6 @@ export class UserController {
     return this.userService.deleteById(id);
   }
 
-  @UseGuards(AtGuard)
   @Get('me')
   async getMe(@GetCurrentUserId() id: ObjectId) {
     return this.userService.findById(id);

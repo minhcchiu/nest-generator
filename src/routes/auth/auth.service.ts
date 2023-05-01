@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
+import { MailService } from '~lazy-modules/mail/mail.service';
 import { CreateUserDto } from '~routes/users/dto/create-user.dto';
+import { authSelect } from '~routes/users/select/auth.select';
 
 import {
   BadRequestException,
@@ -7,12 +9,11 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { UserService } from '../users/user.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { LoginDto } from './dto/sign-in.dto';
-import { authSelect } from '~routes/users/select/auth.select';
 import { TokenService } from './token.service';
-import { MailService } from '~lazy-modules/mail/mail.service';
 
 @Injectable()
 export class AuthService {

@@ -1,13 +1,11 @@
 import { ObjectId } from 'mongodb';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
-import { AtGuard } from 'src/common/guards/at.guard';
-import { Logger } from '~lazy-modules/logger/logger.service';
+import { Public } from '~decorators/public.decorator';
 import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
-import { Body, Controller, HttpCode, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { UserService } from '../users/user.service';
 import { AuthService } from './auth.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { LoginDto } from './dto/sign-in.dto';
@@ -16,12 +14,9 @@ import { TokenDto } from './dto/token.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-    private readonly logger: Logger,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   async login(@Body() body: LoginDto) {
     return this.authService.login(body);
@@ -69,7 +64,6 @@ export class AuthController {
     return this.authService.forgotPasswordSendTokenLink(email);
   }
 
-  @UseGuards(AtGuard)
   @Patch('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: ObjectId,

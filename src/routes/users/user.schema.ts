@@ -1,4 +1,4 @@
-import * as argon2 from 'argon2';
+import { hash } from 'argon2';
 import { HydratedDocument } from 'mongoose';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -66,7 +66,7 @@ UserSchema.pre('save', async function (next: any) {
   if (!user.isModified('password')) return next();
 
   // Hash password
-  user.password = await argon2.hash(user.password);
+  user.password = await hash(user.password);
 
   return next();
 });

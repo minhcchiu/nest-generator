@@ -6,7 +6,7 @@ import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
 import { UpdateEndpointDto } from './dto/update-endpoint.dto';
@@ -55,11 +55,7 @@ export class EndpointController {
     return this.endpointService.updateById(id, body);
   }
 
-  @ApiParam({
-    name: 'ids',
-    required: true,
-    type: 'ObjectId',
-  })
+  @ApiParamId()
   @Delete(':ids/ids')
   async deleteManyByIds(@Param('ids') ids: string) {
     return this.endpointService.deleteMany({

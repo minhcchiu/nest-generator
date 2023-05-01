@@ -14,7 +14,7 @@ export class CreateEndpointDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  readonly url: string;
+  readonly path: string;
 
   @ApiProperty({ required: false })
   @IsEnum(HttpMethod)

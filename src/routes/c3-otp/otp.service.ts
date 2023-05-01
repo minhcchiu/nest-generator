@@ -1,6 +1,7 @@
 import * as dayjs from 'dayjs';
 import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
+import { AppConfig, OtpConfig } from '~config/environment';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { AuthKeyType } from '~routes/auth/enums/auth-key.enum';
 
@@ -13,7 +14,6 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { OtpType } from './enum/otp-type.enum';
 import { Otp, OtpDocument } from './schemas/otp.schema';
-import { AppConfig, OtpConfig } from '~config/environment';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {

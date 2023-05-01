@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { ConfigName, MailerConfig } from '~config/environment';
 
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
@@ -6,7 +7,6 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { MailService } from './mail.service';
-import { ConfigName, MailerConfig } from '~config/environment';
 
 @Module({
   imports: [
