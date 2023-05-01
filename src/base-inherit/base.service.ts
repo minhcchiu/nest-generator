@@ -20,15 +20,15 @@ export class BaseService<T> {
   }
 
   find(filter: FilterQuery<T>, options?: QueryOptions<T>) {
-    return this.model.find(filter, options.projection, options).lean();
+    return this.model.find(filter, options?.projection, options).lean();
   }
 
   findById(id: ObjectId, options?: QueryOptions<T>) {
-    return this.model.findById(id, options.projection, options).lean();
+    return this.model.findById(id, options?.projection, options).lean();
   }
 
   findOne(filter?: FilterQuery<T>, options?: QueryOptions<T>) {
-    return this.model.findOne(filter, options.projection, options).lean();
+    return this.model.findOne(filter, options?.projection, options).lean();
   }
 
   count(filter: FilterQuery<T> = {}, options: QueryOptions = {}) {

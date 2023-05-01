@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import * as argon2 from 'argon2';
-import { PaginateModel } from 'mongoose';
+import { PaginateModel, QueryOptions } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
 
 import {
@@ -45,7 +45,7 @@ export class UserService extends BaseService<UserDocument> {
 
     if (!user) throw new NotFoundException('User not found.');
 
-    const validOldPass = await argon2.verify(user.password, oldPassword);
+    const validOldPass = await this.comparePassword(oldPassword, newPassword);
 
     if (!validOldPass) throw new UnauthorizedException('Invalid old password.');
 
@@ -63,5 +63,13 @@ export class UserService extends BaseService<UserDocument> {
     const updateData = { deviceID: '', $pull: { fcmTokens: deviceID } };
 
     return this.updateById(id, updateData);
+  }
+
+  async comparePassword(hashPassword: string, plainPassword: string) {
+    return argon2.verify(hashPassword, plainPassword);
+  }
+
+  async updateRefreshToken(id: ObjectId, refreshToken: string, options?: QueryOptions) {
+    return this.updateById(id, { refreshToken }, options).lean();
   }
 }

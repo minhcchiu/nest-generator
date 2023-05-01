@@ -43,11 +43,11 @@ export const defaultEnv = {
     expiresin: '30m',
     accessExpiration: '88d',
     refreshExpiration: '1m',
-    signupExpiration: '10m',
+    registerExpiration: '10m',
     resetPasswordExpiration: '5m',
     accessSecret: 'JWT_ACCESS_SECRET',
     refreshSecret: 'JWT_REFRESH_SECRET',
-    signupSecret: 'JWT_SIGNUP_SECRET',
+    registerSecret: 'JWT_SIGNUP_SECRET',
   },
 
   mailer: {

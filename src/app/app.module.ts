@@ -2,7 +2,6 @@ import { join } from 'path';
 import { EndpointModule } from 'src/routes/endpoints/endpoint.module';
 import { MenuModule } from 'src/routes/menus/menu.module';
 import { DatabaseModule } from '~config/database/database.module';
-import { configuration } from '~config/environment/configuration';
 import { LoggerModule } from '~lazy-modules/logger/logger.module';
 import { AqpMiddleware } from '~middleware/aqp.middleware';
 import { LoggerMiddleware } from '~middleware/logger.middleware';
@@ -14,6 +13,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from '~routes/auth/auth.module';
+import { configuration } from '~config/environment';
+import { MailModule } from '~lazy-modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { AppService } from './app.service';
     }),
 
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [configuration],
     }),
 
@@ -31,8 +34,10 @@ import { AppService } from './app.service';
     // SeedModule,
     LoggerModule,
     EndpointModule,
+    MailModule,
     MenuModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -40,7 +40,11 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  deviceID: string;
+  avatar: string;
+
+  @IsOptional()
+  @IsString()
+  deviceID?: string;
 
   @IsOptional()
   @IsNumber()

@@ -6,6 +6,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AccountType } from './enums/account-type.enum';
 import { Gender } from './enums/gender.enum';
 import { Role } from './enums/role.enum';
+import { IUser } from './interface/user.interface';
 
 type UserDocument = HydratedDocument<User>;
 
@@ -14,20 +15,20 @@ type UserDocument = HydratedDocument<User>;
   versionKey: false,
   collection: 'users',
 })
-export class User {
+export class User implements IUser {
   @Prop({ type: String })
   email: string;
 
   @Prop({ type: String })
   phone: string;
 
-  @Prop({ type: String, unique: true })
-  authKey: string;
+  @Prop({ type: String, select: false })
+  socialToken: string;
 
   @Prop({ type: String, enum: AccountType, default: AccountType.LOCAL })
   accountType: AccountType;
 
-  @Prop({ type: String, minlength: 6 })
+  @Prop({ type: String, minlength: 6, select: false })
   password: string;
 
   @Prop({ type: String, default: '' })
@@ -47,6 +48,12 @@ export class User {
 
   @Prop({ type: Boolean, default: false })
   deleted: boolean;
+
+  @Prop({ type: String, default: '', select: false })
+  refreshToken: string;
+
+  @Prop({ type: String, default: '' })
+  avatar: string;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

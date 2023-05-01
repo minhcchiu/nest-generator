@@ -1,18 +1,17 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-
-import { OtpModule } from '../c3-otp/otp.module';
-import { UserModule } from '../users/user.module';
+import { MailModule } from '~lazy-modules/mail/mail.module';
+import { UserModule } from '~routes/users/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ATStrategy } from './strategies/at.strategy';
 import { TokenService } from './token.service';
 
-@Global()
 @Module({
-  imports: [UserModule, OtpModule, JwtModule],
+  imports: [ConfigModule, UserModule, JwtModule, MailModule],
   providers: [AuthService, TokenService, ATStrategy],
   controllers: [AuthController],
-  exports: [AuthService, TokenService],
+  exports: [AuthService],
 })
 export class AuthModule {}

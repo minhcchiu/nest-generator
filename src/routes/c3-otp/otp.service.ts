@@ -1,9 +1,6 @@
 import * as dayjs from 'dayjs';
 import { PaginateModel } from 'mongoose';
 import { BaseService } from '~base-inherit/base.service';
-import { AppConfig } from '~config/environment';
-import { appEnvEnum } from '~config/environment/enums/app_env.enum';
-import { OtpConfig } from '~config/environment/otp.env';
 import { MailService } from '~lazy-modules/mail/mail.service';
 import { AuthKeyType } from '~routes/auth/enums/auth-key.enum';
 
@@ -16,6 +13,7 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { OtpType } from './enum/otp-type.enum';
 import { Otp, OtpDocument } from './schemas/otp.schema';
+import { AppConfig, OtpConfig } from '~config/environment';
 
 @Injectable()
 export class OtpService extends BaseService<OtpDocument> {
@@ -51,7 +49,7 @@ export class OtpService extends BaseService<OtpDocument> {
   }
 
   /**
-   * Send otp signup to email/phone
+   * Send otp register to email/phone
    *
    * @param {authKey, authValue}
    * @return
@@ -103,7 +101,7 @@ export class OtpService extends BaseService<OtpDocument> {
     await this._sendEmailVerify(email, otpCode);
 
     // Response otp
-    if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+    if (this.appConfig.env === 'DEVELOPMENT') {
       await this.create({ email, otpCode, otpType });
       return { otpCode, otpType };
     }
@@ -128,7 +126,7 @@ export class OtpService extends BaseService<OtpDocument> {
     // await this.sendPhoneVerify(phone, otpCode);
 
     // Reponse otp
-    if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
+    if (this.appConfig.env === 'DEVELOPMENT') {
       await this.create({ phone, otpCode, otpType });
       return { otpCode, otpType };
     }
@@ -148,15 +146,15 @@ export class OtpService extends BaseService<OtpDocument> {
     if (!otpDoc) return null;
 
     // check time send otp
-    const { maximunSecondSendOtp } = this.optConfig;
+    const { maximumSecondSendOtp } = this.optConfig;
 
-    this._validateTimeSendOtp((<any>otpDoc).updatedAt, maximunSecondSendOtp);
+    this._validateTimeSendOtp((<any>otpDoc).updatedAt, +maximumSecondSendOtp);
 
     // update otpCode
     const otpCode = this._generateOTPCode();
 
     // save
-    if (this.appConfig.env === appEnvEnum.PRODUCTION) {
+    if (this.appConfig.env === 'PRODUCTION') {
       otpDoc.otpCode = otpCode;
       otpDoc.otpType = otpType;
 
@@ -185,7 +183,7 @@ export class OtpService extends BaseService<OtpDocument> {
     await this._sendEmailVerify(email, otpCode);
 
     // save
-    if (this.appConfig.env === appEnvEnum.PRODUCTION) {
+    if (this.appConfig.env === 'PRODUCTION') {
       otpDoc.otpCode = otpCode;
       otpDoc.otpType = otpType;
 
