@@ -1,4 +1,4 @@
-import { MailerConfig } from '~config/environment';
+import { AppConfig, ConfigName, MailerConfig } from '~config/environment';
 import { Logger } from '~lazy-modules/logger/logger.service';
 
 import { MailerService } from '@nestjs-modules/mailer';
@@ -7,14 +7,11 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  private _mailConfig: MailerConfig;
   constructor(
     private mailerService: MailerService,
-    private config: ConfigService,
+    private configService: ConfigService,
     private readonly logger: Logger,
-  ) {
-    this._mailConfig = config.get<MailerConfig>('mailer');
-  }
+  ) {}
 
   /**
    * Send mail
@@ -35,8 +32,9 @@ export class MailService {
    * @param from
    */
   async sendOTP(verificationCode: string, to: string, subject: string, from?: string) {
+    const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
     const params = {
-      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${name} ⭐" <${defaults.from}>`,
       to,
       subject,
       template: './otp/otp.template.hbs',
@@ -51,17 +49,21 @@ export class MailService {
   }
 
   /**
-   * Send signup
+   * Send register
    *
-   * @param verificationLink
+   * @param token
    * @param to
    * @param subject
    * @param from
    */
-  async sendSignupToken(verificationLink: string, to: string, subject: string, from?: string) {
+  async sendRegisterToken(token: string, to: string, subject: string, from?: string) {
+    const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
+    const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
+    const verificationLink = `${appUrl}/auth/verify-register-token?token=${token}`;
+
     // options
     const options = {
-      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${name} ⭐" <${defaults.from}>`,
       to,
       subject,
       template: './verify/verify.template.hbs',
@@ -89,9 +91,11 @@ export class MailService {
     subject: string,
     from?: string,
   ) {
+    const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
+
     // options
     const options = {
-      from: from ?? `"${this._mailConfig.name} ⭐" <${this._mailConfig.defaults.from}>`,
+      from: from ?? `"${name} ⭐" <${defaults.from}>`,
       to,
       subject,
       template: './verify/reset-password.template.hbs',

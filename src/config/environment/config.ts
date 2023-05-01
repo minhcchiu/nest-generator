@@ -1,25 +1,21 @@
-export * from './cloudinary.env';
-export * from './database.env';
-export * from './jwt.env';
-export * from './mailer.env';
-export * from './upload.env';
-export * from './app.env';
+import { ConfigName } from './config.enum';
+import { IConfiguration } from './config.interface';
 
 const env = process.env;
 
-export const environmentConfig = {
-  app: {
+export const environmentConfig: IConfiguration = {
+  [ConfigName.app]: {
     env: env.APP_ENV,
-    port: env.APP_PORT,
+    port: +env.APP_PORT,
     appUrl: env.APP_URL,
   },
 
-  database: {
+  [ConfigName.database]: {
     name: env.DATABASE_NAME,
     uri: env.DATABASE_URI,
   },
 
-  cloudinary: {
+  [ConfigName.cloudinary]: {
     config: {
       cloud_name: env.CLOUD_NAME,
       api_key: env.CLOUD_API_KEY,
@@ -30,11 +26,11 @@ export const environmentConfig = {
     },
   },
 
-  otp: {
+  [ConfigName.otp]: {
     maximumSecondSendOtp: env.MAXIMUM_SECOND_SEND_OTP,
   },
 
-  upload: {
+  [ConfigName.upload]: {
     imageMaxSize: +env.UPLOAD_IMAGE_MAX_SIZE,
     rawMaxSize: +env.UPLOAD_RAW_MAX_SIZE,
     videoMaxSize: +env.UPLOAD_VIDEO_MAX_SIZE,
@@ -51,23 +47,27 @@ export const environmentConfig = {
     audioExt: env.UPLOAD_AUDIO_EXT,
   },
 
-  jwt: {
+  [ConfigName.jwt]: {
     secret: env.JWT_SECRET,
-    expiresIn: env.JWT_EXPIRESIN,
-    expirationTime: {
-      access: env.JWT_ACCESS_EXPIRATION,
-      refresh: env.JWT_REFRESH_EXPIRATION,
-      signup: env.JWT_SIGNUP_EXPIRATION,
-      resetPassword: env.JWT_RESET_PASSWORD_EXPIRATION,
+    expiresIn: env.JWT_EXPIRATION,
+    accessToken: {
+      expiresIn: env.JWT_ACCESS_EXPIRATION,
+      secret: env.JWT_ACCESS_SECRET,
     },
-    secrets: {
-      access: env.JWT_ACCESS_SECRET,
-      refresh: env.JWT_REFRESH_SECRET,
-      signup: env.JWT_SIGNUP_SECRET,
+    refreshToken: {
+      expiresIn: env.JWT_REFRESH_EXPIRATION,
+      secret: env.JWT_REFRESH_SECRET,
+    },
+    registerToken: {
+      expiresIn: env.JWT_SIGNUP_EXPIRATION,
+      secret: env.JWT_SIGNUP_SECRET,
+    },
+    resetPasswordToken: {
+      expiresIn: env.JWT_RESET_PASSWORD_EXPIRATION,
     },
   },
 
-  mailer: {
+  [ConfigName.mailer]: {
     isGmailServer: env.MAIL_SERVER,
 
     transport: {

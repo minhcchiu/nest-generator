@@ -4,14 +4,13 @@ import { AtGuard } from 'src/common/guards/at.guard';
 import { Logger } from '~lazy-modules/logger/logger.service';
 import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
-import { Body, Controller, HttpCode, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { UserService } from '../users/user.service';
 import { AuthService } from './auth.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
-import { SignInDto } from './dto/signin.dto';
-import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/sign-in.dto';
 import { TokenDto } from './dto/token.dto';
 
 @ApiTags('Auth')
@@ -23,130 +22,55 @@ export class AuthController {
     private readonly logger: Logger,
   ) {}
 
-  /**
-   * Sign-In with email/phone and password
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('signin')
-  async signin(@Body() body: SignInDto) {
-    return this.authService.signin(body);
+  @Post('login')
+  async login(@Body() body: LoginDto) {
+    return this.authService.login(body);
   }
 
-  /**
-   * Signup with otp
-   *
-   * @param body
-   * @returns
-   */
   @HttpCode(201)
-  @Post('signup')
-  async signup(@Body() body: SignupDto) {
-    return this.authService.signup(body);
+  @Post('register')
+  async register(@Body() body: CreateUserDto) {
+    return this.authService.register(body);
   }
 
-  /**
-   * SignIn with social
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('signin_social')
-  async signinWithSocial(@Body() body: CreateUserDto) {
-    return this.authService.signinWithSocial(body);
+  @Post('login_by_social')
+  async loginBySocial(@Body() body: CreateUserDto) {
+    return this.authService.loginBySocial(body);
   }
 
-  /**
-   * Signup send token to email
-   *
-   * @param body
-   * @returns
-   */
+  @Post('send_register_token')
+  async sendRegisterToken(@Body() body: CreateUserDto) {
+    return this.authService.sendRegisterToken(body);
+  }
+
   @HttpCode(201)
-  @Post('signup_send_token_link')
-  async signupSendTokenLink(@Body() body: CreateUserDto) {
-    return this.authService.signupSendTokenLink(body);
+  @Post('activate_register_token')
+  async activateRegisterToken(@Body() { token }: TokenDto) {
+    return this.authService.activateRegisterToken(token);
   }
 
-  /**
-   * Activate account by token link
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(201)
-  @Post('activate_signup_token')
-  async activateSignupToken(@Body() { token }: TokenDto) {
-    return this.authService.activateSignupToken(token);
+  @Post('logout')
+  async logout(@GetCurrentUserId() userId: ObjectId) {
+    return this.authService.logout(userId);
   }
 
-  /**
-   * Sign out
-   *
-   * @param idUser
-   * @param deviceID
-   * @returns
-   */
-  @HttpCode(200)
-  @Post('sign_out')
-  async signout(@Body('_id') idUser: ObjectId, @Body('deviceID') deviceID: string) {
-    // Remove deviceID and pop fcm token
-    await this.userService.removeDeviceID(idUser, deviceID).catch((error) => {
-      this.logger.warn(AuthController.name, error);
-    });
+  // @Post('refresh_token')
+  // async refreshToken(@GetCurrentUserId() userId: ObjectId) {
+  //   return this.authService.refreshTokenByUserId(userId);
+  // }
 
-    return { success: true };
-  }
-
-  /**
-   * Refresh token
-   *
-   * @param token
-   * @returns
-   */
-  @HttpCode(200)
-  @Put('refresh_token')
-  async refresh(@Body() { token }: TokenDto) {
-    return this.authService.refresh(token);
-  }
-
-  /**
-   * Reset password by otp
-   *
-   * @param body
-   * @returns
-   */
-  @HttpCode(200)
-  @Put('reset_password_by_otp')
+  @Post('reset_password_by_otp')
   async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
     return this.authService.resetPasswordByOtp(body);
   }
 
-  /**
-   * Forgot password
-   *
-   * @param email
-   * @returns
-   */
-  @HttpCode(200)
-  @Put('send_reset_password_link')
+  @Post('send_reset_password_link')
   async forgotPassword(@Body() { email }: { email: string }) {
     return this.authService.forgotPasswordSendTokenLink(email);
   }
 
-  /**
-   * Reset password
-   *
-   * @param userId
-   * @param password
-   * @returns
-   */
   @UseGuards(AtGuard)
-  @HttpCode(200)
-  @Put('reset_password')
+  @Patch('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: ObjectId,
     @Body() { password }: { password: string },

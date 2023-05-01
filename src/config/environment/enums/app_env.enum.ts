@@ -1,4 +1,0 @@
-export enum appEnvEnum {
-  DEVELOPMENT = 'DEVELOPMENT',
-  PRODUCTION = 'PRODUCTION',
-}

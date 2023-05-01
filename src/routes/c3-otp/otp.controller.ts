@@ -78,13 +78,13 @@ export class OtpController {
   }
 
   /**
-   * Send otp signup to emai/phone
+   * Send otp register to emai/phone
    *
    * @param body
    * @returns
    */
   @HttpCode(201)
-  @Post('send_signup')
+  @Post('send_register')
   async sendOtpSignup(@Body() body: SendOtpDto) {
     return this.otpService.sendOtpSignup(body);
   }
