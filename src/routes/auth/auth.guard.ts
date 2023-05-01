@@ -18,25 +18,48 @@ export class AuthGuard implements CanActivate {
     private userService: UserService,
     private endpointService: EndpointService,
   ) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    if (isPublic) return true;
+    if (isPublic) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest();
+    const { route, method } = request;
+    const path = route.path;
+
+    const endpoint = await this.endpointService.findOne(
+      { path, method },
+      { projection: { isPublic: 1, userRoles: 1 } },
+    );
+
+    if (!endpoint) {
+      throw new UnauthorizedException('Endpoint not found!');
+    }
+
+    if (endpoint.isPublic) {
+      return true;
+    }
+
     const token = this.extractTokenFromHeader(request);
 
-    if (!token) throw new UnauthorizedException('Authorization token not found!');
+    if (!token) {
+      throw new UnauthorizedException('Authorization token not found!');
+    }
 
     try {
       const payload = await this.tokenService.verifyAccessToken(token);
-      const user = await this.validate(payload, request);
+      const user = await this.validate(payload);
 
-      request['user'] = user;
+      if (!endpoint.userRoles.includes(payload.role)) {
+        throw new UnauthorizedException('Invalid token or insufficient privileges!');
+      }
+
+      request.user = user;
     } catch {
       throw new UnauthorizedException('Invalid token or insufficient privileges!');
     }
@@ -47,29 +70,17 @@ export class AuthGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
     const authHeader = request.headers.authorization;
 
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return undefined;
     }
 
-    const [type, token] = authHeader.split(' ');
-
-    if (type !== 'Bearer') {
-      return undefined;
-    }
-
-    return token;
+    return authHeader.slice(7);
   }
 
-  private async validate(payload: TokenPayload, request: any) {
-    const { _id, role } = payload;
-    const { route, method } = request;
+  private async validate({ _id }: TokenPayload) {
+    const user = await this.userService.findById(_id, { projection: authSelect });
 
-    const [user, endpoint] = await Promise.all([
-      this.userService.findById(_id, { projection: authSelect }),
-      this.endpointService.findOne({ path: route.path, method, userRoles: role }),
-    ]);
-
-    if (!user || !endpoint) {
+    if (!user) {
       throw new UnauthorizedException();
     }
 

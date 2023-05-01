@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Role } from 'src/routes/users/enums/role.enum';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -38,4 +38,8 @@ export class CreateEndpointDto {
   @IsArray()
   @IsEnum(Role, { each: true })
   readonly userRoles: Role[];
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isPublic: boolean;
 }
