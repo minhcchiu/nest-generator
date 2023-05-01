@@ -1,7 +1,9 @@
+import { ConfigName, JWTConfig } from '~config/environment';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigName, JWTConfig } from '~config/environment';
+
 import { DecodedToken, TokenPayload } from './interface';
 
 @Injectable()

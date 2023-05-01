@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb';
-import { AtGuard } from 'src/common/guards';
 import { dbCollections } from '~config/collections/schemas.collection';
 import { AppConfig } from '~config/environment';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
@@ -14,7 +13,6 @@ import {
   Post,
   UploadedFile,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -44,7 +42,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
   @Post('file')
   async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
@@ -64,7 +61,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
   @Post('files')
   async uploadFilesToLocal(@UploadedFiles() inputFiles: Express.Multer.File[]) {
@@ -89,7 +85,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
   @Post('image')
   async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
@@ -109,7 +104,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
   @Post('images')
   async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
@@ -134,7 +128,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
   @Post('video')
   async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
@@ -154,7 +147,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
   @Post('videos')
   async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
@@ -179,7 +171,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
   @Post('audio')
   async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
@@ -200,7 +191,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
   @Post('audios')
   async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
@@ -226,7 +216,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_file_to_local')
   async saveFileToLocal() {
     // @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: ObjectId,
@@ -246,7 +235,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_files_to_local')
   async saveFilesToLocal(
     @GetCurrentUserId() userId: ObjectId,
@@ -275,7 +263,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(
     @GetCurrentUserId() userId: ObjectId,
@@ -296,7 +283,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_files_to_cloudinary')
   async saveToCloudinary(
     @GetCurrentUserId() userId: ObjectId,
@@ -321,7 +307,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_file_to_s3')
   async saveFileToS3(
     @GetCurrentUserId() userId: ObjectId,
@@ -340,7 +325,6 @@ export class UploadController {
    * @returns
    */
   @HttpCode(201)
-  @UseGuards(AtGuard)
   @Post('save_files_to_s3')
   async saveFilesToS3(
     @GetCurrentUserId() userId: ObjectId,

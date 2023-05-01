@@ -15,7 +15,7 @@ export class Endpoint {
   readonly name: string;
 
   @Prop({ type: String, default: '' })
-  readonly url: string;
+  readonly path: string;
 
   @Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
   readonly method: HttpMethod;
@@ -26,9 +26,13 @@ export class Endpoint {
   @Prop({ type: String, default: '' })
   readonly description?: string;
 
-  @Prop({ type: [{ type: String, enum: Role }], default: [] })
+  @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
   readonly userRoles: Role[];
 }
 
-export type EndpointDocument = HydratedDocument<Endpoint>;
-export const EndpointSchema = SchemaFactory.createForClass(Endpoint);
+type EndpointDocument = HydratedDocument<Endpoint>;
+const EndpointSchema = SchemaFactory.createForClass(Endpoint);
+
+EndpointSchema.index({ path: 1, method: 1, userRoles: 1 }, { unique: true });
+
+export { EndpointDocument, EndpointSchema };

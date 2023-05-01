@@ -4,6 +4,7 @@ import { DistrictService } from 'src/routes/c7-districts/district.service';
 import { WardService } from 'src/routes/c8-wards/ward.service';
 import { fileHelper } from '~helper/file.helper';
 import { Logger } from '~lazy-modules/logger/logger.service';
+import { EndpointService } from '~routes/endpoints/endpoint.service';
 
 import { Injectable } from '@nestjs/common';
 
@@ -13,14 +14,10 @@ export class SeedService {
     private provinceService: ProvinceService,
     private districtService: DistrictService,
     private wardService: WardService,
+    private endpointService: EndpointService,
     private logger: Logger,
   ) {}
 
-  /**
-   * Seed data for provinces, district, ward
-   *
-   * @returns
-   */
   async seedProvincesDistrictsWards() {
     const jsonPath = join(__dirname, '../../utils/json/provinces-districts-wards.json');
     const isFileExist = fileHelper.isFileExist(jsonPath);
@@ -89,19 +86,43 @@ export class SeedService {
           return this.wardService.create(wardItem);
         });
 
-        console.log({ counter });
-
         // Save wards
         await Promise.all(wardSavedPromises);
       }
     }
-
-    console.log({ counter });
 
     this.logger.log('Seed data for all provinces, districts, wards successfully!', {
       ...counter,
     });
 
     return { ...counter };
+  }
+
+  async seedEndpoints(routerStacks: any[]) {
+    const endpoints = routerStacks
+      .filter(({ route }) => route && route.path)
+      .map(({ route }) => ({
+        method: route.stack[0]?.method?.toUpperCase(),
+        path: route.path,
+      }))
+      .reduce((uniqueEndpoints, endpoint) => {
+        if (
+          !uniqueEndpoints.some((e) => e.method === endpoint.method && e.path === endpoint.path)
+        ) {
+          uniqueEndpoints.push(endpoint);
+        }
+        return uniqueEndpoints;
+      }, []);
+
+    const results = await Promise.all(
+      endpoints.map((endpoint) =>
+        this.endpointService.updateOne(endpoint, endpoint, { upsert: true }),
+      ),
+    );
+
+    this.logger.log(
+      `${SeedService.name}`,
+      `Successfully seeded ${results.length} unique endpoints to the database.`,
+    );
   }
 }

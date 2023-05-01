@@ -1,5 +1,7 @@
 import { ValidationError } from 'class-validator';
+import { ConfigName } from '~config/environment';
 import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
+import { SeedService } from '~lazy-modules/seed/seed.service';
 
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -37,11 +39,17 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Server run at port
-  const port = configService.get('app.port');
+  const port = configService.get(ConfigName.app).port;
 
   await app.listen(port, () => {
     Logger.log(`The server is running on: http://localhost:${port}/api`, 'Main');
   });
+
+  // Get a list of all the registered routes
+  const server = app.getHttpServer();
+  const router = server._events.request._router;
+
+  await app.get<SeedService>(SeedService).seedEndpoints(router.stack);
 }
 
 bootstrap();
