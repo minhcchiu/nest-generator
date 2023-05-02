@@ -23,6 +23,7 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+  @Public()
   @HttpCode(201)
   @Post('register')
   async register(@Body() body: RegisterDto) {
@@ -35,12 +36,14 @@ export class AuthController {
     return this.authService.loginBySocial(body);
   }
 
+  @Public()
   @HttpCode(201)
   @Post('send_register_token')
   async sendRegisterToken(@Body() body: RegisterDto) {
     return this.authService.sendRegisterToken(body);
   }
 
+  @Public()
   @HttpCode(201)
   @Post('activate_register_token')
   async activateRegisterToken(@Body() { token }: TokenDto) {
@@ -52,21 +55,25 @@ export class AuthController {
     return this.authService.logout(userId);
   }
 
-  // @Post('refresh_token')
-  // async refreshToken(@GetCurrentUserId() userId: ObjectId) {
-  //   return this.authService.refreshTokenByUserId(userId);
-  // }
+  @Public()
+  @Post('refresh_token')
+  async refreshToken(@Body() { token }: TokenDto) {
+    return this.authService.refreshToken(token);
+  }
 
+  @Public()
   @Post('reset_password_by_otp')
   async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
     return this.authService.resetPasswordByOtp(body);
   }
 
+  @Public()
   @Post('send_reset_password_link')
   async forgotPassword(@Body() { email }: { email: string }) {
     return this.authService.forgotPasswordSendTokenLink(email);
   }
 
+  @Public()
   @Patch('reset_password')
   async resetPassword(
     @GetCurrentUserId() userId: ObjectId,
