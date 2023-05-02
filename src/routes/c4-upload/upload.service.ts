@@ -7,8 +7,6 @@ import { Injectable } from '@nestjs/common';
 import { SaveFileDto } from './dto/save-file.dto';
 import { UploadHelper } from './upload.helper';
 
-/* eslint-disable */
-
 @Injectable()
 export class UploadService {
   constructor(
@@ -37,7 +35,7 @@ export class UploadService {
       secureUrl: result.files[0],
       resourceID: result.files[0],
     };
-    // return this.fileService.create(fileItem);
+    return fileItem;
   }
 
   /**
@@ -57,6 +55,7 @@ export class UploadService {
     // await this.fileService.create({ ...result, owner });
 
     // success
+    console.log(owner);
     return result.files;
   }
 

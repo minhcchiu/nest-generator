@@ -7,3 +7,8 @@ export enum ConfigName {
   jwt = 'jwt',
   mailer = 'mailer',
 }
+
+export enum AppEnv {
+  DEVELOPMENT = 'DEVELOPMENT',
+  PRODUCTION = 'PRODUCTION',
+}

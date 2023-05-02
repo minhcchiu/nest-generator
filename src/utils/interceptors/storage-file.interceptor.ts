@@ -13,33 +13,16 @@ export const StorageFileInterceptor = (fieldName: FieldNameEnum): Type<NestInter
     fileInterceptor: NestInterceptor;
     destination = 'public/uploads/tmp';
 
-    /**
-     * Constructor
-     *
-     * @param configService
-     */
     constructor(private configService: ConfigService) {
       const multerOption = this.getMulterOptions();
 
-      //  init file interceptor
       this.fileInterceptor = new (FileInterceptor(fieldName, multerOption))();
     }
 
-    /**
-     * Intercept
-     *
-     * @param args
-     * @returns
-     */
     intercept(...args: Parameters<NestInterceptor['intercept']>) {
       return this.fileInterceptor.intercept(...args);
     }
 
-    /**
-     * Get multerOptions
-     *
-     * @returns
-     */
     private getMulterOptions() {
       const uploadConfig = this.configService.get<UploadConfig>('upload');
 
