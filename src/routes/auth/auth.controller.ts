@@ -1,15 +1,16 @@
 import { ObjectId } from 'mongodb';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 import { Public } from '~decorators/public.decorator';
-import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 
 import { Body, Controller, HttpCode, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
-import { LoginDto } from './dto/sign-in.dto';
+import { LoginDto } from './dto/login.dto';
 import { TokenDto } from './dto/token.dto';
+import { LoginSocialDto } from './dto/login-social.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -24,17 +25,19 @@ export class AuthController {
 
   @HttpCode(201)
   @Post('register')
-  async register(@Body() body: CreateUserDto) {
+  async register(@Body() body: RegisterDto) {
     return this.authService.register(body);
   }
 
+  @Public()
   @Post('login_by_social')
-  async loginBySocial(@Body() body: CreateUserDto) {
+  async loginBySocial(@Body() body: LoginSocialDto) {
     return this.authService.loginBySocial(body);
   }
 
+  @HttpCode(201)
   @Post('send_register_token')
-  async sendRegisterToken(@Body() body: CreateUserDto) {
+  async sendRegisterToken(@Body() body: RegisterDto) {
     return this.authService.sendRegisterToken(body);
   }
 

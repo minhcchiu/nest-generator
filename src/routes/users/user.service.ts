@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password';
 import { User, UserDocument } from './user.schema';
 
@@ -23,7 +22,7 @@ export class UserService extends BaseService<UserDocument> {
     this.userModel = model;
   }
 
-  async create(data: CreateUserDto) {
+  async create(data: any) {
     await this.validateCreateUser({ phone: data.phone, email: data.email });
     return this.userModel.create(data);
   }
