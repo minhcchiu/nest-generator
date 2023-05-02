@@ -52,6 +52,14 @@ export class UserService extends BaseService<UserDocument> {
     return user.save();
   }
 
+  async resetPassword(id: ObjectId, newPassword: string, options?: QueryOptions) {
+    const user = await this.userModel.findById(id, options.projection, options);
+    if (!user) throw new NotFoundException('User not found.');
+
+    user.password = newPassword;
+    return user.save();
+  }
+
   async addDeviceID(id: ObjectId, deviceID: string): Promise<UserDocument | null> {
     const updateData = { deviceID, $addToSet: { fcmTokens: deviceID } };
 

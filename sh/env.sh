@@ -21,6 +21,7 @@ export JWT_ACCESS_SECRET=access_secret
 export JWT_REFRESH_SECRET=refresh_secret
 export JWT_ACTIVATE_SECRET=activate_secret
 export JWT_SIGNUP_SECRET=register_secret
+export JWT_SECRET_RESET_PASSWORD=secret_reset_password
 
 # JWT expirations
 export JWT_EXPIRATION=30m

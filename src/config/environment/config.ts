@@ -64,6 +64,7 @@ export const environmentConfig: IConfiguration = {
     },
     resetPasswordToken: {
       expiresIn: env.JWT_RESET_PASSWORD_EXPIRATION,
+      secret: env.JWT_SECRET_RESET_PASSWORD,
     },
   },
 

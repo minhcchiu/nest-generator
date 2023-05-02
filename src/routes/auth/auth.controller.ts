@@ -2,15 +2,16 @@ import { ObjectId } from 'mongodb';
 import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
 import { Public } from '~decorators/public.decorator';
 
-import { Body, Controller, HttpCode, Patch, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { TokenDto } from './dto/token.dto';
 import { LoginSocialDto } from './dto/login-social.dto';
 import { RegisterDto } from './dto/register.dto';
+import { EmailDto } from './dto/email.dto';
+import { ResetPasswordDto } from './dto/password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -62,23 +63,14 @@ export class AuthController {
   }
 
   @Public()
-  @Post('reset_password_by_otp')
-  async resetPasswordByOtp(@Body() body: ResetPasswordDto) {
-    return this.authService.resetPasswordByOtp(body);
+  @Post('send_reset_password_token')
+  async sendResetPasswordToken(@Body() { email }: EmailDto) {
+    return this.authService.sendResetPasswordToken(email);
   }
 
   @Public()
-  @Post('send_reset_password_link')
-  async forgotPassword(@Body() { email }: { email: string }) {
-    return this.authService.forgotPasswordSendTokenLink(email);
-  }
-
-  @Public()
-  @Patch('reset_password')
-  async resetPassword(
-    @GetCurrentUserId() userId: ObjectId,
-    @Body() { password }: { password: string },
-  ) {
-    return this.authService.resetPassword(userId, password);
+  @Post('reset_password')
+  async resetPassword(@Body() { token, password }: ResetPasswordDto) {
+    return this.authService.resetPassword(token, password);
   }
 }

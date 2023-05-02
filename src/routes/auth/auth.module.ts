@@ -10,13 +10,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { TokenService } from './token.service';
+import { TokenModule } from '~routes/tokens/token.module';
 
 @Module({
-  imports: [ConfigModule, UserModule, JwtModule, MailModule, EndpointModule],
+  imports: [TokenModule, ConfigModule, UserModule, JwtModule, MailModule, EndpointModule],
   providers: [
     AuthService,
-    TokenService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
