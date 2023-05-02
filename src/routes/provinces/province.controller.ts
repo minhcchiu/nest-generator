@@ -9,12 +9,14 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateProvinceDto } from './dto/create-province.dto';
 import { UpdateProvinceDto } from './dto/update-province.dto';
 import { ProvinceService } from './province.service';
+import { Public } from '~decorators/public.decorator';
 
 @ApiTags('Provinces')
 @Controller('provinces')
 export class ProvinceController {
   constructor(private readonly provinceService: ProvinceService) {}
 
+  @Public()
   @Get('')
   async find(@GetAqp() { filter, ...options }: AqpDto) {
     return this.provinceService.find(filter, options);
@@ -43,16 +45,19 @@ export class ProvinceController {
     return this.provinceService.deleteById(id);
   }
 
+  @Public()
   @Get('paginate')
   async paginate(@GetAqp() { filter, ...options }: AqpDto) {
     return this.provinceService.paginate(filter, options);
   }
 
+  @Public()
   @Get('count')
   async count(@GetAqp('filter') filter: AqpDto) {
     return this.provinceService.count(filter);
   }
 
+  @Public()
   @Get(':id')
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: ObjectId,
