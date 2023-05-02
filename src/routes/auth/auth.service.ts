@@ -1,6 +1,5 @@
 import { ObjectId } from 'mongodb';
 import { MailService } from '~lazy-modules/mail/mail.service';
-import { CreateUserDto } from '~routes/users/dto/create-user.dto';
 import { authSelect } from '~routes/users/select/auth.select';
 
 import {
@@ -12,8 +11,10 @@ import {
 
 import { UserService } from '../users/user.service';
 import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
-import { LoginDto } from './dto/sign-in.dto';
+import { LoginDto } from './dto/login.dto';
 import { TokenService } from './token.service';
+import { LoginSocialDto } from './dto/login-social.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +52,7 @@ export class AuthService {
     return { user, accessToken };
   }
 
-  async loginBySocial(data: CreateUserDto) {
+  async loginBySocial(data: LoginSocialDto) {
     let user = await this.userService.findOne({ socialToken: data.socialToken });
 
     if (!user) user = await this.userService.create(data);
@@ -71,7 +72,7 @@ export class AuthService {
     return { user: updated, accessToken };
   }
 
-  async register(data: CreateUserDto) {
+  async register(data: RegisterDto) {
     const newUser = await this.userService.create(data);
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
@@ -91,7 +92,7 @@ export class AuthService {
     return { user: updated, accessToken };
   }
 
-  async sendRegisterToken(data: CreateUserDto) {
+  async sendRegisterToken(data: RegisterDto) {
     await this.userService.validateCreateUser({ email: data.email });
 
     const token = await this.tokenService.generateUserToken(data);

@@ -6,8 +6,6 @@ export class RegisterDto extends PartialType(
   PickType(CreateUserDto, [
     'phone',
     'email',
-    'socialToken',
-    'accountType',
     'password',
     'dateOfBirth',
     'fullName',
