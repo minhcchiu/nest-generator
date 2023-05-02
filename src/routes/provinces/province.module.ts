@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { ProvinceController } from './province.controller';
 import { ProvinceService } from './province.service';
-import { Province, ProvinceSchema } from './schemas/province.schema';
+import { Province, ProvinceSchema } from './province.schema';
 
 @Module({
   imports: [
