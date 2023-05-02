@@ -11,12 +11,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { Public } from '~decorators/public.decorator';
 
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Get('')
   async find(@GetAqp() { filter, ...options }: AqpDto) {
     return this.userService.find(filter, options);
@@ -62,11 +64,13 @@ export class UserController {
     return this.userService.findById(id);
   }
 
+  @Public()
   @Get('paginate')
   async paginate(@GetAqp() { filter, ...options }: AqpDto) {
     return this.userService.paginate(filter, options);
   }
 
+  @Public()
   @Get(':id')
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: ObjectId,

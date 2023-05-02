@@ -9,12 +9,14 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateWardDto } from './dto/create-ward.dto';
 import { UpdateWardDto } from './dto/update-ward.dto';
 import { WardService } from './ward.service';
+import { Public } from '~decorators/public.decorator';
 
 @ApiTags('Wards')
 @Controller('wards')
 export class WardController {
   constructor(private readonly wardService: WardService) {}
 
+  @Public()
   @Get('')
   async find(@GetAqp() { filter, ...options }: AqpDto) {
     return this.wardService.find(filter, options);
@@ -43,16 +45,19 @@ export class WardController {
     return this.wardService.deleteById(id);
   }
 
+  @Public()
   @Get('paginate')
   async paginate(@GetAqp() { filter, ...options }: AqpDto) {
     return this.wardService.paginate(filter, options);
   }
 
+  @Public()
   @Get('count')
   async count(@GetAqp('filter') filter: AqpDto) {
     return this.wardService.count(filter);
   }
 
+  @Public()
   @Get(':id')
   async findOneById(
     @Param('id', ParseObjectIdPipe) id: ObjectId,
