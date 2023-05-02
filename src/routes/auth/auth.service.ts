@@ -41,15 +41,13 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect account!');
     }
 
-    const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
+    const tokens = await this.tokenService.generateAuthTokens({
       _id: user._id,
       role: user.role,
     });
 
-    await this.userService.updateById(user._id, { refreshToken });
-
     delete user.password;
-    return { user, accessToken };
+    return { ...tokens, user };
   }
 
   async loginBySocial(data: LoginSocialDto) {
@@ -57,43 +55,31 @@ export class AuthService {
 
     if (!user) user = await this.userService.create(data);
 
-    const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
+    const tokens = await this.tokenService.generateAuthTokens({
       _id: user._id,
       role: user.role,
     });
 
-    const updated = await this.userService.updateById(
-      user._id,
-      { refreshToken, deleted: false },
-      { projection: authSelect },
-    );
-
-    delete updated.password;
-    return { user: updated, accessToken };
+    delete user.password;
+    return { ...tokens, user };
   }
 
   async register(data: RegisterDto) {
-    const newUser = await this.userService.create(data);
+    const { _id, role } = await this.userService.create(data);
 
-    const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
-      _id: newUser._id,
-      role: newUser.role,
+    const tokens = await this.tokenService.generateAuthTokens({
+      _id: _id,
+      role: role,
     });
 
-    const updated = await this.userService.updateById(
-      newUser._id,
-      { refreshToken },
-      {
-        projection: authSelect,
-      },
-    );
+    const user = { ...data, _id, role };
 
-    delete updated.password;
-    return { user: updated, accessToken };
+    delete user.password;
+    return { ...tokens, user };
   }
 
   async sendRegisterToken(data: RegisterDto) {
-    await this.userService.validateCreateUser({ email: data.email });
+    await this.userService.validateCreateUser({ email: data.email, phone: data.phone });
 
     const token = await this.tokenService.generateUserToken(data);
     await this.mailService.sendRegisterToken(token, data.email, 'Register account.');
@@ -115,15 +101,18 @@ export class AuthService {
     return this.userService.updateById(userId, { refreshToken: '' });
   }
 
-  // async refreshTokenByUserId(userId: ObjectId) {
-  //   const decoded = await this.tokenService.verifyRefreshToken(token);
+  async refreshToken(token: string) {
+    const decoded = await this.tokenService.verifyRefreshToken(token);
 
-  //   const user = await this.userService.findById(decoded._id);
-  //   if (!user) throw new NotFoundException('Invalid refresh');
-  //   // success
-  //   const tokens = await this.generateAuthTokens(user);
-  //   return { ...tokens, user };
-  // }
+    const user = await this.userService.findById(decoded._id, { projection: authSelect });
+
+    if (!user) throw new NotFoundException('Invalid refresh');
+
+    const tokens = await this.tokenService.generateAuthTokens({ _id: user._id, role: user.role });
+
+    delete user.password;
+    return { ...tokens, user };
+  }
 
   async forgotPasswordSendTokenLink(email: string) {
     // const user = await this.userService.findOne({ email });

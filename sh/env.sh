@@ -45,7 +45,7 @@ export MAIL_SERVER=gmail
 export SMTP_GMAIL_HOST=smtp.gmail.com
 export SMTP_GMAIL_PORT=587
 export SMTP_GMAIL_USERNAME=himinhchiu@gmail.com
-export SMTP_GMAIL_PASSWORD=lnhucyaruvqjkssp
+export SMTP_GMAIL_PASSWORD=gclmehuurauqvdjo
 
 # CONFIG SENDGRID 
 export SMTP_SENDGRID_HOST=smtp.sendgrid.net
