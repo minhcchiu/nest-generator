@@ -10,11 +10,10 @@ import {
 } from '@nestjs/common';
 
 import { UserService } from '../users/user.service';
-import { ResetPasswordDto } from './dto/reset-password-by-otp.dto';
 import { LoginDto } from './dto/login.dto';
-import { TokenService } from './token.service';
 import { LoginSocialDto } from './dto/login-social.dto';
 import { RegisterDto } from './dto/register.dto';
+import { TokenService } from '~routes/tokens/token.service';
 
 @Injectable()
 export class AuthService {
@@ -114,90 +113,36 @@ export class AuthService {
     return { ...tokens, user };
   }
 
-  async forgotPasswordSendTokenLink(email: string) {
-    // const user = await this.userService.findOne({ email });
+  async sendResetPasswordToken(email: string) {
+    const user = await this.userService.findOne({ email });
 
-    // // check user exist
-    // if (user) {
-    //   if (user.deleted) {
-    //     throw new BadRequestException('The account has been removed.');
-    //   }
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
 
-    //   // Create expireTime
-    //   // const expireTime = this.jwtConfig.expirationTime.resetPassword;
+    if (user.deleted) {
+      throw new BadRequestException('The account has been removed.');
+    }
 
-    //   // Generate accessToken
-    //   const token = await this.tokenService.generateAccessToken({
-    //     _id: user._id,
-    //     role: user.role,
-    //   });
+    const token = await this.tokenService.generateResetPasswordToken({
+      _id: user._id,
+      role: user.role,
+    });
 
-    //   const resetPasswordLink = `${this.appConfig.appUrl}/auth/reset-password?token=${token}`;
+    await this.mailService.sendResetPasswordToken(token, email, 'Reset password.');
 
-    //   // Send mail
-    //   await this.mailService.sendResetPasswordToken(
-    //     resetPasswordLink,
-    //     'data.email',
-    //     'Reset password.',
-    //   );
-
-    //   // Response otp
-    //   if (this.appConfig.env === appEnvEnum.DEVELOPMENT) {
-    //     return { resetPasswordLink, token };
-    //   }
-    // }
-
-    return email;
+    return { email };
   }
 
-  async resetPasswordByOtp(data: ResetPasswordDto) {
-    return data;
-    // const { authKey, authValue } = data;
+  async resetPassword(token: string, password: string) {
+    const { _id } = await this.tokenService.verifyResetPasswordToken(token);
 
-    // const filter = { [authKey]: authValue };
+    const user = await this.userService.resetPassword(_id, password, {
+      projection: authSelect,
+    });
 
-    // const user = await this.userService.findOne(filter);
+    const tokens = await this.tokenService.generateAuthTokens({ _id: user._id, role: user.role });
 
-    // // check user exist
-    // if (user) {
-    //   if (user.deleted) {
-    //     throw new BadRequestException('The account has been removed.');
-    //   }
-
-    //   // Add deviceID to fcmTokens
-    //   if (data.deviceID) {
-    //     await this.userService.addDeviceID(user._id, data.deviceID);
-    //     // user.deviceID = data.deviceID;
-    //   }
-
-    //   // verify otpCode
-    //   await this.otpService.verifyOtp({
-    //     authKey,
-    //     authValue,
-    //     otpType: OtpType.RESET_PASSWORD,
-    //     otpCode: data.otpCode,
-    //   });
-
-    //   // update password
-    //   await this.userService.updatePasswordById(user._id, {
-    //     oldPassword: data.password,
-    //     newPassword: data.password,
-    //   });
-
-    //   // success
-    //   const tokens = await this.generateAuthTokens(user);
-    //   return { ...tokens, user };
-    // }
-  }
-
-  async resetPassword(userId: ObjectId, password: string) {
-    return { userId, password };
-    // const user = await this.userService.updatePasswordById(userId, {
-    //   oldPassword: '',
-    //   newPassword: password,
-    // });
-    // // success
-    // const tokens = await this.generateAuthTokens(user);
-    // return { ...tokens, user };
+    return { ...tokens, user };
   }
 }

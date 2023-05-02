@@ -7,8 +7,8 @@ import { UserService } from '~routes/users/user.service';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { TokenPayload } from './interface';
-import { TokenService } from './token.service';
+import { TokenService } from '~routes/tokens/token.service';
+import { TokenPayload } from '~routes/tokens/interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

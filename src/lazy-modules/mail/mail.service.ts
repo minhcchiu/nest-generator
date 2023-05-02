@@ -13,24 +13,10 @@ export class MailService {
     private readonly logger: Logger,
   ) {}
 
-  /**
-   * Send mail
-   *
-   * @param options
-   * @returns
-   */
   sendMail(options: any) {
     return this.mailerService.sendMail(options);
   }
 
-  /**
-   * Send OTP
-   *
-   * @param verificationCode
-   * @param to
-   * @param subject
-   * @param from
-   */
   async sendOTP(verificationCode: string, to: string, subject: string, from?: string) {
     const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
     const params = {
@@ -48,14 +34,6 @@ export class MailService {
     });
   }
 
-  /**
-   * Send register
-   *
-   * @param token
-   * @param to
-   * @param subject
-   * @param from
-   */
   async sendRegisterToken(token: string, to: string, subject: string, from?: string) {
     const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
     const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
@@ -77,21 +55,10 @@ export class MailService {
     });
   }
 
-  /**
-   * Send verify
-   *
-   * @param resetPasswordLink
-   * @param to
-   * @param subject
-   * @param from
-   */
-  async sendResetPasswordToken(
-    resetPasswordLink: string,
-    to: string,
-    subject: string,
-    from?: string,
-  ) {
+  async sendResetPasswordToken(token: string, to: string, subject: string, from?: string) {
     const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
+    const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
+    const resetPasswordLink = `${appUrl}/auth/reset-password?token=${token}`;
 
     // options
     const options = {

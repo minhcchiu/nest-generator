@@ -1,16 +1,20 @@
 import { ConfigName, JWTConfig } from '~config/environment';
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { DecodedToken, TokenPayload } from './interface';
+import { Model } from 'mongoose';
+import { Token } from './token.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    @InjectModel(Token.name) readonly tokenModel: Model<Token>,
   ) {}
 
   async generateToken(payload: any, secret: string, expiresIn: string): Promise<string> {
@@ -38,6 +42,17 @@ export class TokenService {
     return this.generateToken(payload, secret, expiresIn);
   }
 
+  async generateResetPasswordToken(payload: TokenPayload): Promise<string> {
+    const { resetPasswordToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+    const { secret, expiresIn } = resetPasswordToken;
+
+    const token = await this.generateToken(payload, secret, expiresIn);
+
+    await this.tokenModel.create({ user: payload._id, resetPasswordToken: token });
+
+    return token;
+  }
+
   async generateAuthTokens(
     payload: TokenPayload,
   ): Promise<{ accessToken: string; refreshToken: string }> {
@@ -58,22 +73,29 @@ export class TokenService {
 
   async verifyAccessToken(token: string): Promise<DecodedToken> {
     const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-    const { secret } = accessToken;
-
-    return this.verifyToken(token, secret);
+    return this.verifyToken(token, accessToken.secret);
   }
 
   async verifyRefreshToken(token: string): Promise<DecodedToken> {
     const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-    const { secret } = refreshToken;
-
-    return this.verifyToken(token, secret);
+    return this.verifyToken(token, refreshToken.secret);
   }
 
   async verifySignupToken(token: string): Promise<any> {
     const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-    const { secret } = registerToken;
+    return this.verifyToken(token, registerToken.secret);
+  }
 
-    return this.verifyToken(token, secret);
+  async verifyResetPasswordToken(token: string): Promise<DecodedToken> {
+    const { resetPasswordToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
+    const [decoded, user] = await Promise.all([
+      this.verifyToken(token, resetPasswordToken.secret),
+      this.tokenModel.findOneAndDelete({ resetPasswordToken: token }),
+    ]);
+
+    if (!user) throw new BadRequestException('Tokens already used!');
+
+    return decoded;
   }
 }

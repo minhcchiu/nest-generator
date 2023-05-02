@@ -95,6 +95,6 @@ export interface JWTConfig {
   };
   resetPasswordToken: {
     expiresIn: string;
-    // secret: string; // is access secret
+    secret: string;
   };
 }
