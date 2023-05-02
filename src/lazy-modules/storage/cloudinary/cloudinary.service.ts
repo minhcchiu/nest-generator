@@ -164,7 +164,7 @@ export class CloudinaryService {
     };
 
     return new Promise((resolve, reject) => {
-      v2.uploader.upload(filePath, uploadOptions, (err, file) => {
+      v2.uploader.upload(filePath, <UploadApiOptions>uploadOptions, (err, file) => {
         if (err) return reject(new BadRequestException(err.message));
 
         // remove file in temp

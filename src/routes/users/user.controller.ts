@@ -38,11 +38,11 @@ export class UserController {
   }
 
   @Patch('password')
-  async resetPassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
+  async updatePassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
     return this.userService.updatePasswordById(id, body);
   }
 
-  @Delete(':ids/soft-ids')
+  @Delete(':ids/soft_ids')
   async deleteManySoftByIds(@Param('ids') ids: string) {
     return this.userService.updateMany({ _id: { $in: ids.split(',') } }, { deleted: true });
   }
