@@ -1,4 +1,4 @@
-import { LeanDocument, PopulateOptions } from 'mongoose';
+import { PopulateOptions } from 'mongoose';
 
 export interface PaginateOptions {
   sort?: object | string | undefined;
@@ -7,18 +7,4 @@ export interface PaginateOptions {
   lean?: boolean | undefined;
   page?: number | undefined;
   limit?: number | undefined;
-}
-
-export interface PageInfo {
-  totalData: number;
-  limit: number;
-  totalPages: number;
-  page: number;
-  hasPrevPage: boolean;
-  hasNextPage: boolean;
-}
-
-export interface PaginateResponse<T> {
-  data: LeanDocument<T>[];
-  pageInfo: PageInfo;
 }
