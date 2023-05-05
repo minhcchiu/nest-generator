@@ -34,10 +34,16 @@ export class MailService {
     });
   }
 
-  async sendRegisterToken(token: string, to: string, subject: string, from?: string) {
+  async sendRegisterToken(
+    body: { token: string; expiresAt: number },
+    to: string,
+    subject: string,
+    from?: string,
+  ) {
     const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
     const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
-    const verificationLink = `${appUrl}/auth/verify-register-token?token=${token}`;
+    const expiresAt = new Date(body.expiresAt);
+    const verificationLink = `${appUrl}/auth/verify-register-token?token=${body.token}`;
 
     // options
     const options = {
@@ -45,7 +51,7 @@ export class MailService {
       to,
       subject,
       template: './verify/verify.template.hbs',
-      context: { verificationLink },
+      context: { verificationLink, expiresAt },
     };
 
     // Send
@@ -55,10 +61,16 @@ export class MailService {
     });
   }
 
-  async sendResetPasswordToken(token: string, to: string, subject: string, from?: string) {
+  async sendResetPasswordToken(
+    body: { token: string; expiresAt: number },
+    to: string,
+    subject: string,
+    from?: string,
+  ) {
     const { name, defaults } = this.configService.get<MailerConfig>(ConfigName.mailer);
     const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
-    const resetPasswordLink = `${appUrl}/auth/reset-password?token=${token}`;
+    const expiresAt = new Date(body.expiresAt);
+    const resetPasswordLink = `${appUrl}/auth/reset-password?token=${body.token}`;
 
     // options
     const options = {
@@ -66,7 +78,7 @@ export class MailService {
       to,
       subject,
       template: './verify/reset-password.template.hbs',
-      context: { resetPasswordLink },
+      context: { resetPasswordLink, expiresAt },
     };
 
     // Send

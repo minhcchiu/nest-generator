@@ -7,6 +7,7 @@ import { AccountType } from './enums/account-type.enum';
 import { Gender } from './enums/gender.enum';
 import { Role } from './enums/role.enum';
 import { IUser } from './interface/user.interface';
+import { AccountStatus } from './enums/account-status.enum';
 
 type UserDocument = HydratedDocument<User>;
 
@@ -49,11 +50,11 @@ export class User implements IUser {
   @Prop({ type: Boolean, default: false })
   deleted: boolean;
 
-  @Prop({ type: String, default: '', select: false })
-  refreshToken: string;
-
   @Prop({ type: String, default: '' })
   avatar: string;
+
+  @Prop({ type: String, enum: AccountStatus, default: AccountStatus.INACTIVE })
+  status: AccountStatus;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

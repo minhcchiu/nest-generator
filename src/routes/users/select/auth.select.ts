@@ -8,4 +8,5 @@ export const authSelect = {
   dateOfBirth: 1,
   role: 1,
   deleted: 1,
+  status: 1,
 };

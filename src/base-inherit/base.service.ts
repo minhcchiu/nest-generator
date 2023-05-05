@@ -64,7 +64,7 @@ export class BaseService<T> {
   }
 
   deleteOne(filter: FilterQuery<T>, options?: QueryOptions<T>) {
-    return this.model.deleteOne(filter, options);
+    return this.model.findOneAndDelete(filter, options);
   }
 
   deleteMany(filter: FilterQuery<T>, options?: QueryOptions<T>) {
