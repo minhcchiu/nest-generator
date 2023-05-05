@@ -75,8 +75,4 @@ export class UserService extends BaseService<UserDocument> {
   async comparePassword(hashPassword: string, plainPassword: string) {
     return argon2.verify(hashPassword, plainPassword);
   }
-
-  async updateRefreshToken(id: ObjectId, refreshToken: string, options?: QueryOptions) {
-    return this.updateById(id, { refreshToken }, options).lean();
-  }
 }

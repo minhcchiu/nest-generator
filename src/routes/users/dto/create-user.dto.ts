@@ -9,6 +9,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { AccountStatus } from '../enums/account-status.enum';
 
 import { AccountType } from '../enums/account-type.enum';
 import { Gender } from '../enums/gender.enum';
@@ -61,4 +62,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(Role)
   role?: Role;
+
+  @IsOptional()
+  @IsEnum(AccountStatus)
+  status?: AccountStatus;
 }

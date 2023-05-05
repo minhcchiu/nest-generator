@@ -7,8 +7,8 @@ import { UserService } from '~routes/users/user.service';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { TokenService } from '~routes/tokens/token.service';
 import { TokenPayload } from '~routes/tokens/interface';
+import { TokenService } from '~routes/tokens/token.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -52,10 +52,11 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.tokenService.verifyAccessToken(token);
-      const user = await this.validate(payload);
+      const decoded = await this.tokenService.verifyAccessToken(token);
+      console.log({ decoded });
+      const user = await this.validate(decoded);
 
-      if (!endpoint.userRoles.includes(payload.role)) {
+      if (!endpoint.userRoles.includes(decoded.role)) {
         throw new UnauthorizedException('Invalid token or insufficient privileges!');
       }
 

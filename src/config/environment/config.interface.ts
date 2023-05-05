@@ -79,22 +79,22 @@ export interface MailerConfig {
 }
 
 export interface JWTConfig {
-  secret: string;
-  expiresIn: string;
+  secretKey: string;
+  expiresIn: number;
   accessToken: {
-    expiresIn: string;
-    secret: string;
+    expiresIn: number;
+    secretKey: string;
   };
   refreshToken: {
-    expiresIn: string;
-    secret: string;
+    expiresIn: number;
+    secretKey: string;
   };
   registerToken: {
-    expiresIn: string;
-    secret: string;
+    expiresIn: number;
+    secretKey: string;
   };
   resetPasswordToken: {
-    expiresIn: string;
-    secret: string;
+    expiresIn: number;
+    secretKey: string;
   };
 }

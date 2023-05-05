@@ -48,23 +48,23 @@ export const environmentConfig: IConfiguration = {
   },
 
   [ConfigName.jwt]: {
-    secret: env.JWT_SECRET,
-    expiresIn: env.JWT_EXPIRATION,
+    secretKey: env.JWT_SECRET,
+    expiresIn: eval(env.JWT_EXPIRATION),
     accessToken: {
-      expiresIn: env.JWT_ACCESS_EXPIRATION,
-      secret: env.JWT_ACCESS_SECRET,
+      expiresIn: eval(env.JWT_ACCESS_EXPIRATION),
+      secretKey: env.JWT_ACCESS_SECRET,
     },
     refreshToken: {
-      expiresIn: env.JWT_REFRESH_EXPIRATION,
-      secret: env.JWT_REFRESH_SECRET,
+      expiresIn: eval(env.JWT_REFRESH_EXPIRATION),
+      secretKey: env.JWT_REFRESH_SECRET,
     },
     registerToken: {
-      expiresIn: env.JWT_SIGNUP_EXPIRATION,
-      secret: env.JWT_SIGNUP_SECRET,
+      expiresIn: eval(env.JWT_SIGNUP_EXPIRATION),
+      secretKey: env.JWT_SIGNUP_SECRET,
     },
     resetPasswordToken: {
-      expiresIn: env.JWT_RESET_PASSWORD_EXPIRATION,
-      secret: env.JWT_SECRET_RESET_PASSWORD,
+      expiresIn: eval(env.JWT_RESET_PASSWORD_EXPIRATION),
+      secretKey: env.JWT_SECRET_RESET_PASSWORD,
     },
   },
 

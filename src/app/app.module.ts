@@ -17,6 +17,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TokenModule } from '~routes/tokens/token.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AppService } from './app.service';
     MailModule,
     MenuModule,
     UserModule,
+    TokenModule,
     AuthModule,
   ],
   controllers: [AppController],
