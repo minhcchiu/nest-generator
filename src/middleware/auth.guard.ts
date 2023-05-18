@@ -1,22 +1,20 @@
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '~decorators/public.decorator';
 import { EndpointService } from '~routes/endpoints/endpoint.service';
-import { authSelect } from '~routes/users/select/auth.select';
-import { UserService } from '~routes/users/user.service';
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { TokenPayload } from '~routes/tokens/interface';
 import { TokenService } from '~routes/tokens/token.service';
+import { CacheService } from '~lazy-modules/cache/cache.service.';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private tokenService: TokenService,
-    private userService: UserService,
     private endpointService: EndpointService,
+    private cacheService: CacheService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -31,41 +29,40 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { route, method } = request;
     const path = route.path;
-
-    const endpoint = await this.endpointService.findOne(
-      { path, method },
-      { projection: { isPublic: 1, userRoles: 1 } },
-    );
+    const start = Date.now();
+    const cacheKey = `${path}-${method}`; // Create a unique cache key for the endpoint
+    let endpoint = this.cacheService.get(cacheKey); // Check the cache for the endpoint data
+    console.log({ endpointCache: endpoint });
 
     if (!endpoint) {
-      throw new UnauthorizedException('Endpoint not found!');
+      const projection = { isPublic: 1, userRoles: 1 };
+      endpoint = await this.endpointService.findOne({ path, method }, { projection });
+      console.log({ endpointDB: endpoint });
+
+      this.cacheService.set(cacheKey, endpoint); // Store the endpoint data in the cache
     }
 
-    if (endpoint.isPublic) {
-      return true;
-    }
+    if (!endpoint) throw new UnauthorizedException('Endpoint not found!');
+
+    if (endpoint.isPublic) return true;
 
     const token = this.extractTokenFromHeader(request);
 
-    if (!token) {
-      throw new UnauthorizedException('Authorization token not found!');
-    }
+    if (!token) throw new UnauthorizedException('Authorization token not found!');
 
     try {
       const decoded = await this.tokenService.verifyAccessToken(token);
       console.log({ decoded });
-      const user = await this.validate(decoded);
+      if (!this.isAccessAllowed(decoded.role, endpoint)) throw new UnauthorizedException();
 
-      if (!endpoint.userRoles.includes(decoded.role)) {
-        throw new UnauthorizedException('Invalid token or insufficient privileges!');
-      }
+      request.user = { _id: decoded._id, role: decoded.role };
+      const duration = Date.now() - start;
 
-      request.user = user;
-    } catch {
+      console.log({ duration });
+      return true;
+    } catch (error) {
       throw new UnauthorizedException('Invalid token or insufficient privileges!');
     }
-
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
@@ -78,13 +75,7 @@ export class AuthGuard implements CanActivate {
     return authHeader.slice(7);
   }
 
-  private async validate({ _id }: TokenPayload) {
-    const user = await this.userService.findById(_id, { projection: authSelect });
-
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    return user;
+  private isAccessAllowed(userRole: string, endpoint: any): boolean {
+    return endpoint.userRoles.includes(userRole);
   }
 }

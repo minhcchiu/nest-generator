@@ -8,14 +8,16 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from './auth.controller';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from '../../middleware/auth.guard';
 import { AuthService } from './auth.service';
 import { TokenModule } from '~routes/tokens/token.module';
+import { CacheService } from '~lazy-modules/cache/cache.service.';
 
 @Module({
   imports: [TokenModule, ConfigModule, UserModule, JwtModule, MailModule, EndpointModule],
   providers: [
     AuthService,
+    CacheService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
