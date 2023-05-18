@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
+    "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.4.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.4.0",
@@ -33,6 +34,7 @@
     "@nestjs/swagger": "^6.3.0",
     "api-query-params": "^5.4.0",
     "argon2": "^0.30.3",
+    "cache-manager": "^5.2.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cloudinary": "^1.36.4",

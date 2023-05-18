@@ -18,6 +18,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TokenModule } from '~routes/tokens/token.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -30,7 +31,9 @@ import { TokenModule } from '~routes/tokens/token.module';
       isGlobal: true,
       load: [configuration],
     }),
-
+    CacheModule.register({
+      isGlobal: true,
+    }),
     DatabaseModule,
     SeedModule,
     LoggerModule,

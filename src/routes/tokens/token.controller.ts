@@ -3,7 +3,7 @@ import { GetAqp } from '~decorators/get-aqp.decorator';
 import { AqpDto } from '~dto/aqp.dto';
 import { ParseObjectIdPipe } from '~pipe/parse-object-id.pipe';
 
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { TokenService } from './token.service';
