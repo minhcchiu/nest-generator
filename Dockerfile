@@ -1,10 +1,10 @@
-FROM node:16.17.0
+FROM node:20.0.0
 
 EXPOSE 8888
 
 WORKDIR /app
 
-RUN npm i npm@latest -g
+RUN npm i yarn@latest -g
 
 COPY package.json ./
 

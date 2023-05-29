@@ -1,5 +1,6 @@
 # Config app environment variable
 # DEVELOPMENT | PRODUCTION
+export APP_NAME=NestA
 export APP_ENV=DEVELOPMENT
 export APP_PORT=8888
 
@@ -9,8 +10,8 @@ export APP_URL=http://localhost:8888
 # URL of the Mongo DB
 # export MONGODB_URL="mongodb://127.0.0.1:27017/node-boilerplate"
 # export MONGODB_URL="mongodb+srv://miniSocialNetwork:miniSocialNetwork@cluster0.3rkpg.mongodb.net/mini-social-network?retryWrites=true&w=majority"
-export DATABASE_NAME=awesome-nest-generator
-export DATABASE_URI="mongodb+srv://minhchiu:Minhchiu.it.01@cluster0.llaipgz.mongodb.net"
+export DATABASE_NAME=nest-a
+export DATABASE_URI=mongodb+srv://minh50133:nesta@cluster0.8cucnqb.mongodb.net/nesta
 
 
 # JWT
@@ -19,15 +20,15 @@ export JWT_SECRET=jwt_secret
 export JWT_ACCESS_SECRET=access_secret
 export JWT_REFRESH_SECRET=refresh_secret
 export JWT_ACTIVATE_SECRET=activate_secret
-export JWT_SIGNUP_SECRET=signup_secret
+export JWT_SIGNUP_SECRET=register_secret
+export JWT_SECRET_RESET_PASSWORD=secret_reset_password
 
-# JWT expirations
-export JWT_EXPIRESIN=30m
-export JWT_ACCESS_EXPIRATION=5days
-export JWT_REFRESH_EXPIRATION=30days
-export JWT_RESET_PASSWORD_EXPIRATION=10m
-export JWT_ACTIVATE_EXPIRATION=5m
-export JWT_SIGNUP_EXPIRATION=10m
+# JWT expirations: seconds
+export JWT_EXPIRATION="10*60"
+export JWT_ACCESS_EXPIRATION="10*60"
+export JWT_REFRESH_EXPIRATION="10*60"
+export JWT_RESET_PASSWORD_EXPIRATION="10*60"
+export JWT_SIGNUP_EXPIRATION="10*60"
 
 
 # CLOUDINARY
@@ -44,7 +45,7 @@ export MAIL_SERVER=gmail
 export SMTP_GMAIL_HOST=smtp.gmail.com
 export SMTP_GMAIL_PORT=587
 export SMTP_GMAIL_USERNAME=himinhchiu@gmail.com
-export SMTP_GMAIL_PASSWORD=lnhucyaruvqjkssp
+export SMTP_GMAIL_PASSWORD=gclmehuurauqvdjo
 
 # CONFIG SENDGRID 
 export SMTP_SENDGRID_HOST=smtp.sendgrid.net
@@ -60,7 +61,7 @@ export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.google
 export OAUTH_CLIENT_SECRET=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
 
 # OTP
-export MAXIMUN_SECOND_SEND_OTP=10
+export MAXIMUM_SECOND_SEND_OTP=10
 
 # UPLOAD
 export UPLOAD_IMAGE_MAX_SIZE=25 #MB  
