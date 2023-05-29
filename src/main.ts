@@ -1,15 +1,15 @@
 import { ValidationError } from 'class-validator';
 import { ConfigName } from '~config/environment';
-import { AllExceptionsFilter } from '~exception/all-exceptions.filter';
-import { SeedService } from '~lazy-modules/seed/seed.service';
 
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { AppModule } from './app/app.module';
-import { ValidationExceptions } from './utils/exceptions/validation.exceptions';
+import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './exceptions/all-exceptions.filter';
+import { ValidationExceptions } from './exceptions/validation.exceptions';
+import { SeedService } from './shared/seed/seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

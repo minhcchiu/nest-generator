@@ -1,4 +1,4 @@
-import { Role } from 'src/routes/users/enums/role.enum';
+import { Role } from '~pre-built/1-users/enums/role.enum';
 
 import { SetMetadata } from '@nestjs/common';
 
