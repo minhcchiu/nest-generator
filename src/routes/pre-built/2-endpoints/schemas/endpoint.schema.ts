@@ -2,8 +2,8 @@ import { HydratedDocument } from 'mongoose';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { Role } from '../1-users/enums/role.enum';
-import { HttpMethod } from './enum/http-method';
+import { Role } from '../../1-users/enums/role.enum';
+import { HttpMethod } from '../enum/http-method';
 
 @Schema({
   timestamps: true,

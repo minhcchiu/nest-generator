@@ -12,7 +12,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 
 import { UpdatePasswordDto } from './dto/update-password';
-import { User, UserDocument } from './user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
