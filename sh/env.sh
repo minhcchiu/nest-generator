@@ -23,12 +23,12 @@ export JWT_ACTIVATE_SECRET=activate_secret
 export JWT_SIGNUP_SECRET=register_secret
 export JWT_SECRET_RESET_PASSWORD=secret_reset_password
 
-# JWT expirations: seconds
-export JWT_EXPIRATION="10*60"
-export JWT_ACCESS_EXPIRATION="10*60"
-export JWT_REFRESH_EXPIRATION="10*60"
-export JWT_RESET_PASSWORD_EXPIRATION="10*60"
-export JWT_SIGNUP_EXPIRATION="10*60"
+# JWT expirations: MILLISECONDS
+export JWT_EXPIRATION="10*60*1000" # 10 minutes
+export JWT_ACCESS_EXPIRATION="10*60*1000" # 10 minutes
+export JWT_REFRESH_EXPIRATION="10*60*1000" # 10 minutes
+export JWT_RESET_PASSWORD_EXPIRATION="10*60*1000" # 10 minutes
+export JWT_SIGNUP_EXPIRATION="10*60*1000" # 10 minutes
 
 
 # CLOUDINARY
@@ -60,8 +60,8 @@ export MAILER_NAME_NAME=minhchiu
 export OAUTH_CLIENT_ID=679275323194-0m8bkvm059v14kcepq57l873v8lm7r37.apps.googleusercontent.com
 export OAUTH_CLIENT_SECRET=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
 
-# OTP
-export MAXIMUM_SECOND_SEND_OTP=10
+# OTP expirations: MILLISECONDS
+export OTP_EXPIRATION="10*60*1000" # 10 minutes
 
 # UPLOAD
 export UPLOAD_IMAGE_MAX_SIZE=25 #MB  

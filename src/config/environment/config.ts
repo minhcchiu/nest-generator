@@ -5,7 +5,7 @@ const env = process.env;
 
 export const environmentConfig: IConfiguration = {
   [ConfigName.app]: {
-    env: env.APP_ENV,
+    appEnv: env.APP_ENV,
     port: +env.APP_PORT,
     appUrl: env.APP_URL,
   },
@@ -27,7 +27,7 @@ export const environmentConfig: IConfiguration = {
   },
 
   [ConfigName.otp]: {
-    maximumSecondSendOtp: env.MAXIMUM_SECOND_SEND_OTP,
+    expiresIn: eval(env.OTP_EXPIRATION),
   },
 
   [ConfigName.upload]: {

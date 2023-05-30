@@ -46,6 +46,13 @@ export class AuthController {
 
   @Public()
   @HttpCode(201)
+  @Post('send_register_otp')
+  async sendRegisterOtp(@Body() body: RegisterDto) {
+    return this.authService.sendRegisterOtp(body);
+  }
+
+  @Public()
+  @HttpCode(201)
   @Post('activate_register_token')
   async activateRegisterToken(@Body() { token }: TokenDto) {
     return this.authService.activateRegisterToken(token);

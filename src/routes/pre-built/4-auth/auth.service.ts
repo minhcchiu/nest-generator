@@ -15,6 +15,8 @@ import { UserService } from '../1-users/user.service';
 import { LoginSocialDto } from './dto/login-social.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { OtpService } from '../6-otp/otp.service';
+import { OtpType } from '../6-otp/enums/otp-type';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly mailService: MailService,
+    private readonly otpService: OtpService,
   ) {}
 
   async login({ password, ...credentials }: LoginDto) {
@@ -103,6 +106,16 @@ export class AuthService {
     await this.mailService.sendRegisterToken(token, data.email, 'Register account.');
 
     return { message: 'Send register account success!' };
+  }
+
+  async sendRegisterOtp(data: RegisterDto) {
+    await this.userService.validateCreateUser({ email: data.email, phone: data.phone });
+
+    return this.otpService.sendOtp({
+      otpType: OtpType.SIGNUP,
+      email: data.email,
+      phone: data.phone,
+    });
   }
 
   async activateRegisterToken(token: string) {
