@@ -40,6 +40,7 @@
     "cloudinary": "^1.36.4",
     "dayjs": "^1.11.7",
     "handlebars": "^4.7.7",
+    "ioredis": "^5.3.2",
     "jsonapi-serializer": "^3.6.7",
     "magic-bytes.js": "^1.0.14",
     "mongoose": "^7.1.0",

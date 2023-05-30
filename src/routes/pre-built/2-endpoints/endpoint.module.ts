@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { EndpointController } from './endpoint.controller';
-import { Endpoint, EndpointSchema } from './endpoint.schema';
+import { Endpoint, EndpointSchema } from './schemas/endpoint.schema';
 import { EndpointService } from './endpoint.service';
+import { EndpointCacheService } from './endpoint-cache.service';
+import { RedisService } from '~shared/redis/redis.service';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { EndpointService } from './endpoint.service';
     ]),
   ],
   controllers: [EndpointController],
-  providers: [EndpointService],
-  exports: [EndpointService],
+  providers: [RedisService, EndpointService, EndpointCacheService],
+  exports: [EndpointService, EndpointCacheService],
 })
 export class EndpointModule {}

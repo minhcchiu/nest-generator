@@ -9,8 +9,9 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '~routes/pre-built/1-users/enums/role.enum';
 import { performanceLogger } from '~utils/performance-logger';
 import { HttpMethod } from '~routes/pre-built/2-endpoints/enum/http-method';
+import { EndpointCacheService } from '~routes/pre-built/2-endpoints/endpoint-cache.service';
 
-interface IEndpoint {
+export interface IEndpoint {
   userRoles: Role[];
   isPublic: boolean;
 }
@@ -22,6 +23,7 @@ export class AppGuard implements CanActivate {
     private tokenService: TokenService,
     private endpointService: EndpointService,
     private cacheService: CacheService,
+    private endpointCacheService: EndpointCacheService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -35,7 +37,9 @@ export class AppGuard implements CanActivate {
     const { route, method } = request;
     const path = route.path;
 
+    performanceLogger.start();
     const endpoint = await this.getPermissionEndpoint(path, method);
+    performanceLogger.end();
 
     if (endpoint.isPublic) return true;
 
@@ -80,7 +84,8 @@ export class AppGuard implements CanActivate {
     const cacheKey = `${path}-${method}`;
 
     // check in cache
-    let endpointCache = this.cacheService.get(cacheKey);
+    let endpointCache = await this.endpointCacheService.get(cacheKey);
+    // let endpointCache = this.cacheService.get(cacheKey);
 
     if (endpointCache) return endpointCache;
 
@@ -92,7 +97,8 @@ export class AppGuard implements CanActivate {
     const { isPublic, userRoles } = endpoint;
 
     // save to cache
-    this.cacheService.set(cacheKey, { isPublic, userRoles });
+    await this.endpointCacheService.set(cacheKey, { isPublic, userRoles });
+    // this.cacheService.set(cacheKey, { isPublic, userRoles });
 
     return { isPublic, userRoles };
   }

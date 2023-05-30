@@ -22,6 +22,7 @@ import { LoggingInterceptor } from './shared/interceptors';
 import { LoggerModule } from './shared/logger/logger.module';
 import { MailModule } from './shared/mail/mail.module';
 import { SeedModule } from './shared/seed/seed.module';
+import { RedisService } from '~shared/redis/redis.service';
 
 @Module({
   imports: [
