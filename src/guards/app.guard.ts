@@ -6,6 +6,14 @@ import { CacheService } from '~shared/cache/cache.service.';
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Role } from '~routes/pre-built/1-users/enums/role.enum';
+import { performanceLogger } from '~utils/performance-logger';
+import { HttpMethod } from '~routes/pre-built/2-endpoints/enum/http-method';
+
+interface IEndpoint {
+  userRoles: Role[];
+  isPublic: boolean;
+}
 
 @Injectable()
 export class AppGuard implements CanActivate {
@@ -21,43 +29,31 @@ export class AppGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (isPublic) {
-      return true;
-    }
+    if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest();
     const { route, method } = request;
     const path = route.path;
-    const start = Date.now();
-    const cacheKey = `${path}-${method}`; // Create a unique cache key for the endpoint
-    let endpoint = this.cacheService.get(cacheKey); // Check the cache for the endpoint data
-    console.log({ endpointCache: endpoint });
 
-    if (!endpoint) {
-      const projection = { isPublic: 1, userRoles: 1 };
-      endpoint = await this.endpointService.findOne({ path, method }, { projection });
-      console.log({ endpointDB: endpoint });
-
-      this.cacheService.set(cacheKey, endpoint); // Store the endpoint data in the cache
-    }
-
-    if (!endpoint) throw new UnauthorizedException('Endpoint not found!');
+    const endpoint = await this.getPermissionEndpoint(path, method);
 
     if (endpoint.isPublic) return true;
 
+    return await this.validate(request, endpoint);
+  }
+
+  private async validate(request: any, endpoint: IEndpoint) {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) throw new UnauthorizedException('Authorization token not found!');
 
     try {
       const decoded = await this.tokenService.verifyAccessToken(token);
-      console.log({ decoded });
+
       if (!this.isAccessAllowed(decoded.role, endpoint)) throw new UnauthorizedException();
 
       request.user = { _id: decoded._id, role: decoded.role };
-      const duration = Date.now() - start;
 
-      console.log({ duration });
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid token or insufficient privileges!');
@@ -67,14 +63,37 @@ export class AppGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
     const authHeader = request.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const textBearer = 'Bearer ';
+
+    if (!authHeader || !authHeader.startsWith(textBearer)) {
       return undefined;
     }
 
-    return authHeader.slice(7);
+    return authHeader.slice(textBearer.length);
   }
 
-  private isAccessAllowed(userRole: string, endpoint: any): boolean {
+  private isAccessAllowed(userRole: Role, endpoint: IEndpoint) {
     return endpoint.userRoles.includes(userRole);
+  }
+
+  private async getPermissionEndpoint(path: string, method: HttpMethod): Promise<IEndpoint> {
+    const cacheKey = `${path}-${method}`;
+
+    // check in cache
+    let endpointCache = this.cacheService.get(cacheKey);
+
+    if (endpointCache) return endpointCache;
+
+    // check in db
+    const endpoint = await this.endpointService.findOne({ path, method });
+
+    if (!endpoint) throw new UnauthorizedException('Endpoint not found!');
+
+    const { isPublic, userRoles } = endpoint;
+
+    // save to cache
+    this.cacheService.set(cacheKey, { isPublic, userRoles });
+
+    return { isPublic, userRoles };
   }
 }
