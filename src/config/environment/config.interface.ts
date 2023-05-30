@@ -11,7 +11,7 @@ export interface IConfiguration {
 }
 
 export interface AppConfig {
-  env: string;
+  appEnv: string;
   port: number;
   appUrl: string;
 }
@@ -33,7 +33,7 @@ export interface CloudinaryConfig {
 }
 
 export interface OtpConfig {
-  maximumSecondSendOtp: string;
+  expiresIn: number;
 }
 
 export interface UploadConfig {

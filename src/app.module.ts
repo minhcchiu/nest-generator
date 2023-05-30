@@ -22,6 +22,7 @@ import { LoggingInterceptor } from './shared/interceptors';
 import { LoggerModule } from './shared/logger/logger.module';
 import { MailModule } from './shared/mail/mail.module';
 import { SeedModule } from './shared/seed/seed.module';
+import { OtpModule } from '~routes/pre-built/6-otp/otp.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { SeedModule } from './shared/seed/seed.module';
     UserModule,
     TokenModule,
     AuthModule,
+    OtpModule,
   ],
   controllers: [AppController],
   providers: [
