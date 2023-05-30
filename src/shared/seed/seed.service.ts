@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { EndpointService } from '~pre-built/2-endpoints/endpoint.service';
-import { WardService } from '~pre-built/7-wards/ward.service';
+import { ProvinceService } from '~pre-built/7-provinces/province.service';
 import { DistrictService } from '~pre-built/8-districts/district.service';
-import { ProvinceService } from '~pre-built/9-provinces/province.service';
+import { WardService } from '~pre-built/9-wards/ward.service';
 import { Logger } from '~shared/logger/logger.service';
 import { existsSync, readFileSync } from '~utils/file.util';
 

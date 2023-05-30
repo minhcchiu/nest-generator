@@ -2,13 +2,12 @@ import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '~decorators/public.decorator';
 import { EndpointService } from '~pre-built/2-endpoints/endpoint.service';
 import { TokenService } from '~pre-built/5-tokens/token.service';
+import { Role } from '~routes/pre-built/1-users/enums/role.enum';
+import { HttpMethod } from '~routes/pre-built/2-endpoints/enum/http-method';
 import { CacheService } from '~shared/cache/cache.service.';
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from '~routes/pre-built/1-users/enums/role.enum';
-import { performanceLogger } from '~utils/performance-logger';
-import { HttpMethod } from '~routes/pre-built/2-endpoints/enum/http-method';
 
 interface IEndpoint {
   userRoles: Role[];
@@ -80,7 +79,7 @@ export class AppGuard implements CanActivate {
     const cacheKey = `${path}-${method}`;
 
     // check in cache
-    let endpointCache = this.cacheService.get(cacheKey);
+    const endpointCache = this.cacheService.get(cacheKey);
 
     if (endpointCache) return endpointCache;
 

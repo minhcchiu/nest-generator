@@ -1,7 +1,7 @@
 import { EndpointModule } from '~pre-built/2-endpoints/endpoint.module';
-import { WardModule } from '~pre-built/7-wards/ward.module';
+import { ProvinceModule } from '~pre-built/7-provinces/province.module';
 import { DistrictModule } from '~pre-built/8-districts/district.module';
-import { ProvinceModule } from '~pre-built/9-provinces/province.module';
+import { WardModule } from '~pre-built/9-wards/ward.module';
 
 import { Module } from '@nestjs/common';
 
