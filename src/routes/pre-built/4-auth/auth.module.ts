@@ -1,5 +1,4 @@
 import { UserModule } from '~pre-built/1-users/user.module';
-import { EndpointModule } from '~pre-built/2-endpoints/endpoint.module';
 import { TokenModule } from '~pre-built/5-tokens/token.module';
 import { MailModule } from '~shared/mail/mail.module';
 
@@ -9,9 +8,10 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { OtpModule } from '../6-otp/otp.module';
 
 @Module({
-  imports: [TokenModule, ConfigModule, UserModule, JwtModule, MailModule, EndpointModule],
+  imports: [TokenModule, ConfigModule, UserModule, JwtModule, MailModule, OtpModule],
   providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService],

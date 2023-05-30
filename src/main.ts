@@ -1,5 +1,5 @@
 import { ValidationError } from 'class-validator';
-import { ConfigName } from '~config/environment';
+import { AppConfig, ConfigName } from '~config/environment';
 
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -39,7 +39,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Server run at port
-  const port = configService.get(ConfigName.app).port;
+  const port = configService.get<AppConfig>(ConfigName.app).port;
 
   await app.listen(port, () => {
     Logger.log(`The server is running on: http://localhost:${port}/api`, 'Main');
