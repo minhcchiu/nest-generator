@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { DecodedToken, TokenPayload } from './interface';
-import { Token, TokenDocument } from './token.schema';
+import { Token, TokenDocument } from './schemas/token.schema';
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
