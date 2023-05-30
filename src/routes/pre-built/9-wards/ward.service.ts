@@ -4,7 +4,7 @@ import { BaseService } from '~base-inherit/base.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { Ward, WardDocument } from './ward.schema';
+import { Ward, WardDocument } from './schemas/ward.schema';
 
 @Injectable()
 export class WardService extends BaseService<WardDocument> {
