@@ -111,11 +111,12 @@ export class AuthService {
   async sendRegisterOtp(data: RegisterDto) {
     await this.userService.validateCreateUser({ email: data.email, phone: data.phone });
 
-    return this.otpService.sendOtp({
-      otpType: OtpType.SIGNUP,
-      email: data.email,
-      phone: data.phone,
-    });
+    const otpItem: any = { otpType: OtpType.SIGNUP };
+
+    if (data.phone) otpItem.phone = data.phone;
+    else otpItem.email = data.email;
+
+    return this.otpService.sendOtp(otpItem);
   }
 
   async activateRegisterToken(token: string) {
