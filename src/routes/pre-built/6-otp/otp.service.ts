@@ -24,23 +24,23 @@ export class OtpService {
     private configService: ConfigService,
   ) {}
 
-  async sendOtp({ otpType, ...credentials }: CreateOtpDto) {
-    const { otpCode } = await this.create(credentials, otpType);
+  async sendOtp({ otpType, ...credential }: CreateOtpDto) {
+    const { otpCode } = await this.create(credential, otpType);
 
     // send verify
-    if (credentials.phone) await this._sendPhoneVerify(credentials.phone, otpCode);
-    if (credentials.email) await this._sendEmailVerify(credentials.email, otpCode);
+    if (credential.phone) await this._sendPhoneVerify(credential.phone, otpCode);
+    if (credential.email) await this._sendEmailVerify(credential.email, otpCode);
 
     const { appEnv } = this.configService.get<AppConfig>(ConfigName.app);
 
     if (appEnv === AppEnv.DEVELOPMENT) return { otpCode, otpType };
 
-    return { message: `OTP code has been successfully sent to the ${credentials}.` };
+    return { message: `OTP code has been successfully sent to the ${credential}.` };
   }
 
-  async verifyOtp({ otpCode, otpType, ...credentials }: VerifyOtpDto) {
+  async verifyOtp({ otpCode, otpType, ...credential }: VerifyOtpDto) {
     const otpDoc = await this.otpModel.findOne({
-      ...credentials,
+      ...credential,
       otpType,
     });
 
@@ -57,13 +57,13 @@ export class OtpService {
     throw new BadRequestException('Invalid otp code.');
   }
 
-  private async create(credentials: any, otpType: OtpType) {
+  private async create(credential: any, otpType: OtpType) {
     const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.otp);
 
     const otpCode = generateOTP();
     const expiredAt = Date.now() + expiresIn;
 
-    const otpDoc = await this.otpModel.findOne({ ...credentials, otpCode, otpType });
+    const otpDoc = await this.otpModel.findOne({ ...credential, otpCode, otpType });
 
     if (otpDoc) {
       otpDoc.otpCode = otpCode;
@@ -74,7 +74,7 @@ export class OtpService {
 
       await otpDoc.save();
     } else {
-      await this.otpModel.create({ ...credentials, otpCode, otpType, expiredAt });
+      await this.otpModel.create({ ...credential, otpCode, otpType, expiredAt });
     }
 
     return { otpCode, otpType };
