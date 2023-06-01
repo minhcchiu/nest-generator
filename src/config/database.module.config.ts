@@ -1,4 +1,4 @@
-import { DatabaseConfig } from '~config/environment';
+import { ConfigName, DatabaseConfig } from '~config/environment';
 
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -10,7 +10,7 @@ export const DatabaseModuleConfig = MongooseModule.forRootAsync({
   imports: [ConfigModule],
 
   useFactory: async (config: ConfigService) => ({
-    uri: config.get<DatabaseConfig>('database').uri,
+    uri: config.get<DatabaseConfig>(ConfigName.database).uri,
     retryWrites: true,
     useNewUrlParser: true,
     autoIndex: true,
