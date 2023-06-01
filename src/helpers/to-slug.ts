@@ -1,9 +1,3 @@
-/**
- * To slug
- *
- * @param str
- * @returns
- */
 export const toSlug = (str: string): string => {
   let _str = str;
   _str = _str.toLowerCase();
