@@ -1,97 +1,105 @@
+import { registerAs } from '@nestjs/config';
 import { ConfigName } from './config.enum';
 import { IConfiguration } from './config.interface';
 
 const env = process.env;
+console.log({ env });
 
-export const environmentConfig: IConfiguration = {
-  [ConfigName.app]: {
-    appEnv: env.APP_ENV,
-    port: +env.APP_PORT,
-    appUrl: env.APP_URL,
+const appEnv = registerAs(ConfigName.app, () => ({
+  appEnv: process.env.APP_ENV,
+  port: +process.env.APP_PORT,
+  appUrl: process.env.APP_URL,
+}));
+
+const databaseEnv = registerAs(ConfigName.database, () => ({
+  name: process.env.DATABASE_NAME,
+  uri: process.env.DATABASE_URI,
+}));
+
+const cloudinaryEnv = registerAs(ConfigName.cloudinary, () => ({
+  config: {
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
   },
-
-  [ConfigName.database]: {
-    name: env.DATABASE_NAME,
-    uri: env.DATABASE_URI,
+  options: {
+    folder: process.env.APP_NAME,
   },
+}));
 
-  [ConfigName.cloudinary]: {
-    config: {
-      cloud_name: env.CLOUD_NAME,
-      api_key: env.CLOUD_API_KEY,
-      api_secret: env.CLOUD_API_SECRET,
-    },
-    options: {
-      folder: env.APP_NAME,
-    },
+const otpEnv = registerAs(ConfigName.otp, () => ({
+  expiresIn: eval(process.env.OTP_EXPIRATION),
+}));
+
+const uploadEnv = registerAs(ConfigName.upload, () => ({
+  imageMaxSize: +process.env.UPLOAD_IMAGE_MAX_SIZE,
+  rawMaxSize: +process.env.UPLOAD_RAW_MAX_SIZE,
+  videoMaxSize: +process.env.UPLOAD_VIDEO_MAX_SIZE,
+  audioMaxSize: +process.env.UPLOAD_AUDIO_MAX_SIZE,
+
+  imageMaxFiles: +process.env.UPLOAD_IMAGE_MAX_FILE,
+  rawMaxFiles: +process.env.UPLOAD_RAW_MAX_FILE,
+  videoMaxFiles: +process.env.UPLOAD_VIDEO_MAX_FILE,
+  audioMaxFiles: +process.env.UPLOAD_AUDIO_MAX_FILE,
+
+  imagesExt: process.env.UPLOAD_IMAGE_EXT,
+  rawExt: process.env.UPLOAD_RAW_EXT,
+  videoExt: process.env.UPLOAD_VIDEO_EXT,
+  audioExt: process.env.UPLOAD_AUDIO_EXT,
+}));
+
+const jwtEnv = registerAs(ConfigName.jwt, () => ({
+  secretKey: process.env.JWT_SECRET,
+  expiresIn: eval(process.env.JWT_EXPIRATION),
+  accessToken: {
+    expiresIn: eval(process.env.JWT_ACCESS_EXPIRATION),
+    secretKey: process.env.JWT_ACCESS_SECRET,
   },
-
-  [ConfigName.otp]: {
-    expiresIn: eval(env.OTP_EXPIRATION),
+  refreshToken: {
+    expiresIn: eval(process.env.JWT_REFRESH_EXPIRATION),
+    secretKey: process.env.JWT_REFRESH_SECRET,
   },
-
-  [ConfigName.upload]: {
-    imageMaxSize: +env.UPLOAD_IMAGE_MAX_SIZE,
-    rawMaxSize: +env.UPLOAD_RAW_MAX_SIZE,
-    videoMaxSize: +env.UPLOAD_VIDEO_MAX_SIZE,
-    audioMaxSize: +env.UPLOAD_AUDIO_MAX_SIZE,
-
-    imageMaxFiles: +env.UPLOAD_IMAGE_MAX_FILE,
-    rawMaxFiles: +env.UPLOAD_RAW_MAX_FILE,
-    videoMaxFiles: +env.UPLOAD_VIDEO_MAX_FILE,
-    audioMaxFiles: +env.UPLOAD_AUDIO_MAX_FILE,
-
-    imagesExt: env.UPLOAD_IMAGE_EXT,
-    rawExt: env.UPLOAD_RAW_EXT,
-    videoExt: env.UPLOAD_VIDEO_EXT,
-    audioExt: env.UPLOAD_AUDIO_EXT,
+  registerToken: {
+    expiresIn: eval(process.env.JWT_SIGNUP_EXPIRATION),
+    secretKey: process.env.JWT_SIGNUP_SECRET,
   },
-
-  [ConfigName.jwt]: {
-    secretKey: env.JWT_SECRET,
-    expiresIn: eval(env.JWT_EXPIRATION),
-    accessToken: {
-      expiresIn: eval(env.JWT_ACCESS_EXPIRATION),
-      secretKey: env.JWT_ACCESS_SECRET,
-    },
-    refreshToken: {
-      expiresIn: eval(env.JWT_REFRESH_EXPIRATION),
-      secretKey: env.JWT_REFRESH_SECRET,
-    },
-    registerToken: {
-      expiresIn: eval(env.JWT_SIGNUP_EXPIRATION),
-      secretKey: env.JWT_SIGNUP_SECRET,
-    },
-    resetPasswordToken: {
-      expiresIn: eval(env.JWT_RESET_PASSWORD_EXPIRATION),
-      secretKey: env.JWT_SECRET_RESET_PASSWORD,
-    },
+  resetPasswordToken: {
+    expiresIn: eval(process.env.JWT_RESET_PASSWORD_EXPIRATION),
+    secretKey: process.env.JWT_SECRET_RESET_PASSWORD,
   },
+}));
 
-  [ConfigName.mailer]: {
-    isGmailServer: env.MAIL_SERVER,
+const mailerEnv = registerAs(ConfigName.mailer, () => ({
+  isGmailServer: process.env.MAIL_SERVER,
 
-    transport: {
-      gmail: {
-        host: env.SMTP_GMAIL_HOST,
-        secure: false,
-        auth: {
-          user: env.SMTP_GMAIL_USERNAME,
-          pass: env.SMTP_GMAIL_PASSWORD,
-        },
-      },
-
-      sendgrid: {
-        host: env.SMTP_SENDGRID_HOST,
-        auth: {
-          user: env.SMTP_SENDGRID_USERNAME,
-          pass: env.SMTP_SENDGRID_PASSWORD,
-        },
+  transport: {
+    gmail: {
+      host: process.env.SMTP_GMAIL_HOST,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_GMAIL_USERNAME,
+        pass: process.env.SMTP_GMAIL_PASSWORD,
       },
     },
-    defaults: { from: env.EMAIL_FROM },
-    name: env.EMAIL_NAME,
-  },
-};
 
-export const configuration = () => environmentConfig;
+    sendgrid: {
+      host: process.env.SMTP_SENDGRID_HOST,
+      auth: {
+        user: process.env.SMTP_SENDGRID_USERNAME,
+        pass: process.env.SMTP_SENDGRID_PASSWORD,
+      },
+    },
+  },
+  defaults: { from: process.env.EMAIL_FROM },
+  name: process.env.EMAIL_NAME,
+}));
+
+export const configurations = [
+  appEnv,
+  databaseEnv,
+  cloudinaryEnv,
+  otpEnv,
+  uploadEnv,
+  jwtEnv,
+  mailerEnv,
+];

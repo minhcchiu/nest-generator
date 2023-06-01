@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { DatabaseModuleConfig } from '~config/database.module.config';
-import { configuration } from '~config/environment';
+import { configurations } from '~config/environment';
 import { AqpMiddleware } from '~middlewares/aqp.middleware';
 import { UserModule } from '~pre-built/1-users/user.module';
 import { EndpointModule } from '~pre-built/2-endpoints/endpoint.module';
@@ -34,7 +34,7 @@ import { OtpModule } from '~routes/pre-built/6-otp/otp.module';
 
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: configurations,
     }),
 
     CacheModule.register({
