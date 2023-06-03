@@ -35,4 +35,6 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Enviroment
 .env
+./ssh/.env
