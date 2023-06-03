@@ -8,7 +8,7 @@ export enum ConfigName {
   mailer = 'mailer',
 }
 
-export enum AppEnv {
+export enum NodeEnv {
   DEVELOPMENT = 'DEVELOPMENT',
   PRODUCTION = 'PRODUCTION',
 }

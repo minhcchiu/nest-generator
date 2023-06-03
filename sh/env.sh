@@ -1,7 +1,7 @@
 # Config app environment variable
 # DEVELOPMENT | PRODUCTION
 export APP_NAME=NestA
-export APP_ENV=DEVELOPMENT
+export NODE_ENV=DEVELOPMENT
 export APP_PORT=8888
 
 # CLIENT URL
