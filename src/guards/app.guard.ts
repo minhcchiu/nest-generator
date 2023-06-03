@@ -8,7 +8,6 @@ import { CacheService } from '~shared/cache/cache.service.';
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-
 interface IEndpoint {
   userRoles: Role[];
   isPublic: boolean;
