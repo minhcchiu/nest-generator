@@ -27,4 +27,4 @@ COPY --from=builder /home/app/dist ./dist
 COPY --from=builder /home/app/package.json .
 COPY --from=builder /home/app/.env .
 
-CMD [ "node", "dist/main" ]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
