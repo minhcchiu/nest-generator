@@ -1,26 +1,30 @@
-FROM node:20.0.0 as builder
+FROM node:20.0.0 as builder 
 
-ENV NODE_ENV build
+WORKDIR /usr/src/app 
 
-WORKDIR /home/node
+COPY package*.json ./
 
-COPY . /home/node
+RUN npm install && npm cache clean --force
 
-RUN npm install \
-    && npm run build \
-    && npm prune --production
+COPY . .
+ 
+RUN npm run build 
 
-# ---
 
-FROM node:20.0.0
+FROM node:20.0.0 as production 
 
-ENV NODE_ENV production
+ARG NODE_ENV=production
 
-USER node
-WORKDIR /home/node
+ENV NODE_ENV=${NODE_ENV}
 
-COPY --from=builder /home/node/package*.json /home/node/
-COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
-COPY --from=builder /home/node/dist/ /home/node/dist/
+WORKDIR /usr/src/app 
 
-CMD ["node", "dist/main.js"]
+COPY package*.json ./
+
+RUN npm install --omit=dev  && npm cache clean --force     
+
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/package.json .
+COPY --from=builder /usr/src/app/.env .
+
+CMD [ "node", "dist/main" ]
