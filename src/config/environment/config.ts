@@ -1,12 +1,8 @@
 import { registerAs } from '@nestjs/config';
 import { ConfigName } from './config.enum';
-import { IConfiguration } from './config.interface';
 
-const env = process.env;
-console.log({ env });
-
-const appEnv = registerAs(ConfigName.app, () => ({
-  appEnv: process.env.APP_ENV,
+const nodeEnv = registerAs(ConfigName.app, () => ({
+  nodeEnv: process.env.NODE_ENV,
   port: +process.env.APP_PORT,
   appUrl: process.env.APP_URL,
 }));
@@ -95,7 +91,7 @@ const mailerEnv = registerAs(ConfigName.mailer, () => ({
 }));
 
 export const configurations = [
-  appEnv,
+  nodeEnv,
   databaseEnv,
   cloudinaryEnv,
   otpEnv,

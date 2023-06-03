@@ -11,7 +11,7 @@ export interface IConfiguration {
 }
 
 export interface AppConfig {
-  appEnv: string;
+  nodeEnv: string;
   port: number;
   appUrl: string;
 }

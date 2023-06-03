@@ -14,7 +14,7 @@ import { CreateOtpDto } from './dto/create-otp.dto';
 import { OtpType } from './enums/otp-type';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { generateOTP } from '~helpers/generate-otp';
-import { AppConfig, AppEnv, ConfigName, OtpConfig } from '~config/environment';
+import { AppConfig, NodeEnv, ConfigName, OtpConfig } from '~config/environment';
 
 @Injectable()
 export class OtpService {
@@ -31,9 +31,9 @@ export class OtpService {
     if (credential.phone) await this._sendPhoneVerify(credential.phone, otpCode);
     if (credential.email) await this._sendEmailVerify(credential.email, otpCode);
 
-    const { appEnv } = this.configService.get<AppConfig>(ConfigName.app);
+    const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.app);
 
-    if (appEnv === AppEnv.DEVELOPMENT) return { otpCode, otpType };
+    if (nodeEnv === NodeEnv.DEVELOPMENT) return { otpCode, otpType };
 
     return { message: `OTP code has been successfully sent to the ${credential}.` };
   }
