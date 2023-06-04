@@ -2,39 +2,40 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { Role } from '~pre-built/1-users/enums/role.enum';
-
+import { ObjectId } from 'mongodb';
 import { MenuLevel } from '../enum/menu-level';
 
 export class CreateMenuDto {
+  @IsOptional()
+  @IsMongoId()
+  readonly parentId?: ObjectId;
+
   @IsNotEmpty()
   @IsString()
   readonly title: string;
 
-  @IsNotEmpty()
-  @IsString()
-  readonly url: string;
-
   @IsOptional()
   @IsString()
-  readonly icon: string;
+  readonly icon?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(MenuLevel)
   readonly level: MenuLevel;
 
-  @IsNotEmpty()
-  @IsNumber()
-  readonly position: number;
-
   @IsOptional()
   @IsString()
-  readonly link: string;
+  readonly url?: string;
+
+  @IsOptional()
+  @IsNumber()
+  readonly position?: number;
 
   @IsOptional()
   @IsBoolean()

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -11,23 +12,23 @@ import { MenuLevel } from './enum/menu-level';
   collection: 'menus',
 })
 export class Menu {
+  @Prop({ type: ObjectId })
+  readonly parentId?: ObjectId;
+
   @Prop({ type: String, default: '' })
   readonly title: string;
 
   @Prop({ type: String, default: '' })
-  readonly url: string;
-
-  @Prop({ type: String, default: '' })
-  readonly icon: string;
+  readonly icon?: string;
 
   @Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
   readonly level: MenuLevel;
 
-  @Prop({ type: Number, default: 0 })
-  readonly position: number;
-
   @Prop({ type: String, default: '' })
-  readonly link: string;
+  readonly url?: string;
+
+  @Prop({ type: Number, default: 0 })
+  readonly position?: number;
 
   @Prop({ type: Boolean, default: false })
   readonly isHorizontal: boolean;
