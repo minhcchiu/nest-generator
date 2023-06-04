@@ -11,6 +11,9 @@ import { HttpMethod } from '../enum/http-method';
   collection: 'endpoints',
 })
 export class Endpoint {
+  @Prop({ type: String, default: '#' })
+  readonly prefix: string;
+
   @Prop({ type: String, default: '' })
   readonly name: string;
 
@@ -19,9 +22,6 @@ export class Endpoint {
 
   @Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
   readonly method: HttpMethod;
-
-  @Prop({ type: Number, default: 1 })
-  readonly position: number;
 
   @Prop({ type: String, default: '' })
   readonly description?: string;

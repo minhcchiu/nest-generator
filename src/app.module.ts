@@ -23,6 +23,11 @@ import { LoggerModule } from './shared/logger/logger.module';
 import { MailModule } from './shared/mail/mail.module';
 import { SeedModule } from './shared/seed/seed.module';
 import { OtpModule } from '~routes/pre-built/6-otp/otp.module';
+import { UploadModule } from '~routes/1-upload/upload.module';
+import { ProvinceModule } from '~routes/pre-built/8-provinces/province.module';
+import { DistrictModule } from '~routes/pre-built/9-districts/district.module';
+import { WardModule } from '~routes/pre-built/10-wards/ward.module';
+import { EndpointGroupModule } from '~routes/pre-built/2-endpoint-groups/endpoint-group.module';
 
 @Module({
   imports: [
@@ -44,15 +49,20 @@ import { OtpModule } from '~routes/pre-built/6-otp/otp.module';
     DatabaseModuleConfig,
     SeedModule,
     LoggerModule,
+    MailModule,
 
     // routes
-    EndpointModule,
-    MailModule,
-    MenuModule,
     UserModule,
-    TokenModule,
+    EndpointGroupModule,
+    EndpointModule,
+    MenuModule,
     AuthModule,
+    TokenModule,
     OtpModule,
+    UploadModule,
+    ProvinceModule,
+    DistrictModule,
+    WardModule,
   ],
   controllers: [AppController],
   providers: [

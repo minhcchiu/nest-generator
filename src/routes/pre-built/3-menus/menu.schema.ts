@@ -19,6 +19,9 @@ export class Menu {
   readonly title: string;
 
   @Prop({ type: String, default: '' })
+  readonly prefix: string;
+
+  @Prop({ type: String, default: '' })
   readonly icon?: string;
 
   @Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
@@ -36,7 +39,7 @@ export class Menu {
   @Prop({ type: Boolean, default: true })
   readonly isShow: boolean;
 
-  @Prop({ type: String, enum: Role, default: Role.MANAGER })
+  @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
   readonly roles: Role[];
 }
 

@@ -7,9 +7,18 @@ import { Module } from '@nestjs/common';
 
 import { SeedController } from './seed.controller';
 import { SeedService } from './seed.service';
+import { MenuModule } from '~routes/pre-built/3-menus/menu.module';
+import { EndpointGroupModule } from '~routes/pre-built/2-endpoint-groups/endpoint-group.module';
 
 @Module({
-  imports: [EndpointModule, ProvinceModule, DistrictModule, WardModule],
+  imports: [
+    EndpointModule,
+    MenuModule,
+    EndpointGroupModule,
+    ProvinceModule,
+    DistrictModule,
+    WardModule,
+  ],
   controllers: [SeedController],
   providers: [SeedService],
 })

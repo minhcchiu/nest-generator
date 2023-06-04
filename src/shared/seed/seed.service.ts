@@ -7,6 +7,11 @@ import { Logger } from '~shared/logger/logger.service';
 import { existsSync, readFileSync } from '~utils/file.util';
 
 import { Injectable } from '@nestjs/common';
+import { HttpMethod } from '~routes/pre-built/2-endpoints/enum/http-method';
+import { MenuService } from '~routes/pre-built/3-menus/menu.service';
+import { Role } from '~routes/pre-built/1-users/enums/role.enum';
+import { removeTrailingSlash } from '~helpers/remove-trailing-slash';
+import { EndpointGroupService } from '~routes/pre-built/2-endpoint-groups/endpoint-group.service';
 
 @Injectable()
 export class SeedService {
@@ -14,7 +19,9 @@ export class SeedService {
     private provinceService: ProvinceService,
     private districtService: DistrictService,
     private wardService: WardService,
+    private endpointGroupService: EndpointGroupService,
     private endpointService: EndpointService,
+    private menuService: MenuService,
     private logger: Logger,
   ) {}
 
@@ -99,30 +106,117 @@ export class SeedService {
   }
 
   async seedEndpoints(routerStacks: any[]) {
-    const endpoints = routerStacks
-      .filter(({ route }) => route && route.path)
-      .map(({ route }) => ({
-        method: route.stack[0]?.method?.toUpperCase(),
-        path: route.path,
-      }))
-      .reduce((uniqueEndpoints, endpoint) => {
-        if (
-          !uniqueEndpoints.some((e) => e.method === endpoint.method && e.path === endpoint.path)
-        ) {
-          uniqueEndpoints.push(endpoint);
-        }
-        return uniqueEndpoints;
-      }, []);
+    const endpointGroupsMap = new Map<string, { prefix: string; position: number }>();
+    const endpointsMap = new Map<string, { method: HttpMethod; path: string; prefix: string }>();
 
-    const results = await Promise.all(
-      endpoints.map((endpoint) =>
-        this.endpointService.updateOne(endpoint, endpoint, { upsert: true }),
-      ),
-    );
+    await this._deleteEndpoints();
+
+    routerStacks
+      .filter(({ route }) => route && route.path)
+      .forEach(({ route }) => {
+        const endpointItem = {
+          method: route.stack[0]?.method?.toUpperCase(),
+          path: removeTrailingSlash(route.path),
+          prefix: '#',
+        };
+        const prefix = endpointItem.path.split('/')[2] || '#';
+        const endpointKey = `${endpointItem.method}-${endpointItem.path}`;
+
+        endpointItem.prefix = prefix;
+
+        if (!endpointGroupsMap.has(prefix))
+          endpointGroupsMap.set(prefix, { prefix, position: endpointGroupsMap.size + 1 });
+
+        if (!endpointsMap.has(endpointKey)) endpointsMap.set(endpointKey, endpointItem);
+      });
+
+    await this._createEndpointGroupsAndMenusFromMap(endpointGroupsMap);
+    await this._createEndpointsFromMap(endpointsMap);
 
     this.logger.log(
       `${SeedService.name}`,
-      `Successfully seeded ${results.length} unique endpoints to the database.`,
+      `Total endpoints/groups: '${endpointsMap.size}/${endpointGroupsMap.size}' `,
     );
+
+    endpointGroupsMap.clear();
+    endpointsMap.clear();
+  }
+
+  private async _createEndpointsFromMap(
+    endpointsMap: Map<
+      string,
+      {
+        method: HttpMethod;
+        path: string;
+        prefix: string;
+      }
+    >,
+  ) {
+    endpointsMap.forEach(async (endpoint) => {
+      const endpointExist = await this.endpointService.count({
+        path: endpoint.path,
+        method: endpoint.method,
+      });
+
+      if (!endpointExist) {
+        const endpointDoc = await this.endpointService.create(endpoint);
+
+        await this.endpointGroupService.updateOne(
+          { prefix: endpointDoc.prefix },
+          { $addToSet: { endpoints: endpointDoc._id } },
+        );
+      }
+    });
+  }
+
+  private async _createEndpointGroupsAndMenusFromMap(
+    endpointGroupsMap: Map<
+      string,
+      {
+        prefix: string;
+        position: number;
+      }
+    >,
+  ) {
+    endpointGroupsMap.forEach(async ({ prefix, position }) => {
+      const [endpointGroupExist, menuExist] = await Promise.all([
+        this.endpointGroupService.count({ prefix }),
+        this.menuService.count({ prefix }),
+      ]);
+
+      const endpointGroupItem = {
+        prefix,
+        position,
+        title: prefix,
+        roles: [Role.SUPER_ADMIN],
+      };
+
+      const menuItem = {
+        prefix,
+        position,
+        title: prefix,
+        level: 1,
+        url: `${prefix}`,
+        isHorizontal: false,
+        isShow: true,
+        roles: [Role.SUPER_ADMIN],
+      };
+
+      if (!endpointGroupExist) {
+        await this.endpointGroupService.create(endpointGroupItem);
+      }
+
+      if (!menuExist) {
+        await this.menuService.create(menuItem);
+      }
+    });
+  }
+
+  private async _deleteEndpoints() {
+    await Promise.all([
+      this.endpointGroupService.deleteMany({}),
+      this.menuService.deleteMany({}),
+      this.endpointService.deleteMany({}),
+    ]);
   }
 }
