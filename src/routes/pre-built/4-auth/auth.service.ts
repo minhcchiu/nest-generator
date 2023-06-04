@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { UserService } from '../1-users/user.service';
-import { LoginSocialDto } from './dto/login-social.dto';
+import { LoginWithSocialDto } from './dto/login-with-social.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { OtpService } from '../6-otp/otp.service';
@@ -27,8 +27,8 @@ export class AuthService {
     private readonly otpService: OtpService,
   ) {}
 
-  async login({ password, ...credentials }: LoginDto) {
-    const user = await this.userService.findOne(credentials, { projection: authSelect });
+  async login({ password, ...credential }: LoginDto) {
+    const user = await this.userService.findOne(credential, { projection: authSelect });
 
     if (!user) {
       throw new NotFoundException('User not found.');
@@ -59,8 +59,11 @@ export class AuthService {
     return { accessToken, refreshToken, user };
   }
 
-  async loginBySocial(data: LoginSocialDto) {
-    let user = await this.userService.findOne({ socialToken: data.socialToken });
+  async loginWithSocial(data: LoginWithSocialDto) {
+    let user = await this.userService.findOne({
+      socialID: data.socialID,
+      socialToken: data.socialToken,
+    });
 
     if (!user) user = await this.userService.create({ ...data, status: AccountStatus.ACTIVE });
 
@@ -80,6 +83,8 @@ export class AuthService {
   }
 
   async register(data: RegisterDto) {
+    await this.userService.validateCreateUser({ phone: data.phone, email: data.email });
+
     const { _id, role } = await this.userService.create(data);
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
