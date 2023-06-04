@@ -109,8 +109,6 @@ export class SeedService {
     const endpointGroupsMap = new Map<string, { prefix: string; position: number }>();
     const endpointsMap = new Map<string, { method: HttpMethod; path: string; prefix: string }>();
 
-    await this._deleteEndpoints();
-
     routerStacks
       .filter(({ route }) => route && route.path)
       .forEach(({ route }) => {
