@@ -23,6 +23,10 @@ export class CreateMenuDto {
 
   @IsOptional()
   @IsString()
+  readonly prefix: string;
+
+  @IsOptional()
+  @IsString()
   readonly icon?: string;
 
   @IsOptional()

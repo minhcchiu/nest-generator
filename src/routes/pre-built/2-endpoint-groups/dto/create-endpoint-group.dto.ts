@@ -1,29 +1,33 @@
-import { IsArray, IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import { ObjectId } from 'mongodb';
+import {
+  IsArray,
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Role } from '~pre-built/1-users/enums/role.enum';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { HttpMethod } from '../enum/http-method';
-
-export class CreateEndpointDto {
-  @ApiProperty({ required: false })
-  @IsOptional()
+export class CreateEndpointGroupDto {
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
   @IsString()
   readonly prefix: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  readonly name: string;
+  readonly title: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
-  readonly path: string;
-
-  @ApiProperty({ required: false })
-  @IsEnum(HttpMethod)
-  readonly method: HttpMethod;
+  @IsArray()
+  @IsMongoId({ each: true })
+  readonly endpoints: ObjectId[];
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -37,9 +41,10 @@ export class CreateEndpointDto {
   })
   @IsArray()
   @IsEnum(Role, { each: true })
-  readonly userRoles: Role[];
+  readonly roles: Role[];
 
+  @ApiProperty({ required: false })
   @IsOptional()
-  @IsBoolean()
-  readonly isPublic: boolean;
+  @IsNumber()
+  readonly position: number;
 }

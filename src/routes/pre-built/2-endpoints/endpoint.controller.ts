@@ -11,11 +11,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
 import { UpdateEndpointDto } from './dto/update-endpoint.dto';
 import { EndpointService } from './endpoint.service';
+import { EndpointGroupService } from '../2-endpoint-groups/endpoint-group.service';
 
 @ApiTags('Endpoints')
 @Controller('endpoints')
 export class EndpointController {
-  constructor(private readonly endpointService: EndpointService) {}
+  constructor(
+    private readonly endpointService: EndpointService,
+    private readonly endpointGroupService: EndpointGroupService,
+  ) {}
 
   @ApiQueryParams()
   @Get('')
@@ -66,6 +70,11 @@ export class EndpointController {
   @ApiParamId()
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
-    return this.endpointService.deleteById(id);
+    const [deleted] = await Promise.all([
+      this.endpointService.deleteById(id),
+      this.endpointGroupService.updateOne({ endpoints: id }, { $pull: { endpoints: id } }),
+    ]);
+
+    return deleted;
   }
 }
