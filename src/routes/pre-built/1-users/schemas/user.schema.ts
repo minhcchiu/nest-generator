@@ -26,6 +26,9 @@ export class User implements IUser {
   @Prop({ type: String, select: false })
   socialToken: string;
 
+  @Prop({ type: String, select: false })
+  socialID: string;
+
   @Prop({ type: String, enum: AccountType, default: AccountType.LOCAL })
   accountType: AccountType;
 

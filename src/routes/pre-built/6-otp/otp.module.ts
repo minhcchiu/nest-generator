@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailModule } from '~shared/mail/mail.module';
-import { UserModule } from '../1-users/user.module';
 import { OtpController } from './otp.controller';
 import { OtpService } from './otp.service';
 import { Otp, OtpSchema } from './schemas/otp.schema';

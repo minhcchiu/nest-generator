@@ -27,6 +27,8 @@ export class UserController {
   @HttpCode(201)
   @Post('')
   async create(@Body() body: CreateUserDto) {
+    await this.userService.validateCreateUser({ phone: body.phone, email: body.email });
+
     return this.userService.create(body);
   }
 
