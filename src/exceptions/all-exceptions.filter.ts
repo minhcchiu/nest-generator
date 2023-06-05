@@ -66,7 +66,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         break;
 
       case ExceptionType.CastError:
-        exceptionResponse.title = `Resource Not Found`;
+        exceptionResponse.title = `Cast Error`;
         exceptionResponse.statusCode = HttpStatus.NOT_FOUND;
         break;
       default:
