@@ -14,16 +14,16 @@ export class Endpoint {
   @Prop({ type: String, default: '#' })
   readonly prefix: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   readonly name: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   readonly path: string;
 
   @Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
   readonly method: HttpMethod;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   readonly description?: string;
 
   @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })

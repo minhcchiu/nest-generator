@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { Public } from '~decorators/public.decorator';
 import { AqpDto } from '~dto/aqp.dto';
@@ -29,7 +28,7 @@ export class ProvinceController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateProvinceDto) {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateProvinceDto) {
     return this.provinceService.updateById(id, body);
   }
 
@@ -41,7 +40,7 @@ export class ProvinceController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: string) {
     return this.provinceService.deleteById(id);
   }
 
@@ -60,7 +59,7 @@ export class ProvinceController {
   @Public()
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.provinceService.findById(id, { projection, populate });

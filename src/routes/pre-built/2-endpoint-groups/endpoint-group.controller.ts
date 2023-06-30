@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { ApiParamId } from '~decorators/api-param-id.swagger';
 import { ApiQueryParams } from '~decorators/aqp.swagger';
 import { GetAqp } from '~decorators/get-aqp.decorator';
@@ -37,7 +36,7 @@ export class EndpointGroupController {
   @ApiParamId()
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.endpointGroupService.findById(id, { projection, populate });
@@ -51,10 +50,7 @@ export class EndpointGroupController {
 
   @ApiParamId()
   @Patch(':id')
-  async update(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
-    @Body() body: UpdateEndpointGroupDto,
-  ) {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateEndpointGroupDto) {
     return this.endpointGroupService.updateById(id, body);
   }
 
@@ -68,7 +64,7 @@ export class EndpointGroupController {
 
   @ApiParamId()
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: string) {
     return this.endpointGroupService.deleteById(id);
   }
 }

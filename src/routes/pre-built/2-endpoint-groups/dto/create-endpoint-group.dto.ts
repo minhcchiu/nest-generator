@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import {
   IsArray,
   IsEnum,
@@ -27,7 +26,7 @@ export class CreateEndpointGroupDto {
   @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
-  readonly endpoints: ObjectId[];
+  readonly endpoints: string[];
 
   @ApiProperty({ required: false })
   @IsOptional()

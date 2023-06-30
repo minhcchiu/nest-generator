@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { Public } from '~decorators/public.decorator';
@@ -33,14 +32,14 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateUserDto) {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateUserDto) {
     await this.userService.validateCreateUser({ phone: body.phone, email: body.email });
 
     return this.userService.updateById(id, body);
   }
 
   @Patch('password')
-  async updatePassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
+  async updatePassword(@GetCurrentUserId() id: string, @Body() body: UpdatePasswordDto) {
     return this.userService.updatePasswordById(id, body);
   }
 
@@ -57,12 +56,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: string) {
     return this.userService.deleteById(id);
   }
 
   @Get('me')
-  async getMe(@GetCurrentUserId() id: ObjectId) {
+  async getMe(@GetCurrentUserId() id: string) {
     return this.userService.findById(id);
   }
 
@@ -75,7 +74,7 @@ export class UserController {
   @Public()
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.userService.findById(id, { projection, populate });

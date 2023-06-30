@@ -35,10 +35,10 @@ export class User implements IUser {
   @Prop({ type: String, minlength: 6, select: false })
   password: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   fullName: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   deviceID: string;
 
   @Prop({ type: Number, default: 0 })
@@ -53,7 +53,7 @@ export class User implements IUser {
   @Prop({ type: Boolean, default: false })
   deleted: boolean;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   avatar: string;
 
   @Prop({ type: String, enum: AccountStatus, default: AccountStatus.INACTIVE })

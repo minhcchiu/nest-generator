@@ -1,5 +1,4 @@
 import { HydratedDocument } from 'mongoose';
-import { ObjectId } from 'mongodb';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Role } from '~routes/pre-built/1-users/enums/role.enum';
@@ -13,16 +12,16 @@ export class EndpointGroup {
   @Prop({ type: String, required: true, index: true, unique: true })
   readonly prefix: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   readonly title: string;
 
   @Prop({
-    type: [{ type: ObjectId, ref: 'Endpoint' }],
+    type: [{ type: String, ref: 'Endpoint' }],
     default: [],
   })
-  readonly endpoints: ObjectId[];
+  readonly endpoints: string[];
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: null })
   readonly description?: string;
 
   @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })

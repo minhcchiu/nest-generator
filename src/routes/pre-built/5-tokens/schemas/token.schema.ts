@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -11,7 +10,7 @@ type TokenDocument = HydratedDocument<Token>;
   collection: 'tokens',
 })
 export class Token {
-  @Prop({ type: ObjectId, ref: 'User', index: 1 })
+  @Prop({ type: String, ref: 'User', index: 1 })
   user: string;
 
   @Prop({ type: String, required: true, index: 1 })

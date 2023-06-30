@@ -1,14 +1,13 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { ObjectId } from 'mongodb';
 
 export class CreateWardDto {
   @IsNotEmpty()
   @IsMongoId()
-  readonly idProvince: ObjectId;
+  readonly idProvince: string;
 
   @IsNotEmpty()
   @IsMongoId()
-  readonly idDistrict: ObjectId;
+  readonly idDistrict: string;
 
   @IsNotEmpty()
   @IsString()

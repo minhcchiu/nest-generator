@@ -28,6 +28,8 @@ import { ProvinceModule } from '~routes/pre-built/8-provinces/province.module';
 import { DistrictModule } from '~routes/pre-built/9-districts/district.module';
 import { WardModule } from '~routes/pre-built/10-wards/ward.module';
 import { EndpointGroupModule } from '~routes/pre-built/2-endpoint-groups/endpoint-group.module';
+import { PostModule } from '~routes/1-posts/post.module';
+import { CommentModule } from '~routes/2-comments/comment.module';
 
 @Module({
   imports: [
@@ -63,6 +65,10 @@ import { EndpointGroupModule } from '~routes/pre-built/2-endpoint-groups/endpoin
     ProvinceModule,
     DistrictModule,
     WardModule,
+
+    // features
+    PostModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

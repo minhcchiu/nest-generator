@@ -1,10 +1,6 @@
-import { ObjectId } from 'mongodb';
-import { Role } from '~pre-built/1-users/enums/role.enum';
+import { TokenPayload } from './token-payload.interface';
 
-export interface DecodedToken {
-  readonly _id: ObjectId;
-  readonly role: Role;
-
+export interface DecodedToken extends TokenPayload {
   iat: number;
   exp: number;
 }
