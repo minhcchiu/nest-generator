@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { AccountStatus } from '~pre-built/1-users/enums/account-status.enum';
 import { authSelect } from '~pre-built/1-users/select/auth.select';
 import { TokenService } from '~pre-built/5-tokens/token.service';
@@ -45,8 +44,10 @@ export class AuthService {
     }
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
-      _id: user._id,
+      _id: user._id.toString(),
       role: user.role,
+      fullName: user.fullName,
+      avatar: user.avatar,
     });
 
     await this.tokenService.updateOne(
@@ -68,8 +69,10 @@ export class AuthService {
     if (!user) user = await this.userService.create({ ...data, status: AccountStatus.ACTIVE });
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
-      _id: user._id,
+      _id: user._id.toString(),
       role: user.role,
+      avatar: user.avatar,
+      fullName: user.fullName,
     });
 
     await this.tokenService.updateOne(
@@ -85,11 +88,13 @@ export class AuthService {
   async register(data: RegisterDto) {
     await this.userService.validateCreateUser({ phone: data.phone, email: data.email });
 
-    const { _id, role } = await this.userService.create(data);
+    const { _id, role, avatar, fullName } = await this.userService.create(data);
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
-      _id: _id,
-      role: role,
+      _id: _id.toString(),
+      role,
+      avatar,
+      fullName,
     });
 
     await this.tokenService.updateOne(
@@ -131,11 +136,11 @@ export class AuthService {
     delete decoded.iat;
     delete decoded.exp;
 
-    decoded.status = AccountStatus.INACTIVE;
+    decoded.status = AccountStatus.ACTIVE;
     return this.register(decoded);
   }
 
-  async logout(userId: ObjectId) {
+  async logout(userId: string) {
     return this.tokenService.deleteOne({ user: userId });
   }
 
@@ -150,6 +155,8 @@ export class AuthService {
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
       _id: decoded._id,
       role: decoded.role,
+      fullName: decoded.fullName,
+      avatar: decoded.avatar,
     });
 
     await this.tokenService.updateById(tokenDoc._id, refreshToken);
@@ -169,8 +176,10 @@ export class AuthService {
     }
 
     const token = await this.tokenService.generateResetPasswordToken({
-      _id: user._id,
+      _id: user._id.toString(),
       role: user.role,
+      fullName: user.fullName,
+      avatar: user.avatar,
     });
 
     await this.tokenService.updateOne(
@@ -192,13 +201,15 @@ export class AuthService {
 
     if (!tokenDoc) throw new UnauthorizedException('Invalid token!');
 
-    const user = await this.userService.resetPassword(decoded._id, password, {
+    const user = await this.userService.resetPassword(decoded._id.toString(), password, {
       projection: authSelect,
     });
 
     const { accessToken, refreshToken } = await this.tokenService.generateAuthTokens({
-      _id: user._id,
+      _id: user._id.toString(),
       role: user.role,
+      fullName: user.fullName,
+      avatar: user.avatar,
     });
 
     await this.tokenService.updateOne(

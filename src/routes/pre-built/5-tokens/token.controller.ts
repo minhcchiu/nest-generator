@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { GetAqp } from '~decorators/get-aqp.decorator';
 import { Public } from '~decorators/public.decorator';
 import { AqpDto } from '~dto/aqp.dto';
@@ -28,7 +27,7 @@ export class TokenController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: string) {
     return this.tokenService.deleteById(id);
   }
 
@@ -47,7 +46,7 @@ export class TokenController {
   @Public()
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.tokenService.findById(id, { projection, populate });

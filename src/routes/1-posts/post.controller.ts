@@ -6,54 +6,55 @@ import { ParseObjectIdPipe } from '~utils/parse-object-id.pipe';
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { CreateWardDto } from './dto/create-ward.dto';
-import { UpdateWardDto } from './dto/update-ward.dto';
-import { WardService } from './ward.service';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PostService } from './post.service';
+import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 
-@ApiTags('Wards')
-@Controller('wards')
-export class WardController {
-  constructor(private readonly wardService: WardService) {}
+@ApiTags('Posts')
+@Controller('posts')
+export class PostController {
+  constructor(private readonly postService: PostService) {}
 
   @Public()
   @Get('')
   async find(@GetAqp() { filter, ...options }: AqpDto) {
-    return this.wardService.find(filter, options);
+    return this.postService.find(filter, options);
   }
 
   @HttpCode(201)
   @Post('')
-  async create(@Body() body: CreateWardDto) {
-    return this.wardService.create(body);
+  async create(@GetCurrentUserId() userId: string, @Body() body: CreatePostDto) {
+    return this.postService.create({ ...body, postedBy: userId });
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateWardDto) {
-    return this.wardService.updateById(id, body);
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdatePostDto) {
+    return this.postService.updateById(id, body);
   }
 
   @Delete(':ids/ids')
   async deleteManyByIds(@Param('ids') ids: string) {
-    return this.wardService.deleteMany({
+    return this.postService.deleteMany({
       _id: { $in: ids.split(',') },
     });
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.wardService.deleteById(id);
+    return this.postService.deleteById(id);
   }
 
   @Public()
   @Get('paginate')
   async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-    return this.wardService.paginate(filter, options);
+    return this.postService.paginate(filter, options);
   }
 
   @Public()
   @Get('count')
   async count(@GetAqp('filter') filter: AqpDto) {
-    return this.wardService.count(filter);
+    return this.postService.count(filter);
   }
 
   @Public()
@@ -62,6 +63,6 @@ export class WardController {
     @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
-    return this.wardService.findById(id, { projection, populate });
+    return this.postService.findById(id, { projection, populate });
   }
 }

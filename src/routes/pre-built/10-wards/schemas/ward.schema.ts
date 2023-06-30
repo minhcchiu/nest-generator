@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({
@@ -9,17 +7,17 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 })
 export class Ward {
   @Prop({
-    type: ObjectId,
+    type: String,
     ref: 'Province',
     required: true,
   })
-  readonly idProvince: ObjectId;
+  readonly idProvince: string;
 
   @Prop({
-    type: ObjectId,
+    type: String,
     ref: 'District',
   })
-  readonly idDistrict: ObjectId;
+  readonly idDistrict: string;
 
   @Prop({ type: String, required: true })
   readonly name: string;

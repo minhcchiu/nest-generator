@@ -9,13 +9,13 @@ import {
   IsString,
 } from 'class-validator';
 import { Role } from '~pre-built/1-users/enums/role.enum';
-import { ObjectId } from 'mongodb';
+
 import { MenuLevel } from '../enum/menu-level';
 
 export class CreateMenuDto {
   @IsOptional()
   @IsMongoId()
-  readonly parentId?: ObjectId;
+  readonly parentId?: string;
 
   @IsNotEmpty()
   @IsString()

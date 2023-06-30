@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { CloudinaryService } from '~shared/storage/cloudinary/cloudinary.service';
 import { LocalStorageService } from '~shared/storage/local-storage/local-storage.service';
 
@@ -22,7 +21,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToLocal({ file, resourceType }: SaveFileDto, owner: ObjectId) {
+  async saveFileToLocal({ file, resourceType }: SaveFileDto, owner: string) {
     // check file
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
@@ -45,7 +44,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToCloudinary({ file, resourceType }: SaveFileDto, owner: ObjectId) {
+  async saveFileToCloudinary({ file, resourceType }: SaveFileDto, owner: string) {
     const realpathOfFile = await this.uploadHelper.getRealpathOfFile(file);
 
     // upload file to cloudinary
@@ -66,7 +65,7 @@ export class UploadService {
    * @param owner
    * @returns
    */
-  async saveFileToS3({ file, resourceType }: SaveFileDto, owner: ObjectId) {
+  async saveFileToS3({ file, resourceType }: SaveFileDto, owner: string) {
     return { file, resourceType, owner };
   }
 }

@@ -50,7 +50,7 @@ export class AppGuard implements CanActivate {
 
       if (!this.isAccessAllowed(decoded.role, endpoint)) throw new UnauthorizedException();
 
-      request.user = { _id: decoded._id, role: decoded.role };
+      request.user = decoded;
 
       return true;
     } catch (error) {

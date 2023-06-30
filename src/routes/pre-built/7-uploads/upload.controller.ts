@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { AppConfig } from '~config/environment';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { StorageFileInterceptor, StorageFilesInterceptor } from '~shared/interceptors';
@@ -216,7 +215,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_file_to_local')
   async saveFileToLocal() {
-    // @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: ObjectId,
+    // @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: string,
     // file = file.replace(this.appUrl, '');
     // // const { files, folder } = await this.uploadService.saveFileToLocal(
     // //   { file, resourceType },
@@ -235,7 +234,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_files_to_local')
   async saveFilesToLocal(
-    @GetCurrentUserId() userId: ObjectId,
+    @GetCurrentUserId() userId: string,
     @Body() { files, resourceType }: SaveFilesDto,
   ) {
     const filesUploadedPromise = files.map((file) => {
@@ -263,7 +262,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_file_to_cloudinary')
   async saveFileToCloudinary(
-    @GetCurrentUserId() userId: ObjectId,
+    @GetCurrentUserId() userId: string,
     @Body() { file, resourceType }: SaveFileDto,
   ) {
     file = file.replace(this.appUrl, '');
@@ -283,7 +282,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_files_to_cloudinary')
   async saveToCloudinary(
-    @GetCurrentUserId() userId: ObjectId,
+    @GetCurrentUserId() userId: string,
     @Body() { files, resourceType }: SaveFilesDto,
   ) {
     const filesUploadedPromise = files.map((file) => {
@@ -307,7 +306,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_file_to_s3')
   async saveFileToS3(
-    @GetCurrentUserId() userId: ObjectId,
+    @GetCurrentUserId() userId: string,
     @Body() { file, resourceType }: SaveFileDto,
   ) {
     const files = await this.uploadService.saveFileToS3({ file, resourceType }, userId);
@@ -325,7 +324,7 @@ export class UploadController {
   @HttpCode(201)
   @Post('save_files_to_s3')
   async saveFilesToS3(
-    @GetCurrentUserId() userId: ObjectId,
+    @GetCurrentUserId() userId: string,
     @Body() { files, resourceType }: SaveFilesDto,
   ) {
     const filesUploadedPromise = files.map((file) =>
