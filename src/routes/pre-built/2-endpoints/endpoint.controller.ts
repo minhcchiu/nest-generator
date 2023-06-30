@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { ApiParamId } from '~decorators/api-param-id.swagger';
 import { ApiQueryParams } from '~decorators/aqp.swagger';
 import { GetAqp } from '~decorators/get-aqp.decorator';
@@ -41,7 +40,7 @@ export class EndpointController {
   @ApiParamId()
   @Get(':id')
   async findOneById(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: string,
     @GetAqp() { projection, populate }: AqpDto,
   ) {
     return this.endpointService.findById(id, { projection, populate });
@@ -55,7 +54,7 @@ export class EndpointController {
 
   @ApiParamId()
   @Patch(':id')
-  async update(@Param('id', ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateEndpointDto) {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateEndpointDto) {
     return this.endpointService.updateById(id, body);
   }
 
@@ -69,7 +68,7 @@ export class EndpointController {
 
   @ApiParamId()
   @Delete(':id')
-  async delete(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async delete(@Param('id', ParseObjectIdPipe) id: string) {
     const [deleted] = await Promise.all([
       this.endpointService.deleteById(id),
       this.endpointGroupService.updateOne({ endpoints: id }, { $pull: { endpoints: id } }),

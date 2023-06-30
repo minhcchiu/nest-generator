@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { GetCurrentUserId } from '~decorators/get-current-user-id.decorator';
 import { Public } from '~decorators/public.decorator';
 
@@ -59,7 +58,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@GetCurrentUserId() userId: ObjectId) {
+  async logout(@GetCurrentUserId() userId: string) {
     return this.authService.logout(userId);
   }
 

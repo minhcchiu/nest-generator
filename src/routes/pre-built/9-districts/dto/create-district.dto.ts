@@ -1,10 +1,9 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { ObjectId } from 'mongodb';
 
 export class CreateDistrictDto {
   @IsNotEmpty()
   @IsMongoId()
-  readonly idProvince: ObjectId;
+  readonly idProvince: string;
 
   @IsNotEmpty()
   @IsString()

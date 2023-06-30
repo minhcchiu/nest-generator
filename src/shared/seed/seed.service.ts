@@ -39,10 +39,10 @@ export class SeedService {
       this.logger.error(SeedService.name, `${jsonPath} was not found, cannot seed provinces`);
 
     //  Read data file
-    const dataString = readFileSync(jsonPath).toString().trim();
+    const datastring = readFileSync(jsonPath).toString().trim();
 
     // Convert data string to JSON
-    const { data } = JSON.parse(dataString);
+    const { data } = JSON.parse(datastring);
 
     // Delete all provinces,district, wards
     await Promise.all([
