@@ -1,5 +1,5 @@
 export enum AuthKeyType {
-  EMAIL = 'EMAIL',
-  PHONE = 'PHONE',
-  SOCIAL = 'SOCIAL',
+	EMAIL = "EMAIL",
+	PHONE = "PHONE",
+	SOCIAL = "SOCIAL",
 }

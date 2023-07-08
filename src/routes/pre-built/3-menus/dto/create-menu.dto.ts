@@ -1,56 +1,56 @@
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Role } from '~pre-built/1-users/enums/role.enum';
+	IsArray,
+	IsBoolean,
+	IsEnum,
+	IsMongoId,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from "class-validator";
+import { Role } from "~pre-built/1-users/enums/role.enum";
 
-import { MenuLevel } from '../enum/menu-level';
+import { MenuLevel } from "../enum/menu-level";
 
 export class CreateMenuDto {
-  @IsOptional()
-  @IsMongoId()
-  readonly parentId?: string;
+	@IsOptional()
+	@IsMongoId()
+	readonly parentId?: string;
 
-  @IsNotEmpty()
-  @IsString()
-  readonly title: string;
+	@IsNotEmpty()
+	@IsString()
+	readonly title: string;
 
-  @IsOptional()
-  @IsString()
-  readonly prefix: string;
+	@IsOptional()
+	@IsString()
+	readonly prefix: string;
 
-  @IsOptional()
-  @IsString()
-  readonly icon?: string;
+	@IsOptional()
+	@IsString()
+	readonly icon?: string;
 
-  @IsOptional()
-  @IsEnum(MenuLevel)
-  readonly level: MenuLevel;
+	@IsOptional()
+	@IsEnum(MenuLevel)
+	readonly level: MenuLevel;
 
-  @IsOptional()
-  @IsString()
-  readonly url?: string;
+	@IsOptional()
+	@IsString()
+	readonly url?: string;
 
-  @IsOptional()
-  @IsNumber()
-  readonly position?: number;
+	@IsOptional()
+	@IsNumber()
+	readonly position?: number;
 
-  @IsOptional()
-  @IsBoolean()
-  readonly isHorizontal: boolean;
+	@IsOptional()
+	@IsBoolean()
+	readonly isHorizontal: boolean;
 
-  @IsOptional()
-  @IsBoolean()
-  readonly isShow: boolean;
+	@IsOptional()
+	@IsBoolean()
+	readonly isShow: boolean;
 
-  @IsOptional()
-  @IsArray()
-  @IsEnum(Role, { each: true })
-  readonly role: Role[];
+	@IsOptional()
+	@IsArray()
+	@IsEnum(Role, { each: true })
+	readonly role: Role[];
 }

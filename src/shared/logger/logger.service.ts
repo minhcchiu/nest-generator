@@ -1,97 +1,107 @@
-import { ConsoleLogger, LoggerService, LogLevel } from '@nestjs/common';
+import { ConsoleLogger, LoggerService, LogLevel } from "@nestjs/common";
 
 export class Logger implements LoggerService {
-  constructor(private readonly logger?: ConsoleLogger) {
-    this.logger = new ConsoleLogger();
-    this.log('Logger', 'CustomLoggerModule init success');
-  }
+	constructor(private readonly logger?: ConsoleLogger) {
+		this.logger = new ConsoleLogger();
+		this.log("CustomLoggerModule init success", "Logger");
+	}
 
-  /**
-   * Log info
-   *
-   * @param context
-   * @param messages
-   */
-  log(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
+	/**
+	 * Log info
+	 *
+	 * @param context
+	 * @param messages
+	 */
+	log(messages: any, context?: string) {
+		const _names = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [messages];
 
-    const messageFinal = `${_names.join('\n')}`;
+		const messageFinal = `${_names.join("\n")}`;
 
-    this.logger.setContext(context);
-    this.logger.log(messageFinal);
-  }
+		this.logger.setContext(context);
+		this.logger.log(messageFinal);
+	}
 
-  /**
-   * Log error
-   *
-   * @param context
-   * @param messages
-   */
-  error(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
-    const messageFinal = `${_names.join('\n')}`;
+	/**
+	 * Log error
+	 *
+	 * @param context
+	 * @param messages
+	 */
+	error(messages: any, context?: string) {
+		const _names = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [messages];
+		const messageFinal = `${_names.join("\n")}`;
 
-    this.logger.setContext(context);
-    this.logger.error(messageFinal);
-  }
+		this.logger.setContext(context);
+		this.logger.error(messageFinal);
+	}
 
-  /**
-   * Log warning
-   *
-   * @param context
-   * @param messages
-   */
-  warn(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
-    const messageFinal = `${_names.join('\n')}`;
+	/**
+	 * Log warning
+	 *
+	 * @param context
+	 * @param messages
+	 */
+	warn(messages: any, context?: string) {
+		const _names = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [messages];
+		const messageFinal = `${_names.join("\n")}`;
 
-    this.logger.setContext(context);
-    this.logger.warn(messageFinal);
-  }
+		this.logger.setContext(context);
+		this.logger.warn(messageFinal);
+	}
 
-  /**
-   * Log debug
-   *
-   * @param context
-   * @param messages
-   */
-  debug(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
-    const messageFinal = `${_names.join('\n')}`;
+	/**
+	 * Log debug
+	 *
+	 * @param context
+	 * @param messages
+	 */
+	debug(messages: any, context?: string) {
+		const _names = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [messages];
+		const messageFinal = `${_names.join("\n")}`;
 
-    this.logger.setContext(context);
-    this.logger.debug(messageFinal);
-  }
+		this.logger.setContext(context);
+		this.logger.debug(messageFinal);
+	}
 
-  /**
-   * Log verbose
-   *
-   * @param context
-   * @param messages
-   */
-  verbose(context: string, ...messages: any[]) {
-    const _names = messages.map((item: any) => JSON.stringify(item, null, '\t'));
-    const messageFinal = `${_names.join('\n')}`;
+	/**
+	 * Log verbose
+	 *
+	 * @param context
+	 * @param messages
+	 */
+	verbose(messages: any, context?: string) {
+		const _names = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [messages];
+		const messageFinal = `${_names.join("\n")}`;
 
-    this.logger.setContext(context);
-    this.logger.verbose(messageFinal);
-  }
+		this.logger.setContext(context);
+		this.logger.verbose(messageFinal);
+	}
 
-  /**
-   * Set log levels
-   *
-   * @param levels
-   */
-  setLogLevels?(levels: LogLevel[]) {
-    this.logger.setLogLevels(levels);
-  }
+	/**
+	 * Set log levels
+	 *
+	 * @param levels
+	 */
+	setLogLevels?(levels: LogLevel[]) {
+		this.logger.setLogLevels(levels);
+	}
 
-  /**
-   * Set context
-   *
-   * @param context
-   */
-  setContext(context: string) {
-    this.logger.setContext(context);
-  }
+	/**
+	 * Set context
+	 *
+	 * @param context
+	 */
+	setContext(context: string) {
+		this.logger.setContext(context);
+	}
 }

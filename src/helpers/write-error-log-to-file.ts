@@ -1,14 +1,17 @@
-import { appendFile } from 'fs';
-import { join } from 'path';
-import { HttpExceptionResponse } from '~exceptions/http-exception-response.interface';
+import { appendFile } from "fs";
+import { join } from "path";
+import { HttpExceptionResponse } from "~exceptions/http-exception-response.interface";
 
-const errorFileName = 'error.log';
-const errorLogPath = join(__dirname, '../../', 'public', 'logs', errorFileName);
+const errorFileName = "error.log";
+const errorLogPath = join(__dirname, "../../", "public", "logs", errorFileName);
 
-export const writeErrorLogToFile = (exceptionResponse: HttpExceptionResponse): void => {
-  const { statusCode, details, method, url, title, timeStamp, user } = exceptionResponse;
+export const writeErrorLogToFile = (
+	exceptionResponse: HttpExceptionResponse,
+): void => {
+	const { statusCode, details, method, url, title, timeStamp, user } =
+		exceptionResponse;
 
-  const errorLog = `
+	const errorLog = `
   ============== ${timeStamp} ===================
   {
     Title: "${title}"
@@ -19,7 +22,7 @@ export const writeErrorLogToFile = (exceptionResponse: HttpExceptionResponse): v
     User: "${user}"
   }\n`;
 
-  appendFile(errorLogPath, errorLog, 'utf8', (err) => {
-    if (err) throw err;
-  });
+	appendFile(errorLogPath, errorLog, "utf8", (err) => {
+		if (err) throw err;
+	});
 };

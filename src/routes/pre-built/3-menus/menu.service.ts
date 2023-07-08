@@ -1,14 +1,14 @@
-import { PaginateModel } from 'mongoose';
-import { BaseService } from '~base-inherit/base.service';
+import { PaginateModel } from "mongoose";
+import { BaseService } from "~base-inherit/base.service";
 
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 
-import { Menu } from './menu.schema';
+import { Menu } from "./menu.schema";
 
 @Injectable()
 export class MenuService extends BaseService<Menu> {
-  constructor(@InjectModel(Menu.name) model: PaginateModel<Menu>) {
-    super(model);
-  }
+	constructor(@InjectModel(Menu.name) model: PaginateModel<Menu>) {
+		super(model);
+	}
 }

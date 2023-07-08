@@ -1,14 +1,14 @@
-import { PaginateModel } from 'mongoose';
-import { BaseService } from '~base-inherit/base.service';
+import { PaginateModel } from "mongoose";
+import { BaseService } from "~base-inherit/base.service";
 
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 
-import { Endpoint } from './schemas/endpoint.schema';
+import { Endpoint } from "./schemas/endpoint.schema";
 
 @Injectable()
 export class EndpointService extends BaseService<Endpoint> {
-  constructor(@InjectModel(Endpoint.name) model: PaginateModel<Endpoint>) {
-    super(model);
-  }
+	constructor(@InjectModel(Endpoint.name) model: PaginateModel<Endpoint>) {
+		super(model);
+	}
 }
