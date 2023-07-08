@@ -1,17 +1,17 @@
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
 
 class PerformanceLogger {
-  private startTime: number;
+	private startTime: number;
 
-  start(): void {
-    this.startTime = performance.now();
-  }
+	start(): void {
+		this.startTime = performance.now();
+	}
 
-  end(): void {
-    const duration = performance.now() - this.startTime;
+	end(): void {
+		const duration = performance.now() - this.startTime;
 
-    console.log(`Performance duration: ${duration}ms`);
-  }
+		console.log(`Performance duration: ${duration}ms`);
+	}
 }
 
 const performanceLogger = new PerformanceLogger();

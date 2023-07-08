@@ -1,26 +1,26 @@
 import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  Length,
-  MaxLength,
-  MinLength,
-  ValidateIf,
-} from 'class-validator';
+	IsEmail,
+	IsNotEmpty,
+	IsString,
+	Length,
+	MaxLength,
+	MinLength,
+	ValidateIf,
+} from "class-validator";
 
 export class LoginDto {
-  @ValidateIf((o) => !o.phone)
-  @IsEmail()
-  readonly email?: string;
+	@ValidateIf((o) => !o.phone)
+	@IsEmail()
+	readonly email?: string;
 
-  @ValidateIf((o) => !o.email)
-  @IsString()
-  @MinLength(8)
-  @MaxLength(15)
-  readonly phone?: string;
+	@ValidateIf((o) => !o.email)
+	@IsString()
+	@MinLength(8)
+	@MaxLength(15)
+	readonly phone?: string;
 
-  @IsNotEmpty()
-  @Length(6, 50)
-  @IsString()
-  readonly password: string;
+	@IsNotEmpty()
+	@Length(6, 50)
+	@IsString()
+	readonly password: string;
 }

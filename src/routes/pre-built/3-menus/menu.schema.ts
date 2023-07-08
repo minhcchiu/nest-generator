@@ -1,45 +1,45 @@
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from "mongoose";
 
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { Role } from '../1-users/enums/role.enum';
-import { MenuLevel } from './enum/menu-level';
+import { Role } from "../1-users/enums/role.enum";
+import { MenuLevel } from "./enum/menu-level";
 
 @Schema({
-  timestamps: true,
-  versionKey: false,
-  collection: 'menus',
+	timestamps: true,
+	versionKey: false,
+	collection: "menus",
 })
 export class Menu {
-  @Prop({ type: String })
-  readonly parentId?: string;
+	@Prop({ type: String })
+	readonly parentId?: string;
 
-  @Prop({ type: String, default: null })
-  readonly title: string;
+	@Prop({ type: String, default: null })
+	readonly title: string;
 
-  @Prop({ type: String, default: null })
-  readonly prefix: string;
+	@Prop({ type: String, default: null })
+	readonly prefix: string;
 
-  @Prop({ type: String, default: null })
-  readonly icon?: string;
+	@Prop({ type: String, default: null })
+	readonly icon?: string;
 
-  @Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
-  readonly level: MenuLevel;
+	@Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
+	readonly level: MenuLevel;
 
-  @Prop({ type: String, default: null })
-  readonly url?: string;
+	@Prop({ type: String, default: null })
+	readonly url?: string;
 
-  @Prop({ type: Number, default: 0 })
-  readonly position?: number;
+	@Prop({ type: Number, default: 0 })
+	readonly position?: number;
 
-  @Prop({ type: Boolean, default: false })
-  readonly isHorizontal: boolean;
+	@Prop({ type: Boolean, default: false })
+	readonly isHorizontal: boolean;
 
-  @Prop({ type: Boolean, default: true })
-  readonly isShow: boolean;
+	@Prop({ type: Boolean, default: true })
+	readonly isShow: boolean;
 
-  @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
-  readonly roles: Role[];
+	@Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
+	readonly roles: Role[];
 }
 
 export type MenuDocument = HydratedDocument<Menu>;

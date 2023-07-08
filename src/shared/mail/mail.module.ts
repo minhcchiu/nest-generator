@@ -1,46 +1,48 @@
-import { join } from 'path';
-import { ConfigName, MailerConfig } from '~config/environment';
+import { join } from "path";
+import { ConfigName, MailerConfig } from "~config/environment";
 
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Logger, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { MailerModule } from "@nestjs-modules/mailer";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { Logger, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
-import { MailService } from './mail.service';
+import { MailService } from "./mail.service";
 
 @Module({
-  imports: [
-    MailerModule.forRootAsync({
-      useFactory: async (config: ConfigService) => {
-        const { transport, defaults, isGmailServer } = config.get<MailerConfig>(
-          ConfigName.mailer,
-        );
+	imports: [
+		MailerModule.forRootAsync({
+			useFactory: async (config: ConfigService) => {
+				const { transport, defaults, isGmailServer } = config.get<MailerConfig>(
+					ConfigName.mailer,
+				);
 
-        // Message log for test
-        const msgLog = isGmailServer ? 'MailerModule GMAIL init' : 'MailerModule SENDGRID init';
+				// Message log for test
+				const msgLog = isGmailServer
+					? "MailerModule GMAIL init"
+					: "MailerModule SENDGRID init";
 
-        // Log
-        Logger.log(`${msgLog}`, 'MailModule');
+				// Log
+				Logger.log(`${msgLog}`, "MailModule");
 
-        // return options
-        return {
-          transport: isGmailServer ? transport.gmail : transport.sendgrid,
-          defaults: defaults,
+				// return options
+				return {
+					transport: isGmailServer ? transport.gmail : transport.sendgrid,
+					defaults: defaults,
 
-          template: {
-            dir: join(__dirname, 'templates'),
+					template: {
+						dir: join(__dirname, "templates"),
 
-            adapter: new HandlebarsAdapter(),
+						adapter: new HandlebarsAdapter(),
 
-            options: { strict: true },
-          },
-        };
-      },
+						options: { strict: true },
+					},
+				};
+			},
 
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [MailService],
-  exports: [MailService],
+			inject: [ConfigService],
+		}),
+	],
+	providers: [MailService],
+	exports: [MailService],
 })
 export class MailModule {}

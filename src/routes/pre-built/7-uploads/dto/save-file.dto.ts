@@ -1,13 +1,13 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from "class-validator";
 
-import { ResourceTypeEnum } from '../enum/resource-type.enum';
+import { ResourceTypeEnum } from "../enum/resource-type.enum";
 
 export class SaveFileDto {
-  @IsNotEmpty()
-  @IsString()
-  file: string;
+	@IsNotEmpty()
+	@IsString()
+	file: string;
 
-  @IsNotEmpty()
-  @IsString()
-  resourceType: ResourceTypeEnum;
+	@IsNotEmpty()
+	@IsString()
+	resourceType: ResourceTypeEnum;
 }

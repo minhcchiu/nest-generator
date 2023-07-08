@@ -1,14 +1,14 @@
-import { PaginateModel } from 'mongoose';
-import { BaseService } from '~base-inherit/base.service';
+import { PaginateModel } from "mongoose";
+import { BaseService } from "~base-inherit/base.service";
 
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 
-import { Ward, WardDocument } from './schemas/ward.schema';
+import { Ward, WardDocument } from "./schemas/ward.schema";
 
 @Injectable()
 export class WardService extends BaseService<WardDocument> {
-  constructor(@InjectModel(Ward.name) model: PaginateModel<WardDocument>) {
-    super(model);
-  }
+	constructor(@InjectModel(Ward.name) model: PaginateModel<WardDocument>) {
+		super(model);
+	}
 }

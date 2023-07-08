@@ -1,36 +1,36 @@
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from "mongoose";
 
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { Role } from '../../1-users/enums/role.enum';
-import { HttpMethod } from '../enum/http-method';
+import { Role } from "../../1-users/enums/role.enum";
+import { HttpMethod } from "../enum/http-method";
 
 @Schema({
-  timestamps: true,
-  versionKey: false,
-  collection: 'endpoints',
+	timestamps: true,
+	versionKey: false,
+	collection: "endpoints",
 })
 export class Endpoint {
-  @Prop({ type: String, default: '#' })
-  readonly prefix: string;
+	@Prop({ type: String, default: "#" })
+	readonly prefix: string;
 
-  @Prop({ type: String, default: null })
-  readonly name: string;
+	@Prop({ type: String, default: null })
+	readonly name: string;
 
-  @Prop({ type: String, default: null })
-  readonly path: string;
+	@Prop({ type: String, default: null })
+	readonly path: string;
 
-  @Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
-  readonly method: HttpMethod;
+	@Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
+	readonly method: HttpMethod;
 
-  @Prop({ type: String, default: null })
-  readonly description?: string;
+	@Prop({ type: String, default: null })
+	readonly description?: string;
 
-  @Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
-  readonly userRoles: Role[];
+	@Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
+	readonly userRoles: Role[];
 
-  @Prop({ type: Boolean, default: false })
-  readonly isPublic: boolean;
+	@Prop({ type: Boolean, default: false })
+	readonly isPublic: boolean;
 }
 
 type EndpointDocument = HydratedDocument<Endpoint>;

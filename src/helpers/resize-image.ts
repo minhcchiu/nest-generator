@@ -1,4 +1,4 @@
-import * as sharp from 'sharp';
+import * as sharp from "sharp";
 
 /**
  * resize iamge PNG
@@ -7,15 +7,19 @@ import * as sharp from 'sharp';
  * @param size
  * @returns
  */
-const resizePNG = async (filePath: string, filePathNew: string, size: number | null) => {
-  const quality = 80;
+const resizePNG = async (
+	filePath: string,
+	filePathNew: string,
+	size: number | null,
+) => {
+	const quality = 80;
 
-  const semiTransparentRedPng = await sharp(filePath)
-    .resize(size)
-    .png({ quality })
-    .toFile(`${filePathNew}`);
+	const semiTransparentRedPng = await sharp(filePath)
+		.resize(size)
+		.png({ quality })
+		.toFile(`${filePathNew}`);
 
-  return semiTransparentRedPng;
+	return semiTransparentRedPng;
 };
 
 /**
@@ -25,15 +29,19 @@ const resizePNG = async (filePath: string, filePathNew: string, size: number | n
  * @param size
  * @returns
  */
-const resizeJPG = async (filePath: string, filePathNew: string, size: number | null) => {
-  const quality = 80;
+const resizeJPG = async (
+	filePath: string,
+	filePathNew: string,
+	size: number | null,
+) => {
+	const quality = 80;
 
-  const semiTransparentRedJpg = await sharp(filePath)
-    .resize(size)
-    .jpeg({ quality })
-    .toFile(`${filePathNew}`);
+	const semiTransparentRedJpg = await sharp(filePath)
+		.resize(size)
+		.jpeg({ quality })
+		.toFile(`${filePathNew}`);
 
-  return semiTransparentRedJpg;
+	return semiTransparentRedJpg;
 };
 
 /**
@@ -43,10 +51,17 @@ const resizeJPG = async (filePath: string, filePathNew: string, size: number | n
  * @param size
  * @returns
  */
-const resizeGIF = async (filePath: string, filePathNew: string, size: number | null) => {
-  const semiTransparentRedPng = await sharp(filePath).resize(size).gif().toFile(`${filePathNew}`);
+const resizeGIF = async (
+	filePath: string,
+	filePathNew: string,
+	size: number | null,
+) => {
+	const semiTransparentRedPng = await sharp(filePath)
+		.resize(size)
+		.gif()
+		.toFile(`${filePathNew}`);
 
-  return semiTransparentRedPng;
+	return semiTransparentRedPng;
 };
 
 export { resizePNG, resizeJPG, resizeGIF };

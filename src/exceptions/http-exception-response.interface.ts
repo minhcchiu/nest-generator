@@ -1,21 +1,21 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from "@nestjs/common";
 
 export interface ErrorResponse {
-  details?: string[] | null;
+	details?: string[] | null;
 
-  statusCode: HttpStatus;
+	statusCode: HttpStatus;
 
-  title: string;
+	title: string;
 }
 
 export interface HttpExceptionResponse extends ErrorResponse {
-  url: string;
+	url: string;
 
-  method: string;
+	method: string;
 
-  timeStamp: Date;
+	timeStamp: Date;
 
-  user?: string;
+	user?: string;
 
-  stack?: any;
+	stack?: any;
 }

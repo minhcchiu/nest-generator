@@ -1,5 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
+import { PartialType } from "@nestjs/swagger";
 
-import { CreateEndpointGroupDto } from './create-endpoint-group.dto';
+import { CreateEndpointGroupDto } from "./create-endpoint-group.dto";
 
-export class UpdateEndpointGroupDto extends PartialType(CreateEndpointGroupDto) {}
+export class UpdateEndpointGroupDto extends PartialType(
+	CreateEndpointGroupDto,
+) {}

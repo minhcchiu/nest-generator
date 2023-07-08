@@ -1,3 +1,3 @@
-export * from './config.enum';
-export * from './config.interface';
-export * from './config';
+export * from "./config.enum";
+export * from "./config.interface";
+export * from "./config";
