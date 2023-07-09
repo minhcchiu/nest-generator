@@ -105,7 +105,13 @@
   },
   "lint-staged": {
     "**/*.{js,ts}": [
-      "yarn lint:fix"
+      "yarn lint:fix",
+      "commitlint --edit $1"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
