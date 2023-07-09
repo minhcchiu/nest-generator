@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Province } from "~routes/pre-built/8-provinces/schemas/province.schema";
 
 @Schema({
 	timestamps: true,
@@ -8,7 +9,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 export class District {
 	@Prop({
 		type: String,
-		ref: "Province",
+		ref: Province.name,
 		required: true,
 	})
 	readonly idProvince: string;

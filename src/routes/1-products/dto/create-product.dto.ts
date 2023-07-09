@@ -1,16 +1,6 @@
-import {
-	IsArray,
-	IsMongoId,
-	IsNotEmpty,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsArray, IsMongoId, IsOptional, IsString } from "class-validator";
 
-export class CreatePostDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	readonly postedBy: string;
-
+export class CreateProductDto {
 	@IsOptional()
 	@IsString()
 	readonly text: string;
