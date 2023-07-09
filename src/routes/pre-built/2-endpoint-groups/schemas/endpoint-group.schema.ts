@@ -2,6 +2,7 @@ import { HydratedDocument } from "mongoose";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Role } from "~routes/pre-built/1-users/enums/role.enum";
+import { Endpoint } from "~routes/pre-built/2-endpoints/schemas/endpoint.schema";
 
 @Schema({
 	timestamps: true,
@@ -16,7 +17,7 @@ export class EndpointGroup {
 	readonly title: string;
 
 	@Prop({
-		type: [{ type: String, ref: "Endpoint" }],
+		type: [{ type: String, ref: Endpoint.name }],
 		default: [],
 	})
 	readonly endpoints: string[];

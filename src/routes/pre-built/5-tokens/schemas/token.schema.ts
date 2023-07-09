@@ -1,6 +1,7 @@
 import { HydratedDocument } from "mongoose";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { User } from "~routes/pre-built/1-users/schemas/user.schema";
 
 type TokenDocument = HydratedDocument<Token>;
 
@@ -10,7 +11,7 @@ type TokenDocument = HydratedDocument<Token>;
 	collection: "tokens",
 })
 export class Token {
-	@Prop({ type: String, ref: "User", index: 1 })
+	@Prop({ type: String, ref: User.name, index: 1 })
 	user: string;
 
 	@Prop({ type: String, required: true, index: 1 })

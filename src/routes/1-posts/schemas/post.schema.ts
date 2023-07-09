@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { User } from "~routes/pre-built/1-users/schemas/user.schema";
 
 @Schema({
 	timestamps: true,
@@ -12,10 +13,10 @@ export class Post {
 	@Prop({ type: String, default: null })
 	readonly image: string;
 
-	@Prop({ type: String, ref: "User" })
-	readonly postedBy: string;
+	@Prop({ type: String, ref: User.name })
+	readonly postedBy: User;
 
-	@Prop({ type: [{ type: String, ref: "User" }], default: [] })
+	@Prop({ type: [{ type: String, ref: User.name }], default: [] })
 	readonly likes: string[];
 }
 

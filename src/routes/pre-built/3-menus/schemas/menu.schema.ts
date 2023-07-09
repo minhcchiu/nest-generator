@@ -1,9 +1,8 @@
 import { HydratedDocument } from "mongoose";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
-import { Role } from "../1-users/enums/role.enum";
-import { MenuLevel } from "./enum/menu-level";
+import { MenuLevel } from "../enum/menu-level";
+import { Role } from "~routes/pre-built/1-users/enums/role.enum";
 
 @Schema({
 	timestamps: true,
@@ -11,7 +10,7 @@ import { MenuLevel } from "./enum/menu-level";
 	collection: "menus",
 })
 export class Menu {
-	@Prop({ type: String })
+	@Prop({ type: String, ref: Menu.name })
 	readonly parentId?: string;
 
 	@Prop({ type: String, default: null })
