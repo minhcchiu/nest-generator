@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ProductType } from "../enums/product-type.enum";
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 import { User } from "~routes/pre-built/1-users/schemas/user.schema";
 
 @Schema({
@@ -30,9 +30,9 @@ export class Product {
 	@Prop({ type: String, ref: User.name })
 	readonly user: string;
 
-	@Prop({ type: mongoose.Schema.Types.Mixed, ref: "Shop" })
-	readonly attributes: string;
+	@Prop({ type: mongoose.Schema.Types.Mixed })
+	readonly attributes: Record<string, any>;
 }
 
-export type ProductDocument = Product & Document;
+export type ProductDocument = Product & HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);

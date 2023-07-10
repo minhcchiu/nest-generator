@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 import { Province } from "~routes/pre-built/8-provinces/schemas/province.schema";
 
 @Schema({
@@ -24,5 +25,5 @@ export class District {
 	readonly slug: string;
 }
 
-export type DistrictDocument = District & Document;
+export type DistrictDocument = District & HydratedDocument<District>;
 export const DistrictSchema = SchemaFactory.createForClass(District);

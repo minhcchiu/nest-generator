@@ -37,7 +37,7 @@ export class ProductController {
 		@GetCurrentUserId() userId: string,
 		@Body() body: CreateProductDto,
 	) {
-		return this.productService.create({ ...body, productedBy: userId });
+		return this.productService.create({ ...body, user: userId });
 	}
 
 	@Patch(":id")
@@ -78,6 +78,13 @@ export class ProductController {
 		@Param("id", ParseObjectIdPipe) id: string,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
-		return this.productService.findById(id, { projection, populate });
+		const product = await this.productService.findById(id, {
+			projection,
+			populate,
+		});
+
+		console.log(product);
+
+		return product;
 	}
 }

@@ -1,16 +1,39 @@
-import { IsArray, IsMongoId, IsOptional, IsString } from "class-validator";
+import {
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsObject,
+	IsOptional,
+	IsString,
+} from "class-validator";
+import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
-	@IsOptional()
+	@IsNotEmpty()
 	@IsString()
-	readonly text: string;
+	readonly name: string;
+
+	@IsNotEmpty()
+	@IsString()
+	readonly thumbnail: string;
 
 	@IsOptional()
 	@IsString()
-	readonly image: string;
+	readonly desc: string;
 
-	@IsOptional()
-	@IsArray()
-	@IsMongoId({ each: true })
-	readonly likes: string[];
+	@IsNotEmpty()
+	@IsNumber()
+	readonly price: number;
+
+	@IsNotEmpty()
+	@IsNumber()
+	readonly quantity: number;
+
+	@IsNotEmpty()
+	@IsString()
+	@IsEnum(ProductType)
+	readonly type: ProductType;
+
+	@IsObject()
+	readonly attributes: Record<string, any>;
 }

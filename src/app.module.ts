@@ -36,6 +36,7 @@ import { EndpointGroupModule } from "~routes/pre-built/2-endpoint-groups/endpoin
 import { PostModule } from "~routes/1-posts/post.module";
 import { CommentModule } from "~routes/2-comments/comment.module";
 import { SocketModule } from "~shared/socket/socket.module";
+import { ProductModule } from "~routes/1-products/product.module";
 
 @Module({
 	imports: [
@@ -74,6 +75,7 @@ import { SocketModule } from "~shared/socket/socket.module";
 		SocketModule,
 
 		// features
+		ProductModule,
 		PostModule,
 		CommentModule,
 	],
