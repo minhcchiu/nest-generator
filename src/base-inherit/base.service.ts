@@ -23,7 +23,7 @@ export class BaseService<T> {
 		return this.model.find(filter, options?.projection, options).lean();
 	}
 
-	findById(id: string | Types.ObjectId, options?: QueryOptions<T>) {
+	findById(id: string, options?: QueryOptions<T>) {
 		return this.model.findById(id, options?.projection, options).lean();
 	}
 
@@ -63,7 +63,7 @@ export class BaseService<T> {
 		return this.model.updateMany(filter, data, options);
 	}
 
-	deleteById(id: string | Types.ObjectId, options?: QueryOptions<T>) {
+	deleteById(id: string, options?: QueryOptions<T>) {
 		return this.model.findByIdAndDelete(id, options);
 	}
 

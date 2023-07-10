@@ -1,5 +1,5 @@
 import * as argon2 from "argon2";
-import { Document } from "mongoose";
+import { HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { OtpType } from "../enums/otp-type";
 
@@ -27,7 +27,7 @@ export class Otp {
 	compareOtpCode: (candidateOtpCode: string) => Promise<boolean>;
 }
 
-export type OtpDocument = Otp & Document;
+export type OtpDocument = Otp & HydratedDocument<Otp>;
 export const OtpSchema = SchemaFactory.createForClass(Otp);
 
 // create index expires

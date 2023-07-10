@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { AuthorDto } from "../dto/author.dto";
+import { HydratedDocument } from "mongoose";
 
 @Schema({
 	timestamps: true,
@@ -26,5 +27,5 @@ export class Comment {
 	readonly image: string;
 }
 
-export type CommentDocument = Comment & Document;
+export type CommentDocument = Comment & HydratedDocument<Comment>;
 export const CommentSchema = SchemaFactory.createForClass(Comment);

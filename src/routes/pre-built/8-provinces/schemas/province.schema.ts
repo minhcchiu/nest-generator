@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 @Schema({
 	timestamps: true,
@@ -16,5 +17,5 @@ export class Province {
 	readonly slug: string;
 }
 
-export type ProvinceDocument = Province & Document;
+export type ProvinceDocument = Province & HydratedDocument<Province>;
 export const ProvinceSchema = SchemaFactory.createForClass(Province);
