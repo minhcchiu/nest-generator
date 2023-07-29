@@ -9,4 +9,10 @@ export enum EVENTS {
 	renameChat = "RENAME_CHAT",
 	notificationReceived = "NOTIFICATION_RECEIVED",
 	error = "ERROR",
+	joinCallVideo = "JOIN_CALL_VIDEO",
+	leaveCallVideo = "LEAVE_CALL_VIDEO",
+	offerCallVideo = "OFFER_CALL_VIDEO",
+	answerCallVideo = "ANSWER_CALL_VIDEO",
+	iceCandidate = "ICE_CANDIDATE",
+	messageVideo = "MESSAGE_VIDEO",
 }
