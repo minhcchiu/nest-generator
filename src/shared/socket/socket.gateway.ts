@@ -104,15 +104,13 @@ export class SocketGateway
 	handleNewMessage(client: Socket, data: Message) {
 		// check members exist
 		if (!data.chat?.members) {
-			client.to(data.chat._id).emit(EVENTS.error, "Chat not found.");
-
+			client.emit(EVENTS.error, "Chat not found.");
 			return;
 		}
 
 		// send message to all members
 		data.chat.members.forEach(({ user }) => {
 			if (user._id === data.sender._id) return;
-
 			client.to(user._id).emit(EVENTS.messageReceived, data);
 		});
 	}
@@ -124,5 +122,29 @@ export class SocketGateway
 
 	onSocketInAPI(data: any) {
 		this.server.sockets.emit("send_message", data);
+	}
+
+	// Join call video
+	@SubscribeMessage(EVENTS.joinCallVideo)
+	handleJoinCallVideo(client: Socket, roomId: string) {
+		client.join(roomId);
+	}
+
+	// Handle offer call video
+	@SubscribeMessage(EVENTS.offerCallVideo)
+	handleOfferCallVideo(client: Socket, data: any) {
+		client.to(data.roomId).emit(EVENTS.offerCallVideo, data.offer);
+	}
+
+	// Handle answer call video
+	@SubscribeMessage(EVENTS.answerCallVideo)
+	handleAnswerCallVideo(client: Socket, data: any) {
+		client.to(data.roomId).emit(EVENTS.answerCallVideo, data.offer);
+	}
+
+	// Handle offer call video
+	@SubscribeMessage(EVENTS.iceCandidate)
+	handleIceCandidate(client: Socket, data: any) {
+		client.to(data.roomId).emit(EVENTS.iceCandidate, data.offer);
 	}
 }
