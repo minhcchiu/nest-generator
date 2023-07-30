@@ -20,9 +20,9 @@ export class TokenService extends BaseService<TokenDocument> {
 		super(model);
 	}
 
-	async generateToken(payload: any, secretKey: string, expiresIn: number) {
+	async generateToken(payload: any, secret: string, expiresIn: number) {
 		const token = await this.jwtService.signAsync(payload, {
-			secret: secretKey,
+			secret,
 			expiresIn,
 		});
 		const expiresAt = Date.now() + expiresIn;
@@ -32,31 +32,44 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async generateAccessToken(payload: TokenPayload) {
 		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = accessToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			accessToken.secretKey,
+			accessToken.expiresIn,
+		);
 	}
 
 	async generateRefreshToken(payload: TokenPayload) {
 		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = refreshToken;
-		return this.generateToken(payload, secretKey, expiresIn);
+
+		return this.generateToken(
+			payload,
+			refreshToken.secretKey,
+			refreshToken.expiresIn,
+		);
 	}
 
 	async generateUserToken(payload: any) {
 		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = registerToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			registerToken.secretKey,
+			registerToken.expiresIn,
+		);
 	}
 
 	async generateResetPasswordToken(payload: TokenPayload) {
 		const { resetPasswordToken } = this.configService.get<JWTConfig>(
 			ConfigName.jwt,
 		);
-		const { secretKey, expiresIn } = resetPasswordToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			resetPasswordToken.secretKey,
+			resetPasswordToken.expiresIn,
+		);
 	}
 
 	async generateAuthTokens(payload: TokenPayload) {
@@ -78,16 +91,19 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async verifyAccessToken(token: string): Promise<DecodedToken> {
 		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, accessToken.secretKey);
 	}
 
 	async verifyRefreshToken(token: string): Promise<DecodedToken> {
 		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, refreshToken.secretKey);
 	}
 
 	async verifySignupToken(token: string) {
 		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, registerToken.secretKey);
 	}
 

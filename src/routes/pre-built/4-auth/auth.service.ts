@@ -1,7 +1,7 @@
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
-import { authSelect } from "~pre-built/1-users/select/auth.select";
 import { TokenService } from "~pre-built/5-tokens/token.service";
 import { MailService } from "~shared/mail/mail.service";
+import { authSelect } from "../1-users/select/auth.select";
 
 import {
 	BadRequestException,

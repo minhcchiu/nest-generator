@@ -10,4 +10,5 @@ export const authSelect = {
 	role: 1,
 	deleted: 1,
 	status: 1,
+	slug: 1,
 };
