@@ -1,7 +1,7 @@
 import { CreateUserDto } from "~pre-built/1-users/dto/create-user.dto";
 
 import { PartialType, PickType } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 
 export class LoginWithSocialDto extends PartialType(
 	PickType(CreateUserDto, [
@@ -20,4 +20,8 @@ export class LoginWithSocialDto extends PartialType(
 	@IsString()
 	@Length(10, 80)
 	socialID: string;
+
+	@IsOptional()
+	@IsString()
+	deviceID?: string;
 }

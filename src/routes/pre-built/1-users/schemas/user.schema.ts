@@ -41,8 +41,8 @@ export class User implements IUser {
 	@Prop({ type: String, slug: "fullName", index: true, unique: true })
 	slug: string;
 
-	@Prop({ type: String })
-	deviceID?: string;
+	@Prop({ type: [String] })
+	fcmTokens?: string[];
 
 	@Prop({ type: Number })
 	dateOfBirth?: number;

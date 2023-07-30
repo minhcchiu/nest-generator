@@ -1,6 +1,7 @@
 import {
 	IsEmail,
 	IsNotEmpty,
+	IsOptional,
 	IsString,
 	Length,
 	MaxLength,
@@ -23,4 +24,8 @@ export class LoginDto {
 	@Length(6, 50)
 	@IsString()
 	readonly password: string;
+
+	@IsOptional()
+	@IsString()
+	deviceID?: string;
 }
