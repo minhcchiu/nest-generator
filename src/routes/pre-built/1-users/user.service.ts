@@ -22,10 +22,6 @@ export class UserService extends BaseService<UserDocument> {
 		this.userModel = model;
 	}
 
-	async create(data: any) {
-		return this.userModel.create(data);
-	}
-
 	async validateCreateUser({
 		phone,
 		email,
@@ -77,15 +73,21 @@ export class UserService extends BaseService<UserDocument> {
 		id: string,
 		deviceID: string,
 	): Promise<UserDocument | null> {
-		const updateData = { deviceID, $addToSet: { fcmTokens: deviceID } };
-
-		return this.updateById(id, updateData);
+		return this.updateById(
+			id,
+			{ $addToSet: { fcmTokens: deviceID } },
+			{ projection: { _id: "1", fcmTokens: 1 } },
+		);
 	}
 
 	async removeDeviceID(id: string, deviceID: string) {
-		const updateData = { deviceID: "", $pull: { fcmTokens: deviceID } };
+		console.log({ id, deviceID });
 
-		return this.updateById(id, updateData);
+		return this.updateById(
+			id,
+			{ $pull: { fcmTokens: deviceID } },
+			{ projection: { _id: "1", fcmTokens: 1 } },
+		);
 	}
 
 	async comparePassword(hashPassword: string, plainPassword: string) {

@@ -5,14 +5,19 @@ cd src/routes/common/c6-files/ && perl-rename -v 's/file-manager/file'/g * && cd
 cd src/routes/common/c8-notifications/ && perl-rename -v 's/ward/notification'/g * && cd schemas/ &&  perl-rename -v 's/ward/notification'/g * && cd ../dto/ && perl-rename -v 's/ward/notification'/g * && cd ../../../../../
 # UPLOAD FILE
 
-# TODO: NEXT
+# TODO: 
+DONE
+# Add authorization
+# Update authorization
+# Implement send otp to phone
+
+NEXT
 # Template email
 # Delete uploaded file
 # Update crud file
-# Add authorization
-# Update authorization
 # Add block select fields in api query params
-# Add push fcm notification
 # Add upload to s3
-# Implement send otp to phone
 # Send mail by sendgrid account
+# Add push fcm notification
+# Write READ.ME
+# Convert using strategies RefreshToken

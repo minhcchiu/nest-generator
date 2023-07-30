@@ -1,7 +1,7 @@
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
-import { authSelect } from "~pre-built/1-users/select/auth.select";
 import { TokenService } from "~pre-built/5-tokens/token.service";
 import { MailService } from "~shared/mail/mail.service";
+import { authSelect } from "../1-users/select/auth.select";
 
 import {
 	BadRequestException,
@@ -26,7 +26,7 @@ export class AuthService {
 		private readonly otpService: OtpService,
 	) {}
 
-	async login({ password, ...credential }: LoginDto) {
+	async login({ password, deviceID, ...credential }: LoginDto) {
 		const user = await this.userService.findOne(credential, {
 			projection: authSelect,
 		});
@@ -48,29 +48,16 @@ export class AuthService {
 			throw new UnauthorizedException("Incorrect account!");
 		}
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: user._id.toString(),
-				role: user.role,
-				fullName: user.fullName,
-				avatar: user.avatar,
-			});
+		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
 
-		await this.tokenService.updateOne(
-			{ user: user._id },
-			{ user: user._id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
-	async loginWithSocial(data: LoginWithSocialDto) {
-		let user = await this.userService.findOne({
-			socialID: data.socialID,
-			socialToken: data.socialToken,
-		});
+	async loginWithSocial({ deviceID, ...data }: LoginWithSocialDto) {
+		let user = await this.userService.findOne(
+			{ socialID: data.socialID, socialToken: data.socialToken },
+			{ projection: authSelect },
+		);
 
 		if (!user)
 			user = await this.userService.create({
@@ -78,50 +65,22 @@ export class AuthService {
 				status: AccountStatus.ACTIVE,
 			});
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: user._id.toString(),
-				role: user.role,
-				avatar: user.avatar,
-				fullName: user.fullName,
-			});
+		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
 
-		await this.tokenService.updateOne(
-			{ user: user._id },
-			{ user: user._id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
-	async register(data: RegisterDto) {
+	async register({ deviceID, ...data }: RegisterDto) {
 		await this.userService.validateCreateUser({
 			phone: data.phone,
 			email: data.email,
 		});
 
-		const { _id, role, avatar, fullName } = await this.userService.create(data);
+		const user = await this.userService.create(data);
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: _id.toString(),
-				role,
-				avatar,
-				fullName,
-			});
+		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
 
-		await this.tokenService.updateOne(
-			{ user: _id },
-			{ user: _id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		const user = { ...data, _id, role };
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
 	async sendRegisterToken(data: RegisterDto) {
@@ -165,29 +124,30 @@ export class AuthService {
 		return this.register(decoded);
 	}
 
-	async logout(userId: string) {
-		return this.tokenService.deleteOne({ user: userId });
+	async logout(userId: string, deviceID?: string) {
+		Promise.all([
+			this.userService.removeDeviceID(userId, deviceID),
+			this.tokenService.deleteOne({ user: userId }),
+		]).then((res) => {
+			console.log({ res });
+		});
+
+		return { message: "Logout success!" };
 	}
 
 	async refreshToken(token: string) {
-		const [decoded, tokenDoc] = await Promise.all([
+		const [tokenDoc] = await Promise.all([
+			this.tokenService.findOne(
+				{ token },
+				{ populate: { path: "user", select: authSelect } },
+			),
 			this.tokenService.verifyRefreshToken(token),
-			this.tokenService.findOne({ token }),
 		]);
 
-		if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
+		if (tokenDoc && tokenDoc.user)
+			return this.tokenService.generateUserAuth(<any>tokenDoc.user);
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: decoded._id,
-				role: decoded.role,
-				fullName: decoded.fullName,
-				avatar: decoded.avatar,
-			});
-
-		await this.tokenService.updateById(tokenDoc._id, refreshToken);
-
-		return { accessToken, refreshToken };
+		throw new UnauthorizedException("Invalid token!");
 	}
 
 	async sendResetPasswordToken(email: string) {
@@ -248,7 +208,7 @@ export class AuthService {
 			});
 
 		await this.tokenService.updateOne(
-			{ user: user._id },
+			{ user: user._id, token: refreshToken.token },
 			{ user: user._id, ...refreshToken },
 			{ upsert: true },
 		);

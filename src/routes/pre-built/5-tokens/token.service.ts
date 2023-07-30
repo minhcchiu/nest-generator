@@ -1,4 +1,4 @@
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ConfigName, JWTConfig } from "~config/environment";
 
@@ -9,6 +9,7 @@ import { InjectModel } from "@nestjs/mongoose";
 
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
+import { User } from "../1-users/schemas/user.schema";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
@@ -20,9 +21,9 @@ export class TokenService extends BaseService<TokenDocument> {
 		super(model);
 	}
 
-	async generateToken(payload: any, secretKey: string, expiresIn: number) {
+	async generateToken(payload: any, secret: string, expiresIn: number) {
 		const token = await this.jwtService.signAsync(payload, {
-			secret: secretKey,
+			secret,
 			expiresIn,
 		});
 		const expiresAt = Date.now() + expiresIn;
@@ -32,31 +33,44 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async generateAccessToken(payload: TokenPayload) {
 		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = accessToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			accessToken.secretKey,
+			accessToken.expiresIn,
+		);
 	}
 
 	async generateRefreshToken(payload: TokenPayload) {
 		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = refreshToken;
-		return this.generateToken(payload, secretKey, expiresIn);
+
+		return this.generateToken(
+			payload,
+			refreshToken.secretKey,
+			refreshToken.expiresIn,
+		);
 	}
 
 	async generateUserToken(payload: any) {
 		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
-		const { secretKey, expiresIn } = registerToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			registerToken.secretKey,
+			registerToken.expiresIn,
+		);
 	}
 
 	async generateResetPasswordToken(payload: TokenPayload) {
 		const { resetPasswordToken } = this.configService.get<JWTConfig>(
 			ConfigName.jwt,
 		);
-		const { secretKey, expiresIn } = resetPasswordToken;
 
-		return this.generateToken(payload, secretKey, expiresIn);
+		return this.generateToken(
+			payload,
+			resetPasswordToken.secretKey,
+			resetPasswordToken.expiresIn,
+		);
 	}
 
 	async generateAuthTokens(payload: TokenPayload) {
@@ -78,16 +92,19 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async verifyAccessToken(token: string): Promise<DecodedToken> {
 		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, accessToken.secretKey);
 	}
 
 	async verifyRefreshToken(token: string): Promise<DecodedToken> {
 		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, refreshToken.secretKey);
 	}
 
 	async verifySignupToken(token: string) {
 		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
+
 		return this.verifyToken(token, registerToken.secretKey);
 	}
 
@@ -97,5 +114,35 @@ export class TokenService extends BaseService<TokenDocument> {
 		);
 
 		return this.verifyToken(token, resetPasswordToken.secretKey);
+	}
+
+	async generateUserAuth(
+		user: User & {
+			_id: Types.ObjectId;
+		},
+	) {
+		const payload = {
+			_id: user._id.toString(),
+			role: user.role,
+			email: user.email,
+			phone: user.phone,
+			fullName: user.fullName,
+			avatar: user.avatar,
+			gender: user.gender,
+			dateOfBirth: user.dateOfBirth,
+			status: user.status,
+		};
+
+		const { accessToken, refreshToken } = await this.generateAuthTokens(
+			payload,
+		);
+
+		await this.updateOne(
+			{ user: user._id },
+			{ user: user._id, ...refreshToken },
+			{ upsert: true },
+		);
+
+		return { accessToken, refreshToken, user: payload };
 	}
 }

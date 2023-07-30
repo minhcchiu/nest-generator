@@ -35,14 +35,17 @@ export class User implements IUser {
 	@Prop({ type: String, minlength: 6, select: false })
 	password: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, required: true })
 	fullName: string;
 
-	@Prop({ type: String, default: null })
-	deviceID: string;
+	@Prop({ type: String, slug: "fullName", index: true, unique: true })
+	slug: string;
 
-	@Prop({ type: Number, default: 0 })
-	dateOfBirth: number;
+	@Prop({ type: [String] })
+	fcmTokens?: string[];
+
+	@Prop({ type: Number })
+	dateOfBirth?: number;
 
 	@Prop({ type: String, enum: Gender, default: Gender.OTHER })
 	gender: Gender;
@@ -53,8 +56,8 @@ export class User implements IUser {
 	@Prop({ type: Boolean, default: false })
 	deleted: boolean;
 
-	@Prop({ type: String, default: null })
-	avatar: string;
+	@Prop({ type: String })
+	avatar?: string;
 
 	@Prop({ type: String, enum: AccountStatus, default: AccountStatus.INACTIVE })
 	status: AccountStatus;

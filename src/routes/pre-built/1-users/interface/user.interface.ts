@@ -7,7 +7,8 @@ export interface IUser {
 	socialToken: string;
 	phone?: string;
 	fullName: string;
-	gender: Gender;
-	dateOfBirth: number;
+	gender?: Gender;
+	dateOfBirth?: number;
 	role: Role;
+	slug: string;
 }
