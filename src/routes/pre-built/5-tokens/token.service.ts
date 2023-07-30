@@ -1,4 +1,4 @@
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ConfigName, JWTConfig } from "~config/environment";
 
@@ -9,6 +9,7 @@ import { InjectModel } from "@nestjs/mongoose";
 
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
+import { User } from "../1-users/schemas/user.schema";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
@@ -113,5 +114,35 @@ export class TokenService extends BaseService<TokenDocument> {
 		);
 
 		return this.verifyToken(token, resetPasswordToken.secretKey);
+	}
+
+	async generateUserAuth(
+		user: User & {
+			_id: Types.ObjectId;
+		},
+	) {
+		const payload = {
+			_id: user._id.toString(),
+			role: user.role,
+			email: user.email,
+			phone: user.phone,
+			fullName: user.fullName,
+			avatar: user.avatar,
+			gender: user.gender,
+			dateOfBirth: user.dateOfBirth,
+			status: user.status,
+		};
+
+		const { accessToken, refreshToken } = await this.generateAuthTokens(
+			payload,
+		);
+
+		await this.updateOne(
+			{ user: user._id },
+			{ user: user._id, ...refreshToken },
+			{ upsert: true },
+		);
+
+		return { accessToken, refreshToken, user: payload };
 	}
 }

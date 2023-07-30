@@ -22,10 +22,6 @@ export class UserService extends BaseService<UserDocument> {
 		this.userModel = model;
 	}
 
-	async create(data: any) {
-		return this.userModel.create(data);
-	}
-
 	async validateCreateUser({
 		phone,
 		email,

@@ -48,29 +48,14 @@ export class AuthService {
 			throw new UnauthorizedException("Incorrect account!");
 		}
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: user._id.toString(),
-				role: user.role,
-				fullName: user.fullName,
-				avatar: user.avatar,
-			});
-
-		await this.tokenService.updateOne(
-			{ user: user._id },
-			{ user: user._id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
 	async loginWithSocial(data: LoginWithSocialDto) {
-		let user = await this.userService.findOne({
-			socialID: data.socialID,
-			socialToken: data.socialToken,
-		});
+		let user = await this.userService.findOne(
+			{ socialID: data.socialID, socialToken: data.socialToken },
+			{ projection: authSelect },
+		);
 
 		if (!user)
 			user = await this.userService.create({
@@ -78,22 +63,7 @@ export class AuthService {
 				status: AccountStatus.ACTIVE,
 			});
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: user._id.toString(),
-				role: user.role,
-				avatar: user.avatar,
-				fullName: user.fullName,
-			});
-
-		await this.tokenService.updateOne(
-			{ user: user._id },
-			{ user: user._id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
 	async register(data: RegisterDto) {
@@ -102,26 +72,9 @@ export class AuthService {
 			email: data.email,
 		});
 
-		const { _id, role, avatar, fullName } = await this.userService.create(data);
+		const user = await this.userService.create(data);
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: _id.toString(),
-				role,
-				avatar,
-				fullName,
-			});
-
-		await this.tokenService.updateOne(
-			{ user: _id },
-			{ user: _id, ...refreshToken },
-			{ upsert: true },
-		);
-
-		const user = { ...data, _id, role };
-
-		delete user.password;
-		return { accessToken, refreshToken, user };
+		return this.tokenService.generateUserAuth(user);
 	}
 
 	async sendRegisterToken(data: RegisterDto) {
