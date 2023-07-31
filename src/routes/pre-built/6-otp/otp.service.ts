@@ -30,7 +30,7 @@ export class OtpService {
 		// send verify
 		if (credential.phone)
 			await this._sendPhoneVerify(credential.phone, otpCode);
-		if (credential.email)
+		else if (credential.email)
 			await this._sendEmailVerify(credential.email, otpCode);
 
 		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.app);

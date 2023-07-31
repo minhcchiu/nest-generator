@@ -17,6 +17,9 @@ type UserDocument = HydratedDocument<User>;
 	collection: "users",
 })
 export class User implements IUser {
+	@Prop({ type: String, index: true, unique: true })
+	username: string;
+
 	@Prop({ type: String })
 	email: string;
 
