@@ -16,6 +16,10 @@ import { Gender } from "../enums/gender.enum";
 import { Role } from "../enums/role.enum";
 
 export class CreateUserDto {
+	@ValidateIf((o) => !(o.phone && o.email))
+	@IsString()
+	username: string;
+
 	@ValidateIf((o) => !o.phone)
 	@IsEmail()
 	email: string;

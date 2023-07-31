@@ -12,6 +12,7 @@ export class RegisterDto extends PartialType(
 		"fullName",
 		"gender",
 		"avatar",
+		"username",
 	] as const),
 ) {
 	@IsOptional()

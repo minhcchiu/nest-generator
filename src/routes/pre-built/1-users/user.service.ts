@@ -25,9 +25,11 @@ export class UserService extends BaseService<UserDocument> {
 	async validateCreateUser({
 		phone,
 		email,
+		username,
 	}: {
 		phone?: string;
 		email?: string;
+		username?: string;
 	}) {
 		let isExistUser = false;
 
@@ -36,6 +38,10 @@ export class UserService extends BaseService<UserDocument> {
 		}
 
 		if (email && (await this.count({ email }))) {
+			isExistUser = true;
+		}
+
+		if (username && (await this.count({ username }))) {
 			isExistUser = true;
 		}
 
