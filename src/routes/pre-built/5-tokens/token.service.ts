@@ -24,9 +24,10 @@ export class TokenService extends BaseService<TokenDocument> {
 	async generateToken(payload: any, secret: string, expiresIn: number) {
 		const token = await this.jwtService.signAsync(payload, {
 			secret,
-			expiresIn,
+			expiresIn: `${expiresIn}m`,
 		});
-		const expiresAt = Date.now() + expiresIn;
+
+		const expiresAt = new Date().getTime() + expiresIn * 60 * 1000;
 
 		return { token, expiresAt };
 	}

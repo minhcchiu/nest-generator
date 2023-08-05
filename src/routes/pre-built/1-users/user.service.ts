@@ -87,8 +87,6 @@ export class UserService extends BaseService<UserDocument> {
 	}
 
 	async removeDeviceID(id: string, deviceID: string) {
-		console.log({ id, deviceID });
-
 		return this.updateById(
 			id,
 			{ $pull: { fcmTokens: deviceID } },

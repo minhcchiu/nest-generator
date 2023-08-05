@@ -38,7 +38,6 @@ export class AuthService {
 		if (user.deleted) {
 			throw new BadRequestException("The account has been removed.");
 		}
-
 		const isPasswordValid = await this.userService.comparePassword(
 			user.password,
 			password,
@@ -128,9 +127,7 @@ export class AuthService {
 		Promise.all([
 			this.userService.removeDeviceID(userId, deviceID),
 			this.tokenService.deleteOne({ user: userId }),
-		]).then((res) => {
-			console.log({ res });
-		});
+		]);
 
 		return { message: "Logout success!" };
 	}
@@ -144,10 +141,10 @@ export class AuthService {
 			this.tokenService.verifyRefreshToken(token),
 		]);
 
-		if (tokenDoc && tokenDoc.user)
-			return this.tokenService.generateUserAuth(<any>tokenDoc.user);
+		if (!tokenDoc?.user)
+			throw new UnauthorizedException("Invalid refresh token!");
 
-		throw new UnauthorizedException("Invalid token!");
+		return this.tokenService.generateUserAuth(<any>tokenDoc.user);
 	}
 
 	async sendResetPasswordToken(email: string) {
