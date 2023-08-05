@@ -1,7 +1,7 @@
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
 
-import { Body, Controller, HttpCode, Patch, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
 import { AuthService } from "./auth.service";
@@ -57,7 +57,7 @@ export class AuthController {
 		return this.authService.activateRegisterToken(token);
 	}
 
-	@Patch("logout")
+	@Post("logout")
 	async logout(
 		@GetCurrentUserId() userId: string,
 		@Body("deviceID") deviceID?: string,
