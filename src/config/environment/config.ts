@@ -59,9 +59,9 @@ const jwtEnv = registerAs(ConfigName.jwt, () => ({
 		expiresIn: eval(process.env.JWT_SIGNUP_EXPIRATION),
 		secretKey: process.env.JWT_SIGNUP_SECRET,
 	},
-	resetPasswordToken: {
+	forgotPasswordToken: {
 		expiresIn: eval(process.env.JWT_RESET_PASSWORD_EXPIRATION),
-		secretKey: process.env.JWT_SECRET_RESET_PASSWORD,
+		secretKey: process.env.JWT_SECRET_FORGOT_PASSWORD,
 	},
 }));
 
@@ -71,7 +71,8 @@ const mailerEnv = registerAs(ConfigName.mailer, () => ({
 	transport: {
 		gmail: {
 			host: process.env.SMTP_GMAIL_HOST,
-			secure: false,
+			secure: true,
+			port: 465,
 			auth: {
 				user: process.env.SMTP_GMAIL_USERNAME,
 				pass: process.env.SMTP_GMAIL_PASSWORD,
@@ -86,8 +87,8 @@ const mailerEnv = registerAs(ConfigName.mailer, () => ({
 			},
 		},
 	},
-	defaults: { from: process.env.EMAIL_FROM },
-	name: process.env.EMAIL_NAME,
+	defaults: { from: process.env.MAILER_FROM_EMAIL },
+	name: process.env.MAILER_NAME_NAME,
 }));
 
 export const configurations = [

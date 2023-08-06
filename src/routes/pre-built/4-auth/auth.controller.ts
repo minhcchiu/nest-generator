@@ -72,9 +72,9 @@ export class AuthController {
 	}
 
 	@Public()
-	@Post("send_reset_password_token")
-	async sendResetPasswordToken(@Body() { email }: EmailDto) {
-		return this.authService.sendResetPasswordToken(email);
+	@Post("forgot_password")
+	async sendForgotPassword(@Body() { email }: EmailDto) {
+		return this.authService.forgotPassword(email);
 	}
 
 	@Public()

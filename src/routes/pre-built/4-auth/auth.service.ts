@@ -89,13 +89,13 @@ export class AuthService {
 		});
 
 		const token = await this.tokenService.generateUserToken(data);
-		await this.mailService.sendRegisterToken(
-			token,
-			data.email,
-			"Register account.",
-		);
+		await this.mailService.sendRegisterToken(token, data.email);
 
-		return { message: "Send register account success!" };
+		return {
+			email: data.email,
+			phone: data.phone,
+			message: "Send register account success!",
+		};
 	}
 
 	async sendRegisterOtp(data: RegisterDto) {
@@ -147,7 +147,7 @@ export class AuthService {
 		return this.tokenService.generateUserAuth(<any>tokenDoc.user);
 	}
 
-	async sendResetPasswordToken(email: string) {
+	async forgotPassword(email: string) {
 		const user = await this.userService.findOne({ email });
 
 		if (!user) {
@@ -158,7 +158,7 @@ export class AuthService {
 			throw new BadRequestException("The account has been removed.");
 		}
 
-		const token = await this.tokenService.generateResetPasswordToken({
+		const token = await this.tokenService.generateForgotPasswordToken({
 			_id: user._id.toString(),
 			role: user.role,
 			fullName: user.fullName,
@@ -171,18 +171,14 @@ export class AuthService {
 			{ upsert: true },
 		);
 
-		await this.mailService.sendResetPasswordToken(
-			token,
-			email,
-			"Reset password.",
-		);
+		this.mailService.sendForgotPasswordToken(token, email);
 
 		return { email };
 	}
 
 	async resetPassword(token: string, password: string) {
 		const [decoded, tokenDoc] = await Promise.all([
-			this.tokenService.verifyResetPasswordToken(token),
+			this.tokenService.verifyForgotPasswordToken(token),
 			this.tokenService.deleteOne({ token }),
 		]);
 

@@ -1,7 +1,7 @@
 import { AppConfig, ConfigName, MailerConfig } from "~config/environment";
 import { Logger } from "~shared/logger/logger.service";
 
-import { MailerService } from "@nestjs-modules/mailer";
+import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -13,7 +13,7 @@ export class MailService {
 		private readonly logger: Logger,
 	) {}
 
-	sendMail(options: any) {
+	sendMail(options: ISendMailOptions) {
 		return this.mailerService.sendMail(options);
 	}
 
@@ -47,7 +47,6 @@ export class MailService {
 	async sendRegisterToken(
 		body: { token: string; expiresAt: number },
 		to: string,
-		subject: string,
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
@@ -61,7 +60,7 @@ export class MailService {
 		const options = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
 			to,
-			subject,
+			subject: "Register account.",
 			template: "./verify/verify.template.hbs",
 			context: { verificationLink, expiresAt },
 		};
@@ -76,10 +75,9 @@ export class MailService {
 		});
 	}
 
-	async sendResetPasswordToken(
+	async sendForgotPasswordToken(
 		body: { token: string; expiresAt: number },
 		to: string,
-		subject: string,
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
@@ -90,20 +88,21 @@ export class MailService {
 		const resetPasswordLink = `${appUrl}/auth/reset-password?token=${body.token}`;
 
 		// options
-		const options = {
-			from: from ?? `"${name} ⭐" <${defaults.from}>`,
+		const options: ISendMailOptions = {
 			to,
-			subject,
-			template: "./verify/reset-password.template.hbs",
+			subject: "Forgot Password - Reset Your Password",
+			template: "./verify/forgot-password.template.hbs",
 			context: { resetPasswordLink, expiresAt },
+			from: from ?? `"${name}" <${defaults.from}>`,
 		};
 
 		// Send
 		return this.sendMail(options).then((result) => {
 			this.logger.log(
 				MailService.name,
-				`Send a RESET_PASSWORD_TOKEN to email:"${to}" successfully!`,
+				`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" successfully!`,
 			);
+
 			return result;
 		});
 	}
