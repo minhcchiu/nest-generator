@@ -59,7 +59,8 @@ export interface MailerConfig {
 	transport: {
 		gmail: {
 			host: string;
-			secure: false;
+			secure: boolean;
+			port: number;
 			auth: {
 				user: string;
 				pass: string;
@@ -93,7 +94,7 @@ export interface JWTConfig {
 		expiresIn: number;
 		secretKey: string;
 	};
-	resetPasswordToken: {
+	forgotPasswordToken: {
 		expiresIn: number;
 		secretKey: string;
 	};

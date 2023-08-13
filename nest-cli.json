@@ -4,10 +4,9 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "lazy-modules/mail/templates/**/*",
+      "shared/mail/templates/**/*",
       "**/*.json"
     ],
     "watchAssets": true
   }
 }
-

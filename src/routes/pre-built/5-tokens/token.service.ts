@@ -62,15 +62,15 @@ export class TokenService extends BaseService<TokenDocument> {
 		);
 	}
 
-	async generateResetPasswordToken(payload: TokenPayload) {
-		const { resetPasswordToken } = this.configService.get<JWTConfig>(
+	async generateForgotPasswordToken(payload: TokenPayload) {
+		const { forgotPasswordToken } = this.configService.get<JWTConfig>(
 			ConfigName.jwt,
 		);
 
 		return this.generateToken(
 			payload,
-			resetPasswordToken.secretKey,
-			resetPasswordToken.expiresIn,
+			forgotPasswordToken.secretKey,
+			forgotPasswordToken.expiresIn,
 		);
 	}
 
@@ -109,12 +109,12 @@ export class TokenService extends BaseService<TokenDocument> {
 		return this.verifyToken(token, registerToken.secretKey);
 	}
 
-	async verifyResetPasswordToken(token: string): Promise<DecodedToken> {
-		const { resetPasswordToken } = this.configService.get<JWTConfig>(
+	async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
+		const { forgotPasswordToken } = this.configService.get<JWTConfig>(
 			ConfigName.jwt,
 		);
 
-		return this.verifyToken(token, resetPasswordToken.secretKey);
+		return this.verifyToken(token, forgotPasswordToken.secretKey);
 	}
 
 	async generateUserAuth(
