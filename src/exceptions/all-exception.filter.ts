@@ -81,6 +81,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		}
 
 		const prodErrorResponse = {
+			type: exception.name,
 			title: exceptionResponse.title,
 			details: exceptionResponse.details,
 		};
