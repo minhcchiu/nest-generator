@@ -88,8 +88,17 @@ export class AuthService {
 			phone: data.phone,
 		});
 
-		const token = await this.tokenService.generateUserToken(data);
-		await this.mailService.sendRegisterToken(token, data.email);
+		const { token, expiresAt } = await this.tokenService.generateUserToken(
+			data,
+		);
+		this.mailService.sendRegisterToken(
+			{
+				token,
+				expiresAt,
+				fullName: data.fullName,
+			},
+			data.email,
+		);
 
 		return {
 			email: data.email,
@@ -158,20 +167,24 @@ export class AuthService {
 			throw new BadRequestException("The account has been removed.");
 		}
 
-		const token = await this.tokenService.generateForgotPasswordToken({
-			_id: user._id.toString(),
-			role: user.role,
-			fullName: user.fullName,
-			avatar: user.avatar,
-		});
+		const { expiresAt, token } =
+			await this.tokenService.generateForgotPasswordToken({
+				_id: user._id.toString(),
+				role: user.role,
+				fullName: user.fullName,
+				avatar: user.avatar,
+			});
 
 		await this.tokenService.updateOne(
 			{ user: user._id },
-			{ user: user._id, ...token },
+			{ user: user._id, token, expiresAt },
 			{ upsert: true },
 		);
 
-		this.mailService.sendForgotPasswordToken(token, email);
+		this.mailService.sendForgotPasswordToken(
+			{ token, expiresAt, fullName: user.fullName },
+			email,
+		);
 
 		return { email };
 	}

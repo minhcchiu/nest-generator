@@ -1,14 +1,10 @@
-import {
-	AppConfig,
-	ConfigName,
-	MailerConfig,
-	UrlConfig,
-} from "~config/environment";
+import { ConfigName, MailerConfig, UrlConfig } from "~config/environment";
 import { Logger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import * as dayjs from "dayjs";
 
 @Injectable()
 export class MailService {
@@ -50,38 +46,49 @@ export class MailService {
 	}
 
 	async sendRegisterToken(
-		body: { token: string; expiresAt: number },
+		body: { token: string; expiresAt: number; fullName: string },
 		to: string,
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
 			ConfigName.mailer,
 		);
-		const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
-		const expiresAt = new Date(body.expiresAt);
-		const verificationLink = `${appUrl}/auth/verify-register-token?token=${body.token}`;
+		const { verifyAccountUrl } = this.configService.get<UrlConfig>(
+			ConfigName.urlConfig,
+		);
+
+		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
+
+		const verificationLink = `${verifyAccountUrl}?token=${body.token}`;
 
 		// options
 		const options = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
 			to,
 			subject: "Register account.",
-			template: "./verify/verify.template.hbs",
-			context: { verificationLink, expiresAt },
+			template: "./verify/account-register.template.hbs",
+			context: { verificationLink, expiresIn, fullName: body.fullName },
 		};
 
 		// Send
-		return this.sendMail(options).then((result) => {
-			this.logger.log(
-				MailService.name,
-				`Send a SIGNUP_TOKEN to email:"${to}" successfully!`,
-			);
-			return result;
-		});
+		return this.sendMail(options)
+			.then((result) => {
+				this.logger.log(
+					`Send a SIGNUP_TOKEN to email:"${to}" successfully!`,
+					MailService.name,
+				);
+				return result;
+			})
+			.catch((err) => {
+				this.logger.error(
+					[`Send a SIGNUP_TOKEN to email:"${to}" failure!`, err],
+					MailService.name,
+				);
+			});
 	}
 
 	async sendForgotPasswordToken(
-		body: { token: string; expiresAt: number },
+		body: { token: string; expiresAt: number; fullName: string },
 		to: string,
 		from?: string,
 	) {
@@ -91,26 +98,34 @@ export class MailService {
 		const { resetPasswordUrl } = this.configService.get<UrlConfig>(
 			ConfigName.urlConfig,
 		);
-		const expiresAt = new Date(body.expiresAt);
+
+		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
 		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;
 
 		// options
 		const options: ISendMailOptions = {
 			to,
 			subject: "Forgot Password - Reset Your Password",
-			template: "./verify/forgot-password.template.hbs",
-			context: { resetPasswordLink, expiresAt },
+			template: "./verify/password-reset.template.hbs",
+			context: { resetPasswordLink, expiresIn, fullName: body.fullName },
 			from: from ?? `"${name}" <${defaults.from}>`,
 		};
 
 		// Send
-		return this.sendMail(options).then((result) => {
-			this.logger.log(
-				MailService.name,
-				`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" successfully!`,
-			);
+		return this.sendMail(options)
+			.then((result) => {
+				this.logger.log(
+					`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" successfully!`,
+					MailService.name,
+				);
 
-			return result;
-		});
+				return result;
+			})
+			.catch((err) => {
+				this.logger.log(
+					[`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" failure!`, err],
+					MailService.name,
+				);
+			});
 	}
 }

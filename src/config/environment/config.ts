@@ -93,6 +93,7 @@ const mailerEnv = registerAs(ConfigName.mailer, () => ({
 
 const urlEnv = registerAs(ConfigName.urlConfig, () => ({
 	resetPasswordUrl: process.env.RESET_PASSWORD_URL,
+	verifyAccountUrl: process.env.VERIFY_ACCOUNT_URL,
 }));
 
 export const configurations = [

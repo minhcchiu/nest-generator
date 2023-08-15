@@ -102,4 +102,5 @@ export interface JWTConfig {
 
 export interface UrlConfig {
 	resetPasswordUrl: string;
+	verifyAccountUrl: string;
 }
