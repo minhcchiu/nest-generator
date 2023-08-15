@@ -91,6 +91,10 @@ const mailerEnv = registerAs(ConfigName.mailer, () => ({
 	name: process.env.MAILER_NAME_NAME,
 }));
 
+const urlEnv = registerAs(ConfigName.urlConfig, () => ({
+	resetPasswordUrl: process.env.RESET_PASSWORD_URL,
+}));
+
 export const configurations = [
 	nodeEnv,
 	databaseEnv,
@@ -99,4 +103,5 @@ export const configurations = [
 	uploadEnv,
 	jwtEnv,
 	mailerEnv,
+	urlEnv,
 ];

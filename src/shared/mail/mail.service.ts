@@ -1,4 +1,9 @@
-import { AppConfig, ConfigName, MailerConfig } from "~config/environment";
+import {
+	AppConfig,
+	ConfigName,
+	MailerConfig,
+	UrlConfig,
+} from "~config/environment";
 import { Logger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
@@ -83,9 +88,11 @@ export class MailService {
 		const { name, defaults } = this.configService.get<MailerConfig>(
 			ConfigName.mailer,
 		);
-		const { appUrl } = this.configService.get<AppConfig>(ConfigName.app);
+		const { resetPasswordUrl } = this.configService.get<UrlConfig>(
+			ConfigName.urlConfig,
+		);
 		const expiresAt = new Date(body.expiresAt);
-		const resetPasswordLink = `${appUrl}/auth/reset-password?token=${body.token}`;
+		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;
 
 		// options
 		const options: ISendMailOptions = {

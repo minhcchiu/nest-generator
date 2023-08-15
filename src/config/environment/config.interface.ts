@@ -99,3 +99,7 @@ export interface JWTConfig {
 		secretKey: string;
 	};
 }
+
+export interface UrlConfig {
+	resetPasswordUrl: string;
+}

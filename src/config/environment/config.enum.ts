@@ -6,6 +6,7 @@ export enum ConfigName {
 	upload = "upload",
 	jwt = "jwt",
 	mailer = "mailer",
+	urlConfig = "urlConfig",
 }
 
 export enum NodeEnv {
