@@ -85,8 +85,11 @@ export class UserController {
 	}
 
 	@Get("me")
-	async getMe(@GetCurrentUserId() id: string) {
-		return this.userService.findById(id);
+	async getMe(
+		@GetCurrentUserId() id: string,
+		@GetAqp() { projection, populate }: AqpDto,
+	) {
+		return this.userService.findById(id, { projection, populate });
 	}
 
 	@Public()

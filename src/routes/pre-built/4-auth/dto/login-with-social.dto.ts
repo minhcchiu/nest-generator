@@ -10,12 +10,9 @@ export class LoginWithSocialDto extends PartialType(
 		"fullName",
 		"gender",
 		"avatar",
+		"email",
 	] as const),
 ) {
-	@IsNotEmpty()
-	@IsString()
-	socialToken: string;
-
 	@IsNotEmpty()
 	@IsString()
 	@Length(10, 80)

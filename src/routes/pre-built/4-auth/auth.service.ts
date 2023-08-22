@@ -53,16 +53,14 @@ export class AuthService {
 	}
 
 	async loginWithSocial({ deviceID, ...data }: LoginWithSocialDto) {
-		let user = await this.userService.findOne(
-			{ socialID: data.socialID, socialToken: data.socialToken },
-			{ projection: authSelect },
-		);
-
-		if (!user)
-			user = await this.userService.create({
+		const user = await this.userService.updateOne(
+			{ socialID: data.socialID },
+			{
 				...data,
 				status: AccountStatus.ACTIVE,
-			});
+			},
+			{ upsert: true, new: true, projection: authSelect },
+		);
 
 		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
 
