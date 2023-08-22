@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 
 import { UserService } from "../1-users/user.service";
-import { LoginWithSocialDto } from "./dto/login-with-social.dto";
+import { SocialLoginDto } from "./dto/social-login.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { OtpService } from "../6-otp/otp.service";
@@ -52,7 +52,7 @@ export class AuthService {
 		return this.tokenService.generateUserAuth(user);
 	}
 
-	async loginWithSocial({ deviceID, ...data }: LoginWithSocialDto) {
+	async socialLogin({ deviceID, ...data }: SocialLoginDto) {
 		const user = await this.userService.updateOne(
 			{ socialID: data.socialID },
 			{
