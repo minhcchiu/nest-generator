@@ -17,7 +17,7 @@ type UserDocument = HydratedDocument<User>;
 	collection: "users",
 })
 export class User implements IUser {
-	@Prop({ type: String, index: true, unique: true })
+	@Prop({ type: String })
 	username: string;
 
 	@Prop({ type: String })
@@ -25,9 +25,6 @@ export class User implements IUser {
 
 	@Prop({ type: String })
 	phone: string;
-
-	@Prop({ type: String, select: false })
-	socialToken: string;
 
 	@Prop({ type: String, select: false })
 	socialID: string;

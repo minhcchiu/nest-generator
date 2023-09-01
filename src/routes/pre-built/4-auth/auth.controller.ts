@@ -6,7 +6,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 import { AuthService } from "./auth.service";
 import { EmailDto } from "./dto/email.dto";
-import { LoginWithSocialDto } from "./dto/login-with-social.dto";
+import { SocialLoginDto } from "./dto/social-login.dto";
 import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordDto } from "./dto/password.dto";
 import { RegisterDto } from "./dto/register.dto";
@@ -31,9 +31,9 @@ export class AuthController {
 	}
 
 	@Public()
-	@Post("login_with_social")
-	async loginWithSocial(@Body() body: LoginWithSocialDto) {
-		return this.authService.loginWithSocial(body);
+	@Post("social_login")
+	async socialLogin(@Body() body: SocialLoginDto) {
+		return this.authService.socialLogin(body);
 	}
 
 	@Public()

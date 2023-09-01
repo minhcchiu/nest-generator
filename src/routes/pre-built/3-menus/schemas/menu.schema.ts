@@ -37,7 +37,10 @@ export class Menu {
 	@Prop({ type: Boolean, default: true })
 	readonly isShow: boolean;
 
-	@Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
+	@Prop({
+		type: [{ type: String, enum: Role }],
+		default: [Role.SUPER_ADMIN, Role.USER],
+	})
 	readonly roles: Role[];
 }
 

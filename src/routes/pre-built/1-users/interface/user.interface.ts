@@ -4,7 +4,7 @@ import { Role } from "../enums/role.enum";
 export interface IUser {
 	password: string;
 	email: string;
-	socialToken: string;
+	socialID: string;
 	phone?: string;
 	fullName: string;
 	gender?: Gender;

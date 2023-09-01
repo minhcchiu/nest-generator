@@ -11,7 +11,7 @@ import { AqpDto } from "../common/dto/aqp.dto";
 import { aqpValidatorDto } from "./validator/aqp.validator";
 
 // BLACK LIST
-const blacklist = ["apiKey"];
+const blacklist = ["socialID", "password"];
 
 @Injectable()
 export class AqpMiddleware implements NestMiddleware {
