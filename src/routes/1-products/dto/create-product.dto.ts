@@ -1,5 +1,6 @@
 import {
 	IsEnum,
+	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsObject,
@@ -9,6 +10,8 @@ import {
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
+	@IsNotEmpty()
+	@IsMongoId()
 	readonly shopId: string;
 
 	@IsNotEmpty()

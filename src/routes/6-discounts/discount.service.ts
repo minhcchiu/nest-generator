@@ -29,47 +29,36 @@ export class DiscountService extends BaseService<DiscountDocument> {
 			})
 			.lean();
 
-		if (foundDiscount || foundDiscount.isActive)
+		if (foundDiscount && foundDiscount.isActive)
 			throw new NotFoundException("Discount exists!");
 
 		return this.discountModel.create(input);
 	}
 
-	async getAllDiscountCodesWithProduct({
-		filter,
-		limit,
-		page,
-		populate,
-		projection,
-	}: AqpDto) {
+	async getAllDiscountCodesWithProduct({ filter, ...productOptions }: AqpDto) {
 		const foundDiscount = await this.findOne(filter);
 
 		if (!foundDiscount || !foundDiscount.isActive)
 			throw new NotFoundException("Discount not exists!");
 
-		const { appliesTo, productIds } = foundDiscount;
+		// find all products
+		const productsFilter: Record<string, any> = {
+			isPublished: true,
+			shopId: foundDiscount.shopId,
+		};
 
-		let products: any[] = [];
-		if (appliesTo === DiscountAppliesToEnum.all) {
-			const pagination = await this.productService.paginate(
-				{
-					shopId: filter.shopId,
-					isPublished: true,
-				},
-				{
-					page,
-					limit,
-					populate,
-					projection: "name",
-					sort: "createdAt",
-				},
-			);
-
-			products = pagination.docs;
-
-			// if(appliesTo === DiscountAppliesToEnum.specific) {
-			// 	products =
-			// }
+		// find products by specific products
+		if (foundDiscount.appliesTo === DiscountAppliesToEnum.SPECIFIC) {
+			Object.assign(productsFilter, {
+				_id: { $in: foundDiscount.productIds },
+			});
 		}
+
+		const pagination = await this.productService.paginate(
+			productsFilter,
+			productOptions,
+		);
+
+		return pagination;
 	}
 }

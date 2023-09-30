@@ -26,8 +26,8 @@ export class DiscountController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.discountService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.discountService.findAll(filter, options);
 	}
 
 	@HttpCode(201)
@@ -66,6 +66,12 @@ export class DiscountController {
 	@Get("count")
 	async count(@GetAqp("filter") filter: AqpDto) {
 		return this.discountService.count(filter);
+	}
+
+	@Public()
+	@Get("products")
+	async findProductsByDiscount(@GetAqp() query: AqpDto) {
+		return this.discountService.getAllDiscountCodesWithProduct(query);
 	}
 
 	@Public()

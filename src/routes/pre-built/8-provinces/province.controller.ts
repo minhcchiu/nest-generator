@@ -26,8 +26,8 @@ export class ProvinceController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.provinceService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.provinceService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

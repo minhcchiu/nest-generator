@@ -1,14 +1,14 @@
 import {
 	IsArray,
 	IsBoolean,
-	IsDate,
+	IsDateString,
 	IsEnum,
 	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	IsString,
-	MinDate,
+	ValidateIf,
 } from "class-validator";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
@@ -40,14 +40,12 @@ export class CreateDiscountDto {
 	value: number;
 
 	@IsNotEmpty()
-	@IsDate()
-	@MinDate(new Date())
-	startDate: Date;
+	@IsDateString()
+	startDate: string;
 
 	@IsNotEmpty()
-	@IsDate()
-	@MinDate(new Date())
-	endDate: Date;
+	@IsDateString()
+	endDate: string;
 
 	@IsNotEmpty()
 	@IsNumber()
@@ -73,11 +71,12 @@ export class CreateDiscountDto {
 	@IsBoolean()
 	isActive: boolean;
 
-	@IsOptional()
+	@IsNotEmpty()
 	@IsEnum(DiscountAppliesToEnum)
 	appliesTo: DiscountAppliesToEnum;
 
-	@IsOptional()
+	@ValidateIf((o) => o.appliesTo === DiscountAppliesToEnum.SPECIFIC)
+	@IsNotEmpty()
 	@IsArray()
 	@IsMongoId({ each: true })
 	productIds: string[];

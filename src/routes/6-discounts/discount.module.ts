@@ -4,6 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Discount, DiscountSchema } from "./schemas/discount.schema";
 import { DiscountController } from "./discount.controller";
 import { DiscountService } from "./discount.service";
+import { ProductModule } from "~routes/1-products/product.module";
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { DiscountService } from "./discount.service";
 				schema: DiscountSchema,
 			},
 		]),
+		ProductModule,
 	],
 	controllers: [DiscountController],
 	providers: [DiscountService],

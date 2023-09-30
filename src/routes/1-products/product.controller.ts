@@ -18,7 +18,6 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductService } from "./product.service";
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 
 @ApiTags("Products")
 @Controller("products")
@@ -27,17 +26,14 @@ export class ProductController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.productService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.productService.findAll(filter, options);
 	}
 
 	@HttpCode(201)
 	@Post()
-	async create(
-		@GetCurrentUserId() userId: string,
-		@Body() body: CreateProductDto,
-	) {
-		return this.productService.createProduct({ ...body, shopId: userId });
+	async create(@Body() body: CreateProductDto) {
+		return this.productService.createProduct(body);
 	}
 
 	@Patch(":id")

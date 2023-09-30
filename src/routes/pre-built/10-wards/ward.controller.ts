@@ -26,8 +26,8 @@ export class WardController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.wardService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.wardService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

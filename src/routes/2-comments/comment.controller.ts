@@ -29,8 +29,8 @@ export class CommentController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.commentService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.commentService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

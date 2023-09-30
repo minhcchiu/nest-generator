@@ -15,57 +15,57 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { CreateInventoryDto } from "./dto/create-inventory.dto";
-import { UpdateInventoryDto } from "./dto/update-inventory.dto";
-import { InventoryService } from "./inventory.service";
+import { CreateShopDto } from "./dto/create-shop.dto";
+import { UpdateShopDto } from "./dto/update-shop.dto";
+import { ShopService } from "./shop.service";
 
-@ApiTags("Inventories")
-@Controller("inventories")
-export class InventoryController {
-	constructor(private readonly inventoryService: InventoryService) {}
+@ApiTags("Shops")
+@Controller("shops")
+export class ShopController {
+	constructor(private readonly shopService: ShopService) {}
 
 	@Public()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.inventoryService.findAll(filter, options);
+		return this.shopService.findAll(filter, options);
 	}
 
 	@HttpCode(201)
 	@Post()
-	async create(@Body() body: CreateInventoryDto) {
-		return this.inventoryService.create(body);
+	async create(@Body() body: CreateShopDto) {
+		return this.shopService.create(body);
 	}
 
 	@Patch(":id")
 	async update(
 		@Param("id", ParseObjectIdPipe) id: string,
-		@Body() body: UpdateInventoryDto,
+		@Body() body: UpdateShopDto,
 	) {
-		return this.inventoryService.updateById(id, body);
+		return this.shopService.updateById(id, body);
 	}
 
 	@Delete(":ids/ids")
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.inventoryService.deleteMany({
+		return this.shopService.deleteMany({
 			_id: { $in: ids.split(",") },
 		});
 	}
 
 	@Delete(":id")
 	async delete(@Param("id", ParseObjectIdPipe) id: string) {
-		return this.inventoryService.deleteById(id);
+		return this.shopService.deleteById(id);
 	}
 
 	@Public()
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.inventoryService.paginate(filter, options);
+		return this.shopService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	async count(@GetAqp("filter") filter: AqpDto) {
-		return this.inventoryService.count(filter);
+		return this.shopService.count(filter);
 	}
 
 	@Public()
@@ -74,6 +74,6 @@ export class InventoryController {
 		@Param("id", ParseObjectIdPipe) id: string,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
-		return this.inventoryService.findById(id, { projection, populate });
+		return this.shopService.findById(id, { projection, populate });
 	}
 }

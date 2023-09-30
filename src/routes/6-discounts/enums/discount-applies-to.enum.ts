@@ -1,4 +1,4 @@
 export enum DiscountAppliesToEnum {
-	all = "ALL",
-	specific = "SPECIFIC",
+	ALL = "ALL",
+	SPECIFIC = "SPECIFIC",
 }

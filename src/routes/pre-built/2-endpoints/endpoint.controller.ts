@@ -31,8 +31,8 @@ export class EndpointController {
 
 	@ApiQueryParams()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.endpointService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.endpointService.findAll(filter, options);
 	}
 
 	@ApiQueryParams()

@@ -5,6 +5,9 @@ import { Product, ProductSchema } from "./schemas/product.schema";
 import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
 import { InventoryModule } from "~routes/5-inventories/inventory.module";
+import { Clothing, ClothingSchema } from "./schemas/clothing.schema";
+import { Electronic, ElectronicSchema } from "./schemas/electronic.schema";
+import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
 
 @Module({
 	imports: [
@@ -19,6 +22,20 @@ import { InventoryModule } from "~routes/5-inventories/inventory.module";
 
 					return schema;
 				},
+			},
+			{
+				name: Clothing.name,
+				useFactory: () => ClothingSchema,
+			},
+
+			{
+				name: Furniture.name,
+				useFactory: () => FurnitureSchema,
+			},
+
+			{
+				name: Electronic.name,
+				useFactory: () => ElectronicSchema,
 			},
 		]),
 		InventoryModule,

@@ -19,7 +19,7 @@ export class BaseService<T> {
 		return this.model.create(input);
 	}
 
-	find(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+	findAll(filter: FilterQuery<T>, options?: QueryOptions<T>) {
 		return this.model.find(filter, options?.projection, options).lean();
 	}
 

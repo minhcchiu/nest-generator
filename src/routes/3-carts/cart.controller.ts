@@ -29,8 +29,8 @@ export class CartController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.cartService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.cartService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

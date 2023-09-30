@@ -27,8 +27,8 @@ export class EndpointGroupController {
 
 	@ApiQueryParams()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.endpointGroupService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.endpointGroupService.findAll(filter, options);
 	}
 
 	@ApiQueryParams()

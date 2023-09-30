@@ -2,11 +2,6 @@ import { join } from "path";
 import { DatabaseModuleConfig } from "~config/database.module.config";
 import { configurations } from "~config/environment";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
-import { UserModule } from "~pre-built/1-users/user.module";
-import { EndpointModule } from "~pre-built/2-endpoints/endpoint.module";
-import { MenuModule } from "~pre-built/3-menus/menu.module";
-import { AuthModule } from "~pre-built/4-auth/auth.module";
-import { TokenModule } from "~pre-built/5-tokens/token.module";
 
 import { CacheModule } from "@nestjs/cache-manager";
 import {
@@ -27,18 +22,9 @@ import { LoggingInterceptor } from "./shared/interceptors";
 import { LoggerModule } from "./shared/logger/logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
-import { OtpModule } from "~routes/pre-built/6-otp/otp.module";
-import { UploadModule } from "~routes/1-upload/upload.module";
-import { ProvinceModule } from "~routes/pre-built/8-provinces/province.module";
-import { DistrictModule } from "~routes/pre-built/9-districts/district.module";
-import { WardModule } from "~routes/pre-built/10-wards/ward.module";
-import { EndpointGroupModule } from "~routes/pre-built/2-endpoint-groups/endpoint-group.module";
-import { PostModule } from "~routes/1-posts/post.module";
-import { CommentModule } from "~routes/2-comments/comment.module";
 import { SocketModule } from "~shared/socket/socket.module";
-import { ProductModule } from "~routes/1-products/product.module";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { InventoryModule } from "~routes/5-inventories/inventory.module";
+import { RouteModules } from "~routes/route.modules";
 
 @Module({
 	imports: [
@@ -68,26 +54,10 @@ import { InventoryModule } from "~routes/5-inventories/inventory.module";
 		SeedModule,
 		LoggerModule,
 		MailModule,
-
-		// routes
-		AuthModule,
-		UserModule,
-		EndpointGroupModule,
-		EndpointModule,
-		MenuModule,
-		TokenModule,
-		OtpModule,
-		UploadModule,
-		ProvinceModule,
-		DistrictModule,
-		WardModule,
 		SocketModule,
 
-		// features
-		ProductModule,
-		PostModule,
-		CommentModule,
-		InventoryModule,
+		// routes
+		...RouteModules,
 	],
 	controllers: [AppController],
 	providers: [

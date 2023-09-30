@@ -24,8 +24,8 @@ export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.menuService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.menuService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

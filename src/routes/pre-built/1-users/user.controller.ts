@@ -28,8 +28,8 @@ export class UserController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.userService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.userService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

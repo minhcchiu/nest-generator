@@ -27,8 +27,8 @@ export class PostController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.postService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.postService.findAll(filter, options);
 	}
 
 	@HttpCode(201)

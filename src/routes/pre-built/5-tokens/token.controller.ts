@@ -15,8 +15,8 @@ export class TokenController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.tokenService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.tokenService.findAll(filter, options);
 	}
 
 	@Delete(":ids/ids")

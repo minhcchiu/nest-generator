@@ -13,7 +13,7 @@ export class OtpController {
 
 	@Public()
 	@Get()
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.otpService.find(filter, options);
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.otpService.findAll(filter, options);
 	}
 }
