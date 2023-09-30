@@ -12,7 +12,7 @@ type TokenDocument = HydratedDocument<Token>;
 })
 export class Token {
 	@Prop({ type: String, ref: User.name, index: 1 })
-	user: string;
+	userId: string;
 
 	@Prop({ type: String, required: true, index: 1 })
 	token: string;

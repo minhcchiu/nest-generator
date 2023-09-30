@@ -25,13 +25,13 @@ export class WardController {
 	constructor(private readonly wardService: WardService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.wardService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateWardDto) {
 		return this.wardService.create(body);
 	}

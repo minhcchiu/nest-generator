@@ -25,13 +25,13 @@ export class ProvinceController {
 	constructor(private readonly provinceService: ProvinceService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.provinceService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateProvinceDto) {
 		return this.provinceService.create(body);
 	}

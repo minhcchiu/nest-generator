@@ -9,6 +9,8 @@ import {
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
+	readonly shopId: string;
+
 	@IsNotEmpty()
 	@IsString()
 	readonly name: string;

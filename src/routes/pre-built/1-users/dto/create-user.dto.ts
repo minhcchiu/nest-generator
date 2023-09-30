@@ -1,8 +1,8 @@
 import {
+	IsDateString,
 	IsEmail,
 	IsEnum,
 	IsNotEmpty,
-	IsNumber,
 	IsOptional,
 	IsString,
 	MaxLength,
@@ -12,23 +12,23 @@ import {
 
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
-import { Gender } from "../enums/gender.enum";
+import { GenderEnum } from "../enums/gender.enum";
 import { Role } from "../enums/role.enum";
 
 export class CreateUserDto {
-	@ValidateIf((o) => !(o.phone && o.email))
+	@ValidateIf((o) => !o.phone && !o.email)
 	@IsString()
-	username: string;
+	username?: string;
 
-	@ValidateIf((o) => !o.phone)
+	@ValidateIf((o) => !o.username && !o.phone)
 	@IsEmail()
-	email: string;
+	email?: string;
 
-	@ValidateIf((o) => !o.email)
+	@ValidateIf((o) => !o.username && !o.email)
 	@IsString()
-	phone: string;
+	phone?: string;
 
-	@ValidateIf((o) => o.email || o.phone)
+	@IsNotEmpty()
 	@IsString()
 	@MinLength(6)
 	@MaxLength(50)
@@ -41,25 +41,20 @@ export class CreateUserDto {
 
 	@IsOptional()
 	@IsString()
-	avatar: string;
+	avatar?: string;
 
 	@IsOptional()
-	@IsNumber()
-	dateOfBirth?: number;
+	@IsDateString()
+	dateOfBirth?: Date;
 
 	@IsOptional()
-	@IsEnum(Gender)
-	gender?: Gender;
+	@IsEnum(GenderEnum)
+	gender?: GenderEnum;
 
-	@IsOptional()
+	@IsNotEmpty()
 	@IsEnum(AccountType)
-	accountType?: AccountType;
+	accountType: AccountType;
 
-	@IsOptional()
-	@IsEnum(Role)
 	role?: Role;
-
-	@IsOptional()
-	@IsEnum(AccountStatus)
 	status?: AccountStatus;
 }

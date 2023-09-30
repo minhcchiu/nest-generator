@@ -15,8 +15,8 @@ export class BaseService<T> {
 		this.model = model;
 	}
 
-	create(data: any | any[]) {
-		return this.model.create(data);
+	create(input: Record<string, any> | Record<string, any>[]) {
+		return this.model.create(input);
 	}
 
 	find(filter: FilterQuery<T>, options?: QueryOptions<T>) {
@@ -41,26 +41,26 @@ export class BaseService<T> {
 
 	updateById(
 		id: string | Types.ObjectId,
-		data: UpdateQuery<T>,
+		input: UpdateQuery<T>,
 		options: QueryOptions<T> = { new: true },
 	) {
-		return this.model.findByIdAndUpdate(id, data, options);
+		return this.model.findByIdAndUpdate(id, input, options);
 	}
 
 	updateOne(
 		filter: FilterQuery<T>,
-		data: UpdateQuery<T>,
+		input: UpdateQuery<T>,
 		options: QueryOptions<T> = { new: true },
 	) {
-		return this.model.findOneAndUpdate(filter, data, options);
+		return this.model.findOneAndUpdate(filter, input, options);
 	}
 
 	updateMany(
 		filter: FilterQuery<T>,
-		data: UpdateQuery<T> | UpdateWithAggregationPipeline,
+		input: UpdateQuery<T> | UpdateWithAggregationPipeline,
 		options?: QueryOptions<T>,
 	) {
-		return this.model.updateMany(filter, data, options);
+		return this.model.updateMany(filter, input, options);
 	}
 
 	deleteById(id: string, options?: QueryOptions<T>) {

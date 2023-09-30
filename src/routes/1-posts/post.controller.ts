@@ -26,13 +26,13 @@ export class PostController {
 	constructor(private readonly postService: PostService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.postService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(
 		@GetCurrentUserId() userId: string,
 		@Body() body: CreatePostDto,

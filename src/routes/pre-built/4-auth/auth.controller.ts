@@ -11,6 +11,7 @@ import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordDto } from "./dto/password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { TokenDto } from "./dto/token.dto";
+import { Throttle } from "@nestjs/throttler";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -18,16 +19,17 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@Public()
-	@Post("login")
-	async login(@Body() body: LoginDto) {
-		return this.authService.login(body);
-	}
-
-	@Public()
 	@HttpCode(201)
 	@Post("register")
 	async register(@Body() body: RegisterDto) {
 		return this.authService.register(body);
+	}
+
+	@Public()
+	@Throttle({ default: { limit: 8, ttl: 60000 } })
+	@Post("login")
+	async login(@Body() body: LoginDto) {
+		return this.authService.login(body);
 	}
 
 	@Public()

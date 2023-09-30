@@ -1,4 +1,4 @@
-import { Gender } from "../enums/gender.enum";
+import { GenderEnum } from "../enums/gender.enum";
 import { Role } from "../enums/role.enum";
 
 export interface IUser {
@@ -7,8 +7,8 @@ export interface IUser {
 	socialID: string;
 	phone?: string;
 	fullName: string;
-	gender?: Gender;
-	dateOfBirth?: number;
+	gender?: GenderEnum;
+	dateOfBirth?: Date;
 	role: Role;
 	slug: string;
 }

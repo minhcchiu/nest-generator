@@ -14,13 +14,13 @@ export class Ward {
 		ref: Province.name,
 		required: true,
 	})
-	readonly idProvince: string;
+	readonly provinceId: string;
 
 	@Prop({
 		type: String,
 		ref: District.name,
 	})
-	readonly idDistrict: string;
+	readonly districtId: string;
 
 	@Prop({ type: String, required: true })
 	readonly name: string;

@@ -33,6 +33,7 @@
     "@nestjs/platform-socket.io": "^10.0.5",
     "@nestjs/serve-static": "^3.0.1",
     "@nestjs/swagger": "^6.3.0",
+    "@nestjs/throttler": "^5.0.0",
     "@nestjs/websockets": "^10.0.5",
     "api-query-params": "^5.4.0",
     "argon2": "^0.30.3",

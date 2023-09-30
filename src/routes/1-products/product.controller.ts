@@ -26,18 +26,18 @@ export class ProductController {
 	constructor(private readonly productService: ProductService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.productService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(
 		@GetCurrentUserId() userId: string,
 		@Body() body: CreateProductDto,
 	) {
-		return this.productService.create({ ...body, user: userId });
+		return this.productService.createProduct({ ...body, shopId: userId });
 	}
 
 	@Patch(":id")

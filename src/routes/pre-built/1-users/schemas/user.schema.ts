@@ -5,7 +5,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
-import { Gender } from "../enums/gender.enum";
+import { GenderEnum } from "../enums/gender.enum";
 import { Role } from "../enums/role.enum";
 import { IUser } from "../interface/user.interface";
 
@@ -44,22 +44,19 @@ export class User implements IUser {
 	@Prop({ type: [String] })
 	fcmTokens?: string[];
 
-	@Prop({ type: Number })
-	dateOfBirth?: number;
+	@Prop({ type: Date })
+	dateOfBirth?: Date;
 
-	@Prop({ type: String, enum: Gender, default: Gender.OTHER })
-	gender: Gender;
+	@Prop({ type: String, enum: GenderEnum })
+	gender: GenderEnum;
 
 	@Prop({ type: String, enum: Role, default: Role.USER })
 	role: Role;
 
-	@Prop({ type: Boolean, default: false })
-	deleted: boolean;
-
 	@Prop({ type: String })
 	avatar?: string;
 
-	@Prop({ type: String, enum: AccountStatus, default: AccountStatus.INACTIVE })
+	@Prop({ type: String, enum: AccountStatus, default: null })
 	status: AccountStatus;
 }
 

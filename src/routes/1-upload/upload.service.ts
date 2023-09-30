@@ -18,7 +18,7 @@ export class UploadService {
 	/**
 	 * Save file to local
 	 *
-	 * @param data
+	 * @param input
 	 * @param owner
 	 * @returns
 	 */
@@ -31,7 +31,7 @@ export class UploadService {
 			resourceType,
 		);
 
-		// save file to database
+		// save file to input
 		const fileItem = {
 			...result,
 			owner,
@@ -44,7 +44,7 @@ export class UploadService {
 	/**
 	 * Save file to Cloudinary
 	 *
-	 * @param data
+	 * @param input
 	 * @param owner
 	 * @returns
 	 */
@@ -60,7 +60,7 @@ export class UploadService {
 			resourceType,
 		);
 
-		// save file to database
+		// save file to input
 		// await this.fileService.create({ ...result, owner });
 
 		// success
@@ -71,7 +71,7 @@ export class UploadService {
 	/**
 	 * Save file to S3
 	 *
-	 * @param data
+	 * @param input
 	 * @param owner
 	 * @returns
 	 */

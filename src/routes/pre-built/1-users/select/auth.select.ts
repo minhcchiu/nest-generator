@@ -12,4 +12,5 @@ export const authSelect = {
 	status: 1,
 	slug: 1,
 	username: 1,
+	accountType: 1,
 };

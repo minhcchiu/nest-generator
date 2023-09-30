@@ -10,7 +10,6 @@ export class SocialLoginDto extends PartialType(
 		"fullName",
 		"gender",
 		"avatar",
-		"email",
 	] as const),
 ) {
 	@IsNotEmpty()

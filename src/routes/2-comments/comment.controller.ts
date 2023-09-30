@@ -28,19 +28,19 @@ export class CommentController {
 	constructor(private readonly commentService: CommentService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.commentService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(
 		@GetCurrentUser() user: TokenPayload,
 		@Body() body: CreateCommentDto,
 	) {
 		const author: AuthorDto = {
-			_id: user._id,
+			userId: user._id,
 			avatar: user.avatar,
 			fullName: user.fullName,
 		};

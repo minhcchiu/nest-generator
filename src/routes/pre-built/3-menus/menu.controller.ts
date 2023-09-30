@@ -23,13 +23,13 @@ import { MenuService } from "./menu.service";
 export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.menuService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateMenuDto) {
 		return this.menuService.create(body);
 	}

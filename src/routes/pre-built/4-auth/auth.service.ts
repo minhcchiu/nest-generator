@@ -16,6 +16,7 @@ import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { OtpService } from "../6-otp/otp.service";
 import { OtpType } from "../6-otp/enums/otp-type";
+import { Role } from "../1-users/enums/role.enum";
 
 @Injectable()
 export class AuthService {
@@ -26,95 +27,104 @@ export class AuthService {
 		private readonly otpService: OtpService,
 	) {}
 
+	async register({ deviceID, ...input }: RegisterDto) {
+		await this.userService.validateCreateUser({
+			phone: input.phone,
+			email: input.email,
+			username: input.username,
+		});
+
+		const newUser = await this.userService.create({
+			...input,
+			status: AccountStatus.NOT_VERIFIED,
+			role: Role.USER,
+		});
+
+		if (deviceID)
+			this.userService.addDeviceID(newUser._id.toString(), deviceID);
+
+		return this.tokenService.generateUserAuth(newUser);
+	}
+
 	async login({ password, deviceID, ...credential }: LoginDto) {
 		const user = await this.userService.findOne(credential, {
 			projection: authSelect,
 		});
 
-		if (!user) {
-			throw new NotFoundException("User not found.");
-		}
+		if (!user) throw new NotFoundException("Incorrect account!");
 
-		if (user.deleted) {
+		if (user.status === AccountStatus.DELETED)
 			throw new BadRequestException("The account has been removed.");
-		}
+
 		const isPasswordValid = await this.userService.comparePassword(
 			user.password,
 			password,
 		);
 
-		if (!isPasswordValid) {
-			throw new UnauthorizedException("Incorrect account!");
-		}
+		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
 
 		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
 
 		return this.tokenService.generateUserAuth(user);
 	}
 
-	async socialLogin({ deviceID, ...data }: SocialLoginDto) {
-		const user = await this.userService.updateOne(
-			{ socialID: data.socialID },
-			{
-				...data,
-				status: AccountStatus.ACTIVE,
-			},
-			{ upsert: true, new: true, projection: authSelect },
+	async socialLogin({ deviceID, ...input }: SocialLoginDto) {
+		let foundUser = await this.userService.findOne(
+			{ socialID: input.socialID },
+			{ projection: authSelect },
 		);
 
-		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
+		if (!foundUser) {
+			const newUser = await this.userService.create({
+				...input,
+				status: AccountStatus.VERIFIED,
+				role: Role.USER,
+			});
 
-		return this.tokenService.generateUserAuth(user);
+			foundUser = newUser.toObject();
+		}
+
+		if (deviceID)
+			this.userService.addDeviceID(foundUser._id.toString(), deviceID);
+
+		return this.tokenService.generateUserAuth(foundUser);
 	}
 
-	async register({ deviceID, ...data }: RegisterDto) {
+	async sendRegisterToken(input: RegisterDto) {
 		await this.userService.validateCreateUser({
-			phone: data.phone,
-			email: data.email,
-		});
-
-		const user = await this.userService.create(data);
-
-		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
-
-		return this.tokenService.generateUserAuth(user);
-	}
-
-	async sendRegisterToken(data: RegisterDto) {
-		await this.userService.validateCreateUser({
-			email: data.email,
-			phone: data.phone,
+			email: input.email,
+			phone: input.phone,
 		});
 
 		const { token, expiresAt } = await this.tokenService.generateUserToken(
-			data,
+			input,
 		);
 		this.mailService.sendRegisterToken(
 			{
 				token,
 				expiresAt,
-				fullName: data.fullName,
+				fullName: input.fullName,
 			},
-			data.email,
+			input.email,
 		);
 
 		return {
-			email: data.email,
-			phone: data.phone,
+			email: input.email,
+			phone: input.phone,
 			message: "Send register account success!",
 		};
 	}
 
-	async sendRegisterOtp(data: RegisterDto) {
+	async sendRegisterOtp(input: RegisterDto) {
 		await this.userService.validateCreateUser({
-			email: data.email,
-			phone: data.phone,
+			email: input.email,
+			phone: input.phone,
 		});
 
 		const otpItem: any = { otpType: OtpType.SIGNUP };
 
-		if (data.phone) otpItem.phone = data.phone;
-		else otpItem.email = data.email;
+		if (input.phone) otpItem.phone = input.phone;
+		else otpItem.email = input.email;
 
 		return this.otpService.sendOtp(otpItem);
 	}
@@ -126,7 +136,7 @@ export class AuthService {
 		delete decoded.iat;
 		delete decoded.exp;
 
-		decoded.status = AccountStatus.ACTIVE;
+		decoded.status = AccountStatus.VERIFIED;
 		return this.register(decoded);
 	}
 
@@ -148,10 +158,10 @@ export class AuthService {
 			this.tokenService.verifyRefreshToken(token),
 		]);
 
-		if (!tokenDoc?.user)
+		if (!tokenDoc?.userId)
 			throw new UnauthorizedException("Invalid refresh token!");
 
-		return this.tokenService.generateUserAuth(<any>tokenDoc.user);
+		return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
 	}
 
 	async forgotPassword(email: string) {
@@ -161,7 +171,7 @@ export class AuthService {
 			throw new NotFoundException("User not found.");
 		}
 
-		if (user.deleted) {
+		if (user.status === AccountStatus.DELETED) {
 			throw new BadRequestException("The account has been removed.");
 		}
 

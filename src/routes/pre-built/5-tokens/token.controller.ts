@@ -14,7 +14,7 @@ export class TokenController {
 	constructor(private readonly tokenService: TokenService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.tokenService.find(filter, options);
 	}

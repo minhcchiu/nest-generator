@@ -1,4 +1,4 @@
-import { PaginateModel, Types } from "mongoose";
+import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ConfigName, JWTConfig } from "~config/environment";
 
@@ -10,6 +10,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 import { User } from "../1-users/schemas/user.schema";
+import { Types } from "mongoose";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
@@ -122,7 +123,7 @@ export class TokenService extends BaseService<TokenDocument> {
 			_id: Types.ObjectId;
 		},
 	) {
-		const payload = {
+		const payload: TokenPayload = {
 			_id: user._id.toString(),
 			role: user.role,
 			email: user.email,
@@ -132,6 +133,7 @@ export class TokenService extends BaseService<TokenDocument> {
 			gender: user.gender,
 			dateOfBirth: user.dateOfBirth,
 			status: user.status,
+			accountType: user.accountType,
 		};
 
 		const { accessToken, refreshToken } = await this.generateAuthTokens(
@@ -139,8 +141,8 @@ export class TokenService extends BaseService<TokenDocument> {
 		);
 
 		await this.updateOne(
-			{ user: user._id },
-			{ user: user._id, ...refreshToken },
+			{ userId: user._id.toString() },
+			{ userId: user._id.toString(), ...refreshToken },
 			{ upsert: true },
 		);
 

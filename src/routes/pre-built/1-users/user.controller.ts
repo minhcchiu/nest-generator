@@ -27,13 +27,13 @@ export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.userService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateUserDto) {
 		await this.userService.validateCreateUser({
 			phone: body.phone,
@@ -84,7 +84,7 @@ export class UserController {
 		return this.userService.deleteById(id);
 	}
 
-	@Get("me")
+	@Get("/me")
 	async getMe(
 		@GetCurrentUserId() id: string,
 		@GetAqp() { projection, populate }: AqpDto,

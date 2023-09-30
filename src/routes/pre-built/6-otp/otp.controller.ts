@@ -12,7 +12,7 @@ export class OtpController {
 	constructor(private readonly otpService: OtpService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.otpService.find(filter, options);
 	}

@@ -26,7 +26,7 @@ export class EndpointGroupController {
 	constructor(private readonly endpointGroupService: EndpointGroupService) {}
 
 	@ApiQueryParams()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.endpointGroupService.find(filter, options);
 	}
@@ -52,7 +52,7 @@ export class EndpointGroupController {
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateEndpointGroupDto) {
 		return this.endpointGroupService.create(body);
 	}

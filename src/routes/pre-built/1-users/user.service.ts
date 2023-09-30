@@ -31,24 +31,17 @@ export class UserService extends BaseService<UserDocument> {
 		email?: string;
 		username?: string;
 	}) {
-		let isExistUser = false;
-
 		if (phone && (await this.count({ phone }))) {
-			isExistUser = true;
+			throw new BadRequestException("Phone already exists in the system.");
 		}
 
 		if (email && (await this.count({ email }))) {
-			isExistUser = true;
+			throw new BadRequestException("Email already exists in the system.");
 		}
 
 		if (username && (await this.count({ username }))) {
-			isExistUser = true;
+			throw new BadRequestException("Username already exists in the system.");
 		}
-
-		if (isExistUser)
-			throw new BadRequestException("Account already exists in the system.");
-
-		return true;
 	}
 
 	async updatePasswordById(
@@ -82,7 +75,7 @@ export class UserService extends BaseService<UserDocument> {
 		return this.updateById(
 			id,
 			{ $addToSet: { fcmTokens: deviceID } },
-			{ projection: { _id: "1", fcmTokens: 1 } },
+			{ projection: { _id: 1, fcmTokens: 1 } },
 		);
 	}
 

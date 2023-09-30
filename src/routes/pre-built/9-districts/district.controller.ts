@@ -25,13 +25,13 @@ export class DistrictController {
 	constructor(private readonly districtService: DistrictService) {}
 
 	@Public()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.districtService.find(filter, options);
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateDistrictDto) {
 		return this.districtService.create(body);
 	}

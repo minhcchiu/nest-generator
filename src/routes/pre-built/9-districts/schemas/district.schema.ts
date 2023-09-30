@@ -13,7 +13,7 @@ export class District {
 		ref: Province.name,
 		required: true,
 	})
-	readonly idProvince: string;
+	readonly provinceId: string;
 
 	@Prop({ type: String, required: true })
 	readonly name: string;

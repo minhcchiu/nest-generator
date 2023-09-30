@@ -30,7 +30,7 @@ export class EndpointController {
 	) {}
 
 	@ApiQueryParams()
-	@Get("")
+	@Get()
 	async find(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.endpointService.find(filter, options);
 	}
@@ -56,7 +56,7 @@ export class EndpointController {
 	}
 
 	@HttpCode(201)
-	@Post("")
+	@Post()
 	async create(@Body() body: CreateEndpointDto) {
 		return this.endpointService.create(body);
 	}

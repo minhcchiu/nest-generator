@@ -37,6 +37,8 @@ import { PostModule } from "~routes/1-posts/post.module";
 import { CommentModule } from "~routes/2-comments/comment.module";
 import { SocketModule } from "~shared/socket/socket.module";
 import { ProductModule } from "~routes/1-products/product.module";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { InventoryModule } from "~routes/5-inventories/inventory.module";
 
 @Module({
 	imports: [
@@ -55,17 +57,24 @@ import { ProductModule } from "~routes/1-products/product.module";
 			isGlobal: true,
 		}),
 
+		ThrottlerModule.forRoot([
+			{
+				ttl: 60000,
+				limit: 10,
+			},
+		]),
+
 		DatabaseModuleConfig,
 		SeedModule,
 		LoggerModule,
 		MailModule,
 
 		// routes
+		AuthModule,
 		UserModule,
 		EndpointGroupModule,
 		EndpointModule,
 		MenuModule,
-		AuthModule,
 		TokenModule,
 		OtpModule,
 		UploadModule,
@@ -78,6 +87,7 @@ import { ProductModule } from "~routes/1-products/product.module";
 		ProductModule,
 		PostModule,
 		CommentModule,
+		InventoryModule,
 	],
 	controllers: [AppController],
 	providers: [
@@ -90,6 +100,10 @@ import { ProductModule } from "~routes/1-products/product.module";
 		{
 			provide: APP_GUARD,
 			useClass: AppGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard,
 		},
 	],
 })

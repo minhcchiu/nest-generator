@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ProductType } from "../enums/product-type.enum";
 import mongoose, { HydratedDocument } from "mongoose";
-import { User } from "~routes/pre-built/1-users/schemas/user.schema";
 
 @Schema({
 	timestamps: true,
@@ -27,11 +26,11 @@ export class Product {
 	@Prop({ type: String, required: true, enum: ProductType })
 	readonly type: ProductType;
 
-	@Prop({ type: String, ref: User.name })
-	readonly user: string;
-
 	@Prop({ type: mongoose.Schema.Types.Mixed })
 	readonly attributes: Record<string, any>;
+
+	@Prop({ type: Boolean, default: true })
+	readonly isPublished: boolean;
 }
 
 export type ProductDocument = Product & HydratedDocument<Product>;
