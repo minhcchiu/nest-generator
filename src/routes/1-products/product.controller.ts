@@ -28,6 +28,7 @@ export class ProductController {
 	@Public()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		await this.productService.placeOrder();
 		return this.productService.findAll(filter, options);
 	}
 

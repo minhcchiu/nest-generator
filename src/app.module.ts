@@ -25,6 +25,7 @@ import { SeedModule } from "./shared/seed/seed.module";
 import { SocketModule } from "~shared/socket/socket.module";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { RouteModules } from "~routes/route.modules";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 
 @Module({
 	imports: [
@@ -63,6 +64,7 @@ import { RouteModules } from "~routes/route.modules";
 	providers: [
 		AppService,
 		CacheService,
+		RedisFeatureService,
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: LoggingInterceptor,

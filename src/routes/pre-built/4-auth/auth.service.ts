@@ -95,8 +95,9 @@ export class AuthService {
 			phone: input.phone,
 		});
 
-		const { token, expiresAt } =
-			await this.tokenService.generateUserToken(input);
+		const { token, expiresAt } = await this.tokenService.generateUserToken(
+			input,
+		);
 		this.mailService.sendRegisterToken(
 			{
 				token,

@@ -10,6 +10,7 @@ import { Clothing, ClothingSchema } from "./schemas/clothing.schema";
 import { Electronic, ElectronicSchema } from "./schemas/electronic.schema";
 import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
 import { DiscountModule } from "~routes/6-discounts/discount.module";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 
 @Module({
 	imports: [
@@ -44,7 +45,7 @@ import { DiscountModule } from "~routes/6-discounts/discount.module";
 		forwardRef(() => DiscountModule),
 	],
 	controllers: [ProductController],
-	providers: [ProductService],
+	providers: [ProductService, RedisFeatureService],
 	exports: [ProductService],
 })
 export class ProductModule {}

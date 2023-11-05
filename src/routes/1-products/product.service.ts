@@ -12,6 +12,8 @@ import { ProductType } from "./enums/product-type.enum";
 import { InventoryService } from "~routes/5-inventories/inventory.service";
 import { CreateInventoryDto } from "~routes/5-inventories/dto/create-inventory.dto";
 import { Furniture, FurnitureDocument } from "./schemas/furniture.schema";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { ChannelName } from "~shared/redis-feature/channel";
 
 @Injectable()
 export class ProductService extends BaseService<ProductDocument> {
@@ -29,6 +31,7 @@ export class ProductService extends BaseService<ProductDocument> {
 		_furnitureModel: PaginateModel<FurnitureDocument>,
 
 		private readonly inventoryService: InventoryService,
+		private readonly redisFeatureService: RedisFeatureService,
 	) {
 		super(_productModel);
 
@@ -36,6 +39,13 @@ export class ProductService extends BaseService<ProductDocument> {
 		this.clothingModel = _clothingModel;
 		this.electronicModel = _electronicModel;
 		this.furnitureModel = _furnitureModel;
+	}
+
+	async placeOrder() {
+		await this.redisFeatureService.publishMessage(
+			ChannelName.Order,
+			JSON.stringify({ name: "Áo Sơ Mi", price: 300000 }),
+		);
 	}
 
 	async createProduct(input: CreateProductDto) {
