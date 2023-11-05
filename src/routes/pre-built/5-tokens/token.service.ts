@@ -137,8 +137,9 @@ export class TokenService extends BaseService<TokenDocument> {
 			accountType: user.accountType,
 		};
 
-		const { accessToken, refreshToken } =
-			await this.generateAuthTokens(payload);
+		const { accessToken, refreshToken } = await this.generateAuthTokens(
+			payload,
+		);
 
 		await this.updateOne(
 			{ userId: user._id.toString() },
