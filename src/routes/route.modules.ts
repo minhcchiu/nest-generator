@@ -15,6 +15,7 @@ import { CommentModule } from "./2-comments/comment.module";
 import { InventoryModule } from "./5-inventories/inventory.module";
 import { DiscountModule } from "./6-discounts/discount.module";
 import { ShopModule } from "./1-shops/shop.module";
+import { CheckoutModule } from "./4-checkouts/checkout.module";
 
 export const RouteModules = [
 	// pre-built
@@ -37,4 +38,5 @@ export const RouteModules = [
 	InventoryModule,
 	DiscountModule,
 	ShopModule,
+	CheckoutModule,
 ];

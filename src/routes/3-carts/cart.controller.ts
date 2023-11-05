@@ -6,86 +6,66 @@ import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 import {
 	Body,
 	Controller,
-	Delete,
 	Get,
 	HttpCode,
 	Param,
 	Patch,
 	Post,
+	ParseIntPipe,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { CreateCartDto } from "./dto/create-cart.dto";
-import { UpdateCartDto } from "./dto/update-cart.dto";
 import { CartService } from "./cart.service";
-import { GetCurrentUser } from "~decorators/get-current-user";
-import { TokenPayload } from "~routes/pre-built/5-tokens/interface";
-import { AuthorDto } from "~routes/2-comments/dto/author.dto";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { CartProductDto } from "./dto/cart-product.dto";
+import { Types } from "mongoose";
 
 @ApiTags("Carts")
 @Controller("carts")
 export class CartController {
 	constructor(private readonly cartService: CartService) {}
 
-	@Public()
-	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.cartService.findAll(filter, options);
+	@HttpCode(201)
+	@Post("add_product")
+	async create(
+		@GetCurrentUserId() userId: string,
+		@Body() product: CartProductDto,
+	) {
+		return this.cartService.addProductToCart({ userId, product });
 	}
 
 	@HttpCode(201)
-	@Post()
-	async create(
-		@GetCurrentUser() user: TokenPayload,
-		@Body() body: CreateCartDto,
+	@Patch("carts/:cartId/products/:productId")
+	async updateProductQuantity(
+		@GetCurrentUserId() userId: string,
+		@Param("cartId", ParseObjectIdPipe) cartId: Types.ObjectId,
+		@Param("productId") productId: string,
+		@Body("quantity", ParseIntPipe) quantity: number,
 	) {
-		const author: AuthorDto = {
-			userId: user._id.toString(),
-			avatar: user.avatar,
-			fullName: user.fullName,
-		};
-
-		return this.cartService.create({ ...body, author });
-	}
-
-	@Patch(":id")
-	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
-		@Body() body: UpdateCartDto,
-	) {
-		return this.cartService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.cartService.deleteMany({
-			_id: { $in: ids.split(",") },
+		return this.cartService.updateProductQuantity(cartId, {
+			userId,
+			productId,
+			quantity,
 		});
 	}
 
-	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
-		return this.cartService.deleteById(id);
-	}
-
-	@Public()
-	@Get("paginate")
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.cartService.paginate(filter, options);
+	@Get(":userId/user")
+	async findOne(
+		@GetCurrentUserId() userId: string,
+		@GetAqp() { filter, populate, projection }: AqpDto,
+	) {
+		return this.cartService.findOne(
+			{ ...filter, userId },
+			{
+				populate,
+				projection,
+			},
+		);
 	}
 
 	@Public()
 	@Get("count")
 	async count(@GetAqp("filter") filter: AqpDto) {
 		return this.cartService.count(filter);
-	}
-
-	@Public()
-	@Get(":id")
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
-		@GetAqp() { projection, populate }: AqpDto,
-	) {
-		return this.cartService.findById(id, { projection, populate });
 	}
 }

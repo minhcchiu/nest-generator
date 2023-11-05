@@ -20,6 +20,7 @@ import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";
 import { EndpointService } from "./endpoint.service";
 import { EndpointGroupService } from "../2-endpoint-groups/endpoint-group.service";
+import { Types } from "mongoose";
 
 @ApiTags("Endpoints")
 @Controller("endpoints")
@@ -49,7 +50,7 @@ export class EndpointController {
 	@ApiParamId()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.endpointService.findById(id, { projection, populate });
@@ -64,7 +65,7 @@ export class EndpointController {
 	@ApiParamId()
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateEndpointDto,
 	) {
 		return this.endpointService.updateById(id, body);
@@ -80,7 +81,7 @@ export class EndpointController {
 
 	@ApiParamId()
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		const [deleted] = await Promise.all([
 			this.endpointService.deleteById(id),
 			this.endpointGroupService.updateOne(

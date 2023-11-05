@@ -4,6 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Cart, CartSchema } from "./schemas/cart.schema";
 import { CartController } from "./cart.controller";
 import { CartService } from "./cart.service";
+import { ProductModule } from "~routes/1-products/product.module";
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { CartService } from "./cart.service";
 				},
 			},
 		]),
+		ProductModule,
 	],
 	controllers: [CartController],
 	providers: [CartService],

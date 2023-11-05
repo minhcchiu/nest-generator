@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { cartState } from "~routes/3-carts/enums/cart-state.enum";
+import { CartState } from "~routes/3-carts/enums/cart-state.enum";
 import { CartProductDto } from "../dto/cart-product.dto";
+import { User } from "~routes/pre-built/1-users/schemas/user.schema";
 
 @Schema({
 	timestamps: true,
@@ -9,11 +10,11 @@ import { CartProductDto } from "../dto/cart-product.dto";
 	collection: "carts",
 })
 export class Cart {
-	@Prop({ type: String, ref: "User" })
+	@Prop({ type: String, ref: User.name })
 	userId: string;
 
-	@Prop({ type: String, enum: cartState, default: cartState.active })
-	readonly state: string;
+	@Prop({ type: String, enum: CartState, default: CartState.Active })
+	state: string;
 
 	@Prop({
 		type: [

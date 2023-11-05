@@ -5,6 +5,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { Inventory, InventoryDocument } from "./schemas/inventory.schema";
+import { CreateInventoryDto } from "./dto/create-inventory.dto";
 
 @Injectable()
 export class InventoryService extends BaseService<InventoryDocument> {
@@ -12,5 +13,49 @@ export class InventoryService extends BaseService<InventoryDocument> {
 		@InjectModel(Inventory.name) _model: PaginateModel<InventoryDocument>,
 	) {
 		super(_model);
+	}
+
+	async reservationInventory(data: {
+		productId: string;
+		quantity: number;
+		cartId: string;
+	}) {
+		const filter = {
+				productId: data.productId,
+				stock: { $gte: data.quantity },
+			},
+			updateSet = {
+				$inc: {
+					stock: -data.quantity,
+				},
+				$push: {
+					reservations: {
+						quantity: data.quantity,
+						cartId: data.cartId,
+					},
+				},
+			},
+			options = { upsert: true, new: true };
+
+		return this.updateOne(filter, updateSet, options);
+	}
+
+	async addStockToInventory(input: CreateInventoryDto) {
+		const filter = {
+				shopId: input.shopId,
+				productId: input.productId,
+			},
+			updateSet = {
+				$inc: {
+					stock: input.stock,
+				},
+				location: input.location,
+			},
+			options = {
+				upsert: true,
+				new: true,
+			};
+
+		return this.updateOne(filter, updateSet, options);
 	}
 }

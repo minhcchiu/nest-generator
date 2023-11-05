@@ -1,6 +1,6 @@
-export enum cartState {
-	active = "ACTIVE",
-	completed = "COMPLETED",
-	failed = "FAILED",
-	pending = "PENDING",
+export enum CartState {
+	Active = "ACTIVE",
+	Completed = "COMPLETED",
+	Failed = "FAILED",
+	Pending = "PENDING",
 }

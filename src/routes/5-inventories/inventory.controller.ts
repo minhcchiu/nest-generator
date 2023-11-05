@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateInventoryDto } from "./dto/create-inventory.dto";
 import { UpdateInventoryDto } from "./dto/update-inventory.dto";
 import { InventoryService } from "./inventory.service";
+import { Types } from "mongoose";
 
 @ApiTags("Inventories")
 @Controller("inventories")
@@ -33,12 +34,12 @@ export class InventoryController {
 	@HttpCode(201)
 	@Post()
 	async create(@Body() body: CreateInventoryDto) {
-		return this.inventoryService.create(body);
+		return this.inventoryService.addStockToInventory(body);
 	}
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateInventoryDto,
 	) {
 		return this.inventoryService.updateById(id, body);
@@ -52,7 +53,7 @@ export class InventoryController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.inventoryService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class InventoryController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.inventoryService.findById(id, { projection, populate });

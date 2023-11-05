@@ -1,6 +1,6 @@
 import * as argon2 from "argon2";
 
-import { PaginateModel, QueryOptions } from "mongoose";
+import { PaginateModel, QueryOptions, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
 import {
@@ -69,7 +69,7 @@ export class UserService extends BaseService<UserDocument> {
 	}
 
 	async addDeviceID(
-		id: string,
+		id: Types.ObjectId,
 		deviceID: string,
 	): Promise<UserDocument | null> {
 		return this.updateById(
@@ -79,7 +79,7 @@ export class UserService extends BaseService<UserDocument> {
 		);
 	}
 
-	async removeDeviceID(id: string, deviceID: string) {
+	async removeDeviceID(id: Types.ObjectId, deviceID: string) {
 		return this.updateById(
 			id,
 			{ $pull: { fcmTokens: deviceID } },

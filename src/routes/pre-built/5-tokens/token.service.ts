@@ -93,6 +93,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async verifyAccessToken(token: string): Promise<DecodedToken> {
+		console.log({ token });
 		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.verifyToken(token, accessToken.secretKey);
@@ -136,9 +137,8 @@ export class TokenService extends BaseService<TokenDocument> {
 			accountType: user.accountType,
 		};
 
-		const { accessToken, refreshToken } = await this.generateAuthTokens(
-			payload,
-		);
+		const { accessToken, refreshToken } =
+			await this.generateAuthTokens(payload);
 
 		await this.updateOne(
 			{ userId: user._id.toString() },

@@ -19,6 +19,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateEndpointGroupDto } from "./dto/create-endpoint-group.dto";
 import { UpdateEndpointGroupDto } from "./dto/update-endpoint-group.dto";
 import { EndpointGroupService } from "./endpoint-group.service";
+import { Types } from "mongoose";
 
 @ApiTags("EndpointGroups")
 @Controller("endpoint-groups")
@@ -45,7 +46,7 @@ export class EndpointGroupController {
 	@ApiParamId()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.endpointGroupService.findById(id, { projection, populate });
@@ -60,7 +61,7 @@ export class EndpointGroupController {
 	@ApiParamId()
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateEndpointGroupDto,
 	) {
 		return this.endpointGroupService.updateById(id, body);
@@ -76,7 +77,7 @@ export class EndpointGroupController {
 
 	@ApiParamId()
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.endpointGroupService.deleteById(id);
 	}
 }

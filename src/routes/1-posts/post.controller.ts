@@ -19,6 +19,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { PostService } from "./post.service";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { Types } from "mongoose";
 
 @ApiTags("Posts")
 @Controller("posts")
@@ -42,7 +43,7 @@ export class PostController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdatePostDto,
 	) {
 		return this.postService.updateById(id, body);
@@ -56,7 +57,7 @@ export class PostController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.postService.deleteById(id);
 	}
 
@@ -75,7 +76,7 @@ export class PostController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.postService.findById(id, { projection, populate });

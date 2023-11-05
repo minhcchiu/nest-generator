@@ -11,15 +11,14 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { ProductType } from "./enums/product-type.enum";
 import { InventoryService } from "~routes/5-inventories/inventory.service";
 import { CreateInventoryDto } from "~routes/5-inventories/dto/create-inventory.dto";
-import { ProductModule } from "./product.module";
 import { Furniture, FurnitureDocument } from "./schemas/furniture.schema";
 
 @Injectable()
 export class ProductService extends BaseService<ProductDocument> {
 	private clothingModel: PaginateModel<ClothingDocument>;
 	private electronicModel: PaginateModel<ElectronicDocument>;
-	private productModel: PaginateModel<ProductModule>;
-	private furnitureModel: PaginateModel<ProductModule>;
+	private productModel: PaginateModel<ProductDocument>;
+	private furnitureModel: PaginateModel<FurnitureDocument>;
 
 	constructor(
 		@InjectModel(Product.name) _productModel: PaginateModel<ProductDocument>,

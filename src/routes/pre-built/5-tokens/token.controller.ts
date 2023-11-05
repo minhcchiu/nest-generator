@@ -7,6 +7,7 @@ import { Controller, Delete, Get, Param } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
 import { TokenService } from "./token.service";
+import { Types } from "mongoose";
 
 @ApiTags("Tokens")
 @Controller("tokens")
@@ -27,7 +28,7 @@ export class TokenController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.tokenService.deleteById(id);
 	}
 
@@ -46,7 +47,7 @@ export class TokenController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.tokenService.findById(id, { projection, populate });

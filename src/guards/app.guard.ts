@@ -61,9 +61,7 @@ export class AppGuard implements CanActivate {
 
 			return true;
 		} catch (error) {
-			throw new UnauthorizedException(
-				"Invalid token or insufficient privileges!",
-			);
+			throw new UnauthorizedException(error.message);
 		}
 	}
 

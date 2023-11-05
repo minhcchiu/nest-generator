@@ -32,7 +32,7 @@ export class ShopOrderDiscountDto {
 
 	@IsNotEmpty()
 	@IsMongoId()
-	codeId: string;
+	code: string;
 }
 
 export class ShopOrderItemDto {

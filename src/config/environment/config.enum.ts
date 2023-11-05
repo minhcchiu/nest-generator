@@ -7,6 +7,7 @@ export enum ConfigName {
 	jwt = "jwt",
 	mailer = "mailer",
 	urlConfig = "urlConfig",
+	redisConfig = "redisConfig",
 }
 
 export enum NodeEnv {

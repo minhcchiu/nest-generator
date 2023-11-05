@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { forwardRef } from "@nestjs/common/utils";
 import { MongooseModule } from "@nestjs/mongoose";
 
 import { Discount, DiscountSchema } from "./schemas/discount.schema";
@@ -14,7 +15,7 @@ import { ProductModule } from "~routes/1-products/product.module";
 				schema: DiscountSchema,
 			},
 		]),
-		ProductModule,
+		forwardRef(() => ProductModule),
 	],
 	controllers: [DiscountController],
 	providers: [DiscountService],
