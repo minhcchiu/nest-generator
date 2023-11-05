@@ -104,3 +104,7 @@ export interface UrlConfig {
 	resetPasswordUrl: string;
 	verifyAccountUrl: string;
 }
+
+export interface RedisConfig {
+	redisUrl: string;
+}

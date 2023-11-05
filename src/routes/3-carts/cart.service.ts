@@ -1,14 +1,16 @@
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { Cart, CartDocument } from "./schemas/cart.schema";
-import { AddToCartDto } from "./dto/add-to-cart.dto";
-import { CartProductDto } from "./dto/cart-product.dto";
+import { AddProductToCartDto } from "./dto/add-product-to-cart.dto";
+import { UpdateCartProductDto } from "./dto/cart-product.dto";
 import { ShopOrderItemDto } from "~routes/4-checkouts/dto/checkout-review.dto";
 import { ProductService } from "~routes/1-products/product.service";
+import { CartState } from "./enums/cart-state.enum";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @Injectable()
 export class CartService extends BaseService<CartDocument> {
@@ -23,28 +25,43 @@ export class CartService extends BaseService<CartDocument> {
 		this.cartModel = _model;
 	}
 
-	async addToCart({ product, userId }: AddToCartDto) {
-		const userCart = await this.cartModel.findOne({ userId });
+	async addProductToCart({ product, userId }: AddProductToCartDto) {
+		const cart = await this.cartModel.findOne({ userId });
 
 		// create user cart
-		if (!userCart)
-			return this.cartModel.create({ products: [product], userId });
+		if (!cart) return this.cartModel.create({ products: [product], userId });
 
 		// update product to carts
-		if (userCart.products.length === 0) {
-			userCart.products = [product];
+		if (cart.products.length === 0) {
+			cart.products = [product];
+			cart.state = CartState.Active;
 
-			return userCart.save();
+			return cart.save();
 		}
 
 		// update quantity
-		return this.updateQuantity({ userId, product });
+		return this.updateProductQuantity(cart._id, {
+			userId,
+			productId: product.productId,
+			quantity: product.quantity,
+		});
 	}
 
-	async updateQuantity(input: { userId: string; product: CartProductDto }) {
-		const { productId, quantity } = input.product;
+	async updateProductQuantity(
+		cartId: Types.ObjectId,
+		input: {
+			userId: string;
+			productId: string;
+			quantity: number;
+		},
+	) {
+		const { productId, quantity, userId } = input;
 
-		const query = { userId: input.userId, "products.productId": productId },
+		const query = {
+				_id: cartId,
+				userId: userId,
+				"products.productId": productId,
+			},
 			updateSet = {
 				$inc: {
 					"products.$.quantity": quantity,
@@ -55,14 +72,45 @@ export class CartService extends BaseService<CartDocument> {
 				upsert: true,
 			};
 
-		return this.cartModel.findOneAndUpdate(query, updateSet, options);
+		return this.updateOne(query, updateSet, options);
+	}
+
+	async updateCartProduct(input: {
+		userId: string;
+		product: UpdateCartProductDto;
+	}) {
+		const { userId, product } = input;
+
+		if (product.quantity === 0)
+			return this.deleteCartProduct(userId, product.productId);
+
+		return this.cartModel.updateOne(
+			{
+				userId,
+				"products.productId": product.productId,
+			},
+			{
+				$inc: {
+					"products.$.quantity": product.quantity - product.oldQuantity,
+				},
+			},
+		);
+	}
+
+	async deleteCartProduct(userId: string, productId: string) {
+		const filter = { userId: userId, state: CartState.Active },
+			$pull = {
+				products: productId,
+			};
+
+		return this.cartModel.updateOne(filter, { $pull });
 	}
 
 	async checkoutProductsByServer(items: ShopOrderItemDto[]) {
 		return Promise.all(
 			items.map(async (product) => {
 				const foundProduct = await this.productService.findById(
-					product.productId,
+					stringIdToObjectId(product.productId),
 				);
 
 				if (foundProduct) {

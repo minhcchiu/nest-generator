@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { forwardRef } from "@nestjs/common/utils";
 
 import { Product, ProductSchema } from "./schemas/product.schema";
 import { ProductController } from "./product.controller";
@@ -8,6 +9,7 @@ import { InventoryModule } from "~routes/5-inventories/inventory.module";
 import { Clothing, ClothingSchema } from "./schemas/clothing.schema";
 import { Electronic, ElectronicSchema } from "./schemas/electronic.schema";
 import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
+import { DiscountModule } from "~routes/6-discounts/discount.module";
 
 @Module({
 	imports: [
@@ -39,6 +41,7 @@ import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
 			},
 		]),
 		InventoryModule,
+		forwardRef(() => DiscountModule),
 	],
 	controllers: [ProductController],
 	providers: [ProductService],

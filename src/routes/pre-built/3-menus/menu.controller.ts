@@ -17,6 +17,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { MenuService } from "./menu.service";
+import { Types } from "mongoose";
 
 @ApiTags("Menus")
 @Controller("menus")
@@ -36,7 +37,7 @@ export class MenuController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateMenuDto,
 	) {
 		return this.menuService.updateById(id, body);
@@ -50,7 +51,7 @@ export class MenuController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.menuService.deleteById(id);
 	}
 
@@ -66,7 +67,7 @@ export class MenuController {
 
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.menuService.findById(id, { projection, populate });

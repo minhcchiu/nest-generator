@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { UpdateDiscountDto } from "./dto/update-discount.dto";
 import { DiscountService } from "./discount.service";
+import { Types } from "mongoose";
 
 @ApiTags("Discounts")
 @Controller("discounts")
@@ -26,7 +27,7 @@ export class DiscountController {
 
 	@Public()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+	async getAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.discountService.findAll(filter, options);
 	}
 
@@ -38,7 +39,7 @@ export class DiscountController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateDiscountDto,
 	) {
 		return this.discountService.updateById(id, body);
@@ -52,7 +53,7 @@ export class DiscountController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.discountService.deleteById(id);
 	}
 
@@ -70,14 +71,19 @@ export class DiscountController {
 
 	@Public()
 	@Get("products")
-	async findProductsByDiscount(@GetAqp() query: AqpDto) {
-		return this.discountService.getAllDiscountCodesWithProduct(query);
+	async getProductsByDiscount(
+		@GetAqp() { filter: discountFilter, ...productOptions }: AqpDto,
+	) {
+		return this.discountService.findProductsByDiscount({
+			discountFilter,
+			productOptions,
+		});
 	}
 
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.discountService.findById(id, { projection, populate });

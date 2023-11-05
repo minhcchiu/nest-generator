@@ -12,6 +12,7 @@ import { ResetPasswordDto } from "./dto/password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { TokenDto } from "./dto/token.dto";
 import { Throttle } from "@nestjs/throttler";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -64,7 +65,7 @@ export class AuthController {
 		@GetCurrentUserId() userId: string,
 		@Body("deviceID") deviceID?: string,
 	) {
-		return this.authService.logout(userId, deviceID);
+		return this.authService.logout(stringIdToObjectId(userId), deviceID);
 	}
 
 	@Public()

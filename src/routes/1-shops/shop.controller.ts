@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateShopDto } from "./dto/create-shop.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
 import { ShopService } from "./shop.service";
+import { Types } from "mongoose";
 
 @ApiTags("Shops")
 @Controller("shops")
@@ -38,7 +39,7 @@ export class ShopController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateShopDto,
 	) {
 		return this.shopService.updateById(id, body);
@@ -52,7 +53,7 @@ export class ShopController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.shopService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class ShopController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.shopService.findById(id, { projection, populate });

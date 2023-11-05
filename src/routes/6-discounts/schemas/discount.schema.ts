@@ -27,10 +27,10 @@ export class Discount {
 		enum: DiscountTypeEnum,
 		default: DiscountTypeEnum.fixedAmount,
 	})
-	type: DiscountTypeEnum;
+	discountType: DiscountTypeEnum;
 
 	@Prop({ type: Number, required: true }) // 10.000 , 10
-	value: number;
+	discountValue: number;
 
 	@Prop({ type: Date, required: true })
 	startDate: Date;
@@ -45,7 +45,7 @@ export class Discount {
 	usesCount: number;
 
 	@Prop({ type: [{ type: String, ref: "User" }], default: [] }) // danh sách user đang sử dụng
-	usersUsed: string;
+	usersUsed: string[];
 
 	@Prop({ type: Number, required: true }) // Số lượng tối đa cho mỗi user
 	maxUsersPerUser: number;

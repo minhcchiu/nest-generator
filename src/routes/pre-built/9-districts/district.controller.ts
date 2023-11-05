@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
 import { UpdateDistrictDto } from "./dto/update-district.dto";
+import { Types } from "mongoose";
 
 @ApiTags("Districts")
 @Controller("districts")
@@ -38,7 +39,7 @@ export class DistrictController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateDistrictDto,
 	) {
 		return this.districtService.updateById(id, body);
@@ -52,7 +53,7 @@ export class DistrictController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.districtService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class DistrictController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.districtService.findById(id, { projection, populate });

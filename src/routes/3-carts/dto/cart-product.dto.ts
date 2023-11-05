@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/swagger";
 import {
 	IsMongoId,
 	IsNotEmpty,
@@ -16,7 +17,7 @@ export class CartProductDto {
 	shopId: string;
 
 	@IsOptional()
-	@IsMongoId()
+	@IsNumber()
 	quantity: number;
 
 	@IsOptional()
@@ -26,4 +27,10 @@ export class CartProductDto {
 	@IsOptional()
 	@IsNumber()
 	price: number;
+}
+
+export class UpdateCartProductDto extends PartialType(CartProductDto) {
+	@IsOptional()
+	@IsNumber()
+	oldQuantity: number;
 }

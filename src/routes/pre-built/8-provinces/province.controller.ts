@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
 import { ProvinceService } from "./province.service";
+import { Types } from "mongoose";
 
 @ApiTags("Provinces")
 @Controller("provinces")
@@ -38,7 +39,7 @@ export class ProvinceController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateProvinceDto,
 	) {
 		return this.provinceService.updateById(id, body);
@@ -52,7 +53,7 @@ export class ProvinceController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.provinceService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class ProvinceController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.provinceService.findById(id, { projection, populate });

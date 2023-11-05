@@ -20,6 +20,8 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserService } from "./user.service";
+import { Types } from "mongoose";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Users")
 @Controller("users")
@@ -45,7 +47,7 @@ export class UserController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateUserDto,
 	) {
 		await this.userService.validateCreateUser({
@@ -80,7 +82,7 @@ export class UserController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.userService.deleteById(id);
 	}
 
@@ -89,7 +91,10 @@ export class UserController {
 		@GetCurrentUserId() id: string,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
-		return this.userService.findById(id, { projection, populate });
+		return this.userService.findById(stringIdToObjectId(id), {
+			projection,
+			populate,
+		});
 	}
 
 	@Public()
@@ -101,7 +106,7 @@ export class UserController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.userService.findById(id, { projection, populate });

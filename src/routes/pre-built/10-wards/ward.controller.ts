@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateWardDto } from "./dto/create-ward.dto";
 import { UpdateWardDto } from "./dto/update-ward.dto";
 import { WardService } from "./ward.service";
+import { Types } from "mongoose";
 
 @ApiTags("Wards")
 @Controller("wards")
@@ -38,7 +39,7 @@ export class WardController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateWardDto,
 	) {
 		return this.wardService.updateById(id, body);
@@ -52,7 +53,7 @@ export class WardController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.wardService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class WardController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.wardService.findById(id, { projection, populate });

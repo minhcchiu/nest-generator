@@ -1,14 +1,18 @@
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { Discount, DiscountDocument } from "./schemas/discount.schema";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
-import { AqpDto } from "~dto/aqp.dto";
 import { DiscountAppliesToEnum } from "./enums/discount-applies-to.enum";
 import { ProductService } from "~routes/1-products/product.service";
+import { DiscountTypeEnum } from "./enums/discount-type.enum";
 
 @Injectable()
 export class DiscountService extends BaseService<DiscountDocument> {
@@ -35,19 +39,25 @@ export class DiscountService extends BaseService<DiscountDocument> {
 		return this.discountModel.create(input);
 	}
 
-	async getAllDiscountCodesWithProduct({ filter, ...productOptions }: AqpDto) {
-		const foundDiscount = await this.findOne(filter);
+	async findProductsByDiscount({
+		discountFilter,
+		productOptions,
+	}: {
+		discountFilter: Record<string, any>;
+		productOptions: Record<string, any>;
+	}) {
+		const foundDiscount = await this.findOne(discountFilter);
 
 		if (!foundDiscount || !foundDiscount.isActive)
 			throw new NotFoundException("Discount not exists!");
 
-		// find all products
+		// all products
 		const productsFilter: Record<string, any> = {
 			isPublished: true,
 			shopId: foundDiscount.shopId,
 		};
 
-		// find products by specific products
+		// specific products
 		if (foundDiscount.appliesTo === DiscountAppliesToEnum.SPECIFIC) {
 			Object.assign(productsFilter, {
 				_id: { $in: foundDiscount.productIds },
@@ -60,5 +70,71 @@ export class DiscountService extends BaseService<DiscountDocument> {
 		);
 
 		return pagination;
+	}
+
+	async getDiscountAmount(data: {
+		code: string;
+		userId: string;
+		shopId: string;
+		products: { price: number; quantity: number; productId: string }[];
+	}) {
+		const foundDiscount = await this.discountModel
+			.findOne({
+				code: data.code,
+				shopId: data.shopId,
+			})
+			.lean();
+
+		if (!foundDiscount) throw new NotFoundException("Discount doesn't exists!");
+
+		const {
+			isActive,
+			maxUses,
+			minOrderValue,
+			usersUsed,
+			startDate,
+			maxUsersPerUser,
+			endDate,
+			discountType,
+			discountValue,
+		} = foundDiscount;
+
+		if (!isActive) throw new BadRequestException("Discount expired!");
+		if (!maxUses) throw new BadRequestException("Discount are out!");
+		if (new Date() < new Date(startDate) || new Date() > new Date(endDate))
+			throw new BadRequestException("Discount code has expired!");
+
+		let totalOrder = 0;
+		if (minOrderValue > 0) {
+			totalOrder = data.products.reduce(
+				(acc, product) => acc + product.price * product.quantity,
+				0,
+			);
+		}
+
+		if (totalOrder < minOrderValue)
+			throw new BadRequestException(
+				`Discount requires a minium order value of ${minOrderValue}!`,
+			);
+
+		if (maxUsersPerUser > 0) {
+			const userUsedDiscount = usersUsed.includes(data.userId);
+
+			if (userUsedDiscount) {
+				// ...
+			}
+		}
+
+		// check unit
+		const amount =
+			discountType === DiscountTypeEnum.fixedAmount
+				? discountValue
+				: totalOrder * (discountValue / 100);
+
+		return {
+			totalOrder,
+			discount: amount,
+			totalPrice: totalOrder - amount,
+		};
 	}
 }

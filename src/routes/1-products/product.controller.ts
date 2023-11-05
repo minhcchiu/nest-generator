@@ -18,6 +18,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductService } from "./product.service";
+import { Types } from "mongoose";
 
 @ApiTags("Products")
 @Controller("products")
@@ -38,7 +39,7 @@ export class ProductController {
 
 	@Patch(":id")
 	async update(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateProductDto,
 	) {
 		return this.productService.updateById(id, body);
@@ -52,7 +53,7 @@ export class ProductController {
 	}
 
 	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.productService.deleteById(id);
 	}
 
@@ -71,7 +72,7 @@ export class ProductController {
 	@Public()
 	@Get(":id")
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		const product = await this.productService.findById(id, {

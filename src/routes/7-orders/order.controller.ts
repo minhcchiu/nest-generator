@@ -15,70 +15,62 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { CreateCommentDto } from "./dto/create-comment.dto";
-import { UpdateCommentDto } from "./dto/update-comment.dto";
-import { CommentService } from "./comment.service";
-import { GetCurrentUser } from "~decorators/get-current-user";
-import { TokenPayload } from "~routes/pre-built/5-tokens/interface";
-import { AuthorDto } from "./dto/author.dto";
+import { CreateOrderDto } from "./dto/create-order.dto";
+import { UpdateOrderDto } from "./dto/update-order.dto";
+import { OrderService } from "./order.service";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Types } from "mongoose";
 
-@ApiTags("Comments")
-@Controller("comments")
-export class CommentController {
-	constructor(private readonly commentService: CommentService) {}
+@ApiTags("Orders")
+@Controller("orders")
+export class OrderController {
+	constructor(private readonly orderService: OrderService) {}
 
 	@Public()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.commentService.findAll(filter, options);
+		return this.orderService.findAll(filter, options);
 	}
 
 	@HttpCode(201)
 	@Post()
 	async create(
-		@GetCurrentUser() user: TokenPayload,
-		@Body() body: CreateCommentDto,
+		@GetCurrentUserId() userId: string,
+		@Body() body: CreateOrderDto,
 	) {
-		const author: AuthorDto = {
-			userId: user._id,
-			avatar: user.avatar,
-			fullName: user.fullName,
-		};
-
-		return this.commentService.create({ ...body, author });
+		return this.orderService.create({ ...body, orderedBy: userId });
 	}
 
 	@Patch(":id")
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateCommentDto,
+		@Body() body: UpdateOrderDto,
 	) {
-		return this.commentService.updateById(id, body);
+		return this.orderService.updateById(id, body);
 	}
 
 	@Delete(":ids/ids")
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.commentService.deleteMany({
+		return this.orderService.deleteMany({
 			_id: { $in: ids.split(",") },
 		});
 	}
 
 	@Delete(":id")
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.commentService.deleteById(id);
+		return this.orderService.deleteById(id);
 	}
 
 	@Public()
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.commentService.paginate(filter, options);
+		return this.orderService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	async count(@GetAqp("filter") filter: AqpDto) {
-		return this.commentService.count(filter);
+		return this.orderService.count(filter);
 	}
 
 	@Public()
@@ -87,6 +79,6 @@ export class CommentController {
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
-		return this.commentService.findById(id, { projection, populate });
+		return this.orderService.findById(id, { projection, populate });
 	}
 }

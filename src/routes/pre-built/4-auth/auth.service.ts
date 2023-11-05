@@ -17,6 +17,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { OtpService } from "../6-otp/otp.service";
 import { OtpType } from "../6-otp/enums/otp-type";
 import { Role } from "../1-users/enums/role.enum";
+import { Types } from "mongoose";
 
 @Injectable()
 export class AuthService {
@@ -40,8 +41,7 @@ export class AuthService {
 			role: Role.USER,
 		});
 
-		if (deviceID)
-			this.userService.addDeviceID(newUser._id.toString(), deviceID);
+		if (deviceID) this.userService.addDeviceID(newUser._id, deviceID);
 
 		return this.tokenService.generateUserAuth(newUser);
 	}
@@ -63,7 +63,7 @@ export class AuthService {
 
 		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
 
-		if (deviceID) this.userService.addDeviceID(user._id.toString(), deviceID);
+		if (deviceID) this.userService.addDeviceID(user._id, deviceID);
 
 		return this.tokenService.generateUserAuth(user);
 	}
@@ -84,8 +84,7 @@ export class AuthService {
 			foundUser = newUser.toObject();
 		}
 
-		if (deviceID)
-			this.userService.addDeviceID(foundUser._id.toString(), deviceID);
+		if (deviceID) this.userService.addDeviceID(foundUser._id, deviceID);
 
 		return this.tokenService.generateUserAuth(foundUser);
 	}
@@ -96,9 +95,8 @@ export class AuthService {
 			phone: input.phone,
 		});
 
-		const { token, expiresAt } = await this.tokenService.generateUserToken(
-			input,
-		);
+		const { token, expiresAt } =
+			await this.tokenService.generateUserToken(input);
 		this.mailService.sendRegisterToken(
 			{
 				token,
@@ -140,7 +138,7 @@ export class AuthService {
 		return this.register(decoded);
 	}
 
-	async logout(userId: string, deviceID?: string) {
+	async logout(userId: Types.ObjectId, deviceID?: string) {
 		Promise.all([
 			this.userService.removeDeviceID(userId, deviceID),
 			this.tokenService.deleteOne({ user: userId }),
