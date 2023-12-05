@@ -1,7 +1,6 @@
 import * as mongoosePaginateV2 from "mongoose-paginate-v2";
 
 const customLabels = {
-	docs: "data",
 	limit: "_limit",
 	page: "_page",
 	totalPages: "_totalPages",

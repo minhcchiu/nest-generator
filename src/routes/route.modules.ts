@@ -16,6 +16,8 @@ import { InventoryModule } from "./5-inventories/inventory.module";
 import { DiscountModule } from "./6-discounts/discount.module";
 import { ShopModule } from "./1-shops/shop.module";
 import { CheckoutModule } from "./4-checkouts/checkout.module";
+import { SettingModule } from "./pre-built/11-settings/setting.module";
+import { NotificationModule } from "./pre-built/12-notifications/notification.module";
 
 export const RouteModules = [
 	// pre-built
@@ -30,6 +32,8 @@ export const RouteModules = [
 	ProvinceModule,
 	DistrictModule,
 	WardModule,
+	SettingModule,
+	NotificationModule,
 
 	// features
 	ProductModule,
