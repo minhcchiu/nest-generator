@@ -19,7 +19,7 @@ import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
 import { NotificationService } from "./notification.service";
 import { Types } from "mongoose";
-import { Language } from "~decorators/language.decorator";
+import { GetLanguage } from "~decorators/language.decorator";
 import { LanguageEnum } from "src/enums/language.enum";
 
 @ApiTags("Notifications")
@@ -58,7 +58,7 @@ export class NotificationController {
 	@Get("paginate")
 	async paginate(
 		@GetAqp() { filter, ...options }: AqpDto,
-		@Language() language: LanguageEnum,
+		@GetLanguage() language: LanguageEnum,
 	) {
 		const pagination = await this.notificationService.paginate(filter, options);
 
@@ -80,7 +80,7 @@ export class NotificationController {
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
-		@Language() language: LanguageEnum,
+		@GetLanguage() language: LanguageEnum,
 	) {
 		const notification = await this.notificationService.findById(id, {
 			projection,
