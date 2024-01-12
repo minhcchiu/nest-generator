@@ -1,5 +1,5 @@
 import { registerAs } from "@nestjs/config";
-import { ConfigName } from "./config.enum";
+import { ConfigName } from "./enums/config.enum";
 import {
 	AppConfig,
 	CloudinaryConfig,
@@ -10,49 +10,51 @@ import {
 	RedisConfig,
 	UploadConfig,
 	UrlConfig,
-} from "./config.interface";
+} from "./interfaces/config.interface";
+import validateConfig from "~utils/src/utils/validate-config";
+import { EnvDto } from "./dto/env.dto";
 
-const nodeEnv = registerAs(
-	ConfigName.app,
-	(): AppConfig => ({
+const nodeEnv = registerAs(ConfigName.App, (): AppConfig => {
+	validateConfig(process.env, EnvDto);
+
+	return {
 		nodeEnv: process.env.NODE_ENV,
 		port: +process.env.APP_PORT,
 		appUrl: process.env.APP_URL,
-	}),
-);
+	};
+});
 
-const databaseEnv = registerAs(
-	ConfigName.database,
-	(): DatabaseConfig => ({
+const databaseEnv = registerAs(ConfigName.Database, (): DatabaseConfig => {
+	return {
 		name: process.env.DATABASE_NAME,
 		uri: process.env.DATABASE_URI,
-	}),
-);
+	};
+});
 
 const cloudinaryEnv = registerAs(
-	ConfigName.cloudinary,
-	(): CloudinaryConfig => ({
-		config: {
-			cloud_name: process.env.CLOUD_NAME,
-			api_key: process.env.CLOUD_API_KEY,
-			api_secret: process.env.CLOUD_API_SECRET,
-		},
-		options: {
-			folder: process.env.APP_NAME,
-		},
-	}),
+	ConfigName.Cloudinary,
+	(): CloudinaryConfig => {
+		return {
+			config: {
+				cloud_name: process.env.CLOUD_NAME,
+				api_key: process.env.CLOUD_API_KEY,
+				api_secret: process.env.CLOUD_API_SECRET,
+			},
+			options: {
+				folder: process.env.APP_NAME,
+			},
+		};
+	},
 );
 
-const otpEnv = registerAs(
-	ConfigName.otp,
-	(): OtpConfig => ({
+const otpEnv = registerAs(ConfigName.Otp, (): OtpConfig => {
+	return {
 		expiresIn: eval(process.env.OTP_EXPIRATION),
-	}),
-);
+	};
+});
 
-const uploadEnv = registerAs(
-	ConfigName.upload,
-	(): UploadConfig => ({
+const uploadEnv = registerAs(ConfigName.Upload, (): UploadConfig => {
+	return {
 		imageMaxSize: +process.env.UPLOAD_IMAGE_MAX_SIZE,
 		rawMaxSize: +process.env.UPLOAD_RAW_MAX_SIZE,
 		videoMaxSize: +process.env.UPLOAD_VIDEO_MAX_SIZE,
@@ -67,11 +69,11 @@ const uploadEnv = registerAs(
 		rawExt: process.env.UPLOAD_RAW_EXT,
 		videoExt: process.env.UPLOAD_VIDEO_EXT,
 		audioExt: process.env.UPLOAD_AUDIO_EXT,
-	}),
-);
+	};
+});
 
 const jwtEnv = registerAs(
-	ConfigName.jwt,
+	ConfigName.Jwt,
 	(): JWTConfig => ({
 		secretKey: process.env.JWT_SECRET,
 		expiresIn: eval(process.env.JWT_EXPIRATION),
@@ -95,7 +97,7 @@ const jwtEnv = registerAs(
 );
 
 const mailerEnv = registerAs(
-	ConfigName.mailer,
+	ConfigName.Mailer,
 	(): MailerConfig => ({
 		isGmailServer: process.env.MAIL_SERVER,
 
@@ -124,7 +126,7 @@ const mailerEnv = registerAs(
 );
 
 const urlEnv = registerAs(
-	ConfigName.urlConfig,
+	ConfigName.UrlConfig,
 	(): UrlConfig => ({
 		resetPasswordUrl: process.env.RESET_PASSWORD_URL,
 		verifyAccountUrl: process.env.VERIFY_ACCOUNT_URL,
@@ -132,7 +134,7 @@ const urlEnv = registerAs(
 );
 
 const redisEnv = registerAs(
-	ConfigName.redisConfig,
+	ConfigName.RedisConfig,
 	(): RedisConfig => ({
 		redisUrl: process.env.REDIS_URL,
 	}),

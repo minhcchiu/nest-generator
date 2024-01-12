@@ -14,7 +14,8 @@ import { CreateOtpDto } from "./dto/create-otp.dto";
 import { OtpType } from "./enums/otp-type";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { generateOTP } from "~helpers/generate-otp";
-import { AppConfig, NodeEnv, ConfigName, OtpConfig } from "~config/environment";
+import { AppConfig, OtpConfig } from "~config/interfaces/config.interface";
+import { ConfigName, NodeEnv } from "~config/enums/config.enum";
 
 @Injectable()
 export class OtpService {
@@ -33,7 +34,7 @@ export class OtpService {
 		else if (credential.email)
 			await this._sendEmailVerify(credential.email, otpCode);
 
-		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.app);
+		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.App);
 
 		if (nodeEnv === NodeEnv.DEVELOPMENT) return { otpCode, otpType };
 
@@ -62,7 +63,7 @@ export class OtpService {
 	}
 
 	private async create(credential: any, otpType: OtpType) {
-		const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.otp);
+		const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.Otp);
 
 		const otpCode = generateOTP();
 		const expiredAt = Date.now() + expiresIn;

@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import { AppConfig } from "~config/environment";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import {
 	StorageFileInterceptor,
@@ -24,6 +23,8 @@ import { SaveFilesDto } from "./dto/save-files.dto";
 import { FieldNameEnum, FieldsNameEnum } from "./enum/field-name.enum";
 import { ResourceTypeEnum } from "./enum/resource-type.enum";
 import { UploadService } from "./upload.service";
+import { AppConfig } from "~config/interfaces/config.interface";
+import { ConfigName } from "~config/enums/config.enum";
 
 @ApiTags("uploads")
 @Controller("uploads")
@@ -33,7 +34,7 @@ export class UploadController {
 		private readonly uploadService: UploadService,
 		readonly configService: ConfigService,
 	) {
-		this.appUrl = configService.get<AppConfig>("app").appUrl;
+		this.appUrl = configService.get<AppConfig>(ConfigName.App).appUrl;
 	}
 
 	/**

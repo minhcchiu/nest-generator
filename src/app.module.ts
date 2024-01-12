@@ -1,6 +1,5 @@
 import { join } from "path";
 import { DatabaseModuleConfig } from "~config/database.module.config";
-import { configurations } from "~config/environment";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
 
 import { CacheModule } from "@nestjs/cache-manager";
@@ -26,6 +25,7 @@ import { SocketModule } from "~shared/socket/socket.module";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { RouteModules } from "~routes/route.modules";
 import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { configurations } from "~config/environment.config";
 
 @Module({
 	imports: [
