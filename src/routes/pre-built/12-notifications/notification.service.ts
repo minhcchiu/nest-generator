@@ -12,6 +12,7 @@ import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { NotificationTypeEnum } from "./enums/noti-type.enum";
 import { notificationTranslate } from "./trans/nottification.translate";
 import { LanguageEnum } from "src/enums/language.enum";
+import { OnEvent } from "@nestjs/event-emitter";
 
 @Injectable()
 export class NotificationService extends BaseService<NotificationDocument> {
@@ -19,6 +20,11 @@ export class NotificationService extends BaseService<NotificationDocument> {
 		@InjectModel(Notification.name) model: PaginateModel<NotificationDocument>,
 	) {
 		super(model);
+	}
+
+	@OnEvent("order.created")
+	handleOrderCreatedEvent(payload: { testId: number; content: string }) {
+		console.log({ payload });
 	}
 
 	async createNotification(input: CreateNotificationDto) {

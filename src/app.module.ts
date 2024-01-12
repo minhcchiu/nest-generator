@@ -26,6 +26,7 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { RouteModules } from "~routes/route.modules";
 import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 import { configurations } from "~config/environment.config";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { configurations } from "~config/environment.config";
 			},
 		]),
 
+		EventEmitterModule.forRoot(),
 		DatabaseModuleConfig,
 		SeedModule,
 		LoggerModule,
