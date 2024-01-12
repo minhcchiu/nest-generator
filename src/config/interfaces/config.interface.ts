@@ -1,13 +1,13 @@
-import { ConfigName } from "./config.enum";
+import { ConfigName } from "../enums/config.enum";
 
 export interface IConfiguration {
-	[ConfigName.app]: AppConfig;
-	[ConfigName.database]: DatabaseConfig;
-	[ConfigName.cloudinary]: CloudinaryConfig;
-	[ConfigName.otp]: OtpConfig;
-	[ConfigName.upload]: UploadConfig;
-	[ConfigName.jwt]: JWTConfig;
-	[ConfigName.mailer]: MailerConfig;
+	[ConfigName.App]: AppConfig;
+	[ConfigName.Database]: DatabaseConfig;
+	[ConfigName.Cloudinary]: CloudinaryConfig;
+	[ConfigName.Otp]: OtpConfig;
+	[ConfigName.Upload]: UploadConfig;
+	[ConfigName.Jwt]: JWTConfig;
+	[ConfigName.Mailer]: MailerConfig;
 }
 
 export interface AppConfig {
