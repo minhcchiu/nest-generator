@@ -1,10 +1,11 @@
-import { ConfigName, MailerConfig, UrlConfig } from "~config/environment";
 import { Logger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as dayjs from "dayjs";
+import { MailerConfig, UrlConfig } from "~config/interfaces/config.interface";
+import { ConfigName } from "~config/enums/config.enum";
 
 @Injectable()
 export class MailService {
@@ -25,7 +26,7 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
+			ConfigName.Mailer,
 		);
 		const params = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
@@ -51,10 +52,10 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
+			ConfigName.Mailer,
 		);
 		const { verifyAccountUrl } = this.configService.get<UrlConfig>(
-			ConfigName.urlConfig,
+			ConfigName.UrlConfig,
 		);
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
@@ -93,10 +94,10 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
+			ConfigName.Mailer,
 		);
 		const { resetPasswordUrl } = this.configService.get<UrlConfig>(
-			ConfigName.urlConfig,
+			ConfigName.UrlConfig,
 		);
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
