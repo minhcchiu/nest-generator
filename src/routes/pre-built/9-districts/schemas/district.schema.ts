@@ -1,6 +1,7 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { Province } from "~routes/pre-built/8-provinces/schemas/province.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema({
 	timestamps: true,

@@ -1,18 +1,17 @@
-import { Logger } from "~shared/logger/logger.service";
+import * as dayjs from "dayjs";
+import { ConfigName, MailerConfig, UrlConfig } from "~config/environment";
+import { CustomLogger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as dayjs from "dayjs";
-import { MailerConfig, UrlConfig } from "~config/interfaces/config.interface";
-import { ConfigName } from "~config/enums/config.enum";
 
 @Injectable()
 export class MailService {
 	constructor(
 		private mailerService: MailerService,
 		private configService: ConfigService,
-		private readonly logger: Logger,
+		private readonly logger: CustomLogger,
 	) {}
 
 	sendMail(options: ISendMailOptions) {
@@ -26,7 +25,7 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.Mailer,
+			ConfigName.mailer,
 		);
 		const params = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
@@ -39,8 +38,8 @@ export class MailService {
 		// send mail
 		return this.sendMail(params).then((result) => {
 			this.logger.log(
-				MailService.name,
 				`Send a OTP to email:"${to}" successfully!`,
+				MailService.name,
 			);
 			return result;
 		});
@@ -52,10 +51,10 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.Mailer,
+			ConfigName.mailer,
 		);
 		const { verifyAccountUrl } = this.configService.get<UrlConfig>(
-			ConfigName.UrlConfig,
+			ConfigName.urlConfig,
 		);
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
@@ -94,10 +93,10 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.Mailer,
+			ConfigName.mailer,
 		);
 		const { resetPasswordUrl } = this.configService.get<UrlConfig>(
-			ConfigName.UrlConfig,
+			ConfigName.urlConfig,
 		);
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");

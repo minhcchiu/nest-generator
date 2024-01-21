@@ -4,7 +4,7 @@ const customLabels = {
 	limit: "_limit",
 	page: "_page",
 	totalPages: "_totalPages",
-	totalDocs: "_totalData",
+	totalDocs: "_totalDocs",
 	meta: "pageInfo",
 	pagingCounter: "_pagingCounter",
 	hasPrevPage: "_hasPrevPage",

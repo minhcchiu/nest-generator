@@ -1,8 +1,9 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { Product } from "~routes/1-products/schemas/product.schema";
 import { Shop } from "~routes/1-shops/schemas/shop.schema";
 import { Cart } from "~routes/3-carts/schemas/cart.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema({
 	timestamps: true,

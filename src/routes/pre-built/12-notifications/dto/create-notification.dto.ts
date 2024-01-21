@@ -6,6 +6,7 @@ import {
 	IsObject,
 	IsOptional,
 } from "class-validator";
+
 import { NotificationTypeEnum } from "../enums/noti-type.enum";
 
 export class CreateNotificationDto {

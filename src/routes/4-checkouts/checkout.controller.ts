@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { CheckoutReviewDto } from "./dto/checkout-review.dto";
+
 import { CheckoutService } from "./checkout.service";
+import { CheckoutReviewDto } from "./dto/checkout-review.dto";
 
 @ApiTags("Checkouts")
 @Controller("checkouts")

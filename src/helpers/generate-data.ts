@@ -1,6 +1,7 @@
-import { faker } from "@faker-js/faker";
 import { CreateProductDto } from "~routes/1-products/dto/create-product.dto";
 import { ProductType } from "~routes/1-products/enums/product-type.enum";
+
+import { faker } from "@faker-js/faker";
 
 const ownerId = "645548ee732c55aa88d2bed4";
 

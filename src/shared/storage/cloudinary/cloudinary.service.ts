@@ -1,15 +1,14 @@
 import { UploadApiOptions, v2 } from "cloudinary";
 import { unlinkSync } from "fs";
+import { CloudinaryConfig } from "~config/environment";
 import { ResourceTypeEnum } from "~routes/1-upload/enum/resource-type.enum";
-import { Logger } from "~shared/logger/logger.service";
+import { CustomLogger } from "~shared/logger/logger.service";
 import { getFileName } from "~utils/file.util";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { cloudinaryHelper } from "./cloudinary.helper";
-import { CloudinaryConfig } from "~config/interfaces/config.interface";
-import { ConfigName } from "~config/enums/config.enum";
 
 @Injectable()
 export class CloudinaryService {
@@ -24,11 +23,9 @@ export class CloudinaryService {
 
 	constructor(
 		readonly configService: ConfigService,
-		private readonly logger: Logger,
+		private readonly logger: CustomLogger,
 	) {
-		this.cloudinaryConfig = configService.get<CloudinaryConfig>(
-			ConfigName.Cloudinary,
-		);
+		this.cloudinaryConfig = configService.get<CloudinaryConfig>("cloudinary");
 	}
 	/**
 	 * Upload

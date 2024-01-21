@@ -1,6 +1,11 @@
 import { join } from "path";
 import { DatabaseModuleConfig } from "~config/database.module.config";
+import { configurations } from "~config/environment";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
+import { RouteModules } from "~routes/route.modules";
+import { FirebaseModule } from "~shared/firebase/firebase.module";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { SocketModule } from "~shared/socket/socket.module";
 
 import { CacheModule } from "@nestjs/cache-manager";
 import {
@@ -12,6 +17,7 @@ import {
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -21,12 +27,6 @@ import { LoggingInterceptor } from "./shared/interceptors";
 import { LoggerModule } from "./shared/logger/logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
-import { SocketModule } from "~shared/socket/socket.module";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { RouteModules } from "~routes/route.modules";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
-import { configurations } from "~config/environment.config";
-import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
 	imports: [
@@ -52,12 +52,12 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 			},
 		]),
 
-		EventEmitterModule.forRoot(),
 		DatabaseModuleConfig,
 		SeedModule,
 		LoggerModule,
 		MailModule,
 		SocketModule,
+		FirebaseModule,
 
 		// routes
 		...RouteModules,

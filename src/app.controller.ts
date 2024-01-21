@@ -1,24 +1,14 @@
-import { Controller, Get } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Public } from "~decorators/public.decorator";
 import { ChannelName } from "~shared/redis-feature/channel";
 import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 
+import { Controller, Get } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+
+@ApiTags("App")
 @Controller()
 export class AppController {
-	constructor(
-		private readonly redisFeatureService: RedisFeatureService,
-		private readonly eventEmitter: EventEmitter2,
-	) {}
-
-	@Public()
-	@Get("test-order")
-	async testOrder() {
-		this.eventEmitter.emit("order.created", {
-			testId: 1,
-			content: "Hello from Order!",
-		});
-	}
+	constructor(private readonly redisFeatureService: RedisFeatureService) {}
 
 	@Public()
 	@Get("publish")

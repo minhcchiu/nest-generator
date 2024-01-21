@@ -1,10 +1,12 @@
 import * as argon2 from "argon2";
-
 import { PaginateModel, QueryOptions, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { StoreService } from "~routes/1-stores/store.service";
 
 import {
 	BadRequestException,
+	forwardRef,
+	Inject,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
@@ -12,36 +14,65 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 
 import { UpdatePasswordDto } from "./dto/update-password";
+import { IAuthKeys, UniqueKeys } from "./enums/unique-keys";
 import { User, UserDocument } from "./schemas/user.schema";
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
 	private userModel: PaginateModel<UserDocument>;
-	constructor(@InjectModel(User.name) model: PaginateModel<UserDocument>) {
+	constructor(
+		@InjectModel(User.name) model: PaginateModel<UserDocument>,
+		@Inject(forwardRef(() => StoreService))
+		private readonly storeService: StoreService,
+	) {
 		super(model);
 		this.userModel = model;
 	}
 
-	async validateCreateUser({
-		phone,
-		email,
-		username,
-	}: {
-		phone?: string;
-		email?: string;
-		username?: string;
-	}) {
-		if (phone && (await this.count({ phone }))) {
-			throw new BadRequestException("Phone already exists in the system.");
-		}
+	async create(input: Record<string, any>) {
+		const authKeyObj: IAuthKeys = {
+			email: input.email,
+			phone: input.phone,
+			username: input.username,
+		};
 
-		if (email && (await this.count({ email }))) {
-			throw new BadRequestException("Email already exists in the system.");
-		}
+		await this.validateCreateUser(authKeyObj);
 
-		if (username && (await this.count({ username }))) {
-			throw new BadRequestException("Username already exists in the system.");
-		}
+		Object.assign(input, {
+			authKeys: this.getAuthKeys(authKeyObj).map((item) => item.value),
+		});
+
+		return this.userModel.create(input);
+	}
+
+	public getAuthKeys(input: IAuthKeys): { [key: string]: string }[] {
+		return UniqueKeys.filter(
+			(key) => input[key] && UniqueKeys.includes(key),
+		).map((key) => ({
+			key,
+			value: input[key].toString(),
+		}));
+	}
+
+	public validateUnique = async (
+		key: string,
+		value: string,
+		errorMessage: string,
+	) => {
+		if (await this.count({ [key]: value }))
+			throw new BadRequestException(errorMessage);
+	};
+
+	async validateCreateUser(input: IAuthKeys) {
+		const validatePromises = this.getAuthKeys(input).map((item) =>
+			this.validateUnique(
+				item.key,
+				item.value,
+				`${item.key.toUpperCase()} already exists.`,
+			),
+		);
+
+		await Promise.all(validatePromises);
 	}
 
 	async updatePasswordById(
@@ -72,19 +103,23 @@ export class UserService extends BaseService<UserDocument> {
 		id: Types.ObjectId,
 		deviceID: string,
 	): Promise<UserDocument | null> {
-		return this.updateById(
+		const updated = await this.updateById(
 			id,
 			{ $addToSet: { fcmTokens: deviceID } },
 			{ projection: { _id: 1, fcmTokens: 1 } },
 		);
+
+		return updated;
 	}
 
 	async removeDeviceID(id: Types.ObjectId, deviceID: string) {
-		return this.updateById(
+		const updated = await this.updateById(
 			id,
 			{ $pull: { fcmTokens: deviceID } },
 			{ projection: { _id: "1", fcmTokens: 1 } },
 		);
+
+		return updated;
 	}
 
 	async comparePassword(hashPassword: string, plainPassword: string) {

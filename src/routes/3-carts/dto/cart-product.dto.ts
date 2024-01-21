@@ -1,4 +1,3 @@
-import { PartialType } from "@nestjs/swagger";
 import {
 	IsMongoId,
 	IsNotEmpty,
@@ -6,6 +5,8 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
+
+import { PartialType } from "@nestjs/swagger";
 
 export class CartProductDto {
 	@IsNotEmpty()

@@ -2,8 +2,9 @@ import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
 
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+
 import { OtpService } from "./otp.service";
 
 @ApiTags("otp")
@@ -11,6 +12,7 @@ import { OtpService } from "./otp.service";
 export class OtpController {
 	constructor(private readonly otpService: OtpService) {}
 
+	@HttpCode(HttpStatus.OK)
 	@Public()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {

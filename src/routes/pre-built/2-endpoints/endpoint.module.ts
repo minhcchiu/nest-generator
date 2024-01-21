@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { EndpointGroupModule } from "../2-endpoint-groups/endpoint-group.module";
 
+import { PermissionModule } from "../2-permissions/permission.module";
 import { EndpointController } from "./endpoint.controller";
 import { EndpointService } from "./endpoint.service";
 import { Endpoint, EndpointSchema } from "./schemas/endpoint.schema";
@@ -14,7 +14,7 @@ import { Endpoint, EndpointSchema } from "./schemas/endpoint.schema";
 				schema: EndpointSchema,
 			},
 		]),
-		EndpointGroupModule,
+		PermissionModule,
 	],
 	controllers: [EndpointController],
 	providers: [EndpointService],

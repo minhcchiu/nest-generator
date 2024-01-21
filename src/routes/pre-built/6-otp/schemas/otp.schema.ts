@@ -1,6 +1,8 @@
 import * as argon2 from "argon2";
 import { HydratedDocument } from "mongoose";
+
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
 import { OtpType } from "../enums/otp-type";
 
 @Schema({

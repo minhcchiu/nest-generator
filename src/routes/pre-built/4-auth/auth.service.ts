@@ -1,7 +1,9 @@
+import { Types } from "mongoose";
+import { generateRandomKey } from "~helpers/generate-random-key";
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { TokenService } from "~pre-built/5-tokens/token.service";
+import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
-import { authSelect } from "../1-users/select/auth.select";
 
 import {
 	BadRequestException,
@@ -10,14 +12,16 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 
+import { AccountType } from "../1-users/enums/account-type.enum";
+import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
-import { SocialLoginDto } from "./dto/social-login.dto";
+import { OtpType } from "../6-otp/enums/otp-type";
+import { OtpService } from "../6-otp/otp.service";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { OtpService } from "../6-otp/otp.service";
-import { OtpType } from "../6-otp/enums/otp-type";
-import { Role } from "../1-users/enums/role.enum";
-import { Types } from "mongoose";
+import { SendRegisterTokenDto } from "./dto/send-register-token.dto";
+import { SocialLoginDto } from "./dto/social-login.dto";
+import { SocialInterface } from "./interfaces/social.interface";
 
 @Injectable()
 export class AuthService {
@@ -25,40 +29,32 @@ export class AuthService {
 		private readonly userService: UserService,
 		private readonly tokenService: TokenService,
 		private readonly mailService: MailService,
+		private readonly firebaseService: FirebaseService,
 		private readonly otpService: OtpService,
 	) {}
 
 	async register({ deviceID, ...input }: RegisterDto) {
-		await this.userService.validateCreateUser({
-			phone: input.phone,
-			email: input.email,
-			username: input.username,
-		});
-
-		const newUser = await this.userService.create({
-			...input,
-			status: AccountStatus.NOT_VERIFIED,
-			role: Role.USER,
-		});
+		const newUser = await this.userService.create(input);
 
 		if (deviceID) this.userService.addDeviceID(newUser._id, deviceID);
 
 		return this.tokenService.generateUserAuth(newUser);
 	}
 
-	async login({ password, deviceID, ...credential }: LoginDto) {
-		const user = await this.userService.findOne(credential, {
-			projection: authSelect,
-		});
+	async login({ deviceID, ...credential }: LoginDto) {
+		const user = await this.userService.findOne(
+			{ authKeys: credential.authKey },
+			{ projection: authSelect },
+		);
 
 		if (!user) throw new NotFoundException("Incorrect account!");
 
-		if (user.status === AccountStatus.DELETED)
+		if (user.status === AccountStatus.Deleted)
 			throw new BadRequestException("The account has been removed.");
 
 		const isPasswordValid = await this.userService.comparePassword(
 			user.password,
-			password,
+			credential.password,
 		);
 
 		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
@@ -68,37 +64,14 @@ export class AuthService {
 		return this.tokenService.generateUserAuth(user);
 	}
 
-	async socialLogin({ deviceID, ...input }: SocialLoginDto) {
-		let foundUser = await this.userService.findOne(
-			{ socialID: input.socialID },
-			{ projection: authSelect },
-		);
-
-		if (!foundUser) {
-			const newUser = await this.userService.create({
-				...input,
-				status: AccountStatus.VERIFIED,
-				role: Role.USER,
-			});
-
-			foundUser = newUser.toObject();
-		}
-
-		if (deviceID) this.userService.addDeviceID(foundUser._id, deviceID);
-
-		return this.tokenService.generateUserAuth(foundUser);
-	}
-
 	async sendRegisterToken(input: RegisterDto) {
-		await this.userService.validateCreateUser({
-			email: input.email,
-			phone: input.phone,
-		});
+		await this.userService.validateCreateUser(input);
 
 		const { token, expiresAt } = await this.tokenService.generateUserToken(
 			input,
 		);
-		this.mailService.sendRegisterToken(
+
+		await this.mailService.sendRegisterToken(
 			{
 				token,
 				expiresAt,
@@ -107,18 +80,11 @@ export class AuthService {
 			input.email,
 		);
 
-		return {
-			email: input.email,
-			phone: input.phone,
-			message: "Send register account success!",
-		};
+		return input;
 	}
 
-	async sendRegisterOtp(input: RegisterDto) {
-		await this.userService.validateCreateUser({
-			email: input.email,
-			phone: input.phone,
-		});
+	async sendRegisterOtp(input: SendRegisterTokenDto) {
+		await this.userService.validateCreateUser(input);
 
 		const otpItem: any = { otpType: OtpType.SIGNUP };
 
@@ -135,8 +101,37 @@ export class AuthService {
 		delete decoded.iat;
 		delete decoded.exp;
 
-		decoded.status = AccountStatus.VERIFIED;
+		decoded.status = AccountStatus.Verified;
+
 		return this.register(decoded);
+	}
+
+	async socialLogin({ deviceID, idToken, accountType }: SocialLoginDto) {
+		const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
+
+		let foundUser = await this.userService.findOne(
+			{ socialID: decodedIdToken.sub },
+			{ projection: authSelect },
+		);
+
+		if (!foundUser) {
+			const newUser = await this.userService.create({
+				status: AccountStatus.Verified,
+				fullName: decodedIdToken.name,
+				socialID: decodedIdToken.sub,
+				authKeys: [decodedIdToken.sub],
+				avatar: decodedIdToken.picture,
+				email: decodedIdToken.email,
+				accountType,
+				password: generateRandomKey(32),
+			});
+
+			foundUser = newUser.toObject();
+		}
+
+		if (deviceID) this.userService.addDeviceID(foundUser._id, deviceID);
+
+		return this.tokenService.generateUserAuth(foundUser);
 	}
 
 	async logout(userId: Types.ObjectId, deviceID?: string) {
@@ -146,6 +141,16 @@ export class AuthService {
 		]);
 
 		return { message: "Logout success!" };
+	}
+
+	async validateSocialLogin(
+		accountType: AccountType,
+		socialData: SocialInterface,
+	) {
+		return {
+			accountType,
+			...socialData,
+		};
 	}
 
 	async refreshToken(token: string) {
@@ -170,14 +175,14 @@ export class AuthService {
 			throw new NotFoundException("User not found.");
 		}
 
-		if (user.status === AccountStatus.DELETED) {
+		if (user.status === AccountStatus.Deleted) {
 			throw new BadRequestException("The account has been removed.");
 		}
 
 		const { expiresAt, token } =
 			await this.tokenService.generateForgotPasswordToken({
 				_id: user._id.toString(),
-				role: user.role,
+				roles: user.roles,
 				fullName: user.fullName,
 				avatar: user.avatar,
 			});
@@ -215,7 +220,7 @@ export class AuthService {
 		const { accessToken, refreshToken } =
 			await this.tokenService.generateAuthTokens({
 				_id: user._id.toString(),
-				role: user.role,
+				roles: user.roles,
 				fullName: user.fullName,
 				avatar: user.avatar,
 			});

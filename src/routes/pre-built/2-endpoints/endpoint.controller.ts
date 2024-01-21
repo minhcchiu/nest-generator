@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { ApiParamId } from "~decorators/api-param-id.swagger";
 import { ApiQueryParams } from "~decorators/aqp.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -10,24 +11,24 @@ import {
 	Delete,
 	Get,
 	HttpCode,
+	HttpStatus,
 	Param,
 	Patch,
 	Post,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { PermissionService } from "../2-permissions/permission.service";
 import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";
 import { EndpointService } from "./endpoint.service";
-import { EndpointGroupService } from "../2-endpoint-groups/endpoint-group.service";
-import { Types } from "mongoose";
 
 @ApiTags("Endpoints")
 @Controller("endpoints")
 export class EndpointController {
 	constructor(
 		private readonly endpointService: EndpointService,
-		private readonly endpointGroupService: EndpointGroupService,
+		private readonly permissionService: PermissionService,
 	) {}
 
 	@ApiQueryParams()
@@ -56,14 +57,15 @@ export class EndpointController {
 		return this.endpointService.findById(id, { projection, populate });
 	}
 
-	@HttpCode(201)
 	@Post()
+	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateEndpointDto) {
 		return this.endpointService.create(body);
 	}
 
 	@ApiParamId()
 	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateEndpointDto,
@@ -73,6 +75,7 @@ export class EndpointController {
 
 	@ApiParamId()
 	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.endpointService.deleteMany({
 			_id: { $in: ids.split(",") },
@@ -81,10 +84,11 @@ export class EndpointController {
 
 	@ApiParamId()
 	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		const [deleted] = await Promise.all([
 			this.endpointService.deleteById(id),
-			this.endpointGroupService.updateOne(
+			this.permissionService.updateOne(
 				{ endpoints: id },
 				{ $pull: { endpoints: id } },
 			),

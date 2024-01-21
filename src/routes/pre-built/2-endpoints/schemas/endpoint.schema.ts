@@ -1,8 +1,8 @@
 import { HydratedDocument } from "mongoose";
+import { Role } from "~pre-built/1-users/enums/role.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { Role } from "~pre-built/1-users/enums/role.enum";
 import { HttpMethod } from "../enum/http-method";
 
 @Schema({

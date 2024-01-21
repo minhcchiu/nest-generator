@@ -1,17 +1,19 @@
+import { CartService } from "~routes/3-carts/cart.service";
+import { CartState } from "~routes/3-carts/enums/cart-state.enum";
+import { LockService } from "~routes/4-checkouts/lock.service";
+import { DiscountService } from "~routes/6-discounts/discount.service";
+import { OrderService } from "~routes/7-orders/order.service";
+
 import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
+
 import {
 	CheckoutReviewDto,
 	ShopOrderDiscountDto,
 } from "./dto/checkout-review.dto";
-import { CartService } from "~routes/3-carts/cart.service";
-import { CartState } from "~routes/3-carts/enums/cart-state.enum";
-import { DiscountService } from "~routes/6-discounts/discount.service";
-import { LockService } from "~routes/4-checkouts/lock.service";
-import { OrderService } from "~routes/7-orders/order.service";
 
 type IShopOrderNew = {
 	shopId: string;

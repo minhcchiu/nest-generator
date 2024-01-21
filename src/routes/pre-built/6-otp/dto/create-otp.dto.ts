@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, ValidateIf } from "class-validator";
+
 import { OtpType } from "../enums/otp-type";
 
 export class CreateOtpDto {

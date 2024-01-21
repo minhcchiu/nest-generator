@@ -1,5 +1,6 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { LanguageEnum } from "src/enums/language.enum";
+
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 
 export const GetLanguage = createParamDecorator(
 	(data: unknown, ctx: ExecutionContext) => {

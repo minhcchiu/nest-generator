@@ -1,3 +1,4 @@
+import { AppConfig } from "~config/environment";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import {
 	StorageFileInterceptor,
@@ -9,6 +10,7 @@ import {
 	Body,
 	Controller,
 	HttpCode,
+	HttpStatus,
 	Post,
 	UploadedFile,
 	UploadedFiles,
@@ -22,8 +24,6 @@ import { SaveFilesDto } from "./dto/save-files.dto";
 import { FieldNameEnum, FieldsNameEnum } from "./enum/field-name.enum";
 import { ResourceTypeEnum } from "./enum/resource-type.enum";
 import { UploadService } from "./upload.service";
-import { AppConfig } from "~config/interfaces/config.interface";
-import { ConfigName } from "~config/enums/config.enum";
 
 @ApiTags("uploads")
 @Controller("uploads")
@@ -33,7 +33,7 @@ export class UploadController {
 		private readonly uploadService: UploadService,
 		readonly configService: ConfigService,
 	) {
-		this.appUrl = configService.get<AppConfig>(ConfigName.App).appUrl;
+		this.appUrl = configService.get<AppConfig>("app").appUrl;
 	}
 
 	/**
@@ -42,7 +42,7 @@ export class UploadController {
 	 * @param file
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
 	@Post("file")
 	async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
@@ -61,7 +61,7 @@ export class UploadController {
 	 * @param inputFiles
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
 	@Post("files")
 	async uploadFilesToLocal(@UploadedFiles() inputFiles: Express.Multer.File[]) {
@@ -85,7 +85,7 @@ export class UploadController {
 	 * @param image
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
 	@Post("image")
 	async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
@@ -105,7 +105,7 @@ export class UploadController {
 	 * @param images
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
 	@Post("images")
 	async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
@@ -130,7 +130,7 @@ export class UploadController {
 	 * @param video
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
 	@Post("video")
 	async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
@@ -150,7 +150,7 @@ export class UploadController {
 	 * @param videos
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
 	@Post("videos")
 	async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
@@ -175,7 +175,7 @@ export class UploadController {
 	 * @param audio
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
 	@Post("audio")
 	async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
@@ -196,7 +196,7 @@ export class UploadController {
 	 * @param audios
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
 	@Post("audios")
 	async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
@@ -222,7 +222,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_file_to_local")
 	async saveFileToLocal() {
 		// @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: string,
@@ -241,7 +241,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_files_to_local")
 	async saveFilesToLocal(
 		@GetCurrentUserId() userId: string,
@@ -269,7 +269,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_file_to_cloudinary")
 	async saveFileToCloudinary(
 		@GetCurrentUserId() userId: string,
@@ -292,7 +292,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_files_to_cloudinary")
 	async saveToCloudinary(
 		@GetCurrentUserId() userId: string,
@@ -319,7 +319,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_file_to_s3")
 	async saveFileToS3(
 		@GetCurrentUserId() userId: string,
@@ -340,7 +340,7 @@ export class UploadController {
 	 * @param body
 	 * @returns
 	 */
-	@HttpCode(201)
+	@HttpCode(HttpStatus.CREATED)
 	@Post("save_files_to_s3")
 	async saveFilesToS3(
 		@GetCurrentUserId() userId: string,

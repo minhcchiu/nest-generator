@@ -1,9 +1,11 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import {
 	User,
 	UserDocument,
 } from "~routes/pre-built/1-users/schemas/user.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
 import { NotificationTypeEnum } from "../enums/noti-type.enum";
 
 @Schema({

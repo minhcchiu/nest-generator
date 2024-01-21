@@ -1,4 +1,5 @@
 import { join } from "path";
+import { ConfigName, MailerConfig } from "~config/environment";
 
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
@@ -6,15 +7,13 @@ import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { MailService } from "./mail.service";
-import { ConfigName } from "~config/enums/config.enum";
-import { MailerConfig } from "~config/interfaces/config.interface";
 
 @Module({
 	imports: [
 		MailerModule.forRootAsync({
 			useFactory: async (config: ConfigService) => {
 				const { transport, defaults } = config.get<MailerConfig>(
-					ConfigName.Mailer,
+					ConfigName.mailer,
 				);
 
 				// return options

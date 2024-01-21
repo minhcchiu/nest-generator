@@ -10,8 +10,9 @@ import {
 	IsString,
 	ValidateIf,
 } from "class-validator";
-import { DiscountTypeEnum } from "../enums/discount-type.enum";
+
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
+import { DiscountTypeEnum } from "../enums/discount-type.enum";
 
 export class CreateDiscountDto {
 	@IsNotEmpty()

@@ -1,8 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { DiscountTypeEnum } from "../enums/discount-type.enum";
-import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { Shop } from "~routes/1-shops/schemas/shop.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
+import { DiscountTypeEnum } from "../enums/discount-type.enum";
 
 @Schema({
 	timestamps: true,

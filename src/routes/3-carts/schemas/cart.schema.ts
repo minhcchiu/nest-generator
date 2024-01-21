@@ -1,8 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { CartState } from "~routes/3-carts/enums/cart-state.enum";
-import { CartProductDto } from "../dto/cart-product.dto";
 import { User } from "~routes/pre-built/1-users/schemas/user.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+import { CartProductDto } from "../dto/cart-product.dto";
 
 @Schema({
 	timestamps: true,

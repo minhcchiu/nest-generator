@@ -1,7 +1,9 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ProductType } from "../enums/product-type.enum";
 import mongoose, { HydratedDocument } from "mongoose";
 import { Shop } from "~routes/1-shops/schemas/shop.schema";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+import { ProductType } from "../enums/product-type.enum";
 
 @Schema({
 	timestamps: true,

@@ -1,6 +1,6 @@
 export enum AccountStatus {
-	VERIFIED = "VERIFIED",
-	NOT_VERIFIED = "NOT_VERIFIED",
-	LOCKED = "LOCKED",
-	DELETED = "DELETED",
+	Verified = "VERIFIED",
+	Unverified = "UNVERIFIED",
+	Locked = "LOCKED",
+	Deleted = "DELETED",
 }

@@ -1,5 +1,6 @@
-import { IsMongoId, IsNotEmpty } from "class-validator";
 import { Type } from "class-transformer";
+import { IsMongoId, IsNotEmpty } from "class-validator";
+
 import { CartProductDto } from "./cart-product.dto";
 
 export class UpdateCartProductDto {

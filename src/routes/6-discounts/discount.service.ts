@@ -1,5 +1,6 @@
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { ProductService } from "~routes/1-products/product.service";
 
 import {
 	BadRequestException,
@@ -8,11 +9,10 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
-import { Discount, DiscountDocument } from "./schemas/discount.schema";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { DiscountAppliesToEnum } from "./enums/discount-applies-to.enum";
-import { ProductService } from "~routes/1-products/product.service";
 import { DiscountTypeEnum } from "./enums/discount-type.enum";
+import { Discount, DiscountDocument } from "./schemas/discount.schema";
 
 @Injectable()
 export class DiscountService extends BaseService<DiscountDocument> {

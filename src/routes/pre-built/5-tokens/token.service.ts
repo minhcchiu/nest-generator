@@ -1,17 +1,15 @@
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { ConfigName, JWTConfig } from "~config/environment";
 
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
 
+import { User } from "../1-users/schemas/user.schema";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
-import { User } from "../1-users/schemas/user.schema";
-import { Types } from "mongoose";
-import { JWTConfig } from "~config/interfaces/config.interface";
-import { ConfigName } from "~config/enums/config.enum";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
@@ -35,7 +33,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async generateAccessToken(payload: TokenPayload) {
-		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.generateToken(
 			payload,
@@ -45,7 +43,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async generateRefreshToken(payload: TokenPayload) {
-		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.generateToken(
 			payload,
@@ -55,7 +53,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async generateUserToken(payload: any) {
-		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.generateToken(
 			payload,
@@ -66,7 +64,7 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async generateForgotPasswordToken(payload: TokenPayload) {
 		const { forgotPasswordToken } = this.configService.get<JWTConfig>(
-			ConfigName.Jwt,
+			ConfigName.jwt,
 		);
 
 		return this.generateToken(
@@ -86,7 +84,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async verifyToken(token: string, secretKey?: string) {
-		const config = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const config = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.jwtService.verifyAsync(token, {
 			secret: secretKey || config.secretKey,
@@ -94,27 +92,26 @@ export class TokenService extends BaseService<TokenDocument> {
 	}
 
 	async verifyAccessToken(token: string): Promise<DecodedToken> {
-		console.log({ token });
-		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { accessToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.verifyToken(token, accessToken.secretKey);
 	}
 
 	async verifyRefreshToken(token: string): Promise<DecodedToken> {
-		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { refreshToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.verifyToken(token, refreshToken.secretKey);
 	}
 
 	async verifySignupToken(token: string) {
-		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.Jwt);
+		const { registerToken } = this.configService.get<JWTConfig>(ConfigName.jwt);
 
 		return this.verifyToken(token, registerToken.secretKey);
 	}
 
 	async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
 		const { forgotPasswordToken } = this.configService.get<JWTConfig>(
-			ConfigName.Jwt,
+			ConfigName.jwt,
 		);
 
 		return this.verifyToken(token, forgotPasswordToken.secretKey);
@@ -127,7 +124,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	) {
 		const payload: TokenPayload = {
 			_id: user._id.toString(),
-			role: user.role,
+			roles: user.roles,
 			email: user.email,
 			phone: user.phone,
 			fullName: user.fullName,

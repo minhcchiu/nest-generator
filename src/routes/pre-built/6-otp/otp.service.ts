@@ -1,4 +1,9 @@
 import dayjs from "dayjs";
+import { FilterQuery, Model, QueryOptions } from "mongoose";
+import { AppConfig, ConfigName, NodeEnv, OtpConfig } from "~config/environment";
+import { generateOTP } from "~helpers/generate-otp";
+import { MailService } from "~shared/mail/mail.service";
+
 import {
 	BadRequestException,
 	Injectable,
@@ -7,15 +12,11 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
-import { Otp } from "./schemas/otp.schema";
-import { FilterQuery, Model, QueryOptions } from "mongoose";
-import { MailService } from "~shared/mail/mail.service";
+
 import { CreateOtpDto } from "./dto/create-otp.dto";
-import { OtpType } from "./enums/otp-type";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
-import { generateOTP } from "~helpers/generate-otp";
-import { AppConfig, OtpConfig } from "~config/interfaces/config.interface";
-import { ConfigName, NodeEnv } from "~config/enums/config.enum";
+import { OtpType } from "./enums/otp-type";
+import { Otp } from "./schemas/otp.schema";
 
 @Injectable()
 export class OtpService {
@@ -34,7 +35,7 @@ export class OtpService {
 		else if (credential.email)
 			await this._sendEmailVerify(credential.email, otpCode);
 
-		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.App);
+		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.app);
 
 		if (nodeEnv === NodeEnv.DEVELOPMENT) return { otpCode, otpType };
 
@@ -63,7 +64,7 @@ export class OtpService {
 	}
 
 	private async create(credential: any, otpType: OtpType) {
-		const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.Otp);
+		const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.otp);
 
 		const otpCode = generateOTP();
 		const expiredAt = Date.now() + expiresIn;

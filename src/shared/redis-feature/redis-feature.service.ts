@@ -1,8 +1,8 @@
-import { ConfigService } from "@nestjs/config";
-import { Injectable } from "@nestjs/common";
 import { Redis } from "ioredis";
-import { RedisConfig } from "~config/interfaces/config.interface";
-import { ConfigName } from "~config/enums/config.enum";
+import { ConfigName, RedisConfig } from "~config/environment";
+
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class RedisFeatureService {
@@ -11,8 +11,8 @@ export class RedisFeatureService {
 	private subscriber: Redis;
 	isSubscribed = false;
 
-	constructor(readonly configService: ConfigService) {
-		const url = configService.get<RedisConfig>(ConfigName.RedisConfig).redisUrl;
+	constructor(private readonly configService: ConfigService) {
+		const url = configService.get<RedisConfig>(ConfigName.redis).redisUrl;
 		this.redis = new Redis(url);
 		this.publisher = new Redis(url);
 		this.subscriber = new Redis(url);

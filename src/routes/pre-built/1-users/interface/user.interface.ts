@@ -8,7 +8,7 @@ export interface IUser {
 	phone?: string;
 	fullName: string;
 	gender?: GenderEnum;
-	dateOfBirth?: Date;
-	role: Role;
+	dateOfBirth?: number;
+	roles: Role[];
 	slug: string;
 }

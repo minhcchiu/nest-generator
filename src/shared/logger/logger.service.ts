@@ -1,9 +1,9 @@
 import { ConsoleLogger, LoggerService, LogLevel } from "@nestjs/common";
 
-export class Logger implements LoggerService {
+export class CustomLogger implements LoggerService {
 	constructor(private readonly logger?: ConsoleLogger) {
 		this.logger = new ConsoleLogger();
-		this.log("CustomLoggerModule init success", "Logger");
+		this.log("CustomLoggerModule init success", "CustomLogger");
 	}
 
 	/**

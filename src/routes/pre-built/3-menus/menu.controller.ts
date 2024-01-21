@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { AqpDto } from "~dto/aqp.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
@@ -8,6 +9,7 @@ import {
 	Delete,
 	Get,
 	HttpCode,
+	HttpStatus,
 	Param,
 	Patch,
 	Post,
@@ -17,7 +19,6 @@ import { ApiTags } from "@nestjs/swagger";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { MenuService } from "./menu.service";
-import { Types } from "mongoose";
 
 @ApiTags("Menus")
 @Controller("menus")
@@ -29,13 +30,13 @@ export class MenuController {
 		return this.menuService.findAll(filter, options);
 	}
 
-	@HttpCode(201)
 	@Post()
+	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateMenuDto) {
 		return this.menuService.create(body);
 	}
-
 	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateMenuDto,
@@ -44,6 +45,7 @@ export class MenuController {
 	}
 
 	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.menuService.deleteMany({
 			_id: { $in: ids.split(",") },
@@ -51,6 +53,7 @@ export class MenuController {
 	}
 
 	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.menuService.deleteById(id);
 	}

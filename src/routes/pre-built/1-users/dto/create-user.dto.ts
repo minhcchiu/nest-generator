@@ -1,14 +1,20 @@
 import {
-	IsDateString,
+	IsArray,
+	IsBoolean,
 	IsEmail,
 	IsEnum,
+	IsMongoId,
 	IsNotEmpty,
+	IsNumber,
 	IsOptional,
 	IsString,
 	MaxLength,
 	MinLength,
 	ValidateIf,
 } from "class-validator";
+import { NullableType } from "~utils/types/nullable.type";
+
+import { ApiProperty } from "@nestjs/swagger";
 
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
@@ -44,17 +50,36 @@ export class CreateUserDto {
 	avatar?: string;
 
 	@IsOptional()
-	@IsDateString()
-	dateOfBirth?: Date;
+	@IsNumber()
+	dateOfBirth?: number;
 
 	@IsOptional()
 	@IsEnum(GenderEnum)
 	gender?: GenderEnum;
 
+	@ApiProperty({ example: AccountType.Local })
 	@IsNotEmpty()
 	@IsEnum(AccountType)
 	accountType: AccountType;
 
-	role?: Role;
+	@IsOptional()
+	@IsBoolean()
+	isNotificationActive?: boolean;
+
+	@IsOptional()
+	@IsMongoId()
+	storeId?: NullableType<string>;
+
+	@IsOptional()
+	@IsMongoId({ each: true })
+	favoriteStores: string[];
+
+	@IsOptional()
+	@IsArray()
+	@IsEnum(Role, { each: true })
+	roles?: Role[];
+
+	@IsOptional()
+	@IsEnum(AccountStatus)
 	status?: AccountStatus;
 }

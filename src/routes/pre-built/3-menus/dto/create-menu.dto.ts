@@ -19,7 +19,7 @@ export class CreateMenuDto {
 
 	@IsNotEmpty()
 	@IsString()
-	readonly title: string;
+	readonly name: string;
 
 	@IsOptional()
 	@IsString()
@@ -47,7 +47,7 @@ export class CreateMenuDto {
 
 	@IsOptional()
 	@IsBoolean()
-	readonly isShow: boolean;
+	readonly isActive: boolean;
 
 	@IsOptional()
 	@IsArray()

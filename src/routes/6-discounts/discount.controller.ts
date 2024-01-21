@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
@@ -9,16 +10,16 @@ import {
 	Delete,
 	Get,
 	HttpCode,
+	HttpStatus,
 	Param,
 	Patch,
 	Post,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { DiscountService } from "./discount.service";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { UpdateDiscountDto } from "./dto/update-discount.dto";
-import { DiscountService } from "./discount.service";
-import { Types } from "mongoose";
 
 @ApiTags("Discounts")
 @Controller("discounts")
@@ -31,13 +32,13 @@ export class DiscountController {
 		return this.discountService.findAll(filter, options);
 	}
 
-	@HttpCode(201)
 	@Post()
+	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateDiscountDto) {
 		return this.discountService.create(body);
 	}
-
 	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateDiscountDto,
@@ -46,6 +47,7 @@ export class DiscountController {
 	}
 
 	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.discountService.deleteMany({
 			_id: { $in: ids.split(",") },
@@ -53,18 +55,21 @@ export class DiscountController {
 	}
 
 	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.discountService.deleteById(id);
 	}
 
 	@Public()
 	@Get("paginate")
+	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.discountService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
+	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: AqpDto) {
 		return this.discountService.count(filter);
 	}
@@ -82,6 +87,7 @@ export class DiscountController {
 
 	@Public()
 	@Get(":id")
+	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,

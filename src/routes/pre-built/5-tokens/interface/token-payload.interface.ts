@@ -5,14 +5,13 @@ import { GenderEnum } from "~routes/pre-built/1-users/enums/gender.enum";
 
 export interface TokenPayload {
 	readonly _id: string;
-	readonly role: Role;
+	readonly roles: Role[];
 	readonly email?: string;
 	readonly phone?: string;
 	readonly fullName: string;
 	readonly avatar?: string;
 	readonly gender?: GenderEnum;
-	readonly dateOfBirth?: Date;
-	readonly deleted?: boolean;
+	readonly dateOfBirth?: number;
 	readonly status?: AccountStatus;
 	readonly accountType?: AccountType;
 }

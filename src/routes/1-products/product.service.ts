@@ -1,19 +1,19 @@
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { CreateInventoryDto } from "~routes/5-inventories/dto/create-inventory.dto";
+import { InventoryService } from "~routes/5-inventories/inventory.service";
+import { ChannelName } from "~shared/redis-feature/channel";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
-import { Product, ProductDocument } from "./schemas/product.schema";
-import { Clothing, ClothingDocument } from "./schemas/clothing.schema";
-import { Electronic, ElectronicDocument } from "./schemas/electronic.schema";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { ProductType } from "./enums/product-type.enum";
-import { InventoryService } from "~routes/5-inventories/inventory.service";
-import { CreateInventoryDto } from "~routes/5-inventories/dto/create-inventory.dto";
+import { Clothing, ClothingDocument } from "./schemas/clothing.schema";
+import { Electronic, ElectronicDocument } from "./schemas/electronic.schema";
 import { Furniture, FurnitureDocument } from "./schemas/furniture.schema";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
-import { ChannelName } from "~shared/redis-feature/channel";
+import { Product, ProductDocument } from "./schemas/product.schema";
 
 @Injectable()
 export class ProductService extends BaseService<ProductDocument> {

@@ -1,17 +1,18 @@
 import { join } from "path";
+import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
+import { WardService } from "~pre-built/10-wards/ward.service";
 import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
-import { WardService } from "~pre-built/10-wards/ward.service";
-import { Logger } from "~shared/logger/logger.service";
+import { PermissionService } from "~routes/pre-built/2-permissions/permission.service";
+import { MenuService } from "~routes/pre-built/3-menus/menu.service";
+import { CustomLogger } from "~shared/logger/logger.service";
 import { existsSync, readFileSync } from "~utils/file.util";
 
 import { Injectable } from "@nestjs/common";
-import { HttpMethod } from "~routes/pre-built/2-endpoints/enum/http-method";
-import { MenuService } from "~routes/pre-built/3-menus/menu.service";
-import { Role } from "~routes/pre-built/1-users/enums/role.enum";
-import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
-import { EndpointGroupService } from "~routes/pre-built/2-endpoint-groups/endpoint-group.service";
+
+import { IEndpoint } from "./interfaces/endpoint.interface";
+import { IPermission } from "./interfaces/permission.interface";
 
 @Injectable()
 export class SeedService {
@@ -19,23 +20,19 @@ export class SeedService {
 		private provinceService: ProvinceService,
 		private districtService: DistrictService,
 		private wardService: WardService,
-		private endpointGroupService: EndpointGroupService,
+		private permissionService: PermissionService,
 		private endpointService: EndpointService,
 		private menuService: MenuService,
-		private logger: Logger,
+		private logger: CustomLogger,
 	) {}
 
 	async seedProvincesDistrictsWards() {
 		const jsonPath = join(
 			__dirname,
-			"../../utils/json/provinces-districts-wards.json",
+			"../../",
+			"utils/json/provinces-districts-wards.json",
 		);
 		const isFileExist = existsSync(jsonPath);
-		const counter = {
-			totalProvince: 0,
-			totalDistrict: 0,
-			totalWard: 0,
-		};
 
 		//  check file exist
 		if (!isFileExist)
@@ -45,10 +42,10 @@ export class SeedService {
 			);
 
 		//  Read data file
-		const datastring = readFileSync(jsonPath).toString().trim();
+		const dataString = readFileSync(jsonPath).toString().trim();
 
 		// Convert data string to JSON
-		const { data } = JSON.parse(datastring);
+		const { data } = JSON.parse(dataString);
 
 		// Delete all provinces,district, wards
 		await Promise.all([
@@ -57,118 +54,103 @@ export class SeedService {
 			this.wardService.deleteMany({}),
 		]);
 
-		// Loop data
-		for await (const province of data) {
-			const provinceItem = {
-				name: province.name,
-				type: province.type,
-			};
-
-			// Save province
-			const provinceSaved = await this.provinceService.create(provinceItem);
-			counter.totalProvince++;
-
-			// Get idProvince
-			const idProvince = provinceSaved._id;
-
-			// Loop level2s
-			for await (const district of province.districts) {
-				const districtItem = {
-					idProvince,
-					name: district.name,
-					type: district.type,
+		await Promise.all(
+			data.map(async (province: any) => {
+				const provinceItem = {
+					name: province.name,
+					type: province.type,
 				};
 
-				// Save district
-				const districtSaved = await this.districtService.create(districtItem);
-				counter.totalDistrict++;
+				// Save province
+				const provinceSaved = await this.provinceService.create(provinceItem);
 
-				// Get idDistrict
-				const idDistrict = districtSaved._id;
+				// Get provinceId
+				const provinceId = provinceSaved._id;
 
-				// Store wards of districts
-				const wardSavedPromises = district.wards.map((ward: any) => {
-					const wardItem = {
-						idProvince,
-						idDistrict,
-						name: ward.name,
-						type: ward.type,
-					};
+				const createDistrictsAndWardsPromises = province.districts.map(
+					async (district: any) => {
+						const districtItem = {
+							provinceId,
+							name: district.name,
+							type: district.type,
+						};
 
-					counter.totalWard++;
-					return this.wardService.create(wardItem);
-				});
+						// Save district
+						const districtSaved = await this.districtService.create(
+							districtItem,
+						);
 
-				// Save wards
-				await Promise.all(wardSavedPromises);
-			}
-		}
+						// Get districtId
+						const districtId = districtSaved._id;
 
-		this.logger.log([
-			"Seed data for all provinces, districts, wards successfully!",
-			{ ...counter },
-		]);
+						// Store wards of districts
+						const wardSavedPromises = district.wards.map((ward: any) => {
+							const wardItem = {
+								provinceId,
+								districtId,
+								name: ward.name,
+								type: ward.type,
+							};
 
-		return { ...counter };
+							return this.wardService.create(wardItem);
+						});
+
+						// Save wards
+						await Promise.all(wardSavedPromises);
+					},
+				);
+
+				await Promise.all(createDistrictsAndWardsPromises);
+			}),
+		);
+
+		return {
+			message: "Seed data for all provinces, districts, wards successfully!",
+		};
 	}
 
 	async seedEndpoints(routerStacks: any[]) {
-		const endpointGroupsMap = new Map<
-			string,
-			{ prefix: string; position: number }
-		>();
-		const endpointsMap = new Map<
-			string,
-			{ method: HttpMethod; path: string; prefix: string }
-		>();
+		const permissionsMap = new Map<string, IPermission>();
+
+		const endpointsMap = new Map<string, IEndpoint>();
 
 		routerStacks
 			.filter(({ route }) => route && route.path)
 			.forEach(({ route }) => {
-				const endpointItem = {
-					method: route.stack[0]?.method?.toUpperCase(),
-					path: removeTrailingSlash(route.path),
-					prefix: "#",
-				};
-				const prefix = endpointItem.path.split("/")[2] || "#";
+				const path = removeTrailingSlash(route.path);
+				const prefix = path.split("/")[2] || "#";
+				const method = route.stack[0]?.method?.toUpperCase();
+
+				const endpointItem: IEndpoint = { method, path, prefix, name: prefix };
 				const endpointKey = `${endpointItem.method}-${endpointItem.path}`;
 
-				endpointItem.prefix = prefix;
-
-				if (!endpointGroupsMap.has(prefix))
-					endpointGroupsMap.set(prefix, {
+				if (!permissionsMap.has(prefix)) {
+					permissionsMap.set(prefix, {
 						prefix,
-						position: endpointGroupsMap.size + 1,
+						position: permissionsMap.size + 1,
+						name: prefix,
 					});
+				}
 
 				if (!endpointsMap.has(endpointKey))
 					endpointsMap.set(endpointKey, endpointItem);
 			});
 
-		await this._createEndpointGroupsAndMenusFromMap(endpointGroupsMap);
+		await this._createPermissionsAndMenusFromMap(permissionsMap);
 		await this._createEndpointsFromMap(endpointsMap);
 
 		this.logger.log(
-			`Total endpoints/groups: '${endpointsMap.size}/${endpointGroupsMap.size}' `,
+			`Total endpoints/groups: '${endpointsMap.size}/${permissionsMap.size}' `,
 			SeedService.name,
 		);
 
-		endpointGroupsMap.clear();
+		permissionsMap.clear();
 		endpointsMap.clear();
 	}
 
-	private async _createEndpointsFromMap(
-		endpointsMap: Map<
-			string,
-			{
-				method: HttpMethod;
-				path: string;
-				prefix: string;
-			}
-		>,
-	) {
+	private async _createEndpointsFromMap(endpointsMap: Map<string, IEndpoint>) {
 		endpointsMap.forEach(async (endpoint) => {
-			const endpointExist = await this.endpointService.count({
+			const endpointExist = await this.endpointService.findOne({
 				path: endpoint.path,
 				method: endpoint.method,
 			});
@@ -176,7 +158,7 @@ export class SeedService {
 			if (!endpointExist) {
 				const endpointDoc = await this.endpointService.create(endpoint);
 
-				await this.endpointGroupService.updateOne(
+				await this.permissionService.updateOne(
 					{ prefix: endpointDoc.prefix },
 					{ $addToSet: { endpoints: endpointDoc._id } },
 				);
@@ -184,41 +166,29 @@ export class SeedService {
 		});
 	}
 
-	private async _createEndpointGroupsAndMenusFromMap(
-		endpointGroupsMap: Map<
-			string,
-			{
-				prefix: string;
-				position: number;
-			}
-		>,
+	private async _createPermissionsAndMenusFromMap(
+		permissionsMap: Map<string, IPermission>,
 	) {
-		endpointGroupsMap.forEach(async ({ prefix, position }) => {
-			const [endpointGroupExist, menuExist] = await Promise.all([
-				this.endpointGroupService.count({ prefix }),
+		permissionsMap.forEach(async ({ prefix, position }) => {
+			const [permissionExist, menuExist] = await Promise.all([
+				this.permissionService.count({ prefix }),
 				this.menuService.count({ prefix }),
 			]);
 
-			const endpointGroupItem = {
-				prefix,
-				position,
-				title: prefix,
-				roles: [Role.SUPER_ADMIN],
-			};
+			const permissionItem: IPermission = { prefix, name: prefix, position };
 
 			const menuItem = {
 				prefix,
-				position,
-				title: prefix,
+				name: prefix,
 				level: 1,
+				position,
 				url: `${prefix}`,
 				isHorizontal: false,
-				isShow: true,
-				roles: [Role.SUPER_ADMIN],
+				isActive: true,
 			};
 
-			if (!endpointGroupExist) {
-				await this.endpointGroupService.create(endpointGroupItem);
+			if (!permissionExist) {
+				await this.permissionService.create(permissionItem);
 			}
 
 			if (!menuExist) {
@@ -228,8 +198,8 @@ export class SeedService {
 	}
 
 	private async _deleteEndpoints() {
-		await Promise.all([
-			this.endpointGroupService.deleteMany({}),
+		return Promise.all([
+			this.permissionService.deleteMany({}),
 			this.menuService.deleteMany({}),
 			this.endpointService.deleteMany({}),
 		]);
