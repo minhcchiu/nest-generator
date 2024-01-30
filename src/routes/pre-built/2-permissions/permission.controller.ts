@@ -16,7 +16,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { UpdatePermissionDto } from "./dto/update-permission.dto";
@@ -27,23 +27,28 @@ import { PermissionService } from "./permission.service";
 export class PermissionController {
 	constructor(private readonly permissionService: PermissionService) {}
 
+	//  ----- Method: GET -----
+	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.permissionService.findAll(filter, options);
 	}
 
+	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.permissionService.paginate(filter, options);
 	}
 
+	@ApiBearerAuth()
 	@Get("count")
 	async count(@GetAqp("filter") filter: AqpDto) {
 		return this.permissionService.count(filter);
 	}
 
+	@ApiBearerAuth()
 	@ApiParamId()
 	@Get(":id")
 	async findOneById(
@@ -53,12 +58,16 @@ export class PermissionController {
 		return this.permissionService.findById(id, { projection, populate });
 	}
 
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreatePermissionDto) {
 		return this.permissionService.create(body);
 	}
 
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
 	@ApiParamId()
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
@@ -69,6 +78,8 @@ export class PermissionController {
 		return this.permissionService.updateById(id, body);
 	}
 
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
 	@ApiParamId()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
@@ -78,6 +89,7 @@ export class PermissionController {
 		});
 	}
 
+	@ApiBearerAuth()
 	@ApiParamId()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)

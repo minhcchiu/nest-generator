@@ -1,9 +1,8 @@
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
 
 import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { OtpService } from "./otp.service";
 
@@ -12,9 +11,9 @@ import { OtpService } from "./otp.service";
 export class OtpController {
 	constructor(private readonly otpService: OtpService) {}
 
-	@HttpCode(HttpStatus.OK)
-	@Public()
+	@ApiBearerAuth()
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.otpService.findAll(filter, options);
 	}

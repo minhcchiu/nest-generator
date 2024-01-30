@@ -1,15 +1,17 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import {
-	IsString,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
+	IsString,
 	ValidateNested,
 } from "class-validator";
-import { NullableType } from "~utils/types/nullable.type";
-import { OpenCloseTimeDto } from "./open-close-time.dto";
 import { LocationDto } from "~dto/location.dto";
-import { Type } from "class-transformer";
+import { NullableType } from "~utils/types/nullable.type";
+
+import { ApiProperty } from "@nestjs/swagger";
+
+import { OpenCloseTimeDto } from "./open-close-time.dto";
 
 export class CreateStoreDto {
 	@ApiProperty({ example: "userId", description: "User ID reference" })

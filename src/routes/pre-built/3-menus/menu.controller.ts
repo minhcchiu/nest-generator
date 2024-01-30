@@ -14,7 +14,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
@@ -25,16 +25,44 @@ import { MenuService } from "./menu.service";
 export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
+	//  ----- Method: GET -----
+	@ApiBearerAuth()
 	@Get()
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.menuService.findAll(filter, options);
 	}
 
+	@ApiBearerAuth()
+	@Get("paginate")
+	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.menuService.paginate(filter, options);
+	}
+
+	@ApiBearerAuth()
+	@Get("count")
+	async count(@GetAqp("filter") filter: AqpDto) {
+		return this.menuService.count(filter);
+	}
+
+	@ApiBearerAuth()
+	@Get(":id")
+	async findOneById(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@GetAqp() { projection, populate }: AqpDto,
+	) {
+		return this.menuService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateMenuDto) {
 		return this.menuService.create(body);
 	}
+
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -44,6 +72,8 @@ export class MenuController {
 		return this.menuService.updateById(id, body);
 	}
 
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -52,27 +82,10 @@ export class MenuController {
 		});
 	}
 
+	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.menuService.deleteById(id);
-	}
-
-	@Get("paginate")
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.menuService.paginate(filter, options);
-	}
-
-	@Get("count")
-	async count(@GetAqp("filter") filter: AqpDto) {
-		return this.menuService.count(filter);
-	}
-
-	@Get(":id")
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
-	) {
-		return this.menuService.findById(id, { projection, populate });
 	}
 }

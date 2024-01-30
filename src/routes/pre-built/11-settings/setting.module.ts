@@ -7,19 +7,7 @@ import { SettingService } from "./setting.service";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
-			{
-				name: Setting.name,
-				useFactory: () => {
-					const schema = SettingSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
-			},
-		]),
+		MongooseModule.forFeature([{ name: Setting.name, schema: SettingSchema }]),
 	],
 	controllers: [SettingController],
 	providers: [SettingService],

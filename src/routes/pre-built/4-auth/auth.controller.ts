@@ -3,7 +3,7 @@ import { Public } from "~decorators/public.decorator";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
 import { AuthService } from "./auth.service";
@@ -20,6 +20,7 @@ import { TokenDto } from "./dto/token.dto";
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
+	//  ----- Method: POST -----
 	@Public()
 	@HttpCode(HttpStatus.CREATED)
 	@Post("register")
@@ -63,6 +64,7 @@ export class AuthController {
 		return this.authService.activateRegisterToken(token);
 	}
 
+	@ApiBearerAuth()
 	@Post("logout")
 	@HttpCode(HttpStatus.OK)
 	async logout(

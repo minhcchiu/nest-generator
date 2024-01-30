@@ -15,7 +15,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreateStoreDto } from "./dto/create-store.dto";
 import { UpdateStoreDto } from "./dto/update-store.dto";
@@ -26,39 +26,12 @@ import { StoreService } from "./store.service";
 export class StoreController {
 	constructor(private readonly storeService: StoreService) {}
 
-	@HttpCode(HttpStatus.OK)
+	// ----- Method: GET -----
 	@Public()
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.storeService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateStoreDto) {
-		return this.storeService.create(body);
-	}
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateStoreDto,
-	) {
-		return this.storeService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.storeService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.storeService.deleteById(id);
 	}
 
 	@Public()
@@ -83,5 +56,41 @@ export class StoreController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.storeService.findById(id, { projection, populate });
+	}
+
+	// ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateStoreDto) {
+		return this.storeService.create(body);
+	}
+
+	// ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateStoreDto,
+	) {
+		return this.storeService.updateById(id, body);
+	}
+
+	// ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.storeService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.storeService.deleteById(id);
 	}
 }

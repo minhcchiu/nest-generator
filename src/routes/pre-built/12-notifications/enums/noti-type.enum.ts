@@ -1,4 +1,4 @@
-export enum NotificationTypeEnum {
+export enum NotificationType {
 	Post = "POST",
 	Comment = "COMMENT",
 }

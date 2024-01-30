@@ -14,16 +14,16 @@ export class Endpoint {
 	@Prop({ type: String, default: "#" })
 	readonly prefix: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly name: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly path: string;
 
 	@Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
 	readonly method: HttpMethod;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly description?: string;
 
 	@Prop({

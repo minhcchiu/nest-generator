@@ -1,19 +1,31 @@
-import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
+
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateSettingDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	readonly idProvince: string;
-
-	@IsNotEmpty()
-	@IsMongoId()
-	readonly idDistrict: string;
-
-	@IsNotEmpty()
+	@ApiProperty({ required: false, description: "URL for the logo" })
+	@IsOptional()
 	@IsString()
-	readonly name: string;
+	logoUrl: string;
 
-	@IsNotEmpty()
+	@ApiProperty({ required: false, description: "Name of the application" })
+	@IsOptional()
 	@IsString()
-	readonly type: string;
+	appName: string;
+
+	@ApiProperty({
+		required: false,
+		description: "Terms of use for the application",
+	})
+	@IsOptional()
+	@IsString()
+	termsOfUse: string;
+
+	@ApiProperty({
+		required: false,
+		description: "Privacy policy for the application",
+	})
+	@IsOptional()
+	@IsString()
+	privacyPolicy: string;
 }

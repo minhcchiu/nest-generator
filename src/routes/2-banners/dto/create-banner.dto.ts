@@ -1,11 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger";
 import {
-	IsString,
-	IsNotEmpty,
-	IsNumber,
 	IsBoolean,
 	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsString,
 } from "class-validator";
+
+import { ApiProperty } from "@nestjs/swagger";
+
 import { AppTypeEnum } from "../enums/app-type.enum";
 
 export class CreateBannerDto {

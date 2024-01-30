@@ -13,7 +13,7 @@ export class Permission {
 	@Prop({ type: String, required: true, index: true, unique: true })
 	readonly prefix: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly name: string;
 
 	@Prop({
@@ -22,13 +22,13 @@ export class Permission {
 	})
 	readonly endpoints: string[];
 
-	@Prop({ type: String, default: null })
-	readonly description?: string;
+	@Prop({ type: String, default: "" })
+	readonly description: string;
 
 	@Prop({ type: [{ type: String, enum: Role }], default: [Role.SUPER_ADMIN] })
 	readonly roles: Role[];
 
-	@Prop({ type: Number, default: false })
+	@Prop({ type: Number, default: 0 })
 	readonly position: number;
 }
 

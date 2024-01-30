@@ -10,7 +10,6 @@ import { ApiTags } from "@nestjs/swagger";
 export class AppController {
 	constructor(private readonly redisFeatureService: RedisFeatureService) {}
 
-	@Public()
 	@Get("publish")
 	async publish() {
 		await this.redisFeatureService.publishMessage(

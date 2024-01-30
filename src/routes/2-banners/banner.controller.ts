@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ApiQueryParams } from "~decorators/aqp.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
@@ -15,17 +16,25 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { BannerService } from "./banner.service";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
+import { AppTypeEnum } from "./enums/app-type.enum";
 
 @ApiTags("Banners")
 @Controller("banners")
 export class BannerController {
 	constructor(private readonly bannerService: BannerService) {}
 
+	// ----- Method: GET -----
+	@ApiQueryParams([
+		{ name: "startAt", type: Number },
+		{ name: "endAt", type: Number },
+		{ name: "isActive", type: Boolean, required: false },
+		{ name: "appType", enum: AppTypeEnum },
+	])
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -33,35 +42,12 @@ export class BannerController {
 		return this.bannerService.findAll(filter, options);
 	}
 
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateBannerDto) {
-		return this.bannerService.create(body);
-	}
-
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateBannerDto,
-	) {
-		return this.bannerService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.bannerService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.bannerService.deleteById(id);
-	}
-
+	@ApiQueryParams([
+		{ name: "startAt", type: Number },
+		{ name: "endAt", type: Number },
+		{ name: "isActive", type: Boolean, required: false },
+		{ name: "appType", enum: AppTypeEnum },
+	])
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
@@ -84,5 +70,41 @@ export class BannerController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.bannerService.findById(id, { projection, populate });
+	}
+
+	// ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateBannerDto) {
+		return this.bannerService.create(body);
+	}
+
+	// ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateBannerDto,
+	) {
+		return this.bannerService.updateById(id, body);
+	}
+
+	// ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.bannerService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.bannerService.deleteById(id);
 	}
 }

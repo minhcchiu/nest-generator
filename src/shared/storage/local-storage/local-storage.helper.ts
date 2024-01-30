@@ -2,12 +2,12 @@ import { close, open, read, renameSync, statSync, unlinkSync } from "fs";
 import { filetypemime } from "magic-bytes.js";
 import { join } from "path";
 import { resizeGIF, resizeJPG, resizePNG } from "~helpers/resize-image";
-import { ResourceTypeEnum } from "~routes/1-upload/enum/resource-type.enum";
-import { StorageDirEnum } from "~routes/1-upload/enum/storage-dir.enum";
+import { ResourceTypeEnum } from "~pre-built/7-uploads/enum/resource-type.enum";
+import { StorageDirEnum } from "~pre-built/7-uploads/enum/storage-dir.enum";
 import { getFileName } from "~utils/file.util";
 
 export const localStorageHelper = {
-	publicDir: join(__dirname, "../../../../", "public"),
+	publicDir: join(process.cwd(), "public"),
 
 	/**
 	 * Upload file

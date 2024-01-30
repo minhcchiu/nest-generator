@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ApiQueryParams } from "~decorators/aqp.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
@@ -15,58 +16,24 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 
-@ApiTags("Categorys")
+@ApiTags("Categories")
 @Controller("categories")
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
 
+	// ----- Method: GET -----
+	@ApiQueryParams([{ name: "isActive", type: Boolean, required: false }])
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.categoryService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateCategoryDto) {
-		return this.categoryService.create(body);
-	}
-
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateCategoryDto,
-	) {
-		return this.categoryService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.categoryService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.categoryService.deleteById(id);
-	}
-
-	@Public()
-	@Get("paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.categoryService.paginate(filter, options);
 	}
 
 	@Public()
@@ -84,5 +51,41 @@ export class CategoryController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.categoryService.findById(id, { projection, populate });
+	}
+
+	// ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateCategoryDto) {
+		return this.categoryService.create(body);
+	}
+
+	// ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateCategoryDto,
+	) {
+		return this.categoryService.updateById(id, body);
+	}
+
+	// ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.categoryService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.categoryService.deleteById(id);
 	}
 }

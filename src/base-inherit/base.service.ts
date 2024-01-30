@@ -20,6 +20,11 @@ export class BaseService<T> {
 	}
 
 	async findAll(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+		const { page, limit, ...option } = options;
+		const skip = (page - 1) * limit;
+
+		option.skip = option.skip || skip;
+
 		return this.model.find(filter, options?.projection, options).lean();
 	}
 

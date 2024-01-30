@@ -1,7 +1,7 @@
 import { diskStorage } from "multer";
 import { UploadConfig } from "~config/environment";
 import { editFileName, imageFileFilter } from "~helpers/storage.helper";
-import { FieldNameEnum } from "~routes/1-upload/enum/field-name.enum";
+import { FieldNameEnum } from "~routes/pre-built/7-uploads/enum/field-name.enum";
 
 import { Injectable, mixin, NestInterceptor, Type } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";

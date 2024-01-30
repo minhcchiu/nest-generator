@@ -68,7 +68,6 @@ export class AppGuard implements CanActivate {
 
 	private extractTokenFromHeader(request: Request): string | undefined {
 		const authHeader = request.headers.authorization;
-
 		const textBearer = "Bearer ";
 
 		if (!authHeader || !authHeader.startsWith(textBearer)) {

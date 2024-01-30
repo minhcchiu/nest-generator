@@ -15,7 +15,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreateSettingDto } from "./dto/create-setting.dto";
 import { UpdateSettingDto } from "./dto/update-setting.dto";
@@ -26,53 +26,12 @@ import { SettingService } from "./setting.service";
 export class SettingController {
 	constructor(private readonly settingService: SettingService) {}
 
-	@HttpCode(HttpStatus.OK)
+	//  ----- Method: GET -----
 	@Public()
-	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.settingService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateSettingDto) {
-		return this.settingService.create(body);
-	}
-	@Patch(":id")
+	@Get("one")
 	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateSettingDto,
-	) {
-		return this.settingService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.settingService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.settingService.deleteById(id);
-	}
-
-	@Public()
-	@Get("paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.settingService.paginate(filter, options);
-	}
-
-	@Public()
-	@Get("count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
-		return this.settingService.count(filter);
+	async findOne(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.settingService.findOne(filter, options);
 	}
 
 	@Public()
@@ -83,5 +42,40 @@ export class SettingController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.settingService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateSettingDto) {
+		return this.settingService.create(body);
+	}
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateSettingDto,
+	) {
+		return this.settingService.updateById(id, body);
+	}
+
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.settingService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.settingService.deleteById(id);
 	}
 }

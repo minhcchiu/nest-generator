@@ -2,8 +2,6 @@ import { HydratedDocument } from "mongoose";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { BoolEnum } from "sharp";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -16,14 +14,14 @@ export class Category {
 	@Prop({ type: String, required: true })
 	name: string;
 
-	@Prop({ type: Number, required: true, unique: true })
+	@Prop({ type: Number, required: true })
 	position: number;
 
 	@Prop({ type: String, required: true })
 	countStores: string;
 
 	@Prop({ type: Boolean, default: false })
-	isOther: BoolEnum;
+	isOther: boolean;
 
 	@Prop({ type: Boolean, default: true })
 	isActive: boolean;

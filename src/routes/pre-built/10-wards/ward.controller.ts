@@ -15,7 +15,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreateWardDto } from "./dto/create-ward.dto";
 import { UpdateWardDto } from "./dto/update-ward.dto";
@@ -26,39 +26,12 @@ import { WardService } from "./ward.service";
 export class WardController {
 	constructor(private readonly wardService: WardService) {}
 
-	@HttpCode(HttpStatus.OK)
+	//  ----- Method: GET -----
 	@Public()
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.wardService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateWardDto) {
-		return this.wardService.create(body);
-	}
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateWardDto,
-	) {
-		return this.wardService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.wardService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.wardService.deleteById(id);
 	}
 
 	@Public()
@@ -83,5 +56,41 @@ export class WardController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.wardService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateWardDto) {
+		return this.wardService.create(body);
+	}
+
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateWardDto,
+	) {
+		return this.wardService.updateById(id, body);
+	}
+
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.wardService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.wardService.deleteById(id);
 	}
 }

@@ -6,7 +6,8 @@ import {
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { NotificationTypeEnum } from "../enums/noti-type.enum";
+import { NotificationType } from "../enums/noti-type.enum";
+import { TargetType } from "../enums/target-type.enum";
 
 @Schema({
 	timestamps: true,
@@ -14,20 +15,38 @@ import { NotificationTypeEnum } from "../enums/noti-type.enum";
 	collection: "notifications",
 })
 export class Notification {
+	@Prop({ type: String, enum: TargetType, required: true })
+	targetType: TargetType;
+
 	@Prop({ type: String, ref: User.name, required: true })
 	senderId: string | UserDocument;
 
 	@Prop({ type: String, ref: User.name })
 	recipientId: string | UserDocument;
 
+	@Prop({ type: String, enum: NotificationType, required: true })
+	type: NotificationType;
+
+	@Prop({ type: String })
+	entityType: string;
+
+	@Prop({ type: String })
+	entityId: string;
+
+	@Prop({ type: String, required: true })
+	title: string;
+
+	@Prop({ type: String, default: "" })
+	description: string;
+
+	@Prop({ type: String, default: "" })
+	thumbnail: string;
+
 	@Prop({ type: mongoose.Schema.Types.Mixed, required: true })
-	body: Record<string, any>;
+	options: Record<string, any>;
 
 	@Prop({ type: Boolean, default: false })
 	isRead: boolean;
-
-	@Prop({ type: String, enum: NotificationTypeEnum, required: true })
-	type: NotificationTypeEnum;
 }
 
 export type NotificationDocument = Notification &

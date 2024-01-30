@@ -1,7 +1,7 @@
 import { UploadApiOptions, v2 } from "cloudinary";
 import { unlinkSync } from "fs";
 import { CloudinaryConfig } from "~config/environment";
-import { ResourceTypeEnum } from "~routes/1-upload/enum/resource-type.enum";
+import { ResourceTypeEnum } from "~routes/pre-built/7-uploads/enum/resource-type.enum";
 import { CustomLogger } from "~shared/logger/logger.service";
 import { getFileName } from "~utils/file.util";
 

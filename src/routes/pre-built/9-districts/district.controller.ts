@@ -15,7 +15,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
@@ -25,40 +25,12 @@ import { UpdateDistrictDto } from "./dto/update-district.dto";
 @Controller("districts")
 export class DistrictController {
 	constructor(private readonly districtService: DistrictService) {}
-
-	@HttpCode(HttpStatus.OK)
+	//  ----- Method: GET -----
 	@Public()
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.districtService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateDistrictDto) {
-		return this.districtService.create(body);
-	}
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateDistrictDto,
-	) {
-		return this.districtService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.districtService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.districtService.deleteById(id);
 	}
 
 	@Public()
@@ -83,5 +55,40 @@ export class DistrictController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.districtService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateDistrictDto) {
+		return this.districtService.create(body);
+	}
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateDistrictDto,
+	) {
+		return this.districtService.updateById(id, body);
+	}
+
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.districtService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.districtService.deleteById(id);
 	}
 }

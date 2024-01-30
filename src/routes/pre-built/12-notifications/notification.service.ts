@@ -6,7 +6,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { CreateNotificationDto } from "./dto/create-notification.dto";
-import { NotificationTypeEnum } from "./enums/noti-type.enum";
+import { NotificationType } from "./enums/noti-type.enum";
 import {
 	Notification,
 	NotificationDocument,
@@ -23,10 +23,10 @@ export class NotificationService extends BaseService<NotificationDocument> {
 
 	async createNotification(input: CreateNotificationDto) {
 		switch (input.type) {
-			case NotificationTypeEnum.Post:
+			case NotificationType.Post:
 				return this._createPostNotification(input);
 
-			case NotificationTypeEnum.Comment:
+			case NotificationType.Comment:
 				return this._createCommentNotification(input);
 
 			default:
@@ -36,14 +36,14 @@ export class NotificationService extends BaseService<NotificationDocument> {
 
 	addNotificationDetail(notification: any, language: LanguageEnum) {
 		switch (notification.type) {
-			case NotificationTypeEnum.Post:
+			case NotificationType.Post:
 				Object.assign(notification, {
 					content: notificationTranslate.post.content[language],
 				});
 
 				break;
 
-			case NotificationTypeEnum.Comment:
+			case NotificationType.Comment:
 				Object.assign(notification, {
 					content: notificationTranslate.comment.content(
 						notification.senderId?.fullName,

@@ -26,9 +26,6 @@ export class Ward {
 	@Prop({ type: String, required: true })
 	readonly name: string;
 
-	@Prop({ type: String, default: "ward" })
-	readonly type: string;
-
 	@Prop({ type: String, slug: "name" })
 	readonly slug: string;
 }

@@ -19,11 +19,11 @@ export class Store {
 	@Prop({ type: String, ref: "User", unique: true })
 	userId: string;
 
-	@Prop({ type: String, default: null })
-	coverImage: NullableType<string>;
+	@Prop({ type: String, default: "" })
+	coverImage: string;
 
 	@Prop({ type: String, required: true })
-	thumbnail: NullableType<string>;
+	thumbnail: string;
 
 	@Prop({ type: String, required: true })
 	name: string;
@@ -31,8 +31,8 @@ export class Store {
 	@Prop({ type: String, required: true })
 	phone: string;
 
-	@Prop({ type: String, default: null })
-	description: NullableType<string>;
+	@Prop({ type: String, default: "" })
+	description: string;
 
 	@Prop({
 		type: [
@@ -70,8 +70,8 @@ export class Store {
 	@Prop({ type: String, ref: Ward.name, default: null })
 	wardId: NullableType<string>;
 
-	@Prop({ type: String, default: null })
-	street: NullableType<string>;
+	@Prop({ type: String, default: "" })
+	street: string;
 
 	@Prop({ type: Number, default: 0 })
 	totalRatings: number;

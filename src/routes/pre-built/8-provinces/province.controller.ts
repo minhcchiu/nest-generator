@@ -15,7 +15,7 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
@@ -26,40 +26,7 @@ import { ProvinceService } from "./province.service";
 export class ProvinceController {
 	constructor(private readonly provinceService: ProvinceService) {}
 
-	@HttpCode(HttpStatus.OK)
-	@Public()
-	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.provinceService.findAll(filter, options);
-	}
-
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateProvinceDto) {
-		return this.provinceService.create(body);
-	}
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateProvinceDto,
-	) {
-		return this.provinceService.updateById(id, body);
-	}
-
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.provinceService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.provinceService.deleteById(id);
-	}
+	//  ----- Method: GET -----
 
 	@Public()
 	@Get("paginate")
@@ -83,5 +50,41 @@ export class ProvinceController {
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.provinceService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: POST -----
+	@ApiBearerAuth()
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async create(@Body() body: CreateProvinceDto) {
+		return this.provinceService.create(body);
+	}
+
+	//  ----- Method: PATCH -----
+	@ApiBearerAuth()
+	@Patch(":id")
+	@HttpCode(HttpStatus.OK)
+	async update(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body() body: UpdateProvinceDto,
+	) {
+		return this.provinceService.updateById(id, body);
+	}
+
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.provinceService.deleteMany({
+			_id: { $in: ids.split(",") },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.provinceService.deleteById(id);
 	}
 }

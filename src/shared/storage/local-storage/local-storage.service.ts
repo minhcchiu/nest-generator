@@ -1,5 +1,5 @@
-import { ResourceTypeEnum } from "~routes/1-upload/enum/resource-type.enum";
-import { StorageDirEnum } from "~routes/1-upload/enum/storage-dir.enum";
+import { ResourceTypeEnum } from "~routes/pre-built/7-uploads/enum/resource-type.enum";
+import { StorageDirEnum } from "~routes/pre-built/7-uploads/enum/storage-dir.enum";
 
 import { Injectable } from "@nestjs/common";
 

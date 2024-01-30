@@ -36,15 +36,9 @@ export class UploadController {
 		this.appUrl = configService.get<AppConfig>("app").appUrl;
 	}
 
-	/**
-	 * Upload single file to tmp
-	 *
-	 * @param file
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
 	@Post("file")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
 		if (!file) throw new BadRequestException("File is required!");
 		const path = file.destination.replace("public/", "") + `/${file.filename}`;
@@ -55,15 +49,9 @@ export class UploadController {
 		};
 	}
 
-	/**
-	 * Upload many files to tmp
-	 *
-	 * @param inputFiles
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
 	@Post("files")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadFilesToLocal(@UploadedFiles() inputFiles: Express.Multer.File[]) {
 		if (!inputFiles) throw new BadRequestException("Files are required!");
 
@@ -79,15 +67,9 @@ export class UploadController {
 		};
 	}
 
-	/**
-	 * Upload single image to tmp
-	 *
-	 * @param image
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
 	@Post("image")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
 		if (!image) throw new BadRequestException("Image is required!");
 		const path =
@@ -99,15 +81,9 @@ export class UploadController {
 		};
 	}
 
-	/**
-	 * Upload many images to tmp
-	 *
-	 * @param images
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
 	@Post("images")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
 		if (!images) throw new BadRequestException("Images are required!");
 
@@ -124,15 +100,9 @@ export class UploadController {
 		};
 	}
 
-	/**
-	 * Upload single video to tmp
-	 *
-	 * @param video
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
 	@Post("video")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
 		if (!video) throw new BadRequestException("Video is required!");
 		const path =
@@ -144,15 +114,9 @@ export class UploadController {
 		};
 	}
 
-	/**
-	 * Upload many videos to tmp
-	 *
-	 * @param videos
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
 	@Post("videos")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
 		if (!videos) throw new BadRequestException("Videos are required!");
 
@@ -175,9 +139,9 @@ export class UploadController {
 	 * @param audio
 	 * @returns
 	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
 	@Post("audio")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
 		if (!audio) throw new BadRequestException("Audio is required!");
 
@@ -196,9 +160,9 @@ export class UploadController {
 	 * @param audios
 	 * @returns
 	 */
-	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
 	@Post("audios")
+	@HttpCode(HttpStatus.CREATED)
 	async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
 		if (!audios) throw new BadRequestException("Audios is required!");
 
@@ -224,6 +188,7 @@ export class UploadController {
 	 */
 	@HttpCode(HttpStatus.CREATED)
 	@Post("save_file_to_local")
+	@HttpCode(HttpStatus.CREATED)
 	async saveFileToLocal() {
 		// @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: string,
 		// file = file.replace(this.appUrl, '');

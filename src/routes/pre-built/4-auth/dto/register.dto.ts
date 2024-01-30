@@ -1,5 +1,7 @@
 import {
 	IsEmail,
+	IsEnum,
+	IsNumber,
 	IsOptional,
 	IsString,
 	MaxLength,
@@ -28,44 +30,46 @@ export class RegisterDto extends PartialType(
 		"avatar",
 	] as const),
 ) {
-	@ApiPropertyOptional({ default: "username" })
+	@ApiPropertyOptional({ default: "user" })
 	@ValidateIf((o) => [o.phone, o.email, o.idToken].length < 0)
 	@IsString()
 	username: string;
 
+	@ApiPropertyOptional({ default: "user@gmail.com" })
 	@ValidateIf((o) => [o.username, o.phone, o.idToken].length < 0)
 	@IsEmail()
 	readonly email?: string;
 
+	@ApiPropertyOptional({ default: "0387776243" })
 	@ValidateIf((o) => [o.username, o.email, o.idToken].length < 0)
 	@IsString()
 	@MinLength(10)
 	@MaxLength(15)
 	readonly phone?: string;
 
-	@ValidateIf((o) => [o.username, o.phone, o.email].length < 0)
-	@IsString()
-	@MinLength(10)
-	@MaxLength(15)
-	readonly idToken?: string;
-
 	@ApiPropertyOptional({ default: null })
 	@IsOptional()
 	@IsString()
 	deviceID?: string;
 
-	@ApiProperty({ default: "Usertest1@123" })
+	@ApiProperty({ default: "User@123" })
 	password: string;
 
-	@ApiProperty({ default: "User Test1" })
+	@ApiProperty({ default: "User" })
 	fullName: string;
 
 	@ApiPropertyOptional({ default: 984528000000 })
-	dateOfBirth: number;
+	@IsOptional()
+	@IsNumber()
+	dateOfBirth?: number;
 
 	@ApiProperty({ enum: GenderEnum, default: GenderEnum.MALE })
-	gender: GenderEnum;
+	@IsOptional()
+	@IsEnum(GenderEnum)
+	gender?: GenderEnum;
 
 	@ApiPropertyOptional({ default: "https://ibb.co/W2nySND" })
-	avatar: string;
+	@IsOptional()
+	@IsString()
+	avatar?: string;
 }
