@@ -1,3 +1,5 @@
+import { FileType } from "~utils/types/file.type";
+
 import { ConfigName } from "./config.enum";
 
 export interface IConfiguration {
@@ -18,6 +20,7 @@ export interface AppConfig {
 	nodeEnv: string;
 	port: number;
 	appUrl: string;
+	appName: string;
 }
 
 export interface DatabaseConfig {
@@ -40,21 +43,32 @@ export interface OtpConfig {
 	expiresIn: number;
 }
 
+export interface FileOption {
+	maxSize: number;
+	allowedExtensions: string[];
+}
+
 export interface UploadConfig {
 	imageMaxSize: number;
 	rawMaxSize: number;
 	videoMaxSize: number;
-	audioMaxSize: number;
+	autoMaxSize: number;
 
 	imageMaxFiles: number;
 	rawMaxFiles: number;
 	videoMaxFiles: number;
-	audioMaxFiles: number;
+	autoMaxFiles: number;
 
 	imagesExt: string;
 	rawExt: string;
 	videoExt: string;
-	audioExt: string;
+	autoExt: string;
+
+	image: FileOption;
+	auto: FileOption;
+	video: FileOption;
+	raw: FileOption;
+	storageFolders: Record<FileType, string>;
 }
 
 export interface MailerConfig {

@@ -1,6 +1,6 @@
 import { diskStorage } from "multer";
 import { UploadConfig } from "~config/environment";
-import { editFileName, imageFileFilter } from "~helpers/storage.helper";
+import { editFileName, fileFilterValidator } from "~helpers/storage.helper";
 import { FieldNameEnum } from "~routes/pre-built/7-uploads/enum/field-name.enum";
 
 import { Injectable, mixin, NestInterceptor, Type } from "@nestjs/common";
@@ -48,11 +48,11 @@ export const StorageFileInterceptor = (
 					extAllowed: uploadConfig.videoExt,
 				};
 
-			// Check upload audio -> options upload audio
-			if (fieldName === FieldNameEnum.AUDIO)
+			// Check upload auto -> options upload auto
+			if (fieldName === FieldNameEnum.AUTO)
 				options = {
-					fileSize: uploadConfig.audioMaxSize,
-					extAllowed: uploadConfig.audioExt,
+					fileSize: uploadConfig.autoMaxSize,
+					extAllowed: uploadConfig.autoExt,
 				};
 
 			return {
@@ -63,8 +63,8 @@ export const StorageFileInterceptor = (
 
 				limits: { fileSize: Math.pow(1024, options.fileSize) },
 
-				fileFilter: (req: any, file: any, callback: any) => {
-					imageFileFilter(options.extAllowed, req, file, callback);
+				fileFilterValidator: (req: any, file: any, callback: any) => {
+					fileFilterValidator(req, file, callback);
 				},
 			};
 		}

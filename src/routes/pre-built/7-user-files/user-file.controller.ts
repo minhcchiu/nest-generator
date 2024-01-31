@@ -1,5 +1,4 @@
 import { Types } from "mongoose";
-import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
@@ -18,66 +17,70 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { CategoryService } from "./category.service";
-import { CreateCategoryDto } from "./dto/create-category.dto";
-import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { CreateUserFileDto } from "./dto/create-user-file.dto";
+import { UpdateUserFileDto } from "./dto/update-user-file.dto";
+import { UserFileService } from "./user-file.service";
 
-@ApiTags("Categories")
-@Controller("categories")
-export class CategoryController {
-	constructor(private readonly categoryService: CategoryService) {}
+@ApiTags("user files")
+@Controller("user_files")
+export class UserFileController {
+	constructor(private readonly userFileService: UserFileService) {}
 
-	// ----- Method: GET -----
-	@ApiQueryParams([{ name: "isActive", type: Boolean, required: false }])
+	//  ----- Method: GET -----
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.categoryService.findAll(filter, options);
+		return this.userFileService.findAll(filter, options);
 	}
 
 	@Public()
+	@Get("paginate")
+	@HttpCode(HttpStatus.OK)
+	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.userFileService.paginate(filter, options);
+	}
+
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: AqpDto) {
-		return this.categoryService.count(filter);
+		return this.userFileService.count(filter);
 	}
 
-	@Public()
 	@Get(":id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
-		return this.categoryService.findById(id, { projection, populate });
+		return this.userFileService.findById(id, { projection, populate });
 	}
 
-	// ----- Method: POST -----
+	//  ----- Method: POST -----
 	@ApiBearerAuth()
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateCategoryDto) {
-		return this.categoryService.create(body);
+	async create(@Body() body: CreateUserFileDto) {
+		return this.userFileService.create(body);
 	}
 
-	// ----- Method: PATCH -----
+	//  ----- Method: PATCH -----
 	@ApiBearerAuth()
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateCategoryDto,
+		@Body() body: UpdateUserFileDto,
 	) {
-		return this.categoryService.updateById(id, body);
+		return this.userFileService.updateById(id, body);
 	}
 
-	// ----- Method: DELETE -----
+	//  ----- Method: DELETE -----
 	@ApiBearerAuth()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.categoryService.deleteMany({
+		return this.userFileService.deleteMany({
 			_id: { $in: ids.split(",") },
 		});
 	}
@@ -86,6 +89,6 @@ export class CategoryController {
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.categoryService.deleteById(id);
+		return this.userFileService.deleteById(id);
 	}
 }

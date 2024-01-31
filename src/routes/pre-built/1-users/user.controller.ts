@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { ApiParamId } from "~decorators/api-param-id.swagger";
+import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { AqpDto } from "~dto/aqp.dto";

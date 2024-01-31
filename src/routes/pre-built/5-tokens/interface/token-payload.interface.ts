@@ -14,4 +14,5 @@ export interface TokenPayload {
 	readonly dateOfBirth?: number;
 	readonly status?: AccountStatus;
 	readonly accountType?: AccountType;
+	readonly storeId?: string;
 }

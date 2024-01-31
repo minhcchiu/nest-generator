@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { ApiParamId } from "~decorators/api-param-id.swagger";
-import { ApiQueryParams } from "~decorators/aqp.swagger";
+import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
+import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { AqpDto } from "~dto/aqp.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";

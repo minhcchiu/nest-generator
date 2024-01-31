@@ -19,6 +19,10 @@ export class BaseService<T> {
 		return this.model.create(input);
 	}
 
+	async createMany(inputs: Record<string, any>[]) {
+		return this.model.create(inputs);
+	}
+
 	async findAll(filter: FilterQuery<T>, options?: QueryOptions<T>) {
 		const { page, limit, ...option } = options;
 		const skip = (page - 1) * limit;

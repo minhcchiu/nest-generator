@@ -1,9 +1,10 @@
 import { UploadApiOptions, v2 } from "cloudinary";
 import { unlinkSync } from "fs";
-import { CloudinaryConfig } from "~config/environment";
+import { CloudinaryConfig, ConfigName } from "~config/environment";
 import { ResourceTypeEnum } from "~routes/pre-built/7-uploads/enum/resource-type.enum";
 import { CustomLogger } from "~shared/logger/logger.service";
 import { getFileName } from "~utils/file.util";
+import { FileType } from "~utils/types/file.type";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -17,7 +18,7 @@ export class CloudinaryService {
 	private uploadOptions = {
 		[ResourceTypeEnum.IMAGE]: this._uploadImage,
 		[ResourceTypeEnum.FILE]: this._uploadFile,
-		[ResourceTypeEnum.AUDIO]: this._uploadAudio,
+		[ResourceTypeEnum.AUTO]: this._uploadAudio,
 		[ResourceTypeEnum.VIDEO]: this._uploadVideo,
 	};
 
@@ -25,8 +26,44 @@ export class CloudinaryService {
 		readonly configService: ConfigService,
 		private readonly logger: CustomLogger,
 	) {
-		this.cloudinaryConfig = configService.get<CloudinaryConfig>("cloudinary");
+		this.cloudinaryConfig = configService.get<CloudinaryConfig>(
+			ConfigName.cloudinary,
+		);
 	}
+
+	/**
+	 * Upload image
+	 *
+	 * @param filePath
+	 * @param options
+	 * @returns
+	 */
+	uploadImage(
+		file: Express.Multer.File,
+		options: {
+			fileName: string;
+			fileType: FileType;
+			fileFolder: string;
+		},
+	): Promise<any> {
+		return new Promise((resolve, reject) => {
+			v2.uploader
+				.upload_stream(
+					{
+						resource_type: options.fileType,
+						folder: options.fileFolder,
+						public_id: options.fileName,
+					},
+					(error, uploadResult) => {
+						if (error) return reject(new BadRequestException(error.message));
+
+						return resolve(uploadResult);
+					},
+				)
+				.end(file.buffer);
+		});
+	}
+
 	/**
 	 * Upload
 	 *
@@ -48,22 +85,22 @@ export class CloudinaryService {
 	/**
 	 * Delete many
 	 *
-	 * @param resourceIds
+	 * @param publicIds
 	 * @returns
 	 */
-	deleteByResourceIds(resourceIds: string[]) {
-		return v2.api.delete_resources(resourceIds);
+	deleteByResourceIds(publicIds: string[]) {
+		return v2.api.delete_resources(publicIds);
 	}
 
 	/**
 	 * Delete one
 	 *
-	 * @param resourceId
+	 * @param publicId
 	 * @returns
 	 */
-	async deleteByResourceId(resourceId: string) {
+	async deleteByResourceId(publicId: string) {
 		try {
-			return await v2.uploader.destroy(resourceId);
+			return await v2.uploader.destroy(publicId);
 		} catch (error) {
 			this.logger.warn(CloudinaryService.name, error);
 		}
@@ -121,7 +158,7 @@ export class CloudinaryService {
 	}
 
 	/**
-	 * Upload audio
+	 * Upload auto
 	 *
 	 * @param filePath
 	 * @param options
@@ -161,14 +198,14 @@ export class CloudinaryService {
 					width: 300,
 					height: 300,
 					crop: "pad",
-					audio_codec: "none",
+					auto_codec: "none",
 				},
 				{
 					width: 160,
 					height: 100,
 					crop: "crop",
 					gravity: "south",
-					audio_codec: "none",
+					auto_codec: "none",
 				},
 			],
 		};

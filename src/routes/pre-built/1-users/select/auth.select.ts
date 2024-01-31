@@ -12,4 +12,5 @@ export const authSelect = {
 	slug: 1,
 	username: 1,
 	accountType: 1,
+	storeId: 1,
 };

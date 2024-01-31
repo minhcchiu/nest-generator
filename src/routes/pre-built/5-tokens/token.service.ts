@@ -133,6 +133,7 @@ export class TokenService extends BaseService<TokenDocument> {
 			dateOfBirth: user.dateOfBirth,
 			status: user.status,
 			accountType: user.accountType,
+			storeId: user.storeId,
 		};
 
 		const { accessToken, refreshToken } = await this.generateAuthTokens(

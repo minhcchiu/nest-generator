@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { ApiQueryParams } from "~decorators/aqp.swagger";
+import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";

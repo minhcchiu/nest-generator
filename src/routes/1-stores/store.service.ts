@@ -35,7 +35,7 @@ export class StoreService extends BaseService<StoreDocument> {
 
 		const storeCreated = await this.storeModel.create(input);
 
-		this.userService.updateById(foundUser._id, {
+		await this.userService.updateById(foundUser._id, {
 			storeId: storeCreated._id.toString(),
 		});
 

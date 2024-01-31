@@ -16,6 +16,7 @@ import { AuthModule } from "./pre-built/4-auth/auth.module";
 import { TokenModule } from "./pre-built/5-tokens/token.module";
 import { OtpModule } from "./pre-built/6-otp/otp.module";
 import { UploadModule } from "./pre-built/7-uploads/upload.module";
+import { UserFileModule } from "./pre-built/7-user-files/user-file.module";
 import { ProvinceModule } from "./pre-built/8-provinces/province.module";
 import { DistrictModule } from "./pre-built/9-districts/district.module";
 
@@ -43,4 +44,5 @@ export const RouteModules = [
 	ProductGroupModule,
 	ProductModule,
 	ReviewModule,
+	UserFileModule,
 ];

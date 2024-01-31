@@ -1,6 +1,6 @@
 import { diskStorage } from "multer";
-import { UploadConfig } from "~config/environment";
-import { editFileName, imageFileFilter } from "~helpers/storage.helper";
+import { ConfigName, UploadConfig } from "~config/environment";
+import { editFileName, fileFilterValidator } from "~helpers/storage.helper";
 import { FieldsNameEnum } from "~routes/pre-built/7-uploads/enum/field-name.enum";
 
 import { Injectable, mixin, NestInterceptor, Type } from "@nestjs/common";
@@ -22,7 +22,9 @@ export const StorageFilesInterceptor = (
 		 */
 		constructor(private configService: ConfigService) {
 			const multerOption = this.getMulterOptions();
-			const uploadConfig = this.configService.get<UploadConfig>("upload");
+			const uploadConfig = this.configService.get<UploadConfig>(
+				ConfigName.upload,
+			);
 
 			// init max files
 			let maxFiles = uploadConfig.imageMaxFiles;
@@ -35,9 +37,9 @@ export const StorageFilesInterceptor = (
 			if (fieldName === FieldsNameEnum.VIDEOS)
 				maxFiles = uploadConfig.videoMaxFiles;
 
-			// set maxFile if fieldName is audio
-			if (fieldName === FieldsNameEnum.AUDIOS)
-				maxFiles = uploadConfig.audioMaxFiles;
+			// set maxFile if fieldName is auto
+			if (fieldName === FieldsNameEnum.AUTOS)
+				maxFiles = uploadConfig.autoMaxFiles;
 
 			//  init file interceptor
 			this.filesInterceptor = new (FilesInterceptor(
@@ -84,11 +86,11 @@ export const StorageFilesInterceptor = (
 					extAllowed: uploadConfig.videoExt,
 				};
 
-			// Check upload audio -> options upload audio
-			if (fieldName === FieldsNameEnum.AUDIOS)
+			// Check upload auto -> options upload auto
+			if (fieldName === FieldsNameEnum.AUTOS)
 				options = {
-					fileSize: uploadConfig.audioMaxSize,
-					extAllowed: uploadConfig.audioExt,
+					fileSize: uploadConfig.autoMaxSize,
+					extAllowed: uploadConfig.autoExt,
 				};
 
 			return {
@@ -99,8 +101,8 @@ export const StorageFilesInterceptor = (
 
 				limits: { fileSize: Math.pow(1024, options.fileSize) },
 
-				fileFilter: (req: any, file: any, callback: any) => {
-					imageFileFilter(options.extAllowed, req, file, callback);
+				fileFilterValidator: (req: any, file: any, callback: any) => {
+					fileFilterValidator(req, file, callback);
 				},
 			};
 		}

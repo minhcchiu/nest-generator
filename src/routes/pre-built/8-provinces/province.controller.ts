@@ -29,6 +29,13 @@ export class ProvinceController {
 	//  ----- Method: GET -----
 
 	@Public()
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.provinceService.findAll(filter, options);
+	}
+
+	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {

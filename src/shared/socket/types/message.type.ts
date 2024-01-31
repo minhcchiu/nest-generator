@@ -18,7 +18,7 @@ export type Message = {
 	};
 	text: string;
 	image: string[];
-	audio: string;
+	auto: string;
 	isDeleted: boolean;
 };
 
@@ -51,7 +51,7 @@ export type Message = {
 // 		],
 // 		"text": " string",
 // 		"image": ["image"],
-// 		"audio": "audio",
+// 		"auto": "auto",
 // 		"isDeleted": false
 // 	},
 // };

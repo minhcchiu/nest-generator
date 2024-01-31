@@ -16,6 +16,7 @@ import {
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
@@ -51,6 +52,16 @@ import { SeedModule } from "./shared/seed/seed.module";
 				limit: 10,
 			},
 		]),
+
+		EventEmitterModule.forRoot({
+			wildcard: false,
+			delimiter: ".",
+			newListener: false,
+			removeListener: false,
+			maxListeners: 10,
+			verboseMemoryLeak: false,
+			ignoreErrors: false,
+		}),
 
 		DatabaseModuleConfig,
 		SeedModule,

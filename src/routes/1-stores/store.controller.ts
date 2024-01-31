@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
@@ -49,6 +50,7 @@ export class StoreController {
 	}
 
 	@Public()
+	@ApiParamId()
 	@Get(":id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
@@ -68,6 +70,7 @@ export class StoreController {
 
 	// ----- Method: PATCH -----
 	@ApiBearerAuth()
+	@ApiParamId()
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -79,6 +82,7 @@ export class StoreController {
 
 	// ----- Method: DELETE -----
 	@ApiBearerAuth()
+	@ApiParamId()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -88,6 +92,7 @@ export class StoreController {
 	}
 
 	@ApiBearerAuth()
+	@ApiParamId()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

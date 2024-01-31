@@ -8,7 +8,7 @@ import { OtpType } from "../enums/otp-type";
 @Schema({
 	timestamps: true,
 	versionKey: false,
-	collection: "otp",
+	collection: "otps",
 })
 export class Otp {
 	@Prop({ type: String })

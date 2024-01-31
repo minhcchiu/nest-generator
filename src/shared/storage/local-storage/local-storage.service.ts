@@ -10,7 +10,7 @@ export class LocalStorageService {
 	private uploadOptions = {
 		[ResourceTypeEnum.IMAGE]: this._uploadImage,
 		[ResourceTypeEnum.FILE]: this._uploadFile,
-		[ResourceTypeEnum.AUDIO]: this._uploadAudio,
+		[ResourceTypeEnum.AUTO]: this._uploadAudio,
 		[ResourceTypeEnum.VIDEO]: this._uploadVideo,
 	};
 
@@ -31,7 +31,7 @@ export class LocalStorageService {
 	 * @returns
 	 */
 	private async _uploadFile(filePath: string) {
-		const uploadDir = StorageDirEnum.FILES;
+		const uploadDir = StorageDirEnum.Raws;
 
 		return localStorageHelper.upload(
 			filePath,
@@ -47,7 +47,7 @@ export class LocalStorageService {
 	 * @returns
 	 */
 	private async _uploadImage(filePath: string) {
-		const uploadDir = StorageDirEnum.IMAGES;
+		const uploadDir = StorageDirEnum.Images;
 
 		return localStorageHelper.uploadImage(filePath, uploadDir);
 	}
@@ -59,7 +59,7 @@ export class LocalStorageService {
 	 * @returns
 	 */
 	private async _uploadVideo(filePath: string) {
-		const uploadDir = StorageDirEnum.VIDEOS;
+		const uploadDir = StorageDirEnum.Videos;
 
 		return localStorageHelper.upload(
 			filePath,
@@ -69,18 +69,18 @@ export class LocalStorageService {
 	}
 
 	/**
-	 * Upload audio
+	 * Upload auto
 	 *
 	 * @param filePath
 	 * @returns
 	 */
 	private async _uploadAudio(filePath: string) {
-		const uploadDir = StorageDirEnum.AUDIOS;
+		const uploadDir = StorageDirEnum.Autos;
 
 		return localStorageHelper.upload(
 			filePath,
 			uploadDir,
-			ResourceTypeEnum.AUDIO,
+			ResourceTypeEnum.AUTO,
 		);
 	}
 }

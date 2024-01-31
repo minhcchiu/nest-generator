@@ -22,6 +22,7 @@ const nodeEnv = registerAs(
 		nodeEnv: process.env.NODE_ENV,
 		port: +process.env.APP_PORT,
 		appUrl: process.env.APP_URL,
+		appName: process.env.APP_NAME,
 	}),
 );
 
@@ -60,17 +61,39 @@ const uploadEnv = registerAs(
 		imageMaxSize: +process.env.UPLOAD_IMAGE_MAX_SIZE,
 		rawMaxSize: +process.env.UPLOAD_RAW_MAX_SIZE,
 		videoMaxSize: +process.env.UPLOAD_VIDEO_MAX_SIZE,
-		audioMaxSize: +process.env.UPLOAD_AUDIO_MAX_SIZE,
+		autoMaxSize: +process.env.UPLOAD_AUTO_MAX_SIZE,
 
 		imageMaxFiles: +process.env.UPLOAD_IMAGE_MAX_FILE,
 		rawMaxFiles: +process.env.UPLOAD_RAW_MAX_FILE,
 		videoMaxFiles: +process.env.UPLOAD_VIDEO_MAX_FILE,
-		audioMaxFiles: +process.env.UPLOAD_AUDIO_MAX_FILE,
+		autoMaxFiles: +process.env.UPLOAD_AUTO_MAX_FILE,
 
 		imagesExt: process.env.UPLOAD_IMAGE_EXT,
 		rawExt: process.env.UPLOAD_RAW_EXT,
 		videoExt: process.env.UPLOAD_VIDEO_EXT,
-		audioExt: process.env.UPLOAD_AUDIO_EXT,
+		autoExt: process.env.UPLOAD_AUTO_EXT,
+		auto: {
+			allowedExtensions: process.env.UPLOAD_AUTO_EXT.split("|"),
+			maxSize: +process.env.UPLOAD_AUTO_MAX_SIZE,
+		},
+		video: {
+			allowedExtensions: process.env.UPLOAD_VIDEO_EXT.split("|"),
+			maxSize: +process.env.UPLOAD_VIDEO_MAX_SIZE,
+		},
+		image: {
+			allowedExtensions: process.env.UPLOAD_IMAGE_EXT.split("|"),
+			maxSize: +process.env.UPLOAD_IMAGE_MAX_SIZE,
+		},
+		raw: {
+			allowedExtensions: process.env.UPLOAD_RAW_EXT.split("|"),
+			maxSize: +process.env.UPLOAD_RAW_MAX_SIZE,
+		},
+		storageFolders: {
+			image: process.env.UPLOAD_IMAGE_FOLDER,
+			raw: process.env.UPLOAD_RAW_FOLDER,
+			video: process.env.UPLOAD_VIDEO_FOLDER,
+			auto: process.env.UPLOAD_AUTO_FOLDER,
+		},
 	}),
 );
 

@@ -1,322 +1,84 @@
-import { AppConfig } from "~config/environment";
+import { ApiUploadFiles } from "src/common/swaggers/api-upload-files.swagger";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-import {
-	StorageFileInterceptor,
-	StorageFilesInterceptor,
-} from "~shared/interceptors";
 
 import {
-	BadRequestException,
-	Body,
 	Controller,
-	HttpCode,
-	HttpStatus,
 	Post,
-	UploadedFile,
 	UploadedFiles,
 	UseInterceptors,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { ApiTags } from "@nestjs/swagger";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import {
+	ApiBearerAuth,
+	ApiConsumes,
+	ApiOperation,
+	ApiTags,
+} from "@nestjs/swagger";
 
-import { SaveFileDto } from "./dto/save-file.dto";
-import { SaveFilesDto } from "./dto/save-files.dto";
-import { FieldNameEnum, FieldsNameEnum } from "./enum/field-name.enum";
-import { ResourceTypeEnum } from "./enum/resource-type.enum";
+import { CreateUserFileDto } from "../7-user-files/dto/create-user-file.dto";
+import { UserFileService } from "../7-user-files/user-file.service";
+import { ResponseUploadedDto } from "./dto/response-uploaded.dto";
 import { UploadService } from "./upload.service";
 
 @ApiTags("uploads")
 @Controller("uploads")
 export class UploadController {
-	private appUrl: string;
 	constructor(
 		private readonly uploadService: UploadService,
-		readonly configService: ConfigService,
-	) {
-		this.appUrl = configService.get<AppConfig>("app").appUrl;
-	}
+		private readonly userFileService: UserFileService,
+	) {}
 
-	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.FILE))
-	@Post("file")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadFileToLocal(@UploadedFile() file: Express.Multer.File) {
-		if (!file) throw new BadRequestException("File is required!");
-		const path = file.destination.replace("public/", "") + `/${file.filename}`;
-
-		return {
-			file: `${this.appUrl}/${path}`,
-			resourceType: ResourceTypeEnum.FILE,
-		};
-	}
-
-	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.FILES))
-	@Post("files")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadFilesToLocal(@UploadedFiles() inputFiles: Express.Multer.File[]) {
-		if (!inputFiles) throw new BadRequestException("Files are required!");
-
-		const files = inputFiles.map((file: any) => {
-			const path = file.destination.replace("public", "") + `/${file.filename}`;
-
-			return `${this.appUrl}/${path}`;
-		});
-
-		return {
-			files,
-			resourceType: ResourceTypeEnum.FILE,
-		};
-	}
-
-	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.IMAGE))
-	@Post("image")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadImageToLocal(@UploadedFile() image: Express.Multer.File) {
-		if (!image) throw new BadRequestException("Image is required!");
-		const path =
-			image.destination.replace("public/", "") + `/${image.filename}`;
-
-		return {
-			file: `${this.appUrl}/${path}`,
-			resourceType: ResourceTypeEnum.IMAGE,
-		};
-	}
-
-	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.IMAGES))
-	@Post("images")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadImagesToLocal(@UploadedFiles() images: Express.Multer.File[]) {
-		if (!images) throw new BadRequestException("Images are required!");
-
-		const files = images.map((image: any) => {
-			const path =
-				image.destination.replace("public", "") + `/${image.filename}`;
-
-			return `${this.appUrl}/${path}`;
-		});
-
-		return {
-			files,
-			resourceType: ResourceTypeEnum.IMAGE,
-		};
-	}
-
-	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.VIDEO))
-	@Post("video")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadVideoToLocal(@UploadedFile() video: Express.Multer.File) {
-		if (!video) throw new BadRequestException("Video is required!");
-		const path =
-			video.destination.replace("public/", "") + `/${video.filename}`;
-
-		return {
-			file: `${this.appUrl}/${path}`,
-			resourceType: ResourceTypeEnum.VIDEO,
-		};
-	}
-
-	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.VIDEOS))
-	@Post("videos")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadVideosToLocal(@UploadedFiles() videos: Express.Multer.File[]) {
-		if (!videos) throw new BadRequestException("Videos are required!");
-
-		const files = videos.map((video: any) => {
-			const path =
-				video.destination.replace("public", "") + `/${video.filename}`;
-
-			return `${this.appUrl}/${path}`;
-		});
-
-		return {
-			files,
-			resourceType: ResourceTypeEnum.VIDEO,
-		};
-	}
-
-	/**
-	 * Upload single audio to tmp
-	 *
-	 * @param audio
-	 * @returns
-	 */
-	@UseInterceptors(StorageFileInterceptor(FieldNameEnum.AUDIO))
-	@Post("audio")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadAudioToLocal(@UploadedFile() audio: Express.Multer.File) {
-		if (!audio) throw new BadRequestException("Audio is required!");
-
-		const path =
-			audio.destination.replace("public/", "") + `/${audio.filename}`;
-
-		return {
-			file: `${this.appUrl}/${path}`,
-			resourceType: ResourceTypeEnum.AUDIO,
-		};
-	}
-
-	/**
-	 * Upload single video to tmp
-	 *
-	 * @param audios
-	 * @returns
-	 */
-	@UseInterceptors(StorageFilesInterceptor(FieldsNameEnum.AUDIOS))
-	@Post("audios")
-	@HttpCode(HttpStatus.CREATED)
-	async uploadAudiosToLocal(@UploadedFiles() audios: Express.Multer.File[]) {
-		if (!audios) throw new BadRequestException("Audios is required!");
-
-		const files = audios.map((audio: any) => {
-			const path =
-				audio.destination.replace("public", "") + `/${audio.filename}`;
-
-			return `${this.appUrl}/${path}`;
-		});
-
-		return {
-			files,
-			resourceType: ResourceTypeEnum.AUDIO,
-		};
-	}
-
-	/**
-	 * Save file to local
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_file_to_local")
-	@HttpCode(HttpStatus.CREATED)
-	async saveFileToLocal() {
-		// @Body() { file, resourceType }: SaveFileDto, // @GetCurrentUserId() userId: string,
-		// file = file.replace(this.appUrl, '');
-		// // const { files, folder } = await this.uploadService.saveFileToLocal(
-		// //   { file, resourceType },
-		// //   userId,
-		// // );
-		// return files.map((fileName) => `${this.appUrl}${folder}${fileName}`);
-	}
-
-	/**
-	 * Save files to local
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_files_to_local")
-	async saveFilesToLocal(
+	@ApiBearerAuth()
+	@ApiConsumes("multipart/form-data")
+	@ApiOperation({ summary: "Upload files" })
+	@ApiUploadFiles(["files"])
+	@Post("cloudinary")
+	@UseInterceptors(FilesInterceptor("files", 10))
+	async uploadFiles(
 		@GetCurrentUserId() userId: string,
-		@Body() { files, resourceType }: SaveFilesDto,
+		@UploadedFiles()
+		inputs: Array<Express.Multer.File>,
 	) {
-		const filesUploadedPromise = files.map((file) => {
-			file = file.replace(this.appUrl, "");
-
-			return this.uploadService.saveFileToLocal({ file, resourceType }, userId);
-		});
-
-		const filesDoc = await Promise.all(filesUploadedPromise);
-		const result = filesDoc.map(
-			() => 1,
-			// fileDoc.files.map((fileName) => `${this.appUrl}${fileDoc.folder}${fileName}`),
+		// upload files
+		const filesUploaded = await Promise.all(
+			inputs.map((file) => this.uploadService.uploadToCloudinary(file)),
 		);
 
-		return { files: result };
-	}
+		const results: ResponseUploadedDto[] = [];
+		const fileItems: CreateUserFileDto[] = [];
 
-	/**
-	 * Save file to Cloudinary
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_file_to_cloudinary")
-	async saveFileToCloudinary(
-		@GetCurrentUserId() userId: string,
-		@Body() { file, resourceType }: SaveFileDto,
-	) {
-		file = file.replace(this.appUrl, "");
+		// add result
+		filesUploaded.forEach((file) => {
+			// uploaded success
+			if (file.url) {
+				results.push({
+					fileName: file.fileName,
+					originalname: file.originalname,
+					fileSize: file.fileSize,
+					url: file.url,
+				});
 
-		const files = await this.uploadService.saveFileToCloudinary(
-			{ file, resourceType },
-			userId,
-		);
-
-		return { files };
-	}
-
-	/**
-	 * Save files to Cloudinary
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_files_to_cloudinary")
-	async saveToCloudinary(
-		@GetCurrentUserId() userId: string,
-		@Body() { files, resourceType }: SaveFilesDto,
-	) {
-		const filesUploadedPromise = files.map((file) => {
-			file = file.replace(this.appUrl, "");
-
-			return this.uploadService.saveFileToCloudinary(
-				{ file, resourceType },
-				userId,
-			);
+				// add file item
+				fileItems.push({
+					fileFolder: file.fileFolder,
+					fileName: file.fileName,
+					fileSize: file.fileSize,
+					fileType: file.fileType,
+					resourceId: file.resourceId,
+					storageLocation: file.storageLocation,
+					uploadedAt: file.uploadedAt,
+					url: file.url,
+					userId,
+				});
+			} else {
+				// upload failed
+				results.push(file);
+			}
 		});
 
-		const result = await Promise.all(filesUploadedPromise);
+		// save files
+		this.userFileService.createMany(fileItems).catch();
 
-		return { files: result };
-	}
-
-	/**
-	 * Save file to S3
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_file_to_s3")
-	async saveFileToS3(
-		@GetCurrentUserId() userId: string,
-		@Body() { file, resourceType }: SaveFileDto,
-	) {
-		const files = await this.uploadService.saveFileToS3(
-			{ file, resourceType },
-			userId,
-		);
-
-		return { files };
-	}
-
-	/**
-	 * Save files to S3
-	 *
-	 * @param userId
-	 * @param body
-	 * @returns
-	 */
-	@HttpCode(HttpStatus.CREATED)
-	@Post("save_files_to_s3")
-	async saveFilesToS3(
-		@GetCurrentUserId() userId: string,
-		@Body() { files, resourceType }: SaveFilesDto,
-	) {
-		const filesUploadedPromise = files.map((file) =>
-			this.uploadService.saveFileToS3({ file, resourceType }, userId),
-		);
-
-		const result = await Promise.all(filesUploadedPromise);
-
-		return { files: result };
+		return results;
 	}
 }
