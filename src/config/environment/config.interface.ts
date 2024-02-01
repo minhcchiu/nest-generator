@@ -21,6 +21,7 @@ export interface AppConfig {
 	port: number;
 	appUrl: string;
 	appName: string;
+	storageServer: string;
 }
 
 export interface DatabaseConfig {
@@ -139,4 +140,14 @@ export interface FacebookConfig {
 export type GoogleConfig = {
 	clientId: string;
 	clientSecret: string;
+};
+
+export type AwsConfig = {
+	url: string;
+	accessKeyId: string;
+	secretAccessKey: string;
+	region: string;
+	endpoint: string;
+	bucketName: string;
+	backupBucketName: string;
 };

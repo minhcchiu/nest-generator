@@ -11,6 +11,7 @@ export enum ConfigName {
 	apple = "apple",
 	facebook = "facebook",
 	google = "google",
+	aws = "aws",
 }
 
 export enum NodeEnv {

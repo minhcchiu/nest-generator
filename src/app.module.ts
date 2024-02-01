@@ -28,6 +28,8 @@ import { LoggingInterceptor } from "./shared/interceptors";
 import { LoggerModule } from "./shared/logger/logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
+import { S3Module } from "~shared/storage/s3/s3.module";
+import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
 
 @Module({
 	imports: [
@@ -69,6 +71,8 @@ import { SeedModule } from "./shared/seed/seed.module";
 		MailModule,
 		SocketModule,
 		FirebaseModule,
+		S3Module,
+		CloudinaryModule,
 
 		// routes
 		...RouteModules,

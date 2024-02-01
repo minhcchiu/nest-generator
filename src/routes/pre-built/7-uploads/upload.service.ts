@@ -13,6 +13,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { StorageLocationEnum } from "./enum/store-location.enum";
+import { S3Service } from "~shared/storage/s3/s3.service";
 
 @Injectable()
 export class UploadService {
@@ -22,6 +23,7 @@ export class UploadService {
 
 	constructor(
 		private readonly cloudinaryService: CloudinaryService,
+		private readonly s3Service: S3Service,
 		private readonly configService: ConfigService,
 	) {
 		const uploadConfig = configService.get<UploadConfig>(ConfigName.upload);
@@ -38,28 +40,65 @@ export class UploadService {
 
 	async uploadToCloudinary(file: Express.Multer.File) {
 		try {
-			const { fileType, fileFolder, fileName } = this._validateFile(file);
+			const { fileType, fileFolder, fileName, fileExt } =
+				this._validateFile(file);
 
-			const res = await this.cloudinaryService.uploadImage(file, {
+			const res = await this.cloudinaryService.uploadStream({
 				fileType,
 				fileFolder,
-				fileName,
+				fileName: fileType === "raw" ? `${fileName}.${fileExt}` : fileName,
+				buffer: file.buffer,
 			});
 
 			return {
 				url: res.url,
 				fileFolder: res.folder,
-				fileName: fileName,
 				fileSize: res.bytes,
-				fileType: fileType,
 				resourceId: res.public_id,
+
+				fileName: fileName,
+				fileType: fileType,
 				storageLocation: StorageLocationEnum.Cloudinary,
-				uploadedAt: Date.now(),
 				originalname: file.originalname,
+				uploadedAt: Date.now(),
 			};
 		} catch (error) {
 			return {
 				error: error.message,
+
+				fileName: file.originalname,
+				originalname: file.originalname,
+				fileSize: file.size,
+			};
+		}
+	}
+
+	async uploadToS3(file: Express.Multer.File) {
+		try {
+			const { fileName, fileType, fileExt } = this._validateFile(file);
+
+			const res = await this.s3Service.upload({
+				mimetype: file.mimetype,
+				body: file.buffer,
+				fileName: `${fileName}.${fileExt}`,
+			});
+
+			return {
+				url: res.Location,
+				fileFolder: res.Bucket,
+				resourceId: res.Key,
+
+				fileName: fileName,
+				fileType: fileType,
+				fileSize: file.size,
+				storageLocation: StorageLocationEnum.S3,
+				originalname: file.originalname,
+				uploadedAt: Date.now(),
+			};
+		} catch (error) {
+			return {
+				error: error.message,
+
 				fileName: file.originalname,
 				originalname: file.originalname,
 				fileSize: file.size,
@@ -83,7 +122,7 @@ export class UploadService {
 		}
 
 		const fileFolder = this.storageFolders[fileType];
-		const fileName = this._getFileName(file.originalname, fileType, fileExt);
+		const fileName = generateFileName(file.originalname);
 
 		return {
 			fileType,
@@ -92,16 +131,6 @@ export class UploadService {
 			fileExt,
 			fileName,
 		};
-	}
-
-	_getFileName(originalname: string, fileType: FileType, fileExt: string) {
-		let fileName = generateFileName(originalname);
-
-		if (fileType === "raw") {
-			fileName = `${fileName}.${fileExt}`;
-		}
-
-		return fileName;
 	}
 
 	_getFileType(fileExt: string): FileType {

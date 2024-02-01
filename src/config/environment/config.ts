@@ -4,6 +4,7 @@ import { ConfigName } from "./config.enum";
 import {
 	AppConfig,
 	AppleConfig,
+	AwsConfig,
 	CloudinaryConfig,
 	DatabaseConfig,
 	FacebookConfig,
@@ -23,6 +24,7 @@ const nodeEnv = registerAs(
 		port: +process.env.APP_PORT,
 		appUrl: process.env.APP_URL,
 		appName: process.env.APP_NAME,
+		storageServer: process.env.STORAGE_SERVER,
 	}),
 );
 
@@ -188,6 +190,19 @@ const googleEnv = registerAs(
 	}),
 );
 
+const awsEnv = registerAs(
+	ConfigName.aws,
+	(): AwsConfig => ({
+		url: process.env.S3_URL,
+		accessKeyId: process.env.S3_ACCESS_KEY_ID,
+		secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+		region: process.env.S3_REGION,
+		endpoint: process.env.S3_ENDPOINT,
+		bucketName: process.env.S3_BUCKET_NAME,
+		backupBucketName: process.env.S3_BUCKET_BACKUP_NAME,
+	}),
+);
+
 export const configurations = [
 	nodeEnv,
 	databaseEnv,
@@ -201,4 +216,5 @@ export const configurations = [
 	appleEnv,
 	facebookEnv,
 	googleEnv,
+	awsEnv,
 ];
