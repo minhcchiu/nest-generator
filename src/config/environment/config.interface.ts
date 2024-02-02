@@ -143,11 +143,9 @@ export type GoogleConfig = {
 };
 
 export type AwsConfig = {
-	url: string;
 	accessKeyId: string;
 	secretAccessKey: string;
 	region: string;
 	endpoint: string;
 	bucketName: string;
-	backupBucketName: string;
 };

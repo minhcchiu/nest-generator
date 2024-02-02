@@ -193,13 +193,11 @@ const googleEnv = registerAs(
 const awsEnv = registerAs(
 	ConfigName.aws,
 	(): AwsConfig => ({
-		url: process.env.S3_URL,
 		accessKeyId: process.env.S3_ACCESS_KEY_ID,
 		secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
 		region: process.env.S3_REGION,
 		endpoint: process.env.S3_ENDPOINT,
 		bucketName: process.env.S3_BUCKET_NAME,
-		backupBucketName: process.env.S3_BUCKET_BACKUP_NAME,
 	}),
 );
 

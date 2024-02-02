@@ -2,12 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AppConfig, AwsConfig, ConfigName } from "~config/environment";
 import { CustomLogger } from "~shared/logger/logger.service";
-import { Body } from "aws-sdk/clients/s3";
-import { S3 } from "aws-sdk";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Readable } from "stream";
+import { Upload } from "@aws-sdk/lib-storage";
 
 @Injectable()
 export class S3Service {
-	private s3: S3;
+	private s3Client: S3Client;
 	private awsConfig: AwsConfig;
 	private appConfig: AppConfig;
 
@@ -23,35 +24,52 @@ export class S3Service {
 
 	initS3() {
 		if (this.appConfig.storageServer === "S3") {
-			this.s3 = new S3({
-				accessKeyId: this.awsConfig.accessKeyId,
-				secretAccessKey: this.awsConfig.secretAccessKey,
+			this.s3Client = new S3Client({
 				region: this.awsConfig.region,
 				endpoint: this.awsConfig.endpoint,
-				correctClockSkew: true,
+				credentials: {
+					accessKeyId: this.awsConfig.accessKeyId,
+					secretAccessKey: this.awsConfig.secretAccessKey,
+				},
 			});
 
 			this.logger.log("S3Module init success", S3Service.name);
-
-			return;
+		} else {
+			this.logger.warn("S3Module module was not initialized", S3Service.name);
 		}
-
-		this.logger.warn("S3Module module was not init", S3Service.name);
 	}
 
-	async upload(file: {
-		fileName: string;
-		mimetype: string;
-		body: Body;
-	}): Promise<S3.ManagedUpload.SendData> {
-		const params: S3.PutObjectRequest = {
-			Key: file.fileName,
-			ContentType: file.mimetype,
-			Body: file.body,
+	async upload(file: { fileName: string; fileFolder: string; buffer: Buffer }) {
+		const upload = new Upload({
+			params: {
+				Bucket: this.awsConfig.bucketName,
+				Key: `${file.fileFolder}/${file.fileName}`,
+				Body: Readable.from(file.buffer),
+			},
+			client: this.s3Client,
+			queueSize: 3,
+		});
 
-			Bucket: this.awsConfig.bucketName,
-		};
+		return upload.done();
+	}
 
-		return this.s3.upload(params).promise();
+	async deleteFile(resourceId: string) {
+		try {
+			const deleteObjectCommand = new DeleteObjectCommand({
+				Bucket: this.awsConfig.bucketName,
+				Key: resourceId,
+			});
+
+			const result = await this.s3Client.send(deleteObjectCommand);
+
+			console.log(
+				`File ${resourceId} deleted successfully from S3 bucket ${this.awsConfig.bucketName}.`,
+			);
+
+			console.log(result);
+		} catch (error) {
+			console.error("Error deleting file from S3:", error);
+			throw error;
+		}
 	}
 }

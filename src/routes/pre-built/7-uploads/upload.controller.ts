@@ -19,6 +19,8 @@ import { CreateUserFileDto } from "../7-user-files/dto/create-user-file.dto";
 import { UserFileService } from "../7-user-files/user-file.service";
 import { ResponseUploadedDto } from "./dto/response-uploaded.dto";
 import { UploadService } from "./upload.service";
+import { UploadedResult } from "./types/upload.result.type";
+import { UploadedError } from "./types/upload.error.type";
 
 @ApiTags("uploads")
 @Controller("uploads")
@@ -28,111 +30,121 @@ export class UploadController {
 		private readonly userFileService: UserFileService,
 	) {}
 
+	// @ApiBearerAuth()
+	// @ApiConsumes("multipart/form-data")
+	// @ApiOperation({ summary: "Upload files" })
+	// @ApiUploadFiles(["files"])
+	// @Post("cloudinary")
+	// @UseInterceptors(FilesInterceptor("files", 10))
+	// async uploadFilesToCloudinary(
+	// 	@GetCurrentUserId() userId: string,
+	// 	@UploadedFiles()
+	// 	inputs: Array<Express.Multer.File>,
+	// ) {
+	// 	// upload files
+	// 	const filesUploaded = await Promise.all(
+	// 		inputs.map((file) => this.uploadService.uploadToCloudinary(file)),
+	// 	);
+
+	// 	// handle upload results
+	// 	const { fileItems, results } = this._handleUploadResults(
+	// 		filesUploaded,
+	// 		userId,
+	// 	);
+
+	// 	// save files
+	// 	this.userFileService.createMany(fileItems).catch();
+
+	// 	// return results
+	// 	return results;
+	// }
+
+	// @ApiBearerAuth()
+	// @ApiConsumes("multipart/form-data")
+	// @ApiOperation({ summary: "Upload files" })
+	// @ApiUploadFiles(["files"])
+	// @Post("s3")
+	// @UseInterceptors(FilesInterceptor("files", 10))
+	// async uploadFilesToS3(
+	// 	@GetCurrentUserId() userId: string,
+	// 	@UploadedFiles()
+	// 	inputs: Array<Express.Multer.File>,
+	// ) {
+	// 	// upload files
+	// 	const filesUploaded = await Promise.all(
+	// 		inputs.map((file) => this.uploadService.uploadToS3(file)),
+	// 	);
+
+	// 	// handle upload results
+	// 	const { fileItems, results } = this._handleUploadResults(
+	// 		filesUploaded,
+	// 		userId,
+	// 	);
+
+	// 	// save files
+	// 	this.userFileService.createMany(fileItems).catch();
+
+	// 	// return results
+	// 	return results;
+	// }
+
 	@ApiBearerAuth()
 	@ApiConsumes("multipart/form-data")
 	@ApiOperation({ summary: "Upload files" })
 	@ApiUploadFiles(["files"])
-	@Post("cloudinary")
+	@Post()
 	@UseInterceptors(FilesInterceptor("files", 10))
-	async uploadFilesToCloudinary(
+	async uploadFiles(
 		@GetCurrentUserId() userId: string,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
 		// upload files
 		const filesUploaded = await Promise.all(
-			inputs.map((file) => this.uploadService.uploadToCloudinary(file)),
+			inputs.map((file) => this.uploadService.uploadFile(file)),
 		);
 
-		const results: ResponseUploadedDto[] = [];
-		const fileItems: CreateUserFileDto[] = [];
-
-		// add result
-		filesUploaded.forEach((file) => {
-			// uploaded success
-			if (file.url) {
-				results.push({
-					fileName: file.fileName,
-					originalname: file.originalname,
-					fileSize: file.fileSize,
-					url: file.url,
-				});
-
-				// add file item
-				fileItems.push({
-					fileFolder: file.fileFolder,
-					fileName: file.fileName,
-					fileSize: file.fileSize,
-					fileType: file.fileType,
-					resourceId: file.resourceId,
-					storageLocation: file.storageLocation,
-					uploadedAt: file.uploadedAt,
-					url: file.url,
-					userId,
-				});
-			} else {
-				// upload failed
-				results.push(file);
-			}
-		});
+		// handle upload results
+		const { fileItems, results } = this._handleUploadResults(
+			filesUploaded,
+			userId,
+		);
 
 		// save files
 		this.userFileService.createMany(fileItems).catch();
 
+		// return results
 		return results;
 	}
 
-	@ApiBearerAuth()
-	@ApiConsumes("multipart/form-data")
-	@ApiOperation({ summary: "Upload files" })
-	@ApiUploadFiles(["files"])
-	@Post("s3")
-	@UseInterceptors(FilesInterceptor("files", 10))
-	async uploadFilesToS3(
-		@GetCurrentUserId() userId: string,
-		@UploadedFiles()
-		inputs: Array<Express.Multer.File>,
+	// Handle the results of file uploads
+	private _handleUploadResults(
+		filesUploaded: (UploadedResult | UploadedError)[],
+		userId: string,
 	) {
-		// upload files
-		const filesUploaded = await Promise.all(
-			inputs.map((file) => this.uploadService.uploadToS3(file)),
-		);
-
 		const results: ResponseUploadedDto[] = [];
 		const fileItems: CreateUserFileDto[] = [];
 
-		// add result
+		// Iterate through the filesUploaded array
 		filesUploaded.forEach((file) => {
-			// uploaded success
-			if (file.url) {
+			// Check if there was an error during upload
+			if (file?.error) {
+				results.push(file);
+			} else {
+				const res = file as UploadedResult;
+
+				// Add the uploaded file to the results array
 				results.push({
-					fileName: file.fileName,
-					originalname: file.originalname,
-					fileSize: file.fileSize,
-					url: file.url,
+					originalname: res.originalname,
+					fileSize: res.fileSize,
+					url: res.url,
 				});
 
-				// add file item
-				fileItems.push({
-					fileFolder: file.fileFolder,
-					fileName: file.fileName,
-					fileSize: file.fileSize,
-					fileType: file.fileType,
-					resourceId: file.resourceId,
-					storageLocation: file.storageLocation,
-					uploadedAt: file.uploadedAt,
-					url: file.url,
-					userId,
-				});
-			} else {
-				// upload failed
-				results.push(file);
+				// Add the uploaded file to the fileItems array
+				fileItems.push({ ...res, userId });
 			}
 		});
 
-		// save files
-		this.userFileService.createMany(fileItems).catch();
-
-		return results;
+		return { results, fileItems };
 	}
 }
