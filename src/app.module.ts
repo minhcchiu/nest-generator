@@ -44,8 +44,8 @@ import { uploadEnv } from "~config/environment/upload.config";
 	imports: [
 		// configs
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, "../../", "public"),
-			serveRoot: "/",
+			rootPath: join(process.cwd(), "public"),
+			serveRoot: "/public",
 		}),
 
 		ConfigModule.forRoot({

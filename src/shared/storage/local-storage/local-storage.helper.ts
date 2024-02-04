@@ -4,7 +4,15 @@ import { join } from "path";
 import { resizeGIF, resizeJPG, resizePNG } from "~helpers/resize-image";
 import { ResourceTypeEnum } from "~pre-built/7-uploads/enum/resource-type.enum";
 import { StorageDirEnum } from "~pre-built/7-uploads/enum/storage-dir.enum";
-import { getFileName } from "~utils/file.util";
+
+export const getFileName = (filePath: string) => {
+	const lastIndexOfSlash = filePath.lastIndexOf("-");
+	const dateTimeLength = 13;
+
+	const fileName = filePath.slice(lastIndexOfSlash - dateTimeLength);
+
+	return fileName;
+};
 
 export const localStorageHelper = {
 	publicDir: join(process.cwd(), "public"),

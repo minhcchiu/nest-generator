@@ -1,21 +1,11 @@
-import * as fs from "fs";
-
-export const existsSync = (filePath: string): boolean => {
-	return fs.existsSync(filePath);
+export const getFileExtension = (originalname: string): string => {
+	return originalname.split(".").pop()?.toLowerCase() || "";
 };
 
-export const readFileSync = (filePath: string): any => {
-	return fs.readFileSync(filePath);
+export const removeFileExtension = (originalname: string): string => {
+	return originalname.split(".").slice(0, -1).join(".");
 };
 
-export const getFileName = (filePath: string) => {
-	const lastIndexOfSlash = filePath.lastIndexOf("-");
-	const dateTimeLength = 13;
-
-	const fileName = filePath.slice(lastIndexOfSlash - dateTimeLength);
-
-	return fileName;
-};
 export const generateFileName = (originalname: string) => {
 	const lastIndexOfSlash = originalname.lastIndexOf(".");
 	const oName = originalname.slice(0, lastIndexOfSlash);
@@ -25,10 +15,11 @@ export const generateFileName = (originalname: string) => {
 		.map(() => Math.round(Math.random() * 16).toString(16))
 		.join("");
 
-	const fileName = `${Date.now()}-${randomNamePre}-${oName}`;
-
-	return fileName
+	const fileName = `${Date.now()}-${randomNamePre}-${oName}`
 		.replace(/[^\w\s]/gi, "")
 		.replace(/\s+/g, "-")
 		.toLowerCase();
+	const fileExt = getFileExtension(originalname);
+
+	return `${fileName}.${fileExt}`;
 };

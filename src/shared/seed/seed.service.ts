@@ -7,12 +7,12 @@ import { DistrictService } from "~pre-built/9-districts/district.service";
 import { PermissionService } from "~routes/pre-built/2-permissions/permission.service";
 import { MenuService } from "~routes/pre-built/3-menus/menu.service";
 import { CustomLogger } from "~shared/logger/logger.service";
-import { existsSync, readFileSync } from "~utils/file.util";
 
 import { Injectable } from "@nestjs/common";
 
 import { IEndpoint } from "./interfaces/endpoint.interface";
 import { IPermission } from "./interfaces/permission.interface";
+import { existsSync, readFileSync } from "fs";
 
 @Injectable()
 export class SeedService {

@@ -9,6 +9,7 @@ import {
 	CloudinaryConfig,
 	cloudinaryConfigName,
 } from "~config/environment/cloudinary.config";
+import { removeFileExtension } from "~utils/file.util";
 
 @Injectable()
 export class CloudinaryService {
@@ -45,6 +46,13 @@ export class CloudinaryService {
 		fileFolder: string;
 		buffer: Buffer;
 	}): Promise<UploadApiResponse> {
+		let fileName = file.fileName;
+
+		// remove file extension
+		if (file.fileType !== "raw") {
+			fileName = removeFileExtension(fileName);
+		}
+
 		return new Promise((resolve, reject) => {
 			try {
 				v2.uploader
@@ -52,7 +60,7 @@ export class CloudinaryService {
 						{
 							resource_type: file.fileType,
 							folder: file.fileFolder,
-							public_id: file.fileName,
+							public_id: fileName,
 						},
 						(error, uploadResult) => {
 							if (error) return reject(error);

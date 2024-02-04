@@ -1,6 +1,5 @@
-import { getFileExtension } from "~helpers/storage.helper";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
-import { generateFileName } from "~utils/file.util";
+import { generateFileName, getFileExtension } from "~utils/file.util";
 import { FileType } from "~utils/types/file.type";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
@@ -16,6 +15,7 @@ import {
 	uploadConfigName,
 } from "~config/environment/upload.config";
 import { AppConfig, appConfigName } from "~config/environment/app.config";
+import { writeFileSync } from "fs";
 
 @Injectable()
 export class UploadService {
@@ -53,34 +53,62 @@ export class UploadService {
 				return this._uploadToCloudinary(file);
 
 			case "LOCAL":
-				return {
-					error: "Local storage is not implemented yet",
-					originalname: file.originalname,
-					fileSize: file.size,
-				};
+				return this._uploadToLocal(file);
 
 			default:
 				throw new BadRequestException("Storage server not found");
 		}
 	}
 
-	private async _uploadToCloudinary(
-		file: Express.Multer.File,
+	private async _uploadToLocal(
+		fileInput: Express.Multer.File,
 	): Promise<UploadedResult | UploadedError> {
 		try {
 			// validate file
-			const validFile = this._validateFile(file);
+			const { file, fileFolder, fileName, fileType } =
+				this._validateFile(fileInput);
 
-			// generate file name
-			let fileName = `${validFile.fileName}.${validFile.fileExt}`;
-			if (validFile.fileType === "raw") fileName = validFile.fileName;
+			// path storage
+			const localFilePath = `${fileFolder}/${fileName}`;
+
+			// upload file to local
+			writeFileSync(localFilePath, file.buffer);
+
+			return {
+				url: `${this.appConfig.appUrl}/${localFilePath}`,
+
+				fileFolder,
+				fileName,
+				fileType,
+				fileSize: fileInput.size,
+				resourceId: localFilePath,
+				originalname: file.originalname,
+				storageLocation: StorageLocationEnum.Local,
+				uploadedAt: Date.now(),
+			};
+		} catch (error) {
+			return {
+				error: error?.message || "Cloudinary upload failed",
+				originalname: fileInput.originalname,
+				fileSize: fileInput.size,
+			};
+		}
+	}
+
+	private async _uploadToCloudinary(
+		fileInput: Express.Multer.File,
+	): Promise<UploadedResult | UploadedError> {
+		try {
+			// validate file
+			const { file, fileFolder, fileName, fileType } =
+				this._validateFile(fileInput);
 
 			// upload file to cloudinary
 			const res = await this.cloudinaryService.uploadStream({
-				fileType: validFile.fileType,
-				fileFolder: validFile.fileFolder,
+				fileType,
+				fileFolder,
 				fileName,
-				buffer: validFile.file.buffer,
+				buffer: file.buffer,
 			});
 
 			// return result
@@ -90,58 +118,54 @@ export class UploadService {
 				fileSize: res.bytes,
 				resourceId: res.public_id,
 
-				fileName: `${validFile.fileName}.${validFile.fileExt}`,
-				fileType: validFile.fileType,
-				originalname: validFile.file.originalname,
+				fileName,
+				fileType,
+				originalname: file.originalname,
 				storageLocation: StorageLocationEnum.Cloudinary,
 				uploadedAt: Date.now(),
 			};
 		} catch (error) {
-			// return error
 			return {
 				error: error?.message || "Cloudinary upload failed",
-				originalname: file.originalname,
-				fileSize: file.size,
+				originalname: fileInput.originalname,
+				fileSize: fileInput.size,
 			};
 		}
 	}
 
 	private async _uploadToS3(
-		file: Express.Multer.File,
+		fileInput: Express.Multer.File,
 	): Promise<UploadedResult | UploadedError> {
 		try {
 			// validate file
-			const validFile = this._validateFile(file);
-
-			// generate file name
-			const fileName = `${validFile.fileName}.${validFile.fileExt}`;
+			const { file, fileFolder, fileName, fileType } =
+				this._validateFile(fileInput);
 
 			// upload file to S3
 			const res = await this.s3Service.upload({
-				buffer: validFile.file.buffer,
+				buffer: file.buffer,
 				fileName,
-				fileFolder: validFile.fileFolder,
+				fileFolder: fileFolder,
 			});
 
 			// return result
 			return {
 				url: res.Location,
 				resourceId: res.Key,
-				fileFolder: validFile.fileFolder,
+				fileFolder: fileFolder,
 
 				fileName,
-				fileType: validFile.fileType,
-				fileSize: validFile.file.size,
-				originalname: validFile.file.originalname,
+				fileType,
+				fileSize: file.size,
+				originalname: file.originalname,
 				storageLocation: StorageLocationEnum.S3,
 				uploadedAt: Date.now(),
 			};
 		} catch (error) {
-			// return error
 			return {
 				error: error?.message || "S3 upload failed",
-				originalname: file.originalname,
-				fileSize: file.size,
+				originalname: fileInput.originalname,
+				fileSize: fileInput.size,
 			};
 		}
 	}
@@ -167,7 +191,7 @@ export class UploadService {
 		return {
 			fileType,
 			file,
-			fileFolder: `${this.appConfig.appName}/${fileFolder}`,
+			fileFolder,
 			fileExt,
 			fileName,
 		};
