@@ -1,6 +1,5 @@
 import { join } from "path";
 import { DatabaseModuleConfig } from "~config/database.module.config";
-import { configurations } from "~config/environment";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
 import { RouteModules } from "~routes/route.modules";
 import { FirebaseModule } from "~shared/firebase/firebase.module";
@@ -30,6 +29,16 @@ import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
 import { S3Module } from "~shared/storage/s3/s3.module";
 import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
+import { appEnv } from "~config/environment/app.config";
+import { redisEnv } from "~config/environment/redis.config";
+import { mailerEnv } from "~config/environment/mailer.config";
+import { awsEnv } from "~config/environment/aws.config";
+import { clientUrlEnv } from "~config/environment/client-url.config";
+import { cloudinaryEnv } from "~config/environment/cloudinary.config";
+import { databaseEnv } from "~config/environment/database.config";
+import { jwtEnv } from "~config/environment/jwt.config";
+import { otpEnv } from "~config/environment/otp.config";
+import { uploadEnv } from "~config/environment/upload.config";
 
 @Module({
 	imports: [
@@ -41,7 +50,18 @@ import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
 
 		ConfigModule.forRoot({
 			isGlobal: true,
-			load: configurations,
+			load: [
+				appEnv,
+				awsEnv,
+				clientUrlEnv,
+				cloudinaryEnv,
+				databaseEnv,
+				jwtEnv,
+				mailerEnv,
+				otpEnv,
+				redisEnv,
+				uploadEnv,
+			],
 		}),
 
 		CacheModule.register({

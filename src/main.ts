@@ -1,5 +1,4 @@
 import { ValidationError } from "class-validator";
-import { AppConfig, ConfigName } from "~config/environment";
 
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -10,6 +9,7 @@ import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./exceptions/all-exception.filter";
 import { ValidationExceptions } from "./exceptions/validation.exceptions";
 import { SeedService } from "./shared/seed/seed.service";
+import { AppConfig, appConfigName } from "~config/environment/app.config";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -47,8 +47,8 @@ async function bootstrap() {
 	SwaggerModule.setup("api", app, document);
 
 	// Server run at port
-	const port = configService.get<AppConfig>(ConfigName.app).port;
-	const nodeEnv = configService.get<AppConfig>(ConfigName.app).nodeEnv;
+	const { port, nodeEnv } = configService.get<AppConfig>(appConfigName);
+
 	await app.listen(port, () => {
 		Logger.log(`Server running in ${nodeEnv} mode on port ${port}`, "Main");
 	});

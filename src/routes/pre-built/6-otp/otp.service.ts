@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { FilterQuery, Model, QueryOptions } from "mongoose";
-import { AppConfig, ConfigName, NodeEnv, OtpConfig } from "~config/environment";
 import { generateOTP } from "~helpers/generate-otp";
 import { MailService } from "~shared/mail/mail.service";
 
@@ -17,14 +16,26 @@ import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { OtpType } from "./enums/otp-type";
 import { Otp } from "./schemas/otp.schema";
+import {
+	AppConfig,
+	NodeEnv,
+	appConfigName,
+} from "~config/environment/app.config";
+import { OtpConfig, otpConfigName } from "~config/environment/otp.config";
 
 @Injectable()
 export class OtpService {
+	private otpConfig: OtpConfig;
+	private appConfig: AppConfig;
+
 	constructor(
 		@InjectModel(Otp.name) private otpModel: Model<Otp>,
 		private mailService: MailService,
 		private configService: ConfigService,
-	) {}
+	) {
+		this.otpConfig = configService.get<OtpConfig>(otpConfigName);
+		this.appConfig = configService.get<AppConfig>(appConfigName);
+	}
 
 	async sendOtp({ otpType, ...credential }: CreateOtpDto) {
 		const { otpCode } = await this.create(credential, otpType);
@@ -35,9 +46,9 @@ export class OtpService {
 		else if (credential.email)
 			await this._sendEmailVerify(credential.email, otpCode);
 
-		const { nodeEnv } = this.configService.get<AppConfig>(ConfigName.app);
+		const { nodeEnv } = this.appConfig;
 
-		if (nodeEnv === NodeEnv.DEVELOPMENT) return { otpCode, otpType };
+		if (nodeEnv === NodeEnv.Development) return { otpCode, otpType };
 
 		return {
 			message: `OTP code has been successfully sent to the ${credential}.`,
@@ -64,7 +75,7 @@ export class OtpService {
 	}
 
 	private async create(credential: any, otpType: OtpType) {
-		const { expiresIn } = this.configService.get<OtpConfig>(ConfigName.otp);
+		const { expiresIn } = this.otpConfig;
 
 		const otpCode = generateOTP();
 		const expiredAt = Date.now() + expiresIn;

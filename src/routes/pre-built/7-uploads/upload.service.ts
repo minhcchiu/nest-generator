@@ -1,9 +1,3 @@
-import {
-	AppConfig,
-	ConfigName,
-	FileOption,
-	UploadConfig,
-} from "~config/environment";
 import { getFileExtension } from "~helpers/storage.helper";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { generateFileName } from "~utils/file.util";
@@ -16,6 +10,12 @@ import { StorageLocationEnum } from "./enum/store-location.enum";
 import { S3Service } from "~shared/storage/s3/s3.service";
 import { UploadedResult } from "./types/upload.result.type";
 import { UploadedError } from "./types/upload.error.type";
+import {
+	FileOption,
+	UploadConfig,
+	uploadConfigName,
+} from "~config/environment/upload.config";
+import { AppConfig, appConfigName } from "~config/environment/app.config";
 
 @Injectable()
 export class UploadService {
@@ -29,8 +29,8 @@ export class UploadService {
 		private readonly s3Service: S3Service,
 		private readonly configService: ConfigService,
 	) {
-		this.uploadConfig = configService.get<UploadConfig>(ConfigName.upload);
-		this.appConfig = this.configService.get<AppConfig>(ConfigName.app);
+		this.uploadConfig = configService.get<UploadConfig>(uploadConfigName);
+		this.appConfig = this.configService.get<AppConfig>(appConfigName);
 
 		// init storage
 		this.storageFolders = this.uploadConfig.storageFolders;
