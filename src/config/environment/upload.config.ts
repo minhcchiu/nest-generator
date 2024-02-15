@@ -10,8 +10,9 @@ export interface FileOption {
 
 export interface UploadConfig {
 	image: FileOption;
-	auto: FileOption;
 	video: FileOption;
+	audio: FileOption;
+	auto: FileOption;
 	raw: FileOption;
 	storageFolders: Record<FileType, string>;
 }
@@ -22,6 +23,10 @@ export const uploadEnv = registerAs(
 		auto: {
 			allowedExtensions: process.env.UPLOAD_AUTO_EXT.split("|"),
 			maxSize: +process.env.UPLOAD_AUTO_MAX_SIZE,
+		},
+		audio: {
+			allowedExtensions: process.env.UPLOAD_AUDIO_EXT.split("|"),
+			maxSize: +process.env.UPLOAD_AUDIO_MAX_SIZE,
 		},
 		video: {
 			allowedExtensions: process.env.UPLOAD_VIDEO_EXT.split("|"),
@@ -37,8 +42,9 @@ export const uploadEnv = registerAs(
 		},
 		storageFolders: {
 			image: process.env.UPLOAD_IMAGE_FOLDER,
-			raw: process.env.UPLOAD_RAW_FOLDER,
 			video: process.env.UPLOAD_VIDEO_FOLDER,
+			audio: process.env.UPLOAD_AUDIO_FOLDER,
+			raw: process.env.UPLOAD_RAW_FOLDER,
 			auto: process.env.UPLOAD_AUTO_FOLDER,
 		},
 	}),

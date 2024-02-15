@@ -36,10 +36,11 @@ export class UploadService {
 		// init storage
 		this.storageFolders = this.uploadConfig.storageFolders;
 		this.fileFilter = {
-			auto: this.uploadConfig.auto,
-			video: this.uploadConfig.video,
 			image: this.uploadConfig.image,
+			video: this.uploadConfig.video,
 			raw: this.uploadConfig.raw,
+			audio: this.uploadConfig.audio,
+			auto: this.uploadConfig.auto,
 		};
 	}
 

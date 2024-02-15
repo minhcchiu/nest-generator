@@ -47,10 +47,16 @@ export class CloudinaryService {
 		buffer: Buffer;
 	}): Promise<UploadApiResponse> {
 		let fileName = file.fileName;
+		let fileType = file.fileType;
 
 		// remove file extension
 		if (file.fileType !== "raw") {
 			fileName = removeFileExtension(fileName);
+		}
+
+		// check file type
+		if (fileType === "audio") {
+			fileType = "video";
 		}
 
 		return new Promise((resolve, reject) => {
@@ -58,7 +64,7 @@ export class CloudinaryService {
 				v2.uploader
 					.upload_stream(
 						{
-							resource_type: file.fileType,
+							resource_type: <any>fileType,
 							folder: file.fileFolder,
 							public_id: fileName,
 						},
@@ -76,6 +82,11 @@ export class CloudinaryService {
 	}
 
 	async deleteByResourceId(input: { publicId: string; fileType: FileType }) {
+		// check file type
+		if (input.fileType === "audio") {
+			input.fileType = "video";
+		}
+
 		try {
 			return v2.uploader.destroy(input.publicId, {
 				resource_type: input.fileType,

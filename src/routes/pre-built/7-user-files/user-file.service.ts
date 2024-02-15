@@ -1,7 +1,7 @@
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { CreateUserFileDto } from "./dto/create-user-file.dto";
@@ -54,10 +54,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 				});
 
 			default:
-				return {
-					message: "Invalid storage location",
-					deletedAt: Date.now(),
-				};
+				throw new BadRequestException("Invalid storage location");
 		}
 	}
 
