@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateProductGroupDto } from "./dto/create-product-group.dto";
 import { UpdateProductGroupDto } from "./dto/update-product-group.dto";
 import { ProductGroupService } from "./product-group.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Product Groups")
 @Controller("product_groups")
@@ -83,7 +84,7 @@ export class ProductGroupController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.productGroupService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { ReviewService } from "./review.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Reviews")
 @Controller("reviews")
@@ -76,7 +77,7 @@ export class ReviewController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.reviewService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

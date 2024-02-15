@@ -20,6 +20,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { DiscountService } from "./discount.service";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { UpdateDiscountDto } from "./dto/update-discount.dto";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Discounts")
 @Controller("discounts")
@@ -50,7 +51,7 @@ export class DiscountController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.discountService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

@@ -5,35 +5,24 @@ import { AqpDto } from "~dto/aqp.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
-	Body,
 	Controller,
 	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
 	Param,
-	Patch,
-	Post,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { CreateUserFileDto } from "./dto/create-user-file.dto";
-import { UpdateUserFileDto } from "./dto/update-user-file.dto";
 import { UserFileService } from "./user-file.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
-@ApiTags("user files")
+@ApiTags("User files")
 @Controller("user_files")
 export class UserFileController {
 	constructor(private readonly userFileService: UserFileService) {}
 
 	//  ----- Method: GET -----
-	@Public()
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.userFileService.findAll(filter, options);
-	}
-
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
@@ -56,32 +45,29 @@ export class UserFileController {
 		return this.userFileService.findById(id, { projection, populate });
 	}
 
-	//  ----- Method: POST -----
-	@ApiBearerAuth()
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateUserFileDto) {
-		return this.userFileService.create(body);
-	}
-
-	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
-	@Patch(":id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateUserFileDto,
-	) {
-		return this.userFileService.updateById(id, body);
-	}
-
 	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":url/url")
+	@HttpCode(HttpStatus.OK)
+	async deleteByUrl(@Param("url") url: string) {
+		return this.userFileService.deleteByUrl(url);
+	}
+
+	@ApiBearerAuth()
+	@Delete(":urls/urls")
+	@HttpCode(HttpStatus.OK)
+	async deleteByUrls(@Param("urls") urls: string) {
+		return this.userFileService.deleteByUrls(urls.split(","));
+	}
+
 	@ApiBearerAuth()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.userFileService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: {
+				$in: ids.split(",").map(stringIdToObjectId),
+			},
 		});
 	}
 

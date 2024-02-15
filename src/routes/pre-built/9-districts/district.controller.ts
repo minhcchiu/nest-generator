@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
 import { UpdateDistrictDto } from "./dto/update-district.dto";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Districts")
 @Controller("districts")
@@ -81,7 +82,7 @@ export class DistrictController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.districtService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

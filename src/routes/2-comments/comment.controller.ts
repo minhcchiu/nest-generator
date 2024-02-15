@@ -23,6 +23,7 @@ import { CommentService } from "./comment.service";
 import { AuthorDto } from "./dto/author.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Comments")
 @Controller("comments")
@@ -63,7 +64,7 @@ export class CommentController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.commentService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

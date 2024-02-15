@@ -21,6 +21,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateStoreDto } from "./dto/create-store.dto";
 import { UpdateStoreDto } from "./dto/update-store.dto";
 import { StoreService } from "./store.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Stores")
 @Controller("stores")
@@ -87,7 +88,7 @@ export class StoreController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.storeService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

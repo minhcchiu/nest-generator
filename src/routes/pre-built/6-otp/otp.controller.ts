@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { OtpService } from "./otp.service";
 
-@ApiTags("otp")
+@ApiTags("OTP")
 @Controller("otp")
 export class OtpController {
 	constructor(private readonly otpService: OtpService) {}

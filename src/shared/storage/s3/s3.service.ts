@@ -54,7 +54,7 @@ export class S3Service {
 		return upload.done();
 	}
 
-	async deleteFile(resourceId: string) {
+	async deleteByResourceId(resourceId: string) {
 		try {
 			const deleteObjectCommand = new DeleteObjectCommand({
 				Bucket: this.awsConfig.bucketName,
@@ -69,8 +69,18 @@ export class S3Service {
 
 			console.log(result);
 		} catch (error) {
-			console.error("Error deleting file from S3:", error);
+			this.logger.warn(S3Service.name, error);
 			throw error;
+		}
+	}
+
+	async deleteByResourceIds(publicIds: string[]) {
+		try {
+			return Promise.all(
+				publicIds.map((publicId) => this.deleteByResourceId(publicId)),
+			);
+		} catch (error) {
+			this.logger.warn(S3Service.name, error);
 		}
 	}
 }

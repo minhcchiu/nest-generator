@@ -14,6 +14,7 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { TokenService } from "./token.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Tokens")
 @Controller("tokens")
@@ -58,7 +59,7 @@ export class TokenController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.tokenService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

@@ -39,6 +39,7 @@ import { databaseEnv } from "~config/environment/database.config";
 import { jwtEnv } from "~config/environment/jwt.config";
 import { otpEnv } from "~config/environment/otp.config";
 import { uploadEnv } from "~config/environment/upload.config";
+import { LocalModule } from "./shared/storage/local-storage/local.module";
 
 @Module({
 	imports: [
@@ -91,6 +92,7 @@ import { uploadEnv } from "~config/environment/upload.config";
 		MailModule,
 		SocketModule,
 		FirebaseModule,
+		LocalModule,
 		S3Module,
 		CloudinaryModule,
 

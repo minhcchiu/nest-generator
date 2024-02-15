@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateNewsDto } from "./dto/create-news.dto";
 import { UpdateNewsDto } from "./dto/update-news.dto";
 import { NewsService } from "./news.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("News")
 @Controller("news")
@@ -76,7 +77,7 @@ export class NewsController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.newsService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

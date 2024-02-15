@@ -2,6 +2,7 @@ import { HydratedDocument } from "mongoose";
 import { StorageLocationEnum } from "~routes/pre-built/7-uploads/enum/store-location.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { FileType } from "~utils/types/file.type";
 
 @Schema({
 	timestamps: true,
@@ -19,7 +20,7 @@ export class UserFile {
 	fileName: string;
 
 	@Prop({ type: String, required: true })
-	fileType: string;
+	fileType: FileType;
 
 	@Prop({ type: String, required: true, unique: true, index: true })
 	url: string;

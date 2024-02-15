@@ -3,6 +3,8 @@ import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 
 import {
 	Controller,
+	HttpCode,
+	HttpStatus,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -22,7 +24,7 @@ import { UploadService } from "./upload.service";
 import { UploadedResult } from "./types/upload.result.type";
 import { UploadedError } from "./types/upload.error.type";
 
-@ApiTags("uploads")
+@ApiTags("Uploads")
 @Controller("uploads")
 export class UploadController {
 	constructor(
@@ -94,6 +96,7 @@ export class UploadController {
 	@ApiUploadFiles(["files"])
 	@Post()
 	@UseInterceptors(FilesInterceptor("files", 10))
+	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: string,
 		@UploadedFiles()
@@ -113,7 +116,6 @@ export class UploadController {
 		// save files
 		this.userFileService.createMany(fileItems).catch();
 
-		// return results
 		return results;
 	}
 

@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateWardDto } from "./dto/create-ward.dto";
 import { UpdateWardDto } from "./dto/update-ward.dto";
 import { WardService } from "./ward.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Wards")
 @Controller("wards")
@@ -83,7 +84,7 @@ export class WardController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.wardService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

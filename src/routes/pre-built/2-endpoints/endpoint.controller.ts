@@ -22,6 +22,7 @@ import { PermissionService } from "../2-permissions/permission.service";
 import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";
 import { EndpointService } from "./endpoint.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Endpoints")
 @Controller("endpoints")
@@ -89,7 +90,7 @@ export class EndpointController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.endpointService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

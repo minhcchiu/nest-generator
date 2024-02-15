@@ -75,25 +75,24 @@ export class CloudinaryService {
 		});
 	}
 
-	/**
-	 * Delete many
-	 *
-	 * @param publicIds
-	 * @returns
-	 */
-	deleteByResourceIds(publicIds: string[]) {
-		return v2.api.delete_resources(publicIds);
+	async deleteByResourceId(input: { publicId: string; fileType: FileType }) {
+		try {
+			return v2.uploader.destroy(input.publicId, {
+				resource_type: input.fileType,
+			});
+		} catch (error) {
+			this.logger.warn(CloudinaryService.name, error);
+		}
 	}
 
-	/**
-	 * Delete one
-	 *
-	 * @param publicId
-	 * @returns
-	 */
-	async deleteByResourceId(publicId: string) {
+	async deleteByResourceIds(
+		inputs: {
+			publicId: string;
+			fileType: FileType;
+		}[],
+	) {
 		try {
-			return await v2.uploader.destroy(publicId);
+			return Promise.all(inputs.map((input) => this.deleteByResourceId(input)));
 		} catch (error) {
 			this.logger.warn(CloudinaryService.name, error);
 		}

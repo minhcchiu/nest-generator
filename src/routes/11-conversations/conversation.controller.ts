@@ -20,6 +20,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { ConversationService } from "./conversation.service";
 import { CreateConversationDto } from "./dto/create-conversation.dto";
 import { UpdateConversationDto } from "./dto/update-conversation.dto";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Conversations")
 @Controller("categories")
@@ -52,7 +53,7 @@ export class ConversationController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.conversationService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

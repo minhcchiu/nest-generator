@@ -22,6 +22,7 @@ import { BannerService } from "./banner.service";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
 import { AppTypeEnum } from "./enums/app-type.enum";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Banners")
 @Controller("banners")
@@ -97,7 +98,7 @@ export class BannerController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.bannerService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

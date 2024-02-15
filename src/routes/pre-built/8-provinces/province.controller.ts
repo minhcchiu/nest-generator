@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
 import { ProvinceService } from "./province.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Provinces")
 @Controller("provinces")
@@ -27,7 +28,6 @@ export class ProvinceController {
 	constructor(private readonly provinceService: ProvinceService) {}
 
 	//  ----- Method: GET -----
-
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -84,7 +84,7 @@ export class ProvinceController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.provinceService.deleteMany({
-			_id: { $in: ids.split(",") },
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
 

@@ -23,11 +23,17 @@ export class BaseService<T> {
 		return this.model.create(inputs);
 	}
 
-	async findAll(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+	async findAll(
+		filter: FilterQuery<T>,
+		options: QueryOptions<T> = {
+			page: 1,
+			limit: 400,
+		},
+	) {
 		const { page, limit, ...option } = options;
 		const skip = (page - 1) * limit;
 
-		option.skip = option.skip || skip;
+		Object.assign(option, { skip: option.skip || skip });
 
 		return this.model.find(filter, options?.projection, options).lean();
 	}

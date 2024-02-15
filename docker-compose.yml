@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   nest-app:
     build:
@@ -8,3 +8,6 @@ services:
       - 8888:8888
     volumes:
       - .:/home/app
+    environment:
+      NODE_ENV: "PRODUCTION"
+    restart: always

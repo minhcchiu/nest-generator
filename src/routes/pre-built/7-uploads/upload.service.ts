@@ -15,7 +15,7 @@ import {
 	uploadConfigName,
 } from "~config/environment/upload.config";
 import { AppConfig, appConfigName } from "~config/environment/app.config";
-import { writeFileSync } from "fs";
+import { LocalService } from "~shared/storage/local-storage/local.service";
 
 @Injectable()
 export class UploadService {
@@ -25,9 +25,10 @@ export class UploadService {
 	private uploadConfig: UploadConfig;
 
 	constructor(
+		private readonly configService: ConfigService,
+		private readonly localService: LocalService,
 		private readonly cloudinaryService: CloudinaryService,
 		private readonly s3Service: S3Service,
-		private readonly configService: ConfigService,
 	) {
 		this.uploadConfig = configService.get<UploadConfig>(uploadConfigName);
 		this.appConfig = this.configService.get<AppConfig>(appConfigName);
@@ -68,27 +69,28 @@ export class UploadService {
 			const { file, fileFolder, fileName, fileType } =
 				this._validateFile(fileInput);
 
-			// path storage
-			const localFilePath = `${fileFolder}/${fileName}`;
-
-			// upload file to local
-			writeFileSync(localFilePath, file.buffer);
-
-			return {
-				url: `${this.appConfig.appUrl}/${localFilePath}`,
-
+			const res = await this.localService.upload({
+				fileType,
 				fileFolder,
 				fileName,
-				fileType,
-				fileSize: fileInput.size,
-				resourceId: localFilePath,
+				buffer: file.buffer,
+			});
+
+			return {
+				url: res.url,
+				fileFolder: res.folder,
+				fileName: res.fileName,
+				fileType: res.type,
+				fileSize: res.size,
+				resourceId: res.resourceId,
+
 				originalname: file.originalname,
 				storageLocation: StorageLocationEnum.Local,
 				uploadedAt: Date.now(),
 			};
 		} catch (error) {
 			return {
-				error: error?.message || "Cloudinary upload failed",
+				error: error?.message || "Local upload failed",
 				originalname: fileInput.originalname,
 				fileSize: fileInput.size,
 			};
@@ -111,7 +113,6 @@ export class UploadService {
 				buffer: file.buffer,
 			});
 
-			// return result
 			return {
 				url: res.url,
 				fileFolder: res.folder,
@@ -148,7 +149,6 @@ export class UploadService {
 				fileFolder: fileFolder,
 			});
 
-			// return result
 			return {
 				url: res.Location,
 				resourceId: res.Key,
