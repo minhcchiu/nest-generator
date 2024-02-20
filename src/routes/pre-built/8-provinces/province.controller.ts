@@ -31,8 +31,8 @@ export class ProvinceController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.provinceService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.provinceService.findMany(filter, options);
 	}
 
 	@Public()

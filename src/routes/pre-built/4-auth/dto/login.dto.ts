@@ -17,5 +17,5 @@ export class LoginDto {
 	@ApiPropertyOptional({ default: null })
 	@IsOptional()
 	@IsString()
-	deviceID?: string;
+	fcmToken?: string;
 }

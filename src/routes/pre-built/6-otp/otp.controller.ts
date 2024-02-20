@@ -14,7 +14,7 @@ export class OtpController {
 	@ApiBearerAuth()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.otpService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.otpService.findMany(filter, options);
 	}
 }

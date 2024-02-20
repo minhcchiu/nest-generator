@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -15,7 +15,7 @@ export class S3Service {
 
 	constructor(
 		private readonly configService: ConfigService,
-		private logger: CustomLogger,
+		private logger: CustomLoggerService,
 	) {
 		this.awsConfig = this.configService.get<AwsConfig>(awsConfigName);
 		this.appConfig = this.configService.get<AppConfig>(appConfigName);

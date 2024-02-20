@@ -5,7 +5,7 @@ import { HttpExceptionResponse } from "~exceptions/http-exception-response.inter
 const errorFileName = "error.log";
 const errorLogPath = join(__dirname, "../../", "public", "logs", errorFileName);
 
-export const writeErrorLogToFile = (
+export const writeExceptionLogToFile = (
 	exceptionResponse: HttpExceptionResponse,
 ): void => {
 	const { statusCode, details, method, url, title, timeStamp, user } =

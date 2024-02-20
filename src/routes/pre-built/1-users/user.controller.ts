@@ -24,18 +24,24 @@ import { UpdatePasswordDto } from "./dto/update-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { AccountStatus } from "./enums/account-status.enum";
 import { UserService } from "./user.service";
+import { UserFirebaseService } from "./user-firebase/user-firebase.service";
 
 @ApiTags("Users")
 @Controller("users")
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(
+		private readonly userService: UserService,
+		private readonly userFirebaseService: UserFirebaseService,
+	) {
+		userFirebaseService.getUser();
+	}
 
 	//  ----- Method: GET -----
 	@ApiBearerAuth()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.userService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.userService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()
@@ -110,7 +116,7 @@ export class UserController {
 	@HttpCode(HttpStatus.OK)
 	async deleteManySoftByIds(@Param("ids") ids: string) {
 		return this.userService.updateMany(
-			{ _id: { $in: ids.split(",") } },
+			{ _id: { $in: ids.split(",").map(stringIdToObjectId) } },
 			{ status: AccountStatus.Deleted },
 		);
 	}

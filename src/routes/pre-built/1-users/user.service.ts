@@ -14,7 +14,7 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 
 import { UpdatePasswordDto } from "./dto/update-password";
-import { IAuthKeys, UniqueKeys } from "./enums/unique-keys";
+import { IAuthKeys, AuthKeys } from "./enums/unique-keys";
 import { User, UserDocument } from "./schemas/user.schema";
 
 @Injectable()
@@ -26,6 +26,7 @@ export class UserService extends BaseService<UserDocument> {
 		private readonly storeService: StoreService,
 	) {
 		super(model);
+
 		this.userModel = model;
 	}
 
@@ -46,15 +47,15 @@ export class UserService extends BaseService<UserDocument> {
 	}
 
 	public getAuthKeys(input: IAuthKeys): { [key: string]: string }[] {
-		return UniqueKeys.filter(
-			(key) => input[key] && UniqueKeys.includes(key),
-		).map((key) => ({
-			key,
-			value: input[key].toString(),
-		}));
+		return AuthKeys.filter((key) => input[key] && AuthKeys.includes(key)).map(
+			(key) => ({
+				key,
+				value: input[key].toString(),
+			}),
+		);
 	}
 
-	public validateUnique = async (
+	public validateAuthKey = async (
 		key: string,
 		value: string,
 		errorMessage: string,
@@ -65,7 +66,7 @@ export class UserService extends BaseService<UserDocument> {
 
 	async validateCreateUser(input: IAuthKeys) {
 		const validatePromises = this.getAuthKeys(input).map((item) =>
-			this.validateUnique(
+			this.validateAuthKey(
 				item.key,
 				item.value,
 				`${item.key.toUpperCase()} already exists.`,
@@ -99,25 +100,30 @@ export class UserService extends BaseService<UserDocument> {
 		return user.save();
 	}
 
-	async addDeviceID(
+	async saveFcmToken(
 		id: Types.ObjectId,
-		deviceID: string,
+		fcmToken: string,
 	): Promise<UserDocument | null> {
 		const updated = await this.updateById(
 			id,
-			{ $addToSet: { fcmTokens: deviceID } },
+			{ $addToSet: { fcmTokens: fcmToken } },
 			{ projection: { _id: 1, fcmTokens: 1 } },
 		);
 
 		return updated;
 	}
 
-	async removeDeviceID(id: Types.ObjectId, deviceID: string) {
-		const updated = await this.updateById(
-			id,
-			{ $pull: { fcmTokens: deviceID } },
-			{ projection: { _id: "1", fcmTokens: 1 } },
+	async removeFcmTokens(fcmTokens: string[]) {
+		const updated = await this.updateMany(
+			{
+				fcmTokens: { $in: fcmTokens },
+			},
+			{
+				$pull: { fcmTokens: { $in: fcmTokens } },
+			},
 		);
+
+		throw new BadRequestException("error");
 
 		return updated;
 	}

@@ -6,7 +6,7 @@ import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { PermissionService } from "~routes/pre-built/2-permissions/permission.service";
 import { MenuService } from "~routes/pre-built/3-menus/menu.service";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";
 
@@ -23,7 +23,7 @@ export class SeedService {
 		private permissionService: PermissionService,
 		private endpointService: EndpointService,
 		private menuService: MenuService,
-		private logger: CustomLogger,
+		private logger: CustomLoggerService,
 	) {}
 
 	async seedProvincesDistrictsWards() {

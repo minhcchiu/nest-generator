@@ -33,8 +33,8 @@ export class CommentController {
 	@HttpCode(HttpStatus.OK)
 	@Public()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.commentService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.commentService.findMany(filter, options);
 	}
 
 	@Post()

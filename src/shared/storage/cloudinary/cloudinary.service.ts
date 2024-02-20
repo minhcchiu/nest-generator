@@ -1,5 +1,5 @@
 import { UploadApiResponse, v2 } from "cloudinary";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { FileType } from "~utils/types/file.type";
 
 import { Injectable } from "@nestjs/common";
@@ -18,7 +18,7 @@ export class CloudinaryService {
 
 	constructor(
 		readonly configService: ConfigService,
-		private readonly logger: CustomLogger,
+		private readonly logger: CustomLoggerService,
 	) {
 		this.cloudinaryConfig =
 			this.configService.get<CloudinaryConfig>(cloudinaryConfigName);

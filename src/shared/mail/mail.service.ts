@@ -1,5 +1,5 @@
 import * as dayjs from "dayjs";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
@@ -21,7 +21,7 @@ export class MailService {
 	constructor(
 		private mailerService: MailerService,
 		private configService: ConfigService,
-		private readonly logger: CustomLogger,
+		private readonly logger: CustomLoggerService,
 	) {
 		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
 		this.clientUrlConfig =

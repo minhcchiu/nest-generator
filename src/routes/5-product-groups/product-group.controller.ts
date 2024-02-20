@@ -31,8 +31,8 @@ export class ProductGroupController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.productGroupService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.productGroupService.findMany(filter, options);
 	}
 
 	@Public()

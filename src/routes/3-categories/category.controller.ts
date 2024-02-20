@@ -33,8 +33,8 @@ export class CategoryController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.categoryService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.categoryService.findMany(filter, options);
 	}
 
 	@Public()
