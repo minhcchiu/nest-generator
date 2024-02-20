@@ -1,12 +1,10 @@
 import { join } from "path";
 import { DatabaseModuleConfig } from "~config/database.module.config";
-import { configurations } from "~config/environment";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
-import { UserModule } from "~pre-built/1-users/user.module";
-import { EndpointModule } from "~pre-built/2-endpoints/endpoint.module";
-import { MenuModule } from "~pre-built/3-menus/menu.module";
-import { AuthModule } from "~pre-built/4-auth/auth.module";
-import { TokenModule } from "~pre-built/5-tokens/token.module";
+import { RouteModules } from "~routes/route.modules";
+import { FirebaseModule } from "~shared/firebase/firebase.module";
+import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { SocketModule } from "~shared/socket/socket.module";
 
 import { CacheModule } from "@nestjs/cache-manager";
 import {
@@ -17,7 +15,9 @@ import {
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -27,62 +27,83 @@ import { LoggingInterceptor } from "./shared/interceptors";
 import { LoggerModule } from "./shared/logger/logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
-import { OtpModule } from "~routes/pre-built/6-otp/otp.module";
-import { UploadModule } from "~routes/1-upload/upload.module";
-import { ProvinceModule } from "~routes/pre-built/8-provinces/province.module";
-import { DistrictModule } from "~routes/pre-built/9-districts/district.module";
-import { WardModule } from "~routes/pre-built/10-wards/ward.module";
-import { EndpointGroupModule } from "~routes/pre-built/2-endpoint-groups/endpoint-group.module";
-import { PostModule } from "~routes/1-posts/post.module";
-import { CommentModule } from "~routes/2-comments/comment.module";
-import { SocketModule } from "~shared/socket/socket.module";
-import { ProductModule } from "~routes/1-products/product.module";
+import { S3Module } from "~shared/storage/s3/s3.module";
+import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
+import { appEnv } from "~config/environment/app.config";
+import { redisEnv } from "~config/environment/redis.config";
+import { mailerEnv } from "~config/environment/mailer.config";
+import { awsEnv } from "~config/environment/aws.config";
+import { clientUrlEnv } from "~config/environment/client-url.config";
+import { cloudinaryEnv } from "~config/environment/cloudinary.config";
+import { databaseEnv } from "~config/environment/database.config";
+import { jwtEnv } from "~config/environment/jwt.config";
+import { otpEnv } from "~config/environment/otp.config";
+import { uploadEnv } from "~config/environment/upload.config";
+import { LocalModule } from "./shared/storage/local-storage/local.module";
 
 @Module({
 	imports: [
 		// configs
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, "../../", "public"),
-			serveRoot: "/",
+			rootPath: join(process.cwd(), "public"),
+			serveRoot: "/public",
 		}),
 
 		ConfigModule.forRoot({
 			isGlobal: true,
-			load: configurations,
+			load: [
+				appEnv,
+				awsEnv,
+				clientUrlEnv,
+				cloudinaryEnv,
+				databaseEnv,
+				jwtEnv,
+				mailerEnv,
+				otpEnv,
+				redisEnv,
+				uploadEnv,
+			],
 		}),
 
 		CacheModule.register({
 			isGlobal: true,
 		}),
 
+		ThrottlerModule.forRoot([
+			{
+				ttl: 60000,
+				limit: 10,
+			},
+		]),
+
+		EventEmitterModule.forRoot({
+			wildcard: false,
+			delimiter: ".",
+			newListener: false,
+			removeListener: false,
+			maxListeners: 10,
+			verboseMemoryLeak: false,
+			ignoreErrors: false,
+		}),
+
 		DatabaseModuleConfig,
 		SeedModule,
 		LoggerModule,
 		MailModule,
+		SocketModule,
+		FirebaseModule,
+		LocalModule,
+		S3Module,
+		CloudinaryModule,
 
 		// routes
-		UserModule,
-		EndpointGroupModule,
-		EndpointModule,
-		MenuModule,
-		AuthModule,
-		TokenModule,
-		OtpModule,
-		UploadModule,
-		ProvinceModule,
-		DistrictModule,
-		WardModule,
-		SocketModule,
-
-		// features
-		ProductModule,
-		PostModule,
-		CommentModule,
+		...RouteModules,
 	],
 	controllers: [AppController],
 	providers: [
 		AppService,
 		CacheService,
+		RedisFeatureService,
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: LoggingInterceptor,
@@ -90,6 +111,10 @@ import { ProductModule } from "~routes/1-products/product.module";
 		{
 			provide: APP_GUARD,
 			useClass: AppGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard,
 		},
 	],
 })

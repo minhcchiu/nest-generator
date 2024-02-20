@@ -2,12 +2,13 @@ export enum FieldNameEnum {
 	FILE = "file",
 	IMAGE = "image",
 	VIDEO = "video",
-	AUDIO = "audio",
+	AUTO = "auto",
 }
 
 export enum FieldsNameEnum {
 	FILES = "files",
+	RAWS = "raws",
 	IMAGES = "images",
 	VIDEOS = "videos",
-	AUDIOS = "audios",
+	AUTOS = "autos",
 }

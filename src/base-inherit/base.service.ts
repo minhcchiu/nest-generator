@@ -15,64 +15,91 @@ export class BaseService<T> {
 		this.model = model;
 	}
 
-	create(data: any | any[]) {
-		return this.model.create(data);
+	async create(input: Record<string, any>) {
+		return this.model.create(input);
 	}
 
-	find(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+	async createMany(inputs: Record<string, any>[]) {
+		return this.model.create(inputs);
+	}
+
+	async findAll(
+		filter: FilterQuery<T>,
+		options: QueryOptions<T> = {
+			page: 1,
+			limit: 400,
+		},
+	) {
+		const { page, limit, ...option } = options;
+		const skip = (page - 1) * limit;
+
+		Object.assign(option, { skip: option.skip || skip });
+
 		return this.model.find(filter, options?.projection, options).lean();
 	}
 
-	findById(id: string, options?: QueryOptions<T>) {
+	async findById(id: Types.ObjectId, options?: QueryOptions<T>) {
 		return this.model.findById(id, options?.projection, options).lean();
 	}
 
-	findOne(filter?: FilterQuery<T>, options?: QueryOptions<T>) {
+	async findOne(filter?: FilterQuery<T>, options?: QueryOptions<T>) {
 		return this.model.findOne(filter, options?.projection, options).lean();
 	}
 
-	count(filter: FilterQuery<T> = {}, options: QueryOptions = {}) {
+	async count(filter: FilterQuery<T> = {}, options: QueryOptions = {}) {
 		return this.model.countDocuments(filter, { ...options, lean: true });
 	}
 
-	distinct(field: string, filter?: FilterQuery<T>) {
+	async distinct(field: string, filter?: FilterQuery<T>) {
 		return this.model.distinct(field, filter).lean();
 	}
 
-	updateById(
-		id: string | Types.ObjectId,
-		data: UpdateQuery<T>,
+	async updateById(
+		id: Types.ObjectId,
+		input: UpdateQuery<T>,
 		options: QueryOptions<T> = { new: true },
 	) {
-		return this.model.findByIdAndUpdate(id, data, options);
+		const updated = await this.model.findByIdAndUpdate(id, input, options);
+
+		return updated;
 	}
 
-	updateOne(
+	async updateOne(
 		filter: FilterQuery<T>,
-		data: UpdateQuery<T>,
+		input: UpdateQuery<T>,
 		options: QueryOptions<T> = { new: true },
 	) {
-		return this.model.findOneAndUpdate(filter, data, options);
+		const updated = await this.model.findOneAndUpdate(filter, input, options);
+
+		return updated;
 	}
 
-	updateMany(
+	async updateMany(
 		filter: FilterQuery<T>,
-		data: UpdateQuery<T> | UpdateWithAggregationPipeline,
+		input: UpdateQuery<T> | UpdateWithAggregationPipeline,
 		options?: QueryOptions<T>,
 	) {
-		return this.model.updateMany(filter, data, options);
+		const updated = await this.model.updateMany(filter, input, options);
+
+		return updated;
 	}
 
-	deleteById(id: string, options?: QueryOptions<T>) {
-		return this.model.findByIdAndDelete(id, options);
+	async deleteById(id: Types.ObjectId, options?: QueryOptions<T>) {
+		const updated = await this.model.findByIdAndDelete(id, options);
+
+		return updated;
 	}
 
-	deleteOne(filter: FilterQuery<T>, options?: QueryOptions<T>) {
-		return this.model.findOneAndDelete(filter, options);
+	async deleteOne(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+		const deleted = await this.model.findOneAndDelete(filter, options);
+
+		return deleted;
 	}
 
-	deleteMany(filter: FilterQuery<T>, options?: QueryOptions<T>) {
-		return this.model.deleteMany(filter, options);
+	async deleteMany(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+		const deleted = await this.model.deleteMany(filter, options);
+
+		return deleted;
 	}
 
 	async paginate(filter: FilterQuery<T>, pageOptions?: PaginateOptions) {

@@ -1,8 +1,8 @@
 import { HydratedDocument } from "mongoose";
+import { Role } from "~pre-built/1-users/enums/role.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { Role } from "~pre-built/1-users/enums/role.enum";
 import { HttpMethod } from "../enum/http-method";
 
 @Schema({
@@ -14,16 +14,16 @@ export class Endpoint {
 	@Prop({ type: String, default: "#" })
 	readonly prefix: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly name: string;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly path: string;
 
 	@Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
 	readonly method: HttpMethod;
 
-	@Prop({ type: String, default: null })
+	@Prop({ type: String, default: "" })
 	readonly description?: string;
 
 	@Prop({

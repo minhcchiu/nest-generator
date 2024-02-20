@@ -1,5 +1,6 @@
 export enum AccountStatus {
-	ACTIVE = "ACTIVE",
-	INACTIVE = "INACTIVE",
-	CLOSED = "CLOSED",
+	Verified = "VERIFIED",
+	Unverified = "UNVERIFIED",
+	Locked = "LOCKED",
+	Deleted = "DELETED",
 }

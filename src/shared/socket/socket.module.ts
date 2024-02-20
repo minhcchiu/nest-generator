@@ -1,7 +1,9 @@
-import { Global, Module } from "@nestjs/common";
-import { SocketService } from "./socket.service";
-import { SocketGateway } from "./socket.gateway";
 import { TokenModule } from "~routes/pre-built/5-tokens/token.module";
+
+import { Global, Module } from "@nestjs/common";
+
+import { SocketGateway } from "./socket.gateway";
+import { SocketService } from "./socket.service";
 
 @Global()
 @Module({

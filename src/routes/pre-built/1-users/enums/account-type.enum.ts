@@ -1,6 +1,6 @@
 export enum AccountType {
-	LOCAL = "LOCAL",
-	GOOGLE = "GOOGLE",
-	FACEBOOK = "FACEBOOK",
-	APPLE = "APPLE",
+	Local = "LOCAL",
+	Google = "GOOGLE",
+	Facebook = "FACEBOOK",
+	Apple = "APPLE",
 }

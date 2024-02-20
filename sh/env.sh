@@ -67,14 +67,14 @@ export OTP_EXPIRATION="10*60*1000" # 10 minutes
 export UPLOAD_IMAGE_MAX_SIZE=25 #MB  
 export UPLOAD_RAW_MAX_SIZE=25 #MB  
 export UPLOAD_VIDEO_MAX_SIZE=25 #MB  
-export UPLOAD_AUDIO_MAX_SIZE=25 #MB  
+export UPLOAD_AUTO_MAX_SIZE=25 #MB  
 
 export UPLOAD_IMAGE_MAX_FILE=10
 export UPLOAD_RAW_MAX_FILE=10
 export UPLOAD_VIDEO_MAX_FILE=4
-export UPLOAD_AUDIO_MAX_FILE=10
+export UPLOAD_AUTO_MAX_FILE=10
 
 export UPLOAD_IMAGE_EXT="jpg|jpeg|png|gif"
 export UPLOAD_RAW_EXT="txt|pdf|doc|docx|xls|xlsx|ppt|pptx|csv|json"
 export UPLOAD_VIDEO_EXT='mp4|mkv|webm|mov|flv'
-export UPLOAD_AUDIO_EXT='mp3|aac|wav|flac'
+export UPLOAD_AUTO_EXT='mp3|aac|wav|flac'

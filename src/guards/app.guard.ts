@@ -13,6 +13,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+
 interface IEndpoint {
 	userRoles: Role[];
 	isPublic: boolean;
@@ -54,22 +55,19 @@ export class AppGuard implements CanActivate {
 		try {
 			const decoded = await this.tokenService.verifyAccessToken(token);
 
-			if (!this.isAccessAllowed(decoded.role, endpoint))
+			if (!this.isAccessAllowed(decoded.roles, endpoint))
 				throw new UnauthorizedException();
 
 			request.user = decoded;
 
 			return true;
 		} catch (error) {
-			throw new UnauthorizedException(
-				"Invalid token or insufficient privileges!",
-			);
+			throw new UnauthorizedException(error.message);
 		}
 	}
 
 	private extractTokenFromHeader(request: Request): string | undefined {
 		const authHeader = request.headers.authorization;
-
 		const textBearer = "Bearer ";
 
 		if (!authHeader || !authHeader.startsWith(textBearer)) {
@@ -79,8 +77,8 @@ export class AppGuard implements CanActivate {
 		return authHeader.slice(textBearer.length);
 	}
 
-	private isAccessAllowed(userRole: Role, endpoint: IEndpoint) {
-		return endpoint.userRoles.includes(userRole);
+	private isAccessAllowed(userRoles: Role[], endpoint: IEndpoint) {
+		return endpoint.userRoles.some((role) => userRoles.includes(role));
 	}
 
 	private async getPermissionEndpoint(

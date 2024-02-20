@@ -15,13 +15,13 @@ export class AqpDto {
 	@IsOptional()
 	@IsNumber()
 	@Min(1)
-	@Max(30)
+	@Max(50)
 	page?: number;
 
 	@IsOptional()
 	@IsNumber()
 	@Min(0)
-	@Max(100)
+	@Max(200)
 	limit?: number = 20;
 
 	@IsOptional()

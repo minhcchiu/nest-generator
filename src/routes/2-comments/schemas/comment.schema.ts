@@ -1,6 +1,8 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { AuthorDto } from "../dto/author.dto";
 import { HydratedDocument } from "mongoose";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+import { AuthorDto } from "../dto/author.dto";
 
 @Schema({
 	timestamps: true,

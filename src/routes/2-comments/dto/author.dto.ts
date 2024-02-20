@@ -3,7 +3,7 @@ import { IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
 export class AuthorDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly _id: string;
+	readonly userId: string;
 
 	@IsOptional()
 	@IsString()

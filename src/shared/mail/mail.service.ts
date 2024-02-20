@@ -1,18 +1,32 @@
-import { ConfigName, MailerConfig, UrlConfig } from "~config/environment";
-import { Logger } from "~shared/logger/logger.service";
+import * as dayjs from "dayjs";
+import { CustomLogger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as dayjs from "dayjs";
+import {
+	MailerConfig,
+	mailerConfigName,
+} from "~config/environment/mailer.config";
+import {
+	ClientUrlConfig,
+	clientUrlConfigName,
+} from "~config/environment/client-url.config";
 
 @Injectable()
 export class MailService {
+	private clientUrlConfig: ClientUrlConfig;
+	private mailerConfig: MailerConfig;
+
 	constructor(
 		private mailerService: MailerService,
 		private configService: ConfigService,
-		private readonly logger: Logger,
-	) {}
+		private readonly logger: CustomLogger,
+	) {
+		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
+		this.clientUrlConfig =
+			this.configService.get<ClientUrlConfig>(clientUrlConfigName);
+	}
 
 	sendMail(options: ISendMailOptions) {
 		return this.mailerService.sendMail(options);
@@ -24,9 +38,7 @@ export class MailService {
 		subject: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
-		);
+		const { name, defaults } = this.mailerConfig;
 		const params = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
 			to,
@@ -38,8 +50,8 @@ export class MailService {
 		// send mail
 		return this.sendMail(params).then((result) => {
 			this.logger.log(
-				MailService.name,
 				`Send a OTP to email:"${to}" successfully!`,
+				MailService.name,
 			);
 			return result;
 		});
@@ -50,12 +62,8 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
-		);
-		const { verifyAccountUrl } = this.configService.get<UrlConfig>(
-			ConfigName.urlConfig,
-		);
+		const { name, defaults } = this.mailerConfig;
+		const { verifyAccountUrl } = this.clientUrlConfig;
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
 
@@ -92,12 +100,8 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.configService.get<MailerConfig>(
-			ConfigName.mailer,
-		);
-		const { resetPasswordUrl } = this.configService.get<UrlConfig>(
-			ConfigName.urlConfig,
-		);
+		const { name, defaults } = this.mailerConfig;
+		const { resetPasswordUrl } = this.clientUrlConfig;
 
 		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
 		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;

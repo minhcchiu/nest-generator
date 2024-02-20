@@ -1,16 +1,18 @@
-import { ConfigName, DatabaseConfig } from "~config/environment";
-
 import { Logger } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 
 import { mongoosePaginateV2 } from "./mongoose-paginate.config";
+import {
+	DatabaseConfig,
+	databaseConfigName,
+} from "./environment/database.config";
 
 export const DatabaseModuleConfig = MongooseModule.forRootAsync({
 	imports: [ConfigModule],
 
 	useFactory: async (config: ConfigService) => ({
-		uri: config.get<DatabaseConfig>(ConfigName.database).uri,
+		uri: config.get<DatabaseConfig>(databaseConfigName).uri,
 		retryWrites: true,
 		useNewUrlParser: true,
 		autoIndex: true,

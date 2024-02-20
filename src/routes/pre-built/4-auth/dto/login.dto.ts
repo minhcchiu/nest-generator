@@ -1,34 +1,20 @@
-import {
-	IsEmail,
-	IsNotEmpty,
-	IsOptional,
-	IsString,
-	Length,
-	MaxLength,
-	MinLength,
-	ValidateIf,
-} from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
+
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class LoginDto {
-	@ValidateIf((o) => !(o.phone || o.email))
+	@ApiPropertyOptional({ default: "user@gmail.com" })
+	@IsNotEmpty()
 	@IsString()
-	username: string;
+	authKey: string;
 
-	@ValidateIf((o) => !(o.username || o.phone))
-	@IsEmail()
-	readonly email?: string;
-
-	@ValidateIf((o) => !(o.email || o.username))
-	@IsString()
-	@MinLength(10)
-	@MaxLength(15)
-	readonly phone?: string;
-
+	@ApiProperty({ default: "User@123" })
 	@IsNotEmpty()
 	@Length(6, 50)
 	@IsString()
 	readonly password: string;
 
+	@ApiPropertyOptional({ default: null })
 	@IsOptional()
 	@IsString()
 	deviceID?: string;

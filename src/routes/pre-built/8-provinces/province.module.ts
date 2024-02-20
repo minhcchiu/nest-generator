@@ -14,7 +14,7 @@ import { Province, ProvinceSchema } from "./schemas/province.schema";
 					const schema = ProvinceSchema;
 
 					// eslint-disable-next-line
-          schema.plugin(require('mongoose-slug-updater'));
+					schema.plugin(require("mongoose-slug-updater"));
 
 					return schema;
 				},

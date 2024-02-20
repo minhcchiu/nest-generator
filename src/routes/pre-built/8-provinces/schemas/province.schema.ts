@@ -1,5 +1,6 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema({
 	timestamps: true,
@@ -9,9 +10,6 @@ import { HydratedDocument } from "mongoose";
 export class Province {
 	@Prop({ type: String, required: true })
 	readonly name: string;
-
-	@Prop({ type: String, default: "province" })
-	readonly type: string;
 
 	@Prop({ type: String, slug: "name", unique: true })
 	readonly slug: string;

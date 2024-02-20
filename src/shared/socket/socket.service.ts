@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
 import { Socket } from "socket.io";
-import { WsException } from "@nestjs/websockets";
 import { TokenService } from "~routes/pre-built/5-tokens/token.service";
+
+import { Injectable } from "@nestjs/common";
+import { WsException } from "@nestjs/websockets";
 
 @Injectable()
 export class SocketService {

@@ -1,54 +1,72 @@
+import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
 import { AqpDto } from "~dto/aqp.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
-import { Controller, Delete, Get, Param } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	HttpStatus,
+	Param,
+} from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { TokenService } from "./token.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Tokens")
 @Controller("tokens")
 export class TokenController {
 	constructor(private readonly tokenService: TokenService) {}
 
-	@Public()
-	@Get("")
-	async find(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.tokenService.find(filter, options);
+	//  ----- Method: GET -----
+	@ApiBearerAuth()
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.tokenService.findAll(filter, options);
 	}
 
-	@Delete(":ids/ids")
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.tokenService.deleteMany({
-			_id: { $in: ids.split(",") },
-		});
-	}
-
-	@Delete(":id")
-	async delete(@Param("id", ParseObjectIdPipe) id: string) {
-		return this.tokenService.deleteById(id);
-	}
-
-	@Public()
+	@ApiBearerAuth()
 	@Get("paginate")
+	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
 		return this.tokenService.paginate(filter, options);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Get("count")
+	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: AqpDto) {
 		return this.tokenService.count(filter);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Get(":id")
+	@HttpCode(HttpStatus.OK)
 	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: string,
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: AqpDto,
 	) {
 		return this.tokenService.findById(id, { projection, populate });
+	}
+
+	//  ----- Method: DELETE -----
+	@ApiBearerAuth()
+	@Delete(":ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.tokenService.deleteMany({
+			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+		});
+	}
+
+	@ApiBearerAuth()
+	@Delete(":id")
+	@HttpCode(HttpStatus.OK)
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.tokenService.deleteById(id);
 	}
 }

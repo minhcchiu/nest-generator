@@ -1,11 +1,13 @@
 import { hash } from "argon2";
 import { HydratedDocument } from "mongoose";
+import { Store } from "~routes/1-stores/schemas/store.schema";
+import { NullableType } from "~utils/types/nullable.type";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
-import { Gender } from "../enums/gender.enum";
+import { GenderEnum } from "../enums/gender.enum";
 import { Role } from "../enums/role.enum";
 import { IUser } from "../interface/user.interface";
 
@@ -17,22 +19,25 @@ type UserDocument = HydratedDocument<User>;
 	collection: "users",
 })
 export class User implements IUser {
-	@Prop({ type: String })
-	username: string;
+	@Prop({ type: [String], required: true, select: false, index: true })
+	authKeys: string[];
 
-	@Prop({ type: String })
-	email: string;
+	@Prop({ type: String, default: null })
+	username: NullableType<string>;
 
-	@Prop({ type: String })
-	phone: string;
+	@Prop({ type: String, default: null })
+	email: NullableType<string>;
 
-	@Prop({ type: String, select: false })
-	socialID: string;
+	@Prop({ type: String, default: null })
+	phone: NullableType<string>;
 
-	@Prop({ type: String, enum: AccountType, default: AccountType.LOCAL })
+	@Prop({ type: String, default: null, select: false })
+	socialID: NullableType<string>;
+
+	@Prop({ type: String, enum: AccountType, default: AccountType.Local })
 	accountType: AccountType;
 
-	@Prop({ type: String, minlength: 6, select: false })
+	@Prop({ type: String, minlength: 6, required: true, select: false })
 	password: string;
 
 	@Prop({ type: String, required: true })
@@ -41,26 +46,47 @@ export class User implements IUser {
 	@Prop({ type: String, slug: "fullName", index: true, unique: true })
 	slug: string;
 
-	@Prop({ type: [String] })
-	fcmTokens?: string[];
+	@Prop({ type: Number, default: 0 })
+	dateOfBirth: number;
 
-	@Prop({ type: Number })
-	dateOfBirth?: number;
+	@Prop({ type: String, enum: GenderEnum, default: GenderEnum.OTHER })
+	gender: GenderEnum;
 
-	@Prop({ type: String, enum: Gender, default: Gender.OTHER })
-	gender: Gender;
+	@Prop({
+		type: [
+			{
+				type: String,
+				enum: Role,
+			},
+		],
+		default: [Role.USER, Role.STORE, Role.SUPER_ADMIN],
+	})
+	roles: Role[];
 
-	@Prop({ type: String, enum: Role, default: Role.USER })
-	role: Role;
+	@Prop({ type: String, default: null })
+	avatar: NullableType<string>;
+
+	@Prop({ type: [String], default: [] })
+	fcmTokens: string[];
+
+	@Prop({
+		type: String,
+		enum: AccountStatus,
+		default: AccountStatus.Unverified,
+	})
+	status: AccountStatus;
 
 	@Prop({ type: Boolean, default: false })
-	deleted: boolean;
+	isNotificationActive: boolean;
 
-	@Prop({ type: String })
-	avatar?: string;
+	@Prop({ type: String, ref: Store.name, default: null })
+	storeId: NullableType<string>;
 
-	@Prop({ type: String, enum: AccountStatus, default: AccountStatus.INACTIVE })
-	status: AccountStatus;
+	@Prop({
+		type: [{ type: String, ref: Store.name }],
+		default: [],
+	})
+	favoriteStores: string[];
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
