@@ -13,13 +13,17 @@ import {
 	WebSocketServer,
 } from "@nestjs/websockets";
 
-import { EVENTS } from "./enums/events.enum";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
+import { SocketEvent } from "./enums/socket-event.enum";
 
 @UseFilters(WsExceptionsFilter)
-@WebSocketGateway(9898, { cors: true, pingTimeout: 60000 })
+@WebSocketGateway(9898, {
+	cors: true,
+	pingTimeout: 60000,
+	transports: ["websocket"],
+})
 export class SocketGateway
 	implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
@@ -72,48 +76,48 @@ export class SocketGateway
 	}
 
 	// Join chat
-	@SubscribeMessage(EVENTS.joinChat)
+	@SubscribeMessage(SocketEvent.JoinChat)
 	handleJoinChat(client: Socket, chatId: string) {
 		client.join(chatId);
 	}
 
 	// Rename chat
-	@SubscribeMessage(EVENTS.renameChat)
+	@SubscribeMessage(SocketEvent.RenameChat)
 	handleRenameChat(client: Socket, data: RenameChat) {
-		client.to(data.chatId).emit(EVENTS.renameChat, data);
+		client.to(data.chatId).emit(SocketEvent.RenameChat, data);
 	}
 
 	// Typing
-	@SubscribeMessage(EVENTS.typing)
+	@SubscribeMessage(SocketEvent.Typing)
 	handleTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(EVENTS.typing);
+		client.to(chatId).emit(SocketEvent.Typing);
 	}
 
 	// Stop typing
-	@SubscribeMessage(EVENTS.stopTyping)
+	@SubscribeMessage(SocketEvent.StopTyping)
 	handleStopTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(EVENTS.stopTyping);
+		client.to(chatId).emit(SocketEvent.StopTyping);
 	}
 
 	// Notification
-	@SubscribeMessage(EVENTS.notificationReceived)
+	@SubscribeMessage(SocketEvent.NewNotification)
 	handleStopNotificationReceived(client: Socket, userId: string) {
-		client.to(userId).emit(EVENTS.notificationReceived, userId);
+		client.to(userId).emit(SocketEvent.NewNotification, userId);
 	}
 
 	// New message
-	@SubscribeMessage(EVENTS.newMessage)
+	@SubscribeMessage(SocketEvent.NewMessage)
 	handleNewMessage(client: Socket, data: Message) {
 		// check members exist
 		if (!data.chat?.members) {
-			client.emit(EVENTS.error, "Chat not found.");
+			client.emit(SocketEvent.Error, "Chat not found.");
 			return;
 		}
 
 		// send message to all members
 		data.chat.members.forEach(({ user }) => {
 			if (user._id === data.sender._id) return;
-			client.to(user._id).emit(EVENTS.messageReceived, data);
+			client.to(user._id).emit(SocketEvent.NewMessage, data);
 		});
 	}
 
@@ -124,29 +128,5 @@ export class SocketGateway
 
 	onSocketInAPI(data: any) {
 		this.server.sockets.emit("send_message", data);
-	}
-
-	// Join call video
-	@SubscribeMessage(EVENTS.joinCallVideo)
-	handleJoinCallVideo(client: Socket, roomId: string) {
-		client.join(roomId);
-	}
-
-	// Handle offer call video
-	@SubscribeMessage(EVENTS.offerCallVideo)
-	handleOfferCallVideo(client: Socket, data: any) {
-		client.to(data.roomId).emit(EVENTS.offerCallVideo, data.offer);
-	}
-
-	// Handle answer call video
-	@SubscribeMessage(EVENTS.answerCallVideo)
-	handleAnswerCallVideo(client: Socket, data: any) {
-		client.to(data.roomId).emit(EVENTS.answerCallVideo, data.offer);
-	}
-
-	// Handle offer call video
-	@SubscribeMessage(EVENTS.iceCandidate)
-	handleIceCandidate(client: Socket, data: any) {
-		client.to(data.roomId).emit(EVENTS.iceCandidate, data.offer);
 	}
 }
