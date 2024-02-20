@@ -50,7 +50,7 @@ export class RegisterDto extends PartialType(
 	@ApiPropertyOptional({ default: null })
 	@IsOptional()
 	@IsString()
-	deviceID?: string;
+	fcmToken?: string;
 
 	@ApiProperty({ default: "User@123" })
 	password: string;

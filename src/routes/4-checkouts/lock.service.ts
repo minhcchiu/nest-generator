@@ -1,10 +1,10 @@
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class LockService {
-	constructor(private readonly logger: CustomLogger) {}
+	constructor(private readonly logger: CustomLoggerService) {}
 
 	async acquireLock(
 		productId: string,

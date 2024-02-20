@@ -33,15 +33,15 @@ export class AuthService {
 		private readonly otpService: OtpService,
 	) {}
 
-	async register({ deviceID, ...input }: RegisterDto) {
+	async register({ fcmToken, ...input }: RegisterDto) {
 		const newUser = await this.userService.create(input);
 
-		if (deviceID) this.userService.addDeviceID(newUser._id, deviceID);
+		if (fcmToken) this.userService.saveFcmToken(newUser._id, fcmToken);
 
 		return this.tokenService.generateUserAuth(newUser);
 	}
 
-	async login({ deviceID, ...credential }: LoginDto) {
+	async login({ fcmToken, ...credential }: LoginDto) {
 		const user = await this.userService.findOne(
 			{ authKeys: credential.authKey },
 			{ projection: authSelect },
@@ -59,7 +59,7 @@ export class AuthService {
 
 		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
 
-		if (deviceID) this.userService.addDeviceID(user._id, deviceID);
+		if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
 
 		return this.tokenService.generateUserAuth(user);
 	}
@@ -106,7 +106,7 @@ export class AuthService {
 		return this.register(decoded);
 	}
 
-	async socialLogin({ deviceID, idToken, accountType }: SocialLoginDto) {
+	async socialLogin({ fcmToken, idToken, accountType }: SocialLoginDto) {
 		const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
 
 		let foundUser = await this.userService.findOne(
@@ -129,14 +129,14 @@ export class AuthService {
 			foundUser = newUser.toObject();
 		}
 
-		if (deviceID) this.userService.addDeviceID(foundUser._id, deviceID);
+		if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);
 
 		return this.tokenService.generateUserAuth(foundUser);
 	}
 
-	async logout(userId: Types.ObjectId, deviceID?: string) {
+	async logout(userId: Types.ObjectId, fcmToken?: string) {
 		Promise.all([
-			this.userService.removeDeviceID(userId, deviceID),
+			this.userService.removeFcmTokens([fcmToken]),
 			this.tokenService.deleteOne({ user: userId }),
 		]);
 

@@ -24,7 +24,7 @@ import { AppService } from "./app.service";
 import { AppGuard } from "./guards/app.guard";
 import { CacheService } from "./shared/cache/cache.service.";
 import { LoggingInterceptor } from "./shared/interceptors";
-import { LoggerModule } from "./shared/logger/logger.module";
+import { CustomLoggerModule } from "./shared/logger/custom-logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
 import { S3Module } from "~shared/storage/s3/s3.module";
@@ -88,7 +88,7 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 
 		DatabaseModuleConfig,
 		SeedModule,
-		LoggerModule,
+		CustomLoggerModule,
 		MailModule,
 		SocketModule,
 		FirebaseModule,

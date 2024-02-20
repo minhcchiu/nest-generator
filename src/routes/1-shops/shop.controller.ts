@@ -30,8 +30,8 @@ export class ShopController {
 	@HttpCode(HttpStatus.OK)
 	@Public()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.shopService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.shopService.findMany(filter, options);
 	}
 
 	@Post()

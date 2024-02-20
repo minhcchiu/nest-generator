@@ -30,8 +30,8 @@ export class ConversationController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.conversationService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.conversationService.findMany(filter, options);
 	}
 
 	@Post()

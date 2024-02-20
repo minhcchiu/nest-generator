@@ -32,8 +32,8 @@ export class PermissionController {
 	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.permissionService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.permissionService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()

@@ -69,9 +69,9 @@ export class AuthController {
 	@HttpCode(HttpStatus.OK)
 	async logout(
 		@GetCurrentUserId() userId: string,
-		@Body("deviceID") deviceID?: string,
+		@Body("fcmToken") fcmToken?: string,
 	) {
-		return this.authService.logout(stringIdToObjectId(userId), deviceID);
+		return this.authService.logout(stringIdToObjectId(userId), fcmToken);
 	}
 
 	@Public()

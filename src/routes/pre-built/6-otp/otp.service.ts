@@ -141,7 +141,7 @@ export class OtpService {
 	 * @param options
 	 * @returns
 	 */
-	findAll(filter: FilterQuery<Otp>, options?: QueryOptions<Otp>) {
+	findMany(filter: FilterQuery<Otp>, options?: QueryOptions<Otp>) {
 		return this.otpModel.find(filter, options?.projection, options).lean();
 	}
 }

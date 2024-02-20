@@ -30,7 +30,7 @@ export class DiscountController {
 	@Public()
 	@Get()
 	async getAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.discountService.findAll(filter, options);
+		return this.discountService.findMany(filter, options);
 	}
 
 	@Post()

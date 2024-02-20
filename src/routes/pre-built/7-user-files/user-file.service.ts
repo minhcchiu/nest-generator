@@ -59,7 +59,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	}
 
 	async deleteByUrls(urls: string[]) {
-		const files = await this.findAll({ url: { $in: urls } });
+		const files = await this.findMany({ url: { $in: urls } });
 
 		const resourceIdsLocal: string[] = [];
 		const resourceIdsS3: string[] = [];

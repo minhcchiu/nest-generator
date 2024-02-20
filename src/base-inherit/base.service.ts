@@ -23,7 +23,7 @@ export class BaseService<T> {
 		return this.model.create(inputs);
 	}
 
-	async findAll(
+	async findMany(
 		filter: FilterQuery<T>,
 		options: QueryOptions<T> = {
 			page: 1,

@@ -69,6 +69,9 @@ export class User implements IUser {
 	@Prop({ type: [String], default: [] })
 	fcmTokens: string[];
 
+	@Prop({ type: Boolean, default: true })
+	isFCMEnabled: boolean;
+
 	@Prop({
 		type: String,
 		enum: AccountStatus,

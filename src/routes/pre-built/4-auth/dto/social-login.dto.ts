@@ -17,5 +17,5 @@ export class SocialLoginDto extends PartialType(
 	@ApiProperty({ example: null })
 	@IsOptional()
 	@IsString()
-	deviceID?: string;
+	fcmToken?: string;
 }

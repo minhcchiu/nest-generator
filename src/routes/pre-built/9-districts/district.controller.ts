@@ -30,8 +30,8 @@ export class DistrictController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.districtService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.districtService.findMany(filter, options);
 	}
 
 	@Public()

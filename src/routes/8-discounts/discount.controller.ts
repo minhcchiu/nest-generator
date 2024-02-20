@@ -30,8 +30,8 @@ export class DiscountController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.discountService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.discountService.findMany(filter, options);
 	}
 
 	@Post()

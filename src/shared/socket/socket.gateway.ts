@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { UseFilters } from "@nestjs/common";
 import {
@@ -32,7 +32,7 @@ export class SocketGateway
 
 	constructor(
 		private readonly socketService: SocketService,
-		private logger: CustomLogger,
+		private logger: CustomLoggerService,
 	) {}
 
 	afterInit() {

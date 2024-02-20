@@ -32,8 +32,8 @@ export class StoreController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.storeService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.storeService.findMany(filter, options);
 	}
 
 	@Public()

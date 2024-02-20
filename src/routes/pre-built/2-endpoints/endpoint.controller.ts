@@ -36,8 +36,8 @@ export class EndpointController {
 	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.endpointService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.endpointService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()

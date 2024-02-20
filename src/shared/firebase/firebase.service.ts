@@ -9,13 +9,13 @@ import {
 } from "firebase-admin/lib/messaging/messaging-api";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class FirebaseService {
-	constructor(private logger: CustomLogger) {
+	constructor(private logger: CustomLoggerService) {
 		this.init();
 	}
 

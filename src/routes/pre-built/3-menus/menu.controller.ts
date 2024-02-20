@@ -29,8 +29,8 @@ export class MenuController {
 	//  ----- Method: GET -----
 	@ApiBearerAuth()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
-		return this.menuService.findAll(filter, options);
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+		return this.menuService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()

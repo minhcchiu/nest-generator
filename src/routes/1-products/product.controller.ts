@@ -30,9 +30,9 @@ export class ProductController {
 	@HttpCode(HttpStatus.OK)
 	@Public()
 	@Get()
-	async findAll(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
 		await this.productService.placeOrder();
-		return this.productService.findAll(filter, options);
+		return this.productService.findMany(filter, options);
 	}
 
 	@Post()
