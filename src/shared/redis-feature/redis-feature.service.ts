@@ -14,7 +14,7 @@ export class RedisFeatureService {
 	isSubscribed = false;
 
 	constructor(private readonly configService: ConfigService) {
-		this.redisConfig = configService.get<RedisConfig>(redisConfigName);
+		this.redisConfig = this.configService.get<RedisConfig>(redisConfigName);
 	}
 
 	initRedis() {

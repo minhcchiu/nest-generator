@@ -76,9 +76,8 @@ export class SeedService {
 						};
 
 						// Save district
-						const districtSaved = await this.districtService.create(
-							districtItem,
-						);
+						const districtSaved =
+							await this.districtService.create(districtItem);
 
 						// Get districtId
 						const districtId = districtSaved._id;

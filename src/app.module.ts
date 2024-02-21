@@ -6,7 +6,6 @@ import { FirebaseModule } from "~shared/firebase/firebase.module";
 import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 import { SocketModule } from "~shared/socket/socket.module";
 
-import { CacheModule } from "@nestjs/cache-manager";
 import {
 	MiddlewareConsumer,
 	Module,
@@ -63,10 +62,6 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 				redisEnv,
 				uploadEnv,
 			],
-		}),
-
-		CacheModule.register({
-			isGlobal: true,
 		}),
 
 		ThrottlerModule.forRoot([

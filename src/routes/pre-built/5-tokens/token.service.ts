@@ -136,9 +136,8 @@ export class TokenService extends BaseService<TokenDocument> {
 			storeId: user.storeId,
 		};
 
-		const { accessToken, refreshToken } = await this.generateAuthTokens(
-			payload,
-		);
+		const { accessToken, refreshToken } =
+			await this.generateAuthTokens(payload);
 
 		await this.updateOne(
 			{ userId: user._id.toString() },
