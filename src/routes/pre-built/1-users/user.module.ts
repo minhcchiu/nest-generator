@@ -6,7 +6,6 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { User, UserSchema } from "./schemas/user.schema";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
-import { UserFirebaseService } from "./user-firebase/user-firebase.service";
 
 @Global()
 @Module({
@@ -27,7 +26,7 @@ import { UserFirebaseService } from "./user-firebase/user-firebase.service";
 		forwardRef(() => StoreModule),
 	],
 	controllers: [UserController],
-	providers: [UserService, UserFirebaseService],
-	exports: [UserService, UserFirebaseService],
+	providers: [UserService],
+	exports: [UserService],
 })
 export class UserModule {}
