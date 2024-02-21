@@ -14,7 +14,6 @@ export const DatabaseModuleConfig = MongooseModule.forRootAsync({
 	useFactory: async (config: ConfigService) => ({
 		uri: config.get<DatabaseConfig>(databaseConfigName).uri,
 		retryWrites: true,
-		useNewUrlParser: true,
 		autoIndex: true,
 
 		connectionFactory: (connection: any) => {

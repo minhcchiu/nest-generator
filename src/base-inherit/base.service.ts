@@ -1,11 +1,13 @@
 import {
 	FilterQuery,
+	MongooseQueryOptions,
 	PaginateModel,
 	QueryOptions,
 	Types,
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
 } from "mongoose";
+import { UpdateOptions, DeleteOptions, CountOptions } from "mongodb";
 
 import { PaginateOptions } from "./base.interface";
 
@@ -16,11 +18,15 @@ export class BaseService<T> {
 	}
 
 	async create(input: Record<string, any>) {
-		return this.model.create(input);
+		const result = await this.model.create(input);
+
+		return result;
 	}
 
 	async createMany(inputs: Record<string, any>[]) {
-		return this.model.create(inputs);
+		const result = await this.model.create(inputs);
+
+		return result;
 	}
 
 	async findMany(
@@ -35,7 +41,11 @@ export class BaseService<T> {
 
 		Object.assign(option, { skip: option.skip || skip });
 
-		return this.model.find(filter, options?.projection, options).lean();
+		const result = await this.model
+			.find(filter, options?.projection, options)
+			.lean();
+
+		return result;
 	}
 
 	async findById(id: Types.ObjectId, options?: QueryOptions<T>) {
@@ -43,15 +53,27 @@ export class BaseService<T> {
 	}
 
 	async findOne(filter?: FilterQuery<T>, options?: QueryOptions<T>) {
-		return this.model.findOne(filter, options?.projection, options).lean();
+		const result = await this.model
+			.findOne(filter, options?.projection, options)
+			.lean();
+
+		return result;
 	}
 
-	async count(filter: FilterQuery<T> = {}, options: QueryOptions = {}) {
-		return this.model.countDocuments(filter, { ...options, lean: true });
+	async count(
+		filter: FilterQuery<T> = {},
+		options?: CountOptions &
+			Omit<MongooseQueryOptions<T>, "lean" | "timestamps">,
+	) {
+		const result = await this.model.countDocuments(filter, options);
+
+		return result;
 	}
 
 	async distinct(field: string, filter?: FilterQuery<T>) {
-		return this.model.distinct(field, filter).lean();
+		const result = await this.model.distinct(field, filter);
+
+		return <any[]>result;
 	}
 
 	async updateById(
@@ -77,7 +99,7 @@ export class BaseService<T> {
 	async updateMany(
 		filter: FilterQuery<T>,
 		input: UpdateQuery<T> | UpdateWithAggregationPipeline,
-		options?: QueryOptions<T>,
+		options?: (UpdateOptions & Omit<MongooseQueryOptions<T>, "lean">) | null,
 	) {
 		const updated = await this.model.updateMany(filter, input, options);
 
@@ -96,7 +118,11 @@ export class BaseService<T> {
 		return deleted;
 	}
 
-	async deleteMany(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+	async deleteMany(
+		filter: FilterQuery<T>,
+		options?: DeleteOptions &
+			Omit<MongooseQueryOptions<T>, "lean" | "timestamps">,
+	) {
 		const deleted = await this.model.deleteMany(filter, options);
 
 		return deleted;
@@ -120,6 +146,8 @@ export class BaseService<T> {
 			lean: true,
 		};
 
-		return this.model.paginate(filter, options);
+		const pagination = await this.model.paginate(filter, options);
+
+		return pagination;
 	}
 }
