@@ -24,17 +24,11 @@ import { UpdatePasswordDto } from "./dto/update-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { AccountStatus } from "./enums/account-status.enum";
 import { UserService } from "./user.service";
-import { UserFirebaseService } from "./user-firebase/user-firebase.service";
 
 @ApiTags("Users")
 @Controller("users")
 export class UserController {
-	constructor(
-		private readonly userService: UserService,
-		private readonly userFirebaseService: UserFirebaseService,
-	) {
-		userFirebaseService.getUser();
-	}
+	constructor(private readonly userService: UserService) {}
 
 	//  ----- Method: GET -----
 	@ApiBearerAuth()

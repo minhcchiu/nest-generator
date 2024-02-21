@@ -9,7 +9,6 @@ import {
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { UserService } from "../user.service";
 import { Types } from "mongoose";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 @Injectable()
@@ -20,48 +19,17 @@ export class UserFirebaseService {
 		private userService: UserService,
 	) {}
 
-	async getUser() {
-		const userIds = [
-			"65ac022cbda46125ca57d979",
-			"65ac01f9bda46125ca57d972",
-			"65a93849fb70ad9e52584126",
-		];
-
-		await this.sendEachForMulticastByUserIds(
-			userIds.map(stringIdToObjectId),
-			{
-				notification: {
-					title: "hello",
-					body: "hello",
-					imageUrl:
-						"https://th.bing.com/th/id/OIP.fjAxHcSzmCKsbKFqWaCBkwHaEK?rs=1&pid=ImgDetMain",
-				},
-			},
-			true,
-		);
-	}
-
-	async sendEachForMulticastByUserIds(
-		userIds: Types.ObjectId[],
+	async sendEachForMulticastByTokens(
+		tokens: string[],
 		baseMessage: BaseMessage,
-		dryRun?: boolean,
 	) {
-		// get tokens from users
-		const tokens = await this.userService.distinct("fcmTokens", {
-			_id: { $in: userIds },
-			isFCMEnabled: true,
-		});
-
 		if (tokens.length === 0) return;
 
-		// get message
+		// message item
 		const message = this._getMessageForMulticast(tokens, baseMessage);
 
-		// send
-		const resultSent = await this.firebaseService.sendEachForMulticast(
-			message,
-			dryRun,
-		);
+		// send message
+		const resultSent = await this.firebaseService.sendEachForMulticast(message);
 
 		// get invalid tokens
 		const invalidTokens = resultSent.responses.reduce((acc, result, index) => {
@@ -76,6 +44,47 @@ export class UserFirebaseService {
 				// ignore
 			});
 		}
+	}
+
+	async sendEachForMulticastByUserIds(
+		userIds: Types.ObjectId[],
+		baseMessage: BaseMessage,
+	) {
+		// get tokens from users
+		const tokens = await this.userService.distinct("fcmTokens", {
+			_id: { $in: userIds },
+			isFCMEnabled: true,
+		});
+
+		if (tokens.length === 0) return;
+
+		// message item
+		const message = this._getMessageForMulticast(tokens, baseMessage);
+
+		// send message
+		const resultSent = await this.firebaseService.sendEachForMulticast(message);
+
+		// get invalid tokens
+		const invalidTokens = resultSent.responses.reduce((acc, result, index) => {
+			if (!result.success) acc.push(tokens[index]);
+
+			return acc;
+		}, []);
+
+		// remove invalid tokens
+		if (invalidTokens.length > 0) {
+			this.userService.removeFcmTokens(invalidTokens).catch(() => {
+				// ignore
+			});
+		}
+	}
+
+	async sendToTopic(
+		topic: string,
+		payload: MessagingPayload,
+		options?: MessagingOptions,
+	): Promise<MessagingTopicResponse> {
+		return this.firebaseService.sendToTopic(topic, payload, options);
 	}
 
 	private _getMessageForMulticast(tokens: string[], baseMessage: BaseMessage) {
@@ -106,13 +115,5 @@ export class UserFirebaseService {
 		};
 
 		return message;
-	}
-
-	async sendToTopic(
-		topic: string,
-		payload: MessagingPayload,
-		options?: MessagingOptions,
-	): Promise<MessagingTopicResponse> {
-		return this.firebaseService.sendToTopic(topic, payload, options);
 	}
 }
