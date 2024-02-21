@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { Types } from "mongoose";
 
 import { BadRequestException, Injectable, PipeTransform } from "@nestjs/common";
@@ -9,7 +8,7 @@ import { stringIdToObjectId } from "./stringId_to_objectId";
 export class ParseObjectIdPipe implements PipeTransform<any, Types.ObjectId> {
 	public transform(value: string): Types.ObjectId {
 		try {
-			const objectId = ObjectId.createFromHexString(value);
+			const objectId = new Types.ObjectId(value);
 
 			return stringIdToObjectId(objectId.toString());
 		} catch (error) {

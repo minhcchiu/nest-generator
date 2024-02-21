@@ -62,6 +62,7 @@ export class LockService {
 	}
 
 	async releaseLock(productId: string): Promise<void> {
+		this.logger.log(productId);
 		// const lockKey = `product:${productId}:lock`;
 		// try {
 		// 	await this.redisService.del(lockKey);

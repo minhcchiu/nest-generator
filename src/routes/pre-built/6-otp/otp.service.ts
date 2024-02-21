@@ -33,8 +33,8 @@ export class OtpService {
 		private mailService: MailService,
 		private configService: ConfigService,
 	) {
-		this.otpConfig = configService.get<OtpConfig>(otpConfigName);
-		this.appConfig = configService.get<AppConfig>(appConfigName);
+		this.otpConfig = this.configService.get<OtpConfig>(otpConfigName);
+		this.appConfig = this.configService.get<AppConfig>(appConfigName);
 	}
 
 	async sendOtp({ otpType, ...credential }: CreateOtpDto) {
