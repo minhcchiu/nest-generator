@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional } from "class-validator";
 
-import { PartialType } from "@nestjs/mapped-types";
+import { PartialType } from "@nestjs/swagger";
 
 import { CreateCartDto } from "./create-cart.dto";
 

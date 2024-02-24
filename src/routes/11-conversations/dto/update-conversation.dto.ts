@@ -1,4 +1,4 @@
-import { PartialType } from "@nestjs/mapped-types";
+import { PartialType } from "@nestjs/swagger";
 
 import { CreateConversationDto } from "./create-conversation.dto";
 
