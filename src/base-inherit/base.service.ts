@@ -7,7 +7,12 @@ import {
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
 } from "mongoose";
-import { UpdateOptions, DeleteOptions, CountOptions } from "mongodb";
+import {
+	UpdateOptions,
+	DeleteOptions,
+	CountOptions,
+	DeleteResult,
+} from "mongodb";
 
 import { PaginateOptions } from "./base.interface";
 
@@ -122,7 +127,7 @@ export class BaseService<T> {
 		filter: FilterQuery<T>,
 		options?: DeleteOptions &
 			Omit<MongooseQueryOptions<T>, "lean" | "timestamps">,
-	) {
+	): Promise<DeleteResult> {
 		const deleted = await this.model.deleteMany(filter, options);
 
 		return deleted;
