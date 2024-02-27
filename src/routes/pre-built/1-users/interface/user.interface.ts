@@ -10,5 +10,4 @@ export interface IUser {
 	gender?: GenderEnum;
 	dateOfBirth?: number;
 	roles: Role[];
-	slug: string;
 }

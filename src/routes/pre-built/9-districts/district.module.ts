@@ -7,17 +7,10 @@ import { District, DistrictSchema } from "./schemas/district.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: District.name,
-				useFactory: () => {
-					const schema = DistrictSchema;
-
-					// eslint-disable-next-line
-          schema.plugin(require('mongoose-slug-updater'));
-
-					return schema;
-				},
+				schema: DistrictSchema,
 			},
 		]),
 	],

@@ -7,17 +7,10 @@ import { Province, ProvinceSchema } from "./schemas/province.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Province.name,
-				useFactory: () => {
-					const schema = ProvinceSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: ProvinceSchema,
 			},
 		]),
 	],

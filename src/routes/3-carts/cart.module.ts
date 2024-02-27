@@ -9,17 +9,10 @@ import { Cart, CartSchema } from "./schemas/cart.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Cart.name,
-				useFactory: () => {
-					const schema = CartSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: CartSchema,
 			},
 		]),
 		ProductModule,

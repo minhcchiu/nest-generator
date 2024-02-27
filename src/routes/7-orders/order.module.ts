@@ -7,17 +7,10 @@ import { Order, OrderSchema } from "./schemas/order.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Order.name,
-				useFactory: () => {
-					const schema = OrderSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: OrderSchema,
 			},
 		]),
 	],

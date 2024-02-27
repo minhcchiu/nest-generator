@@ -111,7 +111,7 @@ export class OtpService {
 		return !!(phone && otp);
 	}
 
-	private async _sendEmailVerify(email: string, otp: string): Promise<boolean> {
+	private async _sendEmailVerify(email: string, otp: string) {
 		return this.mailService.sendOTP(otp, email, "Verify OTP");
 	}
 

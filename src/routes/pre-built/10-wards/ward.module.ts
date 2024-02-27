@@ -7,17 +7,10 @@ import { WardService } from "./ward.service";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Ward.name,
-				useFactory: () => {
-					const schema = WardSchema;
-
-					// eslint-disable-next-line
-          schema.plugin(require('mongoose-slug-updater'));
-
-					return schema;
-				},
+				schema: WardSchema,
 			},
 		]),
 	],

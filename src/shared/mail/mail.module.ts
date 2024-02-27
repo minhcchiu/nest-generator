@@ -17,7 +17,6 @@ import {
 			useFactory: async (config: ConfigService) => {
 				const { transport, defaults } =
 					config.get<MailerConfig>(mailerConfigName);
-
 				// return options
 				const options = {
 					transport: transport.gmail,

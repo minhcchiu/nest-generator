@@ -25,9 +25,6 @@ export class Ward {
 
 	@Prop({ type: String, required: true })
 	readonly name: string;
-
-	@Prop({ type: String, slug: "name" })
-	readonly slug: string;
 }
 
 export type WardDocument = Ward & HydratedDocument<Ward>;

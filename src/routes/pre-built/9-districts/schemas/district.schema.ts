@@ -18,9 +18,6 @@ export class District {
 
 	@Prop({ type: String, required: true })
 	readonly name: string;
-
-	@Prop({ type: String, slug: "name" })
-	readonly slug: string;
 }
 
 export type DistrictDocument = District & HydratedDocument<District>;
