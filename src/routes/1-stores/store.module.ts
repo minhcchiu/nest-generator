@@ -9,17 +9,10 @@ import { StoreService } from "./store.service";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Store.name,
-				useFactory: () => {
-					const schema = StoreSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: StoreSchema,
 			},
 		]),
 		forwardRef(() => UserModule),

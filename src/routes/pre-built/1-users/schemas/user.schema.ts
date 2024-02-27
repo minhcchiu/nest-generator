@@ -43,9 +43,6 @@ export class User implements IUser {
 	@Prop({ type: String, required: true })
 	fullName: string;
 
-	@Prop({ type: String, slug: "fullName", index: true, unique: true })
-	slug: string;
-
 	@Prop({ type: Number, default: 0 })
 	dateOfBirth: number;
 

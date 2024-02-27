@@ -10,17 +10,10 @@ import { UserService } from "./user.service";
 @Global()
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: User.name,
-				useFactory: () => {
-					const schema = UserSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: UserSchema,
 			},
 		]),
 		forwardRef(() => StoreModule),

@@ -10,17 +10,10 @@ import {
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Notification.name,
-				useFactory: () => {
-					const schema = NotificationSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: NotificationSchema,
 			},
 		]),
 	],

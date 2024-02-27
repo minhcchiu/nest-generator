@@ -15,31 +15,22 @@ import { Product, ProductSchema } from "./schemas/product.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Product.name,
-				useFactory: () => {
-					const schema = ProductSchema;
-
-					// eslint-disable-next-line
-					schema.plugin(require("mongoose-slug-updater"));
-
-					return schema;
-				},
+				schema: ProductSchema,
+			},
+			{
+				name: Furniture.name,
+				schema: FurnitureSchema,
 			},
 			{
 				name: Clothing.name,
-				useFactory: () => ClothingSchema,
+				schema: ClothingSchema,
 			},
-
-			{
-				name: Furniture.name,
-				useFactory: () => FurnitureSchema,
-			},
-
 			{
 				name: Electronic.name,
-				useFactory: () => ElectronicSchema,
+				schema: ElectronicSchema,
 			},
 		]),
 		InventoryModule,

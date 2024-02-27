@@ -7,17 +7,10 @@ import { Comment, CommentSchema } from "./schemas/comment.schema";
 
 @Module({
 	imports: [
-		MongooseModule.forFeatureAsync([
+		MongooseModule.forFeature([
 			{
 				name: Comment.name,
-				useFactory: () => {
-					const schema = CommentSchema;
-
-					// eslint-disable-next-line
-          schema.plugin(require('mongoose-slug-updater'));
-
-					return schema;
-				},
+				schema: CommentSchema,
 			},
 		]),
 	],
