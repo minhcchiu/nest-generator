@@ -76,7 +76,7 @@ export class UserController {
 	async create(@Body() body: CreateUserDto) {
 		await this.userService.validateCreateUser(body);
 
-		return this.userService.create(body);
+		return this.userService.createUser(body);
 	}
 
 	//  ----- Method: PATCH -----
