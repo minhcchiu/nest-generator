@@ -14,7 +14,7 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 
 import { UpdatePasswordDto } from "./dto/update-password";
-import { IAuthKeys, AuthKeys } from "./enums/unique-keys";
+import { AuthKeys, IAuthKeys } from "./enums/unique-keys";
 import { User, UserDocument } from "./schemas/user.schema";
 
 @Injectable()
@@ -40,33 +40,15 @@ export class UserService extends BaseService<UserDocument> {
 		await this.validateCreateUser(authKeyObj);
 
 		Object.assign(input, {
-			authKeys: this.getAuthKeys(authKeyObj).map((item) => item.value),
+			authKeys: this._getAuthKeys(authKeyObj).map((item) => item.value),
 		});
 
 		return this.userModel.create(input);
 	}
 
-	public getAuthKeys(input: IAuthKeys): { [key: string]: string }[] {
-		return AuthKeys.filter((key) => input[key] && AuthKeys.includes(key)).map(
-			(key) => ({
-				key,
-				value: input[key].toString(),
-			}),
-		);
-	}
-
-	public validateAuthKey = async (
-		key: string,
-		value: string,
-		errorMessage: string,
-	) => {
-		if (await this.count({ [key]: value }))
-			throw new BadRequestException(errorMessage);
-	};
-
 	async validateCreateUser(input: IAuthKeys) {
-		const validatePromises = this.getAuthKeys(input).map((item) =>
-			this.validateAuthKey(
+		const validatePromises = this._getAuthKeys(input).map((item) =>
+			this._validateAuthKey(
 				item.key,
 				item.value,
 				`${item.key.toUpperCase()} already exists.`,
@@ -130,5 +112,23 @@ export class UserService extends BaseService<UserDocument> {
 
 	async comparePassword(hashPassword: string, plainPassword: string) {
 		return argon2.verify(hashPassword, plainPassword);
+	}
+
+	private _getAuthKeys(input: IAuthKeys): Record<string, string>[] {
+		return AuthKeys.filter((key) => input[key] && AuthKeys.includes(key)).map(
+			(key) => ({
+				key,
+				value: input[key].toString(),
+			}),
+		);
+	}
+
+	private async _validateAuthKey(
+		key: string,
+		value: string,
+		errorMessage: string,
+	) {
+		if (await this.count({ [key]: value }))
+			throw new BadRequestException(errorMessage);
 	}
 }
