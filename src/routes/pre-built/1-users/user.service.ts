@@ -23,21 +23,19 @@ export class UserService extends BaseService<UserDocument> {
 	constructor(
 		@InjectModel(User.name) model: PaginateModel<UserDocument>,
 		@Inject(forwardRef(() => StoreService))
-		private readonly storeService: StoreService,
+		private storeService: StoreService,
 	) {
 		super(model);
 
 		this.userModel = model;
 	}
 
-	async create(input: Record<string, any>) {
+	async createUser(input: Record<string, any>) {
 		const authKeyObj: IAuthKeys = {
 			email: input.email,
 			phone: input.phone,
 			username: input.username,
 		};
-
-		await this.validateCreateUser(authKeyObj);
 
 		Object.assign(input, {
 			authKeys: this._getAuthKeys(authKeyObj).map((item) => item.value),

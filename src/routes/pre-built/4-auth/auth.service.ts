@@ -34,7 +34,9 @@ export class AuthService {
 	) {}
 
 	async register({ fcmToken, ...input }: RegisterDto) {
-		const newUser = await this.userService.create(input);
+		await this.userService.validateCreateUser(input);
+
+		const newUser = await this.userService.createUser(input);
 
 		if (fcmToken) this.userService.saveFcmToken(newUser._id, fcmToken);
 
@@ -114,7 +116,7 @@ export class AuthService {
 		);
 
 		if (!foundUser) {
-			const newUser = await this.userService.create({
+			const newUser = await this.userService.createUser({
 				status: AccountStatus.Verified,
 				fullName: decodedIdToken.name,
 				socialID: decodedIdToken.sub,
