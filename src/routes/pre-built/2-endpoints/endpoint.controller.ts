@@ -18,11 +18,11 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { PermissionService } from "../2-permissions/permission.service";
 import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";
 import { EndpointService } from "./endpoint.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Endpoints")
 @Controller("endpoints")

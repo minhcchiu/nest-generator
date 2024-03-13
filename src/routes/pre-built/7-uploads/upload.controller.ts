@@ -20,9 +20,9 @@ import {
 import { CreateUserFileDto } from "../7-user-files/dto/create-user-file.dto";
 import { UserFileService } from "../7-user-files/user-file.service";
 import { ResponseUploadedDto } from "./dto/response-uploaded.dto";
-import { UploadService } from "./upload.service";
-import { UploadedResult } from "./types/upload.result.type";
 import { UploadedError } from "./types/upload.error.type";
+import { UploadedResult } from "./types/upload.result.type";
+import { UploadService } from "./upload.service";
 
 @ApiTags("Uploads")
 @Controller("uploads")

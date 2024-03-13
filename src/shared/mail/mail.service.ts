@@ -4,13 +4,13 @@ import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import {
-	MailerConfig,
-	mailerConfigName,
-} from "~config/environment/mailer.config";
-import {
 	ClientUrlConfig,
 	clientUrlConfigName,
-} from "~config/environment/client-url.config";
+} from "~configuration/environment/client-url.config";
+import {
+	MailerConfig,
+	mailerConfigName,
+} from "~configuration/environment/mailer.config";
 
 @Injectable()
 export class MailService {

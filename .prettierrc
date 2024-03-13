@@ -8,5 +8,6 @@
 	"bracketSpacing": true,
 	"arrowParens": "always",
 	"requirePragma": false,
-	"proseWrap": "always"
+	"proseWrap": "always",
+	"plugins": ["prettier-plugin-organize-imports"]
 }

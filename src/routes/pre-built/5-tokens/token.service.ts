@@ -6,10 +6,13 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
 
+import {
+	JWTConfig,
+	jwtConfigName,
+} from "~configuration/environment/jwt.config";
 import { User } from "../1-users/schemas/user.schema";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
-import { JWTConfig, jwtConfigName } from "~config/environment/jwt.config";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {

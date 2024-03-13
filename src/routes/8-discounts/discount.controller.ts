@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { DiscountService } from "./discount.service";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { UpdateDiscountDto } from "./dto/update-discount.dto";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Discounts")
 @Controller("categories")

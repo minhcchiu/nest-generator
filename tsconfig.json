@@ -19,17 +19,19 @@
 		"noFallthroughCasesInSwitch": false,
 		"paths": {
 			"~base-inherit/*": ["src/base-inherit/*"],
+			"~types/*": ["src/common/types/*"],
 			"~decorators/*": ["src/common/decorators/*"],
+			"~enums/*": ["src/common/enums/*"],
 			"~dto/*": ["src/common/dto/*"],
-			"~config/*": ["src/config/*"],
+			"~utils/*": ["src/common/utils/*"],
+			"~configuration/*": ["src/configuration/*"],
 			"~exceptions/*": ["src/exceptions/*"],
 			"~guards/*": ["src/common/guards/*"],
 			"~helpers/*": ["src/helpers/*"],
 			"~middlewares/*": ["src/middlewares/*"],
 			"~routes/*": ["src/routes/*"],
 			"~pre-built/*": ["src/routes/pre-built/*"],
-			"~shared/*": ["src/shared/*"],
-			"~utils/*": ["src/utils/*"]
+			"~shared/*": ["src/shared/*"]
 		}
 	},
 	"include": ["src", "commitlint.config.js"],

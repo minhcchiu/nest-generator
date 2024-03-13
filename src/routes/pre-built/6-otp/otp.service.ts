@@ -12,16 +12,19 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 
-import { CreateOtpDto } from "./dto/create-otp.dto";
-import { VerifyOtpDto } from "./dto/verify-otp.dto";
-import { OtpType } from "./enums/otp-type";
-import { Otp } from "./schemas/otp.schema";
 import {
 	AppConfig,
 	NodeEnv,
 	appConfigName,
-} from "~config/environment/app.config";
-import { OtpConfig, otpConfigName } from "~config/environment/otp.config";
+} from "~configuration/environment/app.config";
+import {
+	OtpConfig,
+	otpConfigName,
+} from "~configuration/environment/otp.config";
+import { CreateOtpDto } from "./dto/create-otp.dto";
+import { VerifyOtpDto } from "./dto/verify-otp.dto";
+import { OtpType } from "./enums/otp-type";
+import { Otp } from "./schemas/otp.schema";
 
 @Injectable()
 export class OtpService {

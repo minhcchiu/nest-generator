@@ -18,10 +18,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { UpdatePermissionDto } from "./dto/update-permission.dto";
 import { PermissionService } from "./permission.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Permissions")
 @Controller("permissions")

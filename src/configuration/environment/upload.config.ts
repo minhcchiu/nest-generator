@@ -1,5 +1,5 @@
 import { registerAs } from "@nestjs/config";
-import { FileType } from "~utils/types/file.type";
+import { FileType } from "~types/file.type";
 
 export const uploadConfigName = "upload";
 

@@ -19,11 +19,11 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CommentService } from "./comment.service";
 import { AuthorDto } from "./dto/author.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Comments")
 @Controller("comments")

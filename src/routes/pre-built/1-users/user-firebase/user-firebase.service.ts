@@ -6,10 +6,10 @@ import {
 	MessagingTopicResponse,
 	MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
-import { FirebaseService } from "~shared/firebase/firebase.service";
-import { UserService } from "../user.service";
 import { Types } from "mongoose";
+import { FirebaseService } from "~shared/firebase/firebase.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+import { UserService } from "../user.service";
 
 @Injectable()
 export class UserFirebaseService {

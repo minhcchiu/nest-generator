@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
 import { UpdateDistrictDto } from "./dto/update-district.dto";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Districts")
 @Controller("districts")

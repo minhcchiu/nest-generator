@@ -1,6 +1,6 @@
 import { PaginateModel } from "mongoose";
-import { LanguageEnum } from "src/enums/language.enum";
 import { BaseService } from "~base-inherit/base.service";
+import { LanguageEnum } from "~enums/language.enum";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";

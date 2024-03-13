@@ -7,7 +7,7 @@ import {
 	ValidateNested,
 } from "class-validator";
 import { LocationDto } from "~dto/location.dto";
-import { NullableType } from "~utils/types/nullable.type";
+import { NullableType } from "~types/nullable.type";
 
 import { ApiProperty } from "@nestjs/swagger";
 

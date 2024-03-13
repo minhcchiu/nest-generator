@@ -12,7 +12,7 @@ import {
 	MinLength,
 	ValidateIf,
 } from "class-validator";
-import { NullableType } from "~utils/types/nullable.type";
+import { NullableType } from "~types/nullable.type";
 
 import { ApiProperty } from "@nestjs/swagger";
 

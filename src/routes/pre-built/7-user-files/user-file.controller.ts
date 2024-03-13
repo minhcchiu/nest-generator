@@ -14,8 +14,8 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { UserFileService } from "./user-file.service";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
+import { UserFileService } from "./user-file.service";
 
 @ApiTags("User files")
 @Controller("user_files")

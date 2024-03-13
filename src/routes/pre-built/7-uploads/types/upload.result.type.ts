@@ -1,4 +1,4 @@
-import { FileType } from "~utils/types/file.type";
+import { FileType } from "~types/file.type";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
 export type UploadedResult = {

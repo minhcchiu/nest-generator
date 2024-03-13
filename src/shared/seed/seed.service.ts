@@ -10,9 +10,9 @@ import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";
 
+import { existsSync, readFileSync } from "fs";
 import { IEndpoint } from "./interfaces/endpoint.interface";
 import { IPermission } from "./interfaces/permission.interface";
-import { existsSync, readFileSync } from "fs";
 
 @Injectable()
 export class SeedService {

@@ -1,4 +1,4 @@
-import { LanguageEnum } from "src/enums/language.enum";
+import { LanguageEnum } from "~enums/language.enum";
 
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 

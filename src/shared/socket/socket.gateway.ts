@@ -13,10 +13,10 @@ import {
 	WebSocketServer,
 } from "@nestjs/websockets";
 
+import { SocketEvent } from "./enums/socket-event.enum";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
-import { SocketEvent } from "./enums/socket-event.enum";
 
 @UseFilters(WsExceptionsFilter)
 @WebSocketGateway(9898, {

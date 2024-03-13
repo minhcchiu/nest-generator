@@ -1,7 +1,7 @@
 import { hash } from "argon2";
 import { HydratedDocument } from "mongoose";
 import { Store } from "~routes/1-stores/schemas/store.schema";
-import { NullableType } from "~utils/types/nullable.type";
+import { NullableType } from "~types/nullable.type";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 

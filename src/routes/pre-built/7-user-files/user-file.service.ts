@@ -4,13 +4,13 @@ import { BaseService } from "~base-inherit/base.service";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
+import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
+import { LocalService } from "~shared/storage/local-storage/local.service";
+import { S3Service } from "~shared/storage/s3/s3.service";
+import { FileType } from "~types/file.type";
+import { StorageLocationEnum } from "../7-uploads/enum/store-location.enum";
 import { CreateUserFileDto } from "./dto/create-user-file.dto";
 import { UserFile, UserFileDocument } from "./schemas/user-file.schema";
-import { LocalService } from "~shared/storage/local-storage/local.service";
-import { StorageLocationEnum } from "../7-uploads/enum/store-location.enum";
-import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
-import { S3Service } from "~shared/storage/s3/s3.service";
-import { FileType } from "~utils/types/file.type";
 
 @Injectable()
 export class UserFileService extends BaseService<UserFileDocument> {

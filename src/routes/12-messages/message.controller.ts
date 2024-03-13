@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CreateMessageDto } from "./dto/create-message.dto";
 import { UpdateMessageDto } from "./dto/update-message.dto";
 import { MessageService } from "./message.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Messages")
 @Controller("categories")

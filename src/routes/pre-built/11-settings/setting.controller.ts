@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CreateSettingDto } from "./dto/create-setting.dto";
 import { UpdateSettingDto } from "./dto/update-setting.dto";
 import { SettingService } from "./setting.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Settings")
 @Controller("settings")

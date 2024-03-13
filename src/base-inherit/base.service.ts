@@ -1,4 +1,10 @@
 import {
+	CountOptions,
+	DeleteOptions,
+	DeleteResult,
+	UpdateOptions,
+} from "mongodb";
+import {
 	FilterQuery,
 	MongooseQueryOptions,
 	PaginateModel,
@@ -7,12 +13,6 @@ import {
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
 } from "mongoose";
-import {
-	UpdateOptions,
-	DeleteOptions,
-	CountOptions,
-	DeleteResult,
-} from "mongodb";
 
 import { PaginateOptions } from "./base.interface";
 

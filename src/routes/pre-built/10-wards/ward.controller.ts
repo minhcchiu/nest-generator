@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CreateWardDto } from "./dto/create-ward.dto";
 import { UpdateWardDto } from "./dto/update-ward.dto";
 import { WardService } from "./ward.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Wards")
 @Controller("wards")

@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { NullableType } from "~utils/types/nullable.type";
+import { NullableType } from "~types/nullable.type";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 

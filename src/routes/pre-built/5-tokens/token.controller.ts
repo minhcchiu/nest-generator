@@ -13,8 +13,8 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { TokenService } from "./token.service";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
+import { TokenService } from "./token.service";
 
 @ApiTags("Tokens")
 @Controller("tokens")

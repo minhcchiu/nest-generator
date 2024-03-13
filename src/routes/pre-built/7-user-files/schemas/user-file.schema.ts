@@ -2,7 +2,7 @@ import { HydratedDocument } from "mongoose";
 import { StorageLocationEnum } from "~routes/pre-built/7-uploads/enum/store-location.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { FileType } from "~utils/types/file.type";
+import { FileType } from "src/common/types/file.type";
 
 @Schema({
 	timestamps: true,

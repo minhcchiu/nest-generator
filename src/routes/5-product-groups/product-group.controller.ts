@@ -17,10 +17,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { CreateProductGroupDto } from "./dto/create-product-group.dto";
 import { UpdateProductGroupDto } from "./dto/update-product-group.dto";
 import { ProductGroupService } from "./product-group.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @ApiTags("Product Groups")
 @Controller("product_groups")

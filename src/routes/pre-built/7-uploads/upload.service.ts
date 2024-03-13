@@ -1,21 +1,24 @@
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
+import { FileType } from "~types/file.type";
 import { generateFileName, getFileExtension } from "~utils/file.util";
-import { FileType } from "~utils/types/file.type";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { StorageLocationEnum } from "./enum/store-location.enum";
-import { S3Service } from "~shared/storage/s3/s3.service";
-import { UploadedResult } from "./types/upload.result.type";
-import { UploadedError } from "./types/upload.error.type";
+import {
+	AppConfig,
+	appConfigName,
+} from "~configuration/environment/app.config";
 import {
 	FileOption,
 	UploadConfig,
 	uploadConfigName,
-} from "~config/environment/upload.config";
-import { AppConfig, appConfigName } from "~config/environment/app.config";
+} from "~configuration/environment/upload.config";
 import { LocalService } from "~shared/storage/local-storage/local.service";
+import { S3Service } from "~shared/storage/s3/s3.service";
+import { StorageLocationEnum } from "./enum/store-location.enum";
+import { UploadedError } from "./types/upload.error.type";
+import { UploadedResult } from "./types/upload.result.type";
 
 @Injectable()
 export class UploadService {

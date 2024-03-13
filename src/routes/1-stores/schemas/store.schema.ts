@@ -3,7 +3,7 @@ import { LocationDto } from "~dto/location.dto";
 import { Ward } from "~routes/pre-built/10-wards/schemas/ward.schema";
 import { Province } from "~routes/pre-built/8-provinces/schemas/province.schema";
 import { District } from "~routes/pre-built/9-districts/schemas/district.schema";
-import { NullableType } from "~utils/types/nullable.type";
+import { NullableType } from "~types/nullable.type";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
