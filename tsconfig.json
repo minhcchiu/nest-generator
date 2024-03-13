@@ -29,8 +29,8 @@
 			"~guards/*": ["src/common/guards/*"],
 			"~helpers/*": ["src/helpers/*"],
 			"~middlewares/*": ["src/middlewares/*"],
-			"~routes/*": ["src/routes/*"],
-			"~pre-built/*": ["src/routes/pre-built/*"],
+			"~modules/*": ["src/modules/*"],
+			"~pre-built/*": ["src/modules/pre-built/*"],
 			"~shared/*": ["src/shared/*"]
 		}
 	},

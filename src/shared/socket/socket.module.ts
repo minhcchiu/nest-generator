@@ -1,4 +1,4 @@
-import { TokenModule } from "~routes/pre-built/5-tokens/token.module";
+import { TokenModule } from "~modules/pre-built/5-tokens/token.module";
 
 import { Global, Module } from "@nestjs/common";
 

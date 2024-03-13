@@ -1,5 +1,5 @@
-import { Role } from "~routes/pre-built/1-users/enums/role.enum";
-import { HttpMethod } from "~routes/pre-built/2-endpoints/enum/http-method";
+import { Role } from "~pre-built/1-users/enums/role.enum";
+import { HttpMethod } from "~pre-built/2-endpoints/enum/http-method";
 
 export interface IEndpoint {
 	prefix: string;

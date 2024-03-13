@@ -2,10 +2,10 @@ import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
+import { PermissionService } from "~pre-built/2-permissions/permission.service";
+import { MenuService } from "~pre-built/3-menus/menu.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
-import { PermissionService } from "~routes/pre-built/2-permissions/permission.service";
-import { MenuService } from "~routes/pre-built/3-menus/menu.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";

@@ -1,6 +1,6 @@
 import { join } from "path";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
-import { RouteModules } from "~routes/route.modules";
+import { RouteModules } from "~modules/route.modules";
 import { FirebaseModule } from "~shared/firebase/firebase.module";
 import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
 import { SocketModule } from "~shared/socket/socket.module";
