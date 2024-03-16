@@ -1,12 +1,6 @@
-import {
-	CountOptions,
-	DeleteOptions,
-	DeleteResult,
-	UpdateOptions,
-} from "mongodb";
+import { DeleteResult } from "mongodb";
 import {
 	FilterQuery,
-	MongooseQueryOptions,
 	PaginateModel,
 	QueryOptions,
 	Types,
@@ -65,11 +59,7 @@ export class BaseService<T> {
 		return result;
 	}
 
-	async count(
-		filter: FilterQuery<T> = {},
-		options?: CountOptions &
-			Omit<MongooseQueryOptions<T>, "lean" | "timestamps">,
-	) {
+	async count(filter: FilterQuery<T> = {}, options?: any) {
 		const result = await this.model.countDocuments(filter, options);
 
 		return result;
@@ -104,7 +94,7 @@ export class BaseService<T> {
 	async updateMany(
 		filter: FilterQuery<T>,
 		input: UpdateQuery<T> | UpdateWithAggregationPipeline,
-		options?: (UpdateOptions & Omit<MongooseQueryOptions<T>, "lean">) | null,
+		options?: any,
 	) {
 		const updated = await this.model.updateMany(filter, input, options);
 
@@ -125,8 +115,7 @@ export class BaseService<T> {
 
 	async deleteMany(
 		filter: FilterQuery<T>,
-		options?: DeleteOptions &
-			Omit<MongooseQueryOptions<T>, "lean" | "timestamps">,
+		options?: any,
 	): Promise<DeleteResult> {
 		const deleted = await this.model.deleteMany(filter, options);
 
