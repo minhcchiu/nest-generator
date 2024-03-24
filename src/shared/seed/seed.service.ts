@@ -2,17 +2,17 @@ import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
+import { PermissionService } from "~pre-built/2-permissions/permission.service";
+import { MenuService } from "~pre-built/3-menus/menu.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
-import { PermissionService } from "~routes/pre-built/2-permissions/permission.service";
-import { MenuService } from "~routes/pre-built/3-menus/menu.service";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { Injectable } from "@nestjs/common";
 
+import { existsSync, readFileSync } from "fs";
 import { IEndpoint } from "./interfaces/endpoint.interface";
 import { IPermission } from "./interfaces/permission.interface";
-import { existsSync, readFileSync } from "fs";
 
 @Injectable()
 export class SeedService {
@@ -23,7 +23,7 @@ export class SeedService {
 		private permissionService: PermissionService,
 		private endpointService: EndpointService,
 		private menuService: MenuService,
-		private logger: CustomLogger,
+		private logger: CustomLoggerService,
 	) {}
 
 	async seedProvincesDistrictsWards() {
@@ -76,9 +76,8 @@ export class SeedService {
 						};
 
 						// Save district
-						const districtSaved = await this.districtService.create(
-							districtItem,
-						);
+						const districtSaved =
+							await this.districtService.create(districtItem);
 
 						// Get districtId
 						const districtId = districtSaved._id;

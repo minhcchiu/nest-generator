@@ -1,17 +1,16 @@
 import * as dayjs from "dayjs";
-import { CustomLogger } from "~shared/logger/logger.service";
 
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import {
-	MailerConfig,
-	mailerConfigName,
-} from "~config/environment/mailer.config";
-import {
 	ClientUrlConfig,
 	clientUrlConfigName,
-} from "~config/environment/client-url.config";
+} from "~configuration/environment/client-url.config";
+import {
+	MailerConfig,
+	mailerConfigName,
+} from "~configuration/environment/mailer.config";
 
 @Injectable()
 export class MailService {
@@ -21,7 +20,6 @@ export class MailService {
 	constructor(
 		private mailerService: MailerService,
 		private configService: ConfigService,
-		private readonly logger: CustomLogger,
 	) {
 		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
 		this.clientUrlConfig =
@@ -48,13 +46,7 @@ export class MailService {
 		};
 
 		// send mail
-		return this.sendMail(params).then((result) => {
-			this.logger.log(
-				`Send a OTP to email:"${to}" successfully!`,
-				MailService.name,
-			);
-			return result;
-		});
+		return this.sendMail(params);
 	}
 
 	async sendRegisterToken(
@@ -79,20 +71,7 @@ export class MailService {
 		};
 
 		// Send
-		return this.sendMail(options)
-			.then((result) => {
-				this.logger.log(
-					`Send a SIGNUP_TOKEN to email:"${to}" successfully!`,
-					MailService.name,
-				);
-				return result;
-			})
-			.catch((err) => {
-				this.logger.error(
-					[`Send a SIGNUP_TOKEN to email:"${to}" failure!`, err],
-					MailService.name,
-				);
-			});
+		return this.sendMail(options);
 	}
 
 	async sendForgotPasswordToken(
@@ -116,20 +95,6 @@ export class MailService {
 		};
 
 		// Send
-		return this.sendMail(options)
-			.then((result) => {
-				this.logger.log(
-					`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" successfully!`,
-					MailService.name,
-				);
-
-				return result;
-			})
-			.catch((err) => {
-				this.logger.log(
-					[`Send a FORGOT_PASSWORD_TOKEN to email:"${to}" failure!`, err],
-					MailService.name,
-				);
-			});
+		return this.sendMail(options);
 	}
 }

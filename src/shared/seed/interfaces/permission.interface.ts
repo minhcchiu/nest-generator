@@ -1,4 +1,4 @@
-import { Role } from "~routes/pre-built/1-users/enums/role.enum";
+import { Role } from "~pre-built/1-users/enums/role.enum";
 
 export interface IPermission {
 	prefix: string;

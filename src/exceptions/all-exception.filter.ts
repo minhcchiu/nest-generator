@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { writeErrorLogToFile } from "~helpers/write-error-log-to-file";
+import { writeExceptionLogToFile } from "~helpers/write-exception-log-to-file";
 
 import {
 	ArgumentsHost,
@@ -87,7 +87,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		};
 
 		this.logException(exceptionResponse?.stack);
-		writeErrorLogToFile(exceptionResponse);
+		writeExceptionLogToFile(exceptionResponse);
 
 		return response
 			.status(exceptionResponse.statusCode)

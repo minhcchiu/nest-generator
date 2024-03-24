@@ -2,7 +2,10 @@ import { Redis } from "ioredis";
 
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { RedisConfig, redisConfigName } from "~config/environment/redis.config";
+import {
+	RedisConfig,
+	redisConfigName,
+} from "~configuration/environment/redis.config";
 
 @Injectable()
 export class RedisFeatureService {
@@ -14,7 +17,7 @@ export class RedisFeatureService {
 	isSubscribed = false;
 
 	constructor(private readonly configService: ConfigService) {
-		this.redisConfig = configService.get<RedisConfig>(redisConfigName);
+		this.redisConfig = this.configService.get<RedisConfig>(redisConfigName);
 	}
 
 	initRedis() {

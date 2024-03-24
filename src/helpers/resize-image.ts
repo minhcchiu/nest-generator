@@ -64,4 +64,4 @@ const resizeGIF = async (
 	return semiTransparentRedPng;
 };
 
-export { resizePNG, resizeJPG, resizeGIF };
+export { resizeGIF, resizeJPG, resizePNG };

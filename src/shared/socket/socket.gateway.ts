@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
-import { CustomLogger } from "~shared/logger/logger.service";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 import { UseFilters } from "@nestjs/common";
 import {
@@ -13,10 +13,10 @@ import {
 	WebSocketServer,
 } from "@nestjs/websockets";
 
+import { SocketEvent } from "./enums/socket-event.enum";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
-import { SocketEvent } from "./enums/socket-event.enum";
 
 @UseFilters(WsExceptionsFilter)
 @WebSocketGateway(9898, {
@@ -32,7 +32,7 @@ export class SocketGateway
 
 	constructor(
 		private readonly socketService: SocketService,
-		private logger: CustomLogger,
+		private logger: CustomLoggerService,
 	) {}
 
 	afterInit() {

@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { FileType } from "~utils/types/file.type";
-import { rmSync, writeFileSync } from "fs";
 import { ConfigService } from "@nestjs/config";
-import { AppConfig, appConfigName } from "~config/environment/app.config";
+import { rmSync, writeFileSync } from "fs";
+import {
+	AppConfig,
+	appConfigName,
+} from "~configuration/environment/app.config";
+import { FileType } from "~types/file.type";
 
 @Injectable()
 export class LocalService {

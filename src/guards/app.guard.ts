@@ -1,9 +1,9 @@
 import { Request } from "express";
 import { IS_PUBLIC_KEY } from "~decorators/public.decorator";
+import { Role } from "~pre-built/1-users/enums/role.enum";
 import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
+import { HttpMethod } from "~pre-built/2-endpoints/enum/http-method";
 import { TokenService } from "~pre-built/5-tokens/token.service";
-import { Role } from "~routes/pre-built/1-users/enums/role.enum";
-import { HttpMethod } from "~routes/pre-built/2-endpoints/enum/http-method";
 import { CacheService } from "~shared/cache/cache.service.";
 
 import {

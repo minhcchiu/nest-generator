@@ -5,11 +5,11 @@ WORKDIR /home/app
 
 COPY package*.json ./
 
-RUN yarn install --force && yarn cache clean --force
+RUN npm install --force && npm cache clean --force
 
 COPY . .
 
-RUN yarn build
+RUN npm build
 
 # Stage 2: Production
 FROM node:21.5.0 as production
@@ -21,7 +21,7 @@ WORKDIR /home/app
 
 COPY package*.json ./
 
-RUN yarn install --omit=dev --force && yarn cache clean --force
+RUN npm install --omit=dev --force && npm cache clean --force
 
 COPY --from=builder /home/app/dist ./dist
 COPY --from=builder /home/app/.env .
