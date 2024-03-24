@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetLanguage } from "~decorators/language.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { LanguageEnum } from "~enums/language.enum";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
@@ -33,7 +33,7 @@ export class NotificationController {
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(
-		@GetAqp() { filter, ...options }: AqpDto,
+		@GetAqp() { filter, ...options }: PaginationDto,
 		@GetLanguage() language: LanguageEnum,
 	) {
 		const pagination = await this.notificationService.paginate(filter, options);
@@ -48,7 +48,7 @@ export class NotificationController {
 	@ApiBearerAuth()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.notificationService.count(filter);
 	}
 
@@ -57,7 +57,7 @@ export class NotificationController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 		@GetLanguage() language: LanguageEnum,
 	) {
 		const notification = await this.notificationService.findById(id, {

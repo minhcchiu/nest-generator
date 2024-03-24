@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
@@ -34,7 +34,7 @@ export class UserController {
 	@ApiBearerAuth()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userService.findMany(filter, options);
 	}
 
@@ -43,7 +43,7 @@ export class UserController {
 	@HttpCode(HttpStatus.OK)
 	async getMe(
 		@GetCurrentUserId() id: string,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.userService.findById(stringIdToObjectId(id), {
 			projection,
@@ -54,7 +54,7 @@ export class UserController {
 	@ApiBearerAuth()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userService.paginate(filter, options);
 	}
 
@@ -64,7 +64,7 @@ export class UserController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.userService.findById(id, { projection, populate });
 	}

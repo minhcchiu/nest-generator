@@ -8,7 +8,7 @@ import {
 } from "class-validator";
 import { PopulateOptions } from "mongoose";
 
-export class AqpDto {
+export class PaginationDto {
 	@IsOptional()
 	filter?: any;
 

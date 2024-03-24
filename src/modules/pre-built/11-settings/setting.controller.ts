@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -31,7 +31,7 @@ export class SettingController {
 	@Public()
 	@Get("one")
 	@HttpCode(HttpStatus.OK)
-	async findOne(@GetAqp() { filter, ...options }: AqpDto) {
+	async findOne(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.settingService.findOne(filter, options);
 	}
 
@@ -40,7 +40,7 @@ export class SettingController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.settingService.findById(id, { projection, populate });
 	}

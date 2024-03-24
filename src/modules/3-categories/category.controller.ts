@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -33,14 +33,14 @@ export class CategoryController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.categoryService.findMany(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.categoryService.count(filter);
 	}
 
@@ -49,7 +49,7 @@ export class CategoryController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.categoryService.findById(id, { projection, populate });
 	}

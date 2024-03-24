@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -53,7 +53,7 @@ export class CartController {
 	@Get(":userId/user")
 	async findOne(
 		@GetCurrentUserId() userId: string,
-		@GetAqp() { filter, populate, projection }: AqpDto,
+		@GetAqp() { filter, populate, projection }: PaginationDto,
 	) {
 		return this.cartService.findOne(
 			{ ...filter, userId },
@@ -67,7 +67,7 @@ export class CartController {
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.cartService.count(filter);
 	}
 }
