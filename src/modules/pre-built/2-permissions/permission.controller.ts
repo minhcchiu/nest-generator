@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -32,20 +32,20 @@ export class PermissionController {
 	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get()
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.permissionService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()
 	@ApiQueryParams()
 	@Get("paginate")
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.permissionService.paginate(filter, options);
 	}
 
 	@ApiBearerAuth()
 	@Get("count")
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.permissionService.count(filter);
 	}
 
@@ -54,7 +54,7 @@ export class PermissionController {
 	@Get(":id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.permissionService.findById(id, { projection, populate });
 	}

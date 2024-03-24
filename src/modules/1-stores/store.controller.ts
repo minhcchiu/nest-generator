@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -32,21 +32,21 @@ export class StoreController {
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.storeService.findMany(filter, options);
 	}
 
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.storeService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.storeService.count(filter);
 	}
 
@@ -56,7 +56,7 @@ export class StoreController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.storeService.findById(id, { projection, populate });
 	}

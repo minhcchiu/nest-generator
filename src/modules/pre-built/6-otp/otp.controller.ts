@@ -1,5 +1,5 @@
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 
 import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -14,7 +14,7 @@ export class OtpController {
 	@ApiBearerAuth()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.otpService.findMany(filter, options);
 	}
 }

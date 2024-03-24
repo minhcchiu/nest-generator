@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -31,14 +31,14 @@ export class ReviewController {
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.reviewService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.reviewService.count(filter);
 	}
 
@@ -47,7 +47,7 @@ export class ReviewController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.reviewService.findById(id, { projection, populate });
 	}

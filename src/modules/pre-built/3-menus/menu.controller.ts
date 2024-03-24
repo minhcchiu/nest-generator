@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
@@ -29,19 +29,19 @@ export class MenuController {
 	//  ----- Method: GET -----
 	@ApiBearerAuth()
 	@Get()
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.menuService.findMany(filter, options);
 	}
 
 	@ApiBearerAuth()
 	@Get("paginate")
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.menuService.paginate(filter, options);
 	}
 
 	@ApiBearerAuth()
 	@Get("count")
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.menuService.count(filter);
 	}
 
@@ -49,7 +49,7 @@ export class MenuController {
 	@Get(":id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.menuService.findById(id, { projection, populate });
 	}

@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUser } from "~decorators/get-current-user";
 import { Public } from "~decorators/public.decorator";
-import { AqpDto } from "~dto/aqp.dto";
+import { PaginationDto } from "~dto/pagination.dto";
 import { TokenPayload } from "~pre-built/5-tokens/interface";
 import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
@@ -33,7 +33,7 @@ export class CommentController {
 	@HttpCode(HttpStatus.OK)
 	@Public()
 	@Get()
-	async findMany(@GetAqp() { filter, ...options }: AqpDto) {
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.commentService.findMany(filter, options);
 	}
 
@@ -77,14 +77,14 @@ export class CommentController {
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: AqpDto) {
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.commentService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: AqpDto) {
+	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.commentService.count(filter);
 	}
 
@@ -93,7 +93,7 @@ export class CommentController {
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: AqpDto,
+		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.commentService.findById(id, { projection, populate });
 	}

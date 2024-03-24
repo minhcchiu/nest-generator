@@ -7,7 +7,7 @@ import {
 	NestMiddleware,
 } from "@nestjs/common";
 
-import { AqpDto } from "../common/dto/aqp.dto";
+import { PaginationDto } from "../common/dto/pagination.dto";
 import { aqpValidatorDto } from "./validator/aqp.validator";
 
 // BLACK LIST
@@ -31,7 +31,7 @@ export class AqpMiddleware implements NestMiddleware {
 
 		// Validate params
 		try {
-			await aqpValidatorDto(AqpDto, { ...query, populate, page });
+			await aqpValidatorDto(PaginationDto, { ...query, populate, page });
 		} catch (e) {
 			next(new BadRequestException(e.message));
 		}
