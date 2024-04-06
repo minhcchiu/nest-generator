@@ -1,18 +1,15 @@
-import * as dayjs from "dayjs";
-
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import {
-	ClientUrlConfig,
-	clientUrlConfigName,
-} from "~configuration/environment/client-url.config";
+import { differenceInMinutes } from "date-fns";
+import { AppConfig } from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
 import { MailerConfig } from "./config/mail-config.type";
 import { mailerConfigName } from "./config/mail.config";
 
 @Injectable()
 export class MailService {
-	private clientUrlConfig: ClientUrlConfig;
+	private appConfig: AppConfig;
 	private mailerConfig: MailerConfig;
 
 	constructor(
@@ -20,8 +17,7 @@ export class MailService {
 		private configService: ConfigService,
 	) {
 		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
-		this.clientUrlConfig =
-			this.configService.get<ClientUrlConfig>(clientUrlConfigName);
+		this.appConfig = this.configService.get<AppConfig>(appConfigName);
 	}
 
 	sendMail(options: ISendMailOptions) {
@@ -53,10 +49,9 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.mailerConfig;
-		const { verifyAccountUrl } = this.clientUrlConfig;
+		const { verifyAccountUrl } = this.appConfig;
 
-		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
-
+		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const verificationLink = `${verifyAccountUrl}?token=${body.token}`;
 
 		// options
@@ -78,9 +73,9 @@ export class MailService {
 		from?: string,
 	) {
 		const { name, defaults } = this.mailerConfig;
-		const { resetPasswordUrl } = this.clientUrlConfig;
+		const { resetPasswordUrl } = this.appConfig;
 
-		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
+		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;
 
 		// options

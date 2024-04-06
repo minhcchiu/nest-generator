@@ -2,10 +2,8 @@ import { Logger, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 
-import {
-	DatabaseConfig,
-	databaseConfigName,
-} from "~configuration/environment/database.config";
+import { DatabaseConfig } from "./config/database-config.type";
+import { databaseConfigName } from "./config/database.config";
 import { mongoosePaginateV2 } from "./mongoose-paginate.config";
 
 @Module({

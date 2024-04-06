@@ -3,15 +3,15 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Readable } from "stream";
+
 import {
 	AppConfig,
-	appConfigName,
-} from "~configuration/environment/app.config";
-import {
-	AwsConfig,
-	awsConfigName,
-} from "~configuration/environment/aws.config";
+	StorageServerEnum,
+} from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+import { AwsConfig } from "./config/aws-config.type";
+import { awsConfigName } from "./config/aws.config";
 
 @Injectable()
 export class S3Service {
@@ -30,20 +30,21 @@ export class S3Service {
 	}
 
 	initS3() {
-		if (this.appConfig.storageServer === "S3") {
-			this.s3Client = new S3Client({
-				region: this.awsConfig.region,
-				endpoint: this.awsConfig.endpoint,
-				credentials: {
-					accessKeyId: this.awsConfig.accessKeyId,
-					secretAccessKey: this.awsConfig.secretAccessKey,
-				},
-			});
-
-			this.logger.log("S3Module init success", S3Service.name);
-		} else {
+		if (this.appConfig.storageServer !== StorageServerEnum.S3) {
 			this.logger.warn("S3Module module was not initialized", S3Service.name);
+			return;
 		}
+
+		this.s3Client = new S3Client({
+			region: this.awsConfig.region,
+			endpoint: this.awsConfig.endpoint,
+			credentials: {
+				accessKeyId: this.awsConfig.accessKeyId,
+				secretAccessKey: this.awsConfig.secretAccessKey,
+			},
+		});
+
+		this.logger.log("S3Module init success", S3Service.name);
 	}
 
 	async upload(file: { fileName: string; fileFolder: string; buffer: Buffer }) {

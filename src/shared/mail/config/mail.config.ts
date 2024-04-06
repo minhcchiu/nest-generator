@@ -12,8 +12,6 @@ import { MailerConfig } from "./mail-config.type";
 
 export const mailerConfigName = "mailer";
 
-export const redisConfigName = "redis";
-
 export enum MailServerEnum {
 	Gmail = "gmail",
 	Sendgrid = "sendgrid",

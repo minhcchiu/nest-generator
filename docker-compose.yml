@@ -9,5 +9,5 @@ services:
     volumes:
       - .:/home/app
     environment:
-      NODE_ENV: "PRODUCTION"
+      SERVER_ENV: "PRODUCTION"
     restart: always

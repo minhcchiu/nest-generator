@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { FilterQuery, Model, QueryOptions } from "mongoose";
 import { generateOTP } from "~helpers/generate-otp";
 import { MailService } from "~shared/mail/mail.service";
@@ -12,15 +11,11 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 
-import {
-	AppConfig,
-	NodeEnv,
-	appConfigName,
-} from "~configuration/environment/app.config";
-import {
-	OtpConfig,
-	otpConfigName,
-} from "~configuration/environment/otp.config";
+import { differenceInSeconds } from "date-fns";
+import { AppConfig, NodeEnv } from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
+import { OtpConfig } from "./config/otp-config.type";
+import { otpConfigName } from "./config/otp.config";
 import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { OtpType } from "./enums/otp-type";
@@ -125,7 +120,7 @@ export class OtpService {
 	 * @returns
 	 */
 	private _validateTimeResendOtp(updatedAt: string) {
-		const secondsLeft = dayjs().diff(dayjs(updatedAt), "second");
+		const secondsLeft = differenceInSeconds(new Date(), new Date(updatedAt));
 		const isValidTime = secondsLeft < 10;
 
 		if (isValidTime) {

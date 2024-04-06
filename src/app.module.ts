@@ -15,13 +15,13 @@ import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
-import { ConfigurationModule } from "~configuration/configuration.module";
-import { DatabaseModule } from "~configuration/database/database.module";
 import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
 import { S3Module } from "~shared/storage/s3/s3.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CommonModule } from "./common/common.module";
+import { DatabaseModule } from "./common/database/database.module";
+import { ConfigurationModule } from "./configurations/configuration.module";
 import { AppGuard } from "./guards/app.guard";
 import { CacheService } from "./shared/cache/cache.service.";
 import { LoggingInterceptor } from "./shared/interceptors";

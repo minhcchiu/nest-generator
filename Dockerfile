@@ -14,8 +14,8 @@ RUN npm build
 # Stage 2: Production
 FROM node:21.5.0 as production
 
-ARG NODE_ENV=PRODUCTION
-ENV NODE_ENV=${NODE_ENV}
+ARG SERVER_ENV=PRODUCTION
+ENV SERVER_ENV=${SERVER_ENV}
 
 WORKDIR /home/app
 

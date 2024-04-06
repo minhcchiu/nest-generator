@@ -7,15 +7,13 @@ import { ConfigService } from "@nestjs/config";
 
 import {
 	AppConfig,
-	appConfigName,
-} from "~configuration/environment/app.config";
-import {
-	FileOption,
-	UploadConfig,
-	uploadConfigName,
-} from "~configuration/environment/upload.config";
+	StorageServerEnum,
+} from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
 import { LocalService } from "~shared/storage/local-storage/local.service";
 import { S3Service } from "~shared/storage/s3/s3.service";
+import { FileOption, UploadConfig } from "./config/upload-config.type";
+import { uploadConfigName } from "./config/upload.config";
 import { StorageLocationEnum } from "./enum/store-location.enum";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
@@ -51,13 +49,13 @@ export class UploadService {
 		file: Express.Multer.File,
 	): Promise<UploadedResult | UploadedError> {
 		switch (this.appConfig.storageServer) {
-			case "S3":
+			case StorageServerEnum.S3:
 				return this._uploadToS3(file);
 
-			case "CLOUDINARY":
+			case StorageServerEnum.Cloudinary:
 				return this._uploadToCloudinary(file);
 
-			case "LOCAL":
+			case StorageServerEnum.Local:
 				return this._uploadToLocal(file);
 
 			default:

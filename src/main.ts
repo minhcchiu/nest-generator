@@ -1,13 +1,10 @@
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
-import {
-	AppConfig,
-	appConfigName,
-} from "~configuration/environment/app.config";
 import { AppModule } from "./app.module";
+import { AppConfig } from "./configurations/app-config.type";
+import { appConfigName } from "./configurations/app.config";
 import { SeedService } from "./shared/seed/seed.service";
 
 async function bootstrap() {
@@ -33,20 +30,24 @@ async function bootstrap() {
 	// app.useGlobalFilters(new AllExceptionsFilter());
 
 	// Config swagger
-	const config = new DocumentBuilder()
-		.setTitle("NestA 2023")
-		.setVersion("1.0")
-		.addBearerAuth()
-		.build();
+	// const config = new DocumentBuilder()
+	// 	.setTitle("NestA 2023")
+	// 	.setVersion("1.0")
+	// 	.addBearerAuth()
+	// 	.build();
 
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup("api", app, document);
+	// const document = SwaggerModule.createDocument(app, config);
+	// SwaggerModule.setup("api", app, document);
 
 	// Server run at port
 	const configService = app.get(ConfigService);
-	const { port, nodeEnv } = configService.get<AppConfig>(appConfigName);
-	await app.listen(port, () =>
-		Logger.log(`Server running in ${nodeEnv} mode on port ${port}`, "Main"),
+	const appConfig = configService.get<AppConfig>(appConfigName);
+
+	await app.listen(appConfig.port, () =>
+		Logger.log(
+			`Server running in ${appConfig.nodeEnv} mode on port ${appConfig.port}`,
+			"Main",
+		),
 	);
 
 	// Get a list of all the registered routes

@@ -1,11 +1,11 @@
 # Config app environment variable
 # DEVELOPMENT | PRODUCTION
-export APP_NAME=NestA
-export NODE_ENV=DEVELOPMENT
-export APP_PORT=8888
+export SERVER_NAME=NestA
+export SERVER_ENV=DEVELOPMENT
+export SERVER_PORT=8888
 
 # CLIENT URL
-export APP_URL=http://localhost:8888 
+export SERVER_URL=http://localhost:8888 
 
 # URL of the Mongo DB
 # export MONGODB_URL="mongodb://127.0.0.1:27017/node-boilerplate"

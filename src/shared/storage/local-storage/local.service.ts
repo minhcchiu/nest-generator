@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { rmSync, writeFileSync } from "fs";
-import {
-	AppConfig,
-	appConfigName,
-} from "~configuration/environment/app.config";
+import { AppConfig } from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
+
 import { FileType } from "~types/file.type";
 
 @Injectable()
@@ -28,7 +27,7 @@ export class LocalService {
 		writeFileSync(localFilePath, file.buffer);
 
 		return {
-			url: `${this.appConfig.appUrl}/${localFilePath}`,
+			url: `${this.appConfig.serverUrl}/${localFilePath}`,
 			folder: file.fileFolder,
 			fileName: file.fileName,
 			type: file.fileType,

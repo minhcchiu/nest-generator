@@ -5,14 +5,14 @@ import { FileType } from "~types/file.type";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { removeFileExtension } from "src/utils/file.util";
+
 import {
 	AppConfig,
-	appConfigName,
-} from "~configuration/environment/app.config";
-import {
-	CloudinaryConfig,
-	cloudinaryConfigName,
-} from "~configuration/environment/cloudinary.config";
+	StorageServerEnum,
+} from "src/configurations/app-config.type";
+import { appConfigName } from "src/configurations/app.config";
+import { CloudinaryConfig } from "./config/cloudinary-config.type";
+import { cloudinaryConfigName } from "./config/cloudinary.config";
 
 @Injectable()
 export class CloudinaryService {
@@ -31,16 +31,18 @@ export class CloudinaryService {
 	}
 
 	initCloudinary() {
-		if (this.appConfig.storageServer === "CLOUDINARY") {
-			v2.config(this.cloudinaryConfig.config);
-
-			this.logger.log("CloudinaryModule init success", CloudinaryService.name);
-		} else {
+		if (this.appConfig.storageServer !== StorageServerEnum.Cloudinary) {
 			this.logger.warn(
 				"CloudinaryModule module was not init",
 				CloudinaryService.name,
 			);
+
+			return;
 		}
+
+		v2.config(this.cloudinaryConfig.config);
+
+		this.logger.log("CloudinaryModule init success", CloudinaryService.name);
 	}
 
 	uploadStream(file: {

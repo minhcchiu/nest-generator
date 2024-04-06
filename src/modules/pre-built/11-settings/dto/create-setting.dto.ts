@@ -11,7 +11,7 @@ export class CreateSettingDto {
 	@ApiProperty({ required: false, description: "Name of the application" })
 	@IsOptional()
 	@IsString()
-	appName: string;
+	serverName: string;
 
 	@ApiProperty({
 		required: false,

@@ -12,7 +12,7 @@ export class Setting {
 	logoUrl: string;
 
 	@Prop({ type: String, default: "" })
-	appName: string;
+	serverName: string;
 
 	@Prop({ type: String, default: "" })
 	termsOfUse: string;
