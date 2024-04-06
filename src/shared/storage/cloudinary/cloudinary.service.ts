@@ -4,6 +4,7 @@ import { FileType } from "~types/file.type";
 
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { removeFileExtension } from "src/utils/file.util";
 import {
 	AppConfig,
 	appConfigName,
@@ -12,7 +13,6 @@ import {
 	CloudinaryConfig,
 	cloudinaryConfigName,
 } from "~configuration/environment/cloudinary.config";
-import { removeFileExtension } from "~utils/file.util";
 
 @Injectable()
 export class CloudinaryService {

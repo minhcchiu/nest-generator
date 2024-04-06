@@ -6,11 +6,9 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
 
-import {
-	JWTConfig,
-	jwtConfigName,
-} from "~configuration/environment/jwt.config";
 import { User } from "../1-users/schemas/user.schema";
+import { JWTConfig } from "./config/jwt-config.type";
+import { jwtConfigName } from "./config/jwt.config";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 

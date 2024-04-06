@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
 import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
 	Body,
@@ -18,7 +18,7 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
+import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { PermissionService } from "../2-permissions/permission.service";
 import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";

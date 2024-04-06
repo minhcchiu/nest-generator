@@ -7,10 +7,8 @@ import {
 	ClientUrlConfig,
 	clientUrlConfigName,
 } from "~configuration/environment/client-url.config";
-import {
-	MailerConfig,
-	mailerConfigName,
-} from "~configuration/environment/mailer.config";
+import { MailerConfig } from "./config/mail-config.type";
+import { mailerConfigName } from "./config/mail.config";
 
 @Injectable()
 export class MailService {

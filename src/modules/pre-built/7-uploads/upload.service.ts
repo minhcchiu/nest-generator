@@ -1,6 +1,6 @@
+import { generateFileName, getFileExtension } from "src/utils/file.util";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { FileType } from "~types/file.type";
-import { generateFileName, getFileExtension } from "~utils/file.util";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";

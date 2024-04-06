@@ -5,10 +5,8 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import {
-	MailerConfig,
-	mailerConfigName,
-} from "~configuration/environment/mailer.config";
+import { MailerConfig } from "./config/mail-config.type";
+import { mailerConfigName } from "./config/mail.config";
 import { MailService } from "./mail.service";
 
 @Module({
@@ -17,6 +15,7 @@ import { MailService } from "./mail.service";
 			useFactory: async (config: ConfigService) => {
 				const { transport, defaults } =
 					config.get<MailerConfig>(mailerConfigName);
+
 				// return options
 				const options = {
 					transport: transport.gmail,
