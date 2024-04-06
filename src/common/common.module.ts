@@ -1,7 +1,7 @@
 import { Module, ValidationPipe } from "@nestjs/common";
 import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { AllExceptionsFilter } from "~exceptions/all-exception.filter";
-import { VALIDATION_PIPE_OPTIONS } from "./utils/common.constants";
+import { VALIDATION_PIPE_OPTIONS } from "../utils/common.constants";
 
 @Module({
 	providers: [

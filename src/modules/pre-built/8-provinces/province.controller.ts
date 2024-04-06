@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
 
 import {
 	Body,
@@ -17,7 +17,7 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
+import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
 import { ProvinceService } from "./province.service";

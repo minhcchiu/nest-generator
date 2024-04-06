@@ -23,7 +23,7 @@
 			"~decorators/*": ["src/common/decorators/*"],
 			"~enums/*": ["src/common/enums/*"],
 			"~dto/*": ["src/common/dto/*"],
-			"~utils/*": ["src/common/utils/*"],
+			"~utils/*": ["src/utils/*"],
 			"~configuration/*": ["src/configuration/*"],
 			"~exceptions/*": ["src/exceptions/*"],
 			"~guards/*": ["src/common/guards/*"],
