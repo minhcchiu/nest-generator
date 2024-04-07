@@ -5,17 +5,17 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
-import { Role } from "~pre-built/1-users/enums/role.enum";
 
 import { ApiProperty } from "@nestjs/swagger";
 
+import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
 import { HttpMethod } from "../enum/http-method";
 
 export class CreateEndpointDto {
 	@ApiProperty({ required: false })
 	@IsOptional()
 	@IsString()
-	readonly prefix: string;
+	readonly collectionName: string;
 
 	@ApiProperty({ required: false })
 	@IsOptional()
@@ -37,13 +37,13 @@ export class CreateEndpointDto {
 	readonly description?: string;
 
 	@ApiProperty({
-		enum: Role,
+		enum: RoleEnum,
 		isArray: true,
 		required: false,
 	})
 	@IsArray()
-	@IsEnum(Role, { each: true })
-	readonly userRoles: Role[];
+	@IsEnum(RoleEnum, { each: true })
+	readonly userRoles: RoleEnum[];
 
 	@IsOptional()
 	@IsBoolean()

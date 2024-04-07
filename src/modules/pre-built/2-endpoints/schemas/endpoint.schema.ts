@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { Role } from "~pre-built/1-users/enums/role.enum";
+import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
@@ -12,7 +12,7 @@ import { HttpMethod } from "../enum/http-method";
 })
 export class Endpoint {
 	@Prop({ type: String, default: "#" })
-	readonly prefix: string;
+	readonly collectionName: string;
 
 	@Prop({ type: String, default: "" })
 	readonly name: string;
@@ -27,10 +27,10 @@ export class Endpoint {
 	readonly description?: string;
 
 	@Prop({
-		type: [{ type: String, enum: Role }],
-		default: [Role.SUPER_ADMIN, Role.USER],
+		type: [{ type: String, enum: RoleEnum }],
+		default: [RoleEnum.SupperAdmin, RoleEnum.User],
 	})
-	readonly userRoles: Role[];
+	readonly userRoles: RoleEnum[];
 
 	@Prop({ type: Boolean, default: false })
 	readonly isPublic: boolean;

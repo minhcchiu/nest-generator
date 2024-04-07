@@ -19,7 +19,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { Role } from "../enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 
 export class CreateUserDto {
 	@ApiProperty({ required: false })
@@ -85,11 +85,11 @@ export class CreateUserDto {
 	@IsMongoId({ each: true })
 	favoriteStores: string[];
 
-	@ApiProperty({ enum: Role, isArray: true, required: false })
+	@ApiProperty({ enum: RoleEnum, isArray: true, required: false })
 	@IsOptional()
 	@IsArray()
-	@IsEnum(Role, { each: true })
-	roles?: Role[];
+	@IsEnum(RoleEnum, { each: true })
+	roles?: RoleEnum[];
 
 	@ApiProperty({ enum: AccountStatus, required: false })
 	@IsOptional()

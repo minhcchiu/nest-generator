@@ -1,10 +1,10 @@
-import { Role } from "~pre-built/1-users/enums/role.enum";
+import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 
 export interface IPermission {
-	prefix: string;
+	collectionName: string;
 	name: string;
 	endpoints?: string[];
 	description?: string;
-	roles?: Role[];
+	roles?: RoleEnum[];
 	position: number;
 }

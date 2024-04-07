@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { Role } from "~pre-built/1-users/enums/role.enum";
+import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
@@ -18,7 +18,7 @@ export class Menu {
 	readonly name: string;
 
 	@Prop({ type: String, default: "" })
-	readonly prefix: string;
+	readonly collectionName: string;
 
 	@Prop({ type: String, default: "" })
 	readonly icon: string;
@@ -39,10 +39,10 @@ export class Menu {
 	readonly isActive: boolean;
 
 	@Prop({
-		type: [{ type: String, enum: Role }],
-		default: [Role.SUPER_ADMIN, Role.USER],
+		type: [{ type: String, enum: RoleEnum }],
+		default: [RoleEnum.SupperAdmin, RoleEnum.User],
 	})
-	readonly roles: Role[];
+	readonly roles: RoleEnum[];
 }
 
 export type MenuDocument = HydratedDocument<Menu>;

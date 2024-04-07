@@ -1,5 +1,5 @@
 import { GenderEnum } from "../enums/gender.enum";
-import { Role } from "../enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 
 export interface IUser {
 	password: string;
@@ -9,5 +9,5 @@ export interface IUser {
 	fullName: string;
 	gender?: GenderEnum;
 	dateOfBirth?: number;
-	roles: Role[];
+	roles: RoleEnum[];
 }

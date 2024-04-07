@@ -110,24 +110,28 @@ export class SeedService {
 
 	async seedEndpoints(routerStacks: any[]) {
 		const permissionsMap = new Map<string, IPermission>();
-
 		const endpointsMap = new Map<string, IEndpoint>();
 
 		routerStacks
 			.filter(({ route }) => route && route.path)
 			.forEach(({ route }) => {
 				const path = removeTrailingSlash(route.path);
-				const prefix = path.split("/")[2] || "#";
+				const collectionName = path.split("/")[2]?.replace("_", "") || "#";
 				const method = route.stack[0]?.method?.toUpperCase();
 
-				const endpointItem: IEndpoint = { method, path, prefix, name: prefix };
+				const endpointItem: IEndpoint = {
+					method,
+					path,
+					collectionName,
+					name: collectionName,
+				};
 				const endpointKey = `${endpointItem.method}-${endpointItem.path}`;
 
-				if (!permissionsMap.has(prefix)) {
-					permissionsMap.set(prefix, {
-						prefix,
+				if (!permissionsMap.has(collectionName)) {
+					permissionsMap.set(collectionName, {
+						collectionName,
 						position: permissionsMap.size + 1,
-						name: prefix,
+						name: collectionName,
 					});
 				}
 
@@ -158,7 +162,7 @@ export class SeedService {
 				const endpointDoc = await this.endpointService.create(endpoint);
 
 				await this.permissionService.updateOne(
-					{ prefix: endpointDoc.prefix },
+					{ collectionName: endpointDoc.collectionName },
 					{ $addToSet: { endpoints: endpointDoc._id } },
 				);
 			}
@@ -168,20 +172,24 @@ export class SeedService {
 	private async _createPermissionsAndMenusFromMap(
 		permissionsMap: Map<string, IPermission>,
 	) {
-		permissionsMap.forEach(async ({ prefix, position }) => {
+		permissionsMap.forEach(async ({ collectionName, position }) => {
 			const [permissionExist, menuExist] = await Promise.all([
-				this.permissionService.count({ prefix }),
-				this.menuService.count({ prefix }),
+				this.permissionService.count({ collectionName }),
+				this.menuService.count({ collectionName }),
 			]);
 
-			const permissionItem: IPermission = { prefix, name: prefix, position };
+			const permissionItem: IPermission = {
+				collectionName,
+				name: collectionName,
+				position,
+			};
 
 			const menuItem = {
-				prefix,
-				name: prefix,
+				collectionName,
+				name: collectionName,
 				level: 1,
 				position,
-				url: `${prefix}`,
+				url: `${collectionName}`,
 				isHorizontal: false,
 				isActive: true,
 			};

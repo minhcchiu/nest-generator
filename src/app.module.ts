@@ -10,21 +10,23 @@ import {
 	Module,
 	NestModule,
 	RequestMethod,
+	ValidationPipe,
 } from "@nestjs/common";
-import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { AllExceptionsFilter } from "~exceptions/all-exception.filter";
+import { LoggingInterceptor } from "~shared/interceptors";
 import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
 import { S3Module } from "~shared/storage/s3/s3.module";
+import { VALIDATION_PIPE_OPTIONS } from "~utils/common.constants";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { CommonModule } from "./common/common.module";
 import { DatabaseModule } from "./common/database/database.module";
 import { ConfigurationModule } from "./configurations/configuration.module";
 import { AppGuard } from "./guards/app.guard";
 import { CacheService } from "./shared/cache/cache.service.";
-import { LoggingInterceptor } from "./shared/interceptors";
 import { CustomLoggerModule } from "./shared/logger/custom-logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
@@ -38,10 +40,9 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 			serveRoot: "/public",
 		}),
 
-		ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
+		ThrottlerModule.forRoot([{ ttl: 60, limit: 10 }]),
 
 		ConfigurationModule,
-		CommonModule,
 		DatabaseModule,
 		SeedModule,
 		CustomLoggerModule,
@@ -60,6 +61,14 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 		AppService,
 		CacheService,
 		RedisFeatureService,
+		{
+			provide: APP_PIPE,
+			useValue: new ValidationPipe(VALIDATION_PIPE_OPTIONS),
+		},
+		{
+			provide: APP_FILTER,
+			useValue: new AllExceptionsFilter(),
+		},
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: LoggingInterceptor,

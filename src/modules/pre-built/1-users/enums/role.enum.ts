@@ -1,5 +1,5 @@
-export enum Role {
-	USER = "USER",
-	STORE = "STORE",
-	SUPER_ADMIN = "SUPER_ADMIN",
+export enum RoleEnum {
+	User = "USER",
+	Store = "STORE",
+	SupperAdmin = "SUPER_ADMIN",
 }

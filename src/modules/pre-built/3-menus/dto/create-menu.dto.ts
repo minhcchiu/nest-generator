@@ -8,7 +8,7 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
-import { Role } from "~pre-built/1-users/enums/role.enum";
+import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -28,7 +28,7 @@ export class CreateMenuDto {
 	@ApiProperty({ required: false })
 	@IsOptional()
 	@IsString()
-	readonly prefix: string;
+	readonly collectionName: string;
 
 	@ApiProperty({ required: false })
 	@IsOptional()
@@ -60,9 +60,9 @@ export class CreateMenuDto {
 	@IsBoolean()
 	readonly isActive: boolean = true;
 
-	@ApiProperty({ enum: Role, isArray: true, required: false })
+	@ApiProperty({ enum: RoleEnum, isArray: true, required: false })
 	@IsOptional()
 	@IsArray()
-	@IsEnum(Role, { each: true })
-	readonly role: Role[];
+	@IsEnum(RoleEnum, { each: true })
+	readonly role: RoleEnum[];
 }

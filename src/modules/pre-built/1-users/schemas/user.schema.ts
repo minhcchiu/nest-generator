@@ -8,7 +8,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { Role } from "../enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 import { IUser } from "../interface/user.interface";
 
 type UserDocument = HydratedDocument<User>;
@@ -53,12 +53,12 @@ export class User implements IUser {
 		type: [
 			{
 				type: String,
-				enum: Role,
+				enum: RoleEnum,
 			},
 		],
-		default: [Role.USER, Role.STORE, Role.SUPER_ADMIN],
+		default: [RoleEnum.User, RoleEnum.SupperAdmin],
 	})
-	roles: Role[];
+	roles: RoleEnum[];
 
 	@Prop({ type: String, default: null })
 	avatar: NullableType<string>;

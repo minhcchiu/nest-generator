@@ -1,6 +1,5 @@
 import { Request } from "express";
 import { IS_PUBLIC_KEY } from "~decorators/public.decorator";
-import { Role } from "~pre-built/1-users/enums/role.enum";
 import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
 import { HttpMethod } from "~pre-built/2-endpoints/enum/http-method";
 import { TokenService } from "~pre-built/5-tokens/token.service";
@@ -13,11 +12,8 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-
-interface IEndpoint {
-	userRoles: Role[];
-	isPublic: boolean;
-}
+import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
+import { EndpointPermissionType } from "./types/endpoint-permission.type";
 
 @Injectable()
 export class AppGuard implements CanActivate {
@@ -39,14 +35,14 @@ export class AppGuard implements CanActivate {
 		const { route, method } = request;
 		const path = route.path;
 
-		const endpoint = await this.getPermissionEndpoint(path, method);
+		const endpoint = await this.getEndpointPermission(path, method);
 
 		if (endpoint.isPublic) return true;
 
 		return await this.validate(request, endpoint);
 	}
 
-	private async validate(request: any, endpoint: IEndpoint) {
+	private async validate(request: any, endpoint: EndpointPermissionType) {
 		const token = this.extractTokenFromHeader(request);
 
 		if (!token)
@@ -77,20 +73,23 @@ export class AppGuard implements CanActivate {
 		return authHeader.slice(textBearer.length);
 	}
 
-	private isAccessAllowed(userRoles: Role[], endpoint: IEndpoint) {
+	private isAccessAllowed(
+		userRoles: RoleEnum[],
+		endpoint: EndpointPermissionType,
+	) {
 		return endpoint.userRoles.some((role) => userRoles.includes(role));
 	}
 
-	private async getPermissionEndpoint(
+	private async getEndpointPermission(
 		path: string,
 		method: HttpMethod,
-	): Promise<IEndpoint> {
+	): Promise<EndpointPermissionType> {
 		const cacheKey = `${path}-${method}`;
 
 		// check in cache
-		const endpointCache = this.cacheService.get(cacheKey);
+		const endpointCached = this.cacheService.getEndpointPermission(cacheKey);
 
-		if (endpointCache) return endpointCache;
+		if (endpointCached) return endpointCached;
 
 		// check in db
 		const endpoint = await this.endpointService.findOne({ path, method });
@@ -100,7 +99,7 @@ export class AppGuard implements CanActivate {
 		const { isPublic, userRoles } = endpoint;
 
 		// save to cache
-		this.cacheService.set(cacheKey, { isPublic, userRoles });
+		this.cacheService.setEndpointPermission(cacheKey, { isPublic, userRoles });
 
 		return { isPublic, userRoles };
 	}
