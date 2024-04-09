@@ -1,7 +1,7 @@
 import * as sharp from "sharp";
 
 /**
- * resize iamge PNG
+ * resize image PNG
  * @param filePath
  * @param filePathNew
  * @param size
@@ -17,7 +17,7 @@ const resizePNG = async (
 	const semiTransparentRedPng = await sharp(filePath)
 		.resize(size)
 		.png({ quality })
-		.toFile(`${filePathNew}`);
+		.toFile(filePathNew);
 
 	return semiTransparentRedPng;
 };
@@ -39,13 +39,13 @@ const resizeJPG = async (
 	const semiTransparentRedJpg = await sharp(filePath)
 		.resize(size)
 		.jpeg({ quality })
-		.toFile(`${filePathNew}`);
+		.toFile(filePathNew);
 
 	return semiTransparentRedJpg;
 };
 
 /**
- * resize iamge PNG
+ * resize image PNG
  * @param filePath
  * @param filePathNew
  * @param size
@@ -59,7 +59,7 @@ const resizeGIF = async (
 	const semiTransparentRedPng = await sharp(filePath)
 		.resize(size)
 		.gif()
-		.toFile(`${filePathNew}`);
+		.toFile(filePathNew);
 
 	return semiTransparentRedPng;
 };

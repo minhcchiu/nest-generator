@@ -17,9 +17,7 @@ import {
 	ApiTags,
 } from "@nestjs/swagger";
 
-import { CreateUserFileDto } from "../7-user-files/dto/create-user-file.dto";
 import { UserFileService } from "../7-user-files/user-file.service";
-import { ResponseUploadedDto } from "./dto/response-uploaded.dto";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
 import { UploadService } from "./upload.service";
@@ -31,64 +29,6 @@ export class UploadController {
 		private readonly uploadService: UploadService,
 		private readonly userFileService: UserFileService,
 	) {}
-
-	// @ApiBearerAuth()
-	// @ApiConsumes("multipart/form-data")
-	// @ApiOperation({ summary: "Upload files" })
-	// @ApiUploadFiles(["files"])
-	// @Post("cloudinary")
-	// @UseInterceptors(FilesInterceptor("files", 10))
-	// async uploadFilesToCloudinary(
-	// 	@GetCurrentUserId() userId: string,
-	// 	@UploadedFiles()
-	// 	inputs: Array<Express.Multer.File>,
-	// ) {
-	// 	// upload files
-	// 	const filesUploaded = await Promise.all(
-	// 		inputs.map((file) => this.uploadService.uploadToCloudinary(file)),
-	// 	);
-
-	// 	// handle upload results
-	// 	const { fileItems, results } = this._handleUploadResults(
-	// 		filesUploaded,
-	// 		userId,
-	// 	);
-
-	// 	// save files
-	// 	this.userFileService.createMany(fileItems).catch();
-
-	// 	// return results
-	// 	return results;
-	// }
-
-	// @ApiBearerAuth()
-	// @ApiConsumes("multipart/form-data")
-	// @ApiOperation({ summary: "Upload files" })
-	// @ApiUploadFiles(["files"])
-	// @Post("s3")
-	// @UseInterceptors(FilesInterceptor("files", 10))
-	// async uploadFilesToS3(
-	// 	@GetCurrentUserId() userId: string,
-	// 	@UploadedFiles()
-	// 	inputs: Array<Express.Multer.File>,
-	// ) {
-	// 	// upload files
-	// 	const filesUploaded = await Promise.all(
-	// 		inputs.map((file) => this.uploadService.uploadToS3(file)),
-	// 	);
-
-	// 	// handle upload results
-	// 	const { fileItems, results } = this._handleUploadResults(
-	// 		filesUploaded,
-	// 		userId,
-	// 	);
-
-	// 	// save files
-	// 	this.userFileService.createMany(fileItems).catch();
-
-	// 	// return results
-	// 	return results;
-	// }
 
 	@ApiBearerAuth()
 	@ApiConsumes("multipart/form-data")
@@ -107,45 +47,38 @@ export class UploadController {
 			inputs.map((file) => this.uploadService.uploadFile(file)),
 		);
 
-		// handle upload results
-		const { fileItems, results } = this._handleUploadResults(
-			filesUploaded,
-			userId,
-		);
-
-		// save files
-		this.userFileService.createMany(fileItems).catch();
-
-		return results;
+		return this._handleSaveFileUploaded(filesUploaded, userId);
 	}
 
 	// Handle the results of file uploads
-	private _handleUploadResults(
+	private _handleSaveFileUploaded(
 		filesUploaded: (UploadedResult | UploadedError)[],
 		userId: string,
 	) {
-		const results: ResponseUploadedDto[] = [];
-		const fileItems: CreateUserFileDto[] = [];
+		const results: Record<string, any>[] = [];
+		const fileItems: Record<string, any>[] = [];
 
-		// Iterate through the filesUploaded array
-		filesUploaded.forEach((file) => {
-			// Check if there was an error during upload
-			if (file?.error) {
-				results.push(file);
-			} else {
+		for (const file of filesUploaded) {
+			if (file.isUploadedSuccess) {
 				const res = file as UploadedResult;
 
-				// Add the uploaded file to the results array
 				results.push({
 					originalname: res.originalname,
 					fileSize: res.fileSize,
-					url: res.url,
+					fileOriginal: res.fileOriginal,
+					fileLg: res.fileLg,
+					fileMd: res.fileMd,
+					fileSm: res.fileSm,
+					fileXs: res.fileXs,
 				});
 
 				// Add the uploaded file to the fileItems array
 				fileItems.push({ ...res, userId });
-			}
-		});
+			} else results.push(file);
+		}
+
+		// save files
+		this.userFileService.createMany(fileItems).catch();
 
 		return { results, fileItems };
 	}

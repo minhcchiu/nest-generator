@@ -1,9 +1,9 @@
 import { close, open, read, renameSync, statSync, unlinkSync } from "fs";
 import { filetypemime } from "magic-bytes.js";
 import { join } from "path";
-import { resizeGIF, resizeJPG, resizePNG } from "~helpers/resize-image";
 import { ResourceTypeEnum } from "~pre-built/7-uploads/enum/resource-type.enum";
 import { StorageDirEnum } from "~pre-built/7-uploads/enum/storage-dir.enum";
+import { resizeGIF, resizeJPG, resizePNG } from "~utils/files/resize-image";
 
 export const getFileName = (filePath: string) => {
 	const lastIndexOfSlash = filePath.lastIndexOf("-");
@@ -30,7 +30,7 @@ export const localStorageHelper = {
 		resourceType: ResourceTypeEnum,
 	) {
 		const size = statSync(filePath).size || 0;
-		const filemime = await this.getTypeFileTypemime(filePath);
+		const filemime = await this.getTypeUploadTypemime(filePath);
 		const type = filemime || `${resourceType}/${getFileName(filePath)}`;
 		const file = await this.moveFileToDiskStorage(
 			filePath,
@@ -61,7 +61,7 @@ export const localStorageHelper = {
 		resourceType: ResourceTypeEnum = ResourceTypeEnum.IMAGE,
 	) {
 		const size = statSync(filePath).size || 0;
-		const filemime = await this.getTypeFileTypemime(filePath);
+		const filemime = await this.getTypeUploadTypemime(filePath);
 		const imageType = filemime.split("/")[1];
 		const files = await this.compressImage(filePath, imageType);
 		const type = filemime || `${resourceType}/${getFileName(filePath)}`;
@@ -81,7 +81,7 @@ export const localStorageHelper = {
 	 * @param filePath
 	 * @returns
 	 */
-	async getTypeFileTypemime(filePath: string) {
+	async getTypeUploadTypemime(filePath: string) {
 		const maxLength = 4100;
 
 		const buffer = await this.getBufferFromFile(filePath, maxLength);
@@ -262,7 +262,7 @@ export const localStorageHelper = {
 			})
 			.join(",");
 
-		const fileName = this.generateFileNameResize(filePath, keyName);
+		const fileName = this.genUniqueFilenameResize(filePath, keyName);
 
 		const path = join(this.publicDir, "uploads", "images", fileName);
 
@@ -291,7 +291,7 @@ export const localStorageHelper = {
 	 * @param keyName
 	 * @returns
 	 */
-	generateFileNameResize(filePath: string, keyName: string) {
+	genUniqueFilenameResize(filePath: string, keyName: string) {
 		const fileName = getFileName(filePath);
 
 		const fileExt = fileName.split(".").pop();

@@ -1,58 +1,71 @@
 // file.dto.ts
 
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+	IsEnum,
+	IsISO8601,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
-
-import { ApiProperty } from "@nestjs/swagger";
+import { UploadType } from "~types/upload-type";
 
 export class CreateUserFileDto {
-	@ApiProperty({ type: String, description: "User ID", required: true })
 	@IsNotEmpty()
 	@IsString()
 	userId: string;
 
-	@ApiProperty({ type: String, description: "Resource ID", required: true })
 	@IsNotEmpty()
 	@IsString()
 	resourceId: string;
 
-	@ApiProperty({ type: String, description: "File Name", required: true })
 	@IsNotEmpty()
 	@IsString()
 	fileName: string;
 
-	@ApiProperty({ type: String, description: "File Type", required: true })
 	@IsNotEmpty()
 	@IsString()
 	fileType: string;
 
-	@ApiProperty({ type: String, description: "File URL", required: true })
 	@IsNotEmpty()
 	@IsString()
-	url: string;
+	uploadType: UploadType;
 
-	@ApiProperty({ type: Number, description: "File Size", required: true })
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
+	fileOriginal: string;
+
+	@IsOptional()
+	@IsString()
+	fileXs?: string;
+
+	@IsOptional()
+	@IsString()
+	fileSm?: string;
+
+	@IsOptional()
+	@IsString()
+	fileMd?: string;
+
+	@IsOptional()
+	@IsString()
+	fileLg?: string;
+
 	@IsNumber()
 	fileSize: number;
 
-	@ApiProperty({ type: Number, description: "Uploaded At", required: true })
-	@IsNotEmpty()
-	@IsNumber()
-	uploadedAt: number;
+	@IsISO8601()
+	uploadedAt: Date;
 
-	@ApiProperty({ type: String, description: "File Folder", required: true })
 	@IsNotEmpty()
 	@IsString()
 	fileFolder: string;
 
-	@ApiProperty({
-		type: String,
-		enum: StorageLocationEnum,
-		description: "Storage Location",
-		required: true,
-	})
-	@IsNotEmpty()
 	@IsEnum(StorageLocationEnum)
 	storageLocation: StorageLocationEnum;
+
+	@IsNotEmpty()
+	@IsString()
+	isUploadedSuccess: string;
 }

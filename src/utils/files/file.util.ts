@@ -6,7 +6,7 @@ export const removeFileExtension = (originalname: string): string => {
 	return originalname.split(".").slice(0, -1).join(".");
 };
 
-export const generateFileName = (originalname: string) => {
+export const genUniqueFilename = (originalname: string) => {
 	const lastIndexOfSlash = originalname.lastIndexOf(".");
 	const oName = originalname.slice(0, lastIndexOfSlash);
 
@@ -22,4 +22,8 @@ export const generateFileName = (originalname: string) => {
 	const fileExt = getFileExtension(originalname);
 
 	return `${fileName}.${fileExt}`;
+};
+
+export const getFileName = (filePath: string) => {
+	return filePath.split("/").pop();
 };

@@ -7,9 +7,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { LocalService } from "~shared/storage/local-storage/local.service";
 import { S3Service } from "~shared/storage/s3/s3.service";
-import { FileType } from "~types/file.type";
+import { UploadType } from "~types/upload-type";
 import { StorageLocationEnum } from "../7-uploads/enum/store-location.enum";
-import { CreateUserFileDto } from "./dto/create-user-file.dto";
 import { UserFile, UserFileDocument } from "./schemas/user-file.schema";
 
 @Injectable()
@@ -26,7 +25,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 		this.userFileModel = model;
 	}
 
-	async createMany(inputs: CreateUserFileDto[]) {
+	async createMany(inputs: Record<string, any>[]) {
 		return this.userFileModel.create(inputs);
 	}
 
@@ -42,7 +41,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 
 		switch (file.storageLocation) {
 			case StorageLocationEnum.Local:
-				return this.localService.deleteByResourceId(file.resourceId);
+				return this.localService.delete(file.resourceId);
 
 			case StorageLocationEnum.S3:
 				return this.s3Service.deleteByResourceId(file.resourceId);
@@ -50,7 +49,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 			case StorageLocationEnum.Cloudinary:
 				return this.cloudinaryService.deleteByResourceId({
 					publicId: file.resourceId,
-					fileType: file.fileType,
+					fileType: file.uploadType,
 				});
 
 			default:
@@ -63,7 +62,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 
 		const resourceIdsLocal: string[] = [];
 		const resourceIdsS3: string[] = [];
-		const resourceIdsCloudinary: { publicId: string; fileType: FileType }[] =
+		const resourceIdsCloudinary: { publicId: string; fileType: UploadType }[] =
 			[];
 
 		files.forEach((file) => {
@@ -79,14 +78,14 @@ export class UserFileService extends BaseService<UserFileDocument> {
 				case StorageLocationEnum.Cloudinary:
 					resourceIdsCloudinary.push({
 						publicId: file.resourceId,
-						fileType: file.fileType,
+						fileType: file.uploadType,
 					});
 					break;
 			}
 		});
 
 		await Promise.allSettled([
-			this.localService.deleteByResourceIds(resourceIdsLocal),
+			this.localService.deleteMany(resourceIdsLocal),
 			this.cloudinaryService.deleteByResourceIds(resourceIdsCloudinary),
 			this.s3Service.deleteByResourceIds(resourceIdsS3),
 		]);

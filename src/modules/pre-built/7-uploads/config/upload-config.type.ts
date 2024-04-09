@@ -1,4 +1,4 @@
-import { FileType } from "~types/file.type";
+import { UploadType } from "~types/upload-type";
 
 export interface FileOption {
 	maxSize: number;
@@ -11,5 +11,5 @@ export interface UploadConfig {
 	audio: FileOption;
 	auto: FileOption;
 	raw: FileOption;
-	storageFolders: Record<FileType, string>;
+	storageFolders: Record<UploadType, string>;
 }

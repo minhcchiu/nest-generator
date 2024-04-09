@@ -1,10 +1,10 @@
 import { UploadApiResponse, v2 } from "cloudinary";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-import { FileType } from "~types/file.type";
+import { UploadType } from "~types/upload-type";
 
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { removeFileExtension } from "src/utils/file.util";
+import { removeFileExtension } from "~utils/files/file.util";
 
 import {
 	AppConfig,
@@ -47,7 +47,7 @@ export class CloudinaryService {
 
 	uploadStream(file: {
 		fileName: string;
-		fileType: FileType;
+		fileType: UploadType;
 		fileFolder: string;
 		buffer: Buffer;
 	}): Promise<UploadApiResponse> {
@@ -86,7 +86,25 @@ export class CloudinaryService {
 		});
 	}
 
-	async deleteByResourceId(input: { publicId: string; fileType: FileType }) {
+	resizeImage(id: string, width: number) {
+		return v2.url(id, {
+			width,
+			opacity: 80,
+			crop: "fill",
+			format: "jpg",
+		});
+	}
+
+	genImagesResize(public_id: string) {
+		return {
+			fileXs: this.resizeImage(public_id, 150),
+			fileSm: this.resizeImage(public_id, 360),
+			fileMd: this.resizeImage(public_id, 480),
+			fileLg: this.resizeImage(public_id, 1080),
+		};
+	}
+
+	async deleteByResourceId(input: { publicId: string; fileType: UploadType }) {
 		// check file type
 		if (input.fileType === "audio") {
 			input.fileType = "video";
@@ -104,7 +122,7 @@ export class CloudinaryService {
 	async deleteByResourceIds(
 		inputs: {
 			publicId: string;
-			fileType: FileType;
+			fileType: UploadType;
 		}[],
 	) {
 		try {

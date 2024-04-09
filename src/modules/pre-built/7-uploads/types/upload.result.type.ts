@@ -1,16 +1,20 @@
-import { FileType } from "~types/file.type";
+import { UploadType } from "~types/upload-type";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
 export type UploadedResult = {
-	url: string;
+	fileOriginal?: string;
+	fileLg?: string;
+	fileMd?: string;
+	fileSm?: string;
+	fileXs?: string;
 	fileFolder: string;
 	fileSize: number;
 	resourceId: string;
-
 	fileName: string;
-	fileType: FileType;
-	storageLocation: StorageLocationEnum;
+	fileType: string;
+	uploadType: UploadType;
 	originalname: string;
-	uploadedAt: number;
-	error?: undefined;
+	storageLocation: StorageLocationEnum;
+	uploadedAt: string;
+	isUploadedSuccess: boolean;
 };

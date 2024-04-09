@@ -1,6 +1,6 @@
-import { generateFileName, getFileExtension } from "src/utils/file.util";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
-import { FileType } from "~types/file.type";
+import { UploadType } from "~types/upload-type";
+import { genUniqueFilename, getFileExtension } from "~utils/files/file.util";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -14,14 +14,14 @@ import { LocalService } from "~shared/storage/local-storage/local.service";
 import { S3Service } from "~shared/storage/s3/s3.service";
 import { FileOption, UploadConfig } from "./config/upload-config.type";
 import { uploadConfigName } from "./config/upload.config";
-import { StorageLocationEnum } from "./enum/store-location.enum";
+import { FileFormatted } from "./types/file-formatted.type";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
 
 @Injectable()
 export class UploadService {
-	private fileFilter: Record<FileType, FileOption> | object = {};
-	private storageFolders: Record<FileType, string> | object = {};
+	private fileFilter: Record<UploadType, FileOption> | object = {};
+	private storageFolders: Record<UploadType, string> | object = {};
 	private appConfig: AppConfig;
 	private uploadConfig: UploadConfig;
 
@@ -46,137 +46,112 @@ export class UploadService {
 	}
 
 	async uploadFile(
-		file: Express.Multer.File,
+		fileInput: Express.Multer.File,
 	): Promise<UploadedResult | UploadedError> {
-		switch (this.appConfig.storageServer) {
-			case StorageServerEnum.S3:
-				return this._uploadToS3(file);
+		// validate file
+		const fileFormatted = this._getFormatFileInput(fileInput);
 
-			case StorageServerEnum.Cloudinary:
-				return this._uploadToCloudinary(file);
+		switch (this.appConfig.storageServer) {
+			// case StorageServerEnum.S3:
+			// 	return this._uploadToS3(fileFormatted);
+
+			// case StorageServerEnum.Cloudinary:
+			// 	return this._uploadToCloudinary(fileFormatted);
 
 			case StorageServerEnum.Local:
-				return this._uploadToLocal(file);
+				return this.localService.upload(fileFormatted);
 
 			default:
 				throw new BadRequestException("Storage server not found");
 		}
 	}
 
-	private async _uploadToLocal(
-		fileInput: Express.Multer.File,
-	): Promise<UploadedResult | UploadedError> {
-		try {
-			// validate file
-			const { file, fileFolder, fileName, fileType } =
-				this._validateFile(fileInput);
+	// private async _uploadToCloudinary(
+	// 	fileInput: Express.Multer.File,
+	// ): Promise<UploadedResult | UploadedError> {
+	// 	try {
+	// 		// validate file
+	// 		const { file, fileFolder, fileName, fileType } =
+	// 			this._getFormatFileInput(fileInput);
 
-			const res = await this.localService.upload({
-				fileType,
-				fileFolder,
-				fileName,
-				buffer: file.buffer,
-			});
+	// 		// upload file to cloudinary
+	// 		const res = await this.cloudinaryService.uploadStream({
+	// 			fileType,
+	// 			fileFolder,
+	// 			fileName,
+	// 			buffer: file.buffer,
+	// 		});
 
-			return {
-				url: res.url,
-				fileFolder: res.folder,
-				fileName: res.fileName,
-				fileType: res.type,
-				fileSize: res.size,
-				resourceId: res.resourceId,
+	// 		const { fileLg, fileMd, fileSm, fileXs } =
+	// 			this.cloudinaryService.genImagesResize(res.public_id);
 
-				originalname: file.originalname,
-				storageLocation: StorageLocationEnum.Local,
-				uploadedAt: Date.now(),
-			};
-		} catch (error) {
-			return {
-				error: error?.message || "Local upload failed",
-				originalname: fileInput.originalname,
-				fileSize: fileInput.size,
-			};
-		}
-	}
+	// 		return {
+	// 			url: res.url,
+	// 			fileOriginal: res.url,
+	// 			fileLg,
+	// 			fileMd,
+	// 			fileSm,
+	// 			fileXs,
+	// 			fileFolder: res.folder,
+	// 			fileSize: res.bytes,
+	// 			resourceId: res.public_id,
 
-	private async _uploadToCloudinary(
-		fileInput: Express.Multer.File,
-	): Promise<UploadedResult | UploadedError> {
-		try {
-			// validate file
-			const { file, fileFolder, fileName, fileType } =
-				this._validateFile(fileInput);
+	// 			fileName,
+	// 			fileType,
+	// 			originalname: file.originalname,
+	// 			storageLocation: StorageLocationEnum.Cloudinary,
+	// 			uploadedAt: Date.now(),
+	// 		};
+	// 	} catch (error) {
+	// 		return {
+	// 			error: error?.message || "Cloudinary upload failed",
+	// 			originalname: fileInput.originalname,
+	// 			fileSize: fileInput.size,
+	// 		};
+	// 	}
+	// }
 
-			// upload file to cloudinary
-			const res = await this.cloudinaryService.uploadStream({
-				fileType,
-				fileFolder,
-				fileName,
-				buffer: file.buffer,
-			});
+	// private async _uploadToS3(
+	// 	fileInput: Express.Multer.File,
+	// ): Promise<UploadedResult | UploadedError> {
+	// 	try {
+	// 		// validate file
+	// 		const { file, fileFolder, fileName, fileType } =
+	// 			this._getFormatFileInput(fileInput);
 
-			return {
-				url: res.url,
-				fileFolder: res.folder,
-				fileSize: res.bytes,
-				resourceId: res.public_id,
+	// 		// upload file to S3
+	// 		const res = await this.s3Service.upload({
+	// 			buffer: file.buffer,
+	// 			fileName,
+	// 			fileFolder: fileFolder,
+	// 		});
 
-				fileName,
-				fileType,
-				originalname: file.originalname,
-				storageLocation: StorageLocationEnum.Cloudinary,
-				uploadedAt: Date.now(),
-			};
-		} catch (error) {
-			return {
-				error: error?.message || "Cloudinary upload failed",
-				originalname: fileInput.originalname,
-				fileSize: fileInput.size,
-			};
-		}
-	}
+	// 		return {
+	// 			url: res.Location,
+	// 			resourceId: res.Key,
+	// 			fileFolder: fileFolder,
 
-	private async _uploadToS3(
-		fileInput: Express.Multer.File,
-	): Promise<UploadedResult | UploadedError> {
-		try {
-			// validate file
-			const { file, fileFolder, fileName, fileType } =
-				this._validateFile(fileInput);
+	// 			fileName,
+	// 			fileType,
+	// 			fileSize: file.size,
+	// 			originalname: file.originalname,
+	// 			storageLocation: StorageLocationEnum.S3,
+	// 			uploadedAt: Date.now(),
+	// 		};
+	// 	} catch (error) {
+	// 		return {
+	// 			error: error?.message || "S3 upload failed",
+	// 			originalname: fileInput.originalname,
+	// 			fileSize: fileInput.size,
+	// 		};
+	// 	}
+	// }
 
-			// upload file to S3
-			const res = await this.s3Service.upload({
-				buffer: file.buffer,
-				fileName,
-				fileFolder: fileFolder,
-			});
-
-			return {
-				url: res.Location,
-				resourceId: res.Key,
-				fileFolder: fileFolder,
-
-				fileName,
-				fileType,
-				fileSize: file.size,
-				originalname: file.originalname,
-				storageLocation: StorageLocationEnum.S3,
-				uploadedAt: Date.now(),
-			};
-		} catch (error) {
-			return {
-				error: error?.message || "S3 upload failed",
-				originalname: fileInput.originalname,
-				fileSize: fileInput.size,
-			};
-		}
-	}
-
-	_validateFile(file: Express.Multer.File) {
+	_getFormatFileInput(file: Express.Multer.File): FileFormatted {
 		const fileExt = getFileExtension(file.originalname);
-		const fileType = this._getFileType(fileExt);
+		const uploadType = this._getUploadType(fileExt);
 
-		const { maxSize, allowedExtensions } = this.fileFilter[fileType];
+		const { maxSize, allowedExtensions } = this.fileFilter[uploadType];
 		const fileSizeInMB = file.size / (1024 * 1024);
 
 		if (fileSizeInMB > maxSize || !allowedExtensions.includes(fileExt)) {
@@ -187,25 +162,28 @@ export class UploadService {
 			);
 		}
 
-		const fileFolder = this.storageFolders[fileType];
-		const fileName = generateFileName(file.originalname);
+		const fileFolder = this.storageFolders[uploadType];
+		const fileName = genUniqueFilename(file.originalname);
 
 		return {
-			fileType,
-			file,
+			mimetype: file.mimetype,
+			buffer: file.buffer,
+			size: file.size,
+			uploadType,
 			fileFolder,
 			fileExt,
 			fileName,
+			originalname: file.originalname,
 		};
 	}
 
-	_getFileType(fileExt: string): FileType {
+	_getUploadType(fileExt: string): UploadType {
 		const fileType = Object.keys(this.fileFilter).find((key) => {
 			return this.fileFilter[key].allowedExtensions.includes(fileExt);
 		});
 
 		if (!fileType) throw new BadRequestException("Unsupported file type");
 
-		return <FileType>fileType;
+		return <UploadType>fileType;
 	}
 }
