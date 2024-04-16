@@ -18,6 +18,11 @@ import { FileFormatted } from "./types/file-formatted.type";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
 
+// import sizeOf from "image-size";
+// const dimensions = sizeOf(inputs[0].buffer);
+// const dimensions2 = sizeOf(inputs[1].buffer);
+// console.log({ dimensions, dimensions2 });
+
 @Injectable()
 export class UploadService {
 	private fileFilter: Record<UploadType, FileOption> | object = {};
@@ -49,17 +54,22 @@ export class UploadService {
 		fileInput: Express.Multer.File,
 	): Promise<UploadedResult | UploadedError> {
 		// validate file
-		const fileFormatted = this._getFormatFileInput(fileInput);
+		const fileFormatted = this.validateFile(fileInput);
 
 		switch (this.appConfig.storageServer) {
-			// case StorageServerEnum.S3:
-			// 	return this._uploadToS3(fileFormatted);
+			case StorageServerEnum.S3:
+				return this.s3Service.saveFile(fileFormatted);
 
 			// case StorageServerEnum.Cloudinary:
 			// 	return this._uploadToCloudinary(fileFormatted);
 
 			case StorageServerEnum.Local:
-				return this.localService.upload(fileFormatted);
+				return this.localService.saveFile(fileFormatted, [
+					{ width: 150 },
+					{ width: 360 },
+					{ width: 480 },
+					{ width: 720 },
+				]);
 
 			default:
 				throw new BadRequestException("Storage server not found");
@@ -72,7 +82,7 @@ export class UploadService {
 	// 	try {
 	// 		// validate file
 	// 		const { file, fileFolder, fileName, fileType } =
-	// 			this._getFormatFileInput(fileInput);
+	// 			this.validateFile(fileInput);
 
 	// 		// upload file to cloudinary
 	// 		const res = await this.cloudinaryService.uploadStream({
@@ -111,43 +121,22 @@ export class UploadService {
 	// 	}
 	// }
 
-	// private async _uploadToS3(
-	// 	fileInput: Express.Multer.File,
-	// ): Promise<UploadedResult | UploadedError> {
-	// 	try {
-	// 		// validate file
-	// 		const { file, fileFolder, fileName, fileType } =
-	// 			this._getFormatFileInput(fileInput);
+	private async _uploadToS3(
+		input: FileFormatted,
+	): Promise<UploadedResult | UploadedError> {
+		// upload file to S3
+		const res = await this.s3Service.upload({
+			buffer: input.buffer,
+			fileName: input.fileName,
+			fileFolder: input.fileFolder,
+		});
 
-	// 		// upload file to S3
-	// 		const res = await this.s3Service.upload({
-	// 			buffer: file.buffer,
-	// 			fileName,
-	// 			fileFolder: fileFolder,
-	// 		});
+		console.log({ res });
 
-	// 		return {
-	// 			url: res.Location,
-	// 			resourceId: res.Key,
-	// 			fileFolder: fileFolder,
+		return this.localService.saveFile(input);
+	}
 
-	// 			fileName,
-	// 			fileType,
-	// 			fileSize: file.size,
-	// 			originalname: file.originalname,
-	// 			storageLocation: StorageLocationEnum.S3,
-	// 			uploadedAt: Date.now(),
-	// 		};
-	// 	} catch (error) {
-	// 		return {
-	// 			error: error?.message || "S3 upload failed",
-	// 			originalname: fileInput.originalname,
-	// 			fileSize: fileInput.size,
-	// 		};
-	// 	}
-	// }
-
-	_getFormatFileInput(file: Express.Multer.File): FileFormatted {
+	validateFile(file: Express.Multer.File): FileFormatted {
 		const fileExt = getFileExtension(file.originalname);
 		const uploadType = this._getUploadType(fileExt);
 
@@ -164,6 +153,8 @@ export class UploadService {
 
 		const fileFolder = this.storageFolders[uploadType];
 		const fileName = genUniqueFilename(file.originalname);
+
+		console.log({ fileFolder, fileName });
 
 		return {
 			mimetype: file.mimetype,

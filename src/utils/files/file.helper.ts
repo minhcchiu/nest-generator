@@ -1,105 +1,44 @@
-import { getFileExtension, getFileName } from "./file.util";
-import { resizeGIF, resizeJPG, resizePNG } from "./resize-image";
+import { ResizeOptions } from "sharp";
+import { resizeFile, resizeGIF, resizeJPG, resizePNG } from "./resize-image";
 
-const genImageResizePath = (
-	filePath: string,
-	options: { width?: number; height?: number } = {},
+export const compressPNG = async (
+	fileBuffer: Buffer,
+	resizeOptions: ResizeOptions[] = [],
 ) => {
-	const fileName = getFileName(filePath);
-	const saveDir = filePath.split("/").slice(0, -1).join("/");
-
-	const keyName = Object.keys(options)
-		.map((key) => {
-			return `${key[0]}_${options[key]}`;
-		})
-		.join(",");
-
-	return `${saveDir}/${keyName}_${fileName}`;
+	return Promise.all(
+		resizeOptions.map((resizeOption) => resizePNG(fileBuffer, resizeOption)),
+	);
 };
 
-const compressJPG = async (filePath: string) => {
-	const fileXs = genImageResizePath(filePath, { width: 150 });
-	const fileSm = genImageResizePath(filePath, { width: 360 });
-	const fileMd = genImageResizePath(filePath, { width: 480 });
-	const fileLg = genImageResizePath(filePath, { width: 720 });
-
-	await Promise.all([
-		resizeJPG(filePath, fileXs, 150),
-		resizeJPG(filePath, fileSm, 360),
-		resizeJPG(filePath, fileMd, 480),
-		resizeJPG(filePath, fileLg, 720),
-	]);
-
-	return {
-		fileXs,
-		fileSm,
-		fileMd,
-		fileLg,
-	};
+export const compressJPG = async (
+	fileBuffer: Buffer,
+	resizeOptions: ResizeOptions[] = [],
+) => {
+	return Promise.all(
+		resizeOptions.map((resizeOption) => resizeJPG(fileBuffer, resizeOption)),
+	);
 };
 
-const compressGIF = async (filePath: string) => {
-	const fileXs = genImageResizePath(filePath, { width: 150 });
-	const fileSm = genImageResizePath(filePath, { width: 360 });
-	const fileMd = genImageResizePath(filePath, { width: 480 });
-	const fileLg = genImageResizePath(filePath, { width: 720 });
-
-	await Promise.all([
-		resizeGIF(filePath, fileXs, 150),
-		resizeGIF(filePath, fileSm, 360),
-		resizeGIF(filePath, fileMd, 480),
-		resizeGIF(filePath, fileLg, 720),
-	]);
-
-	return {
-		fileXs,
-		fileSm,
-		fileMd,
-		fileLg,
-	};
+export const compressGIF = async (
+	fileBuffer: Buffer,
+	resizeOptions: ResizeOptions[] = [],
+) => {
+	return Promise.all(
+		resizeOptions.map((resizeOption) => resizeGIF(fileBuffer, resizeOption)),
+	);
 };
 
-/**
- * compress PNG LocalStorage
- *
- * @param fileName
- * @returns
- */
-const compressPNG = async (filePath: string) => {
-	const fileXs = genImageResizePath(filePath, { width: 150 });
-	const fileSm = genImageResizePath(filePath, { width: 360 });
-	const fileMd = genImageResizePath(filePath, { width: 480 });
-	const fileLg = genImageResizePath(filePath, { width: 720 });
+export const compressImage = (
+	imageType: string,
+	fileBuffer: Buffer,
+	resizeOptions: ResizeOptions[] = [],
+) => {
+	if (imageType === "png") return compressPNG(fileBuffer, resizeOptions);
 
-	await Promise.all([
-		resizePNG(filePath, fileXs, 150),
-		resizePNG(filePath, fileSm, 360),
-		resizePNG(filePath, fileMd, 480),
-		resizePNG(filePath, fileLg, 720),
-	]);
+	if (imageType === "jpg" || imageType === "jpeg")
+		return compressJPG(fileBuffer, resizeOptions);
 
-	return {
-		fileXs,
-		fileSm,
-		fileMd,
-		fileLg,
-	};
-};
+	if (imageType === "gif") return compressGIF(fileBuffer, resizeOptions);
 
-export const compressImage = (filePath: string) => {
-	const imageType = getFileExtension(filePath);
-
-	if (imageType === "jpg" || imageType === "jpeg") return compressJPG(filePath);
-
-	// image type = png
-	if (imageType === "png") return compressPNG(filePath);
-
-	if (imageType === "gif") return compressGIF(filePath);
-
-	return {
-		fileXs: filePath,
-		fileSm: filePath,
-		fileMd: filePath,
-		fileLg: filePath,
-	};
+	return Promise.all(resizeOptions.map((size) => resizeFile(fileBuffer, size)));
 };

@@ -2,11 +2,7 @@ import { UploadType } from "~types/upload-type";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
 export type UploadedResult = {
-	fileOriginal?: string;
-	fileLg?: string;
-	fileMd?: string;
-	fileSm?: string;
-	fileXs?: string;
+	files: string[];
 	fileFolder: string;
 	fileSize: number;
 	resourceId: string;

@@ -1,9 +1,8 @@
-import { close, open, read, renameSync, statSync, unlinkSync } from "fs";
+import { close, open, read, renameSync, statSync } from "fs";
 import { filetypemime } from "magic-bytes.js";
 import { join } from "path";
 import { ResourceTypeEnum } from "~pre-built/7-uploads/enum/resource-type.enum";
 import { StorageDirEnum } from "~pre-built/7-uploads/enum/storage-dir.enum";
-import { resizeGIF, resizeJPG, resizePNG } from "~utils/files/resize-image";
 
 export const getFileName = (filePath: string) => {
 	const lastIndexOfSlash = filePath.lastIndexOf("-");
@@ -141,132 +140,6 @@ export const localStorageHelper = {
 		if (imageType === "gif") return this.compressGIF(filePath);
 
 		return [];
-	},
-
-	/**
-	 * Compress JPG LocalStorage
-	 *
-	 * @param filePath
-	 * @returns
-	 */
-	async compressJPG(filePath: string): Promise<any[]> {
-		const fileOriginal = this.generateSizePath(filePath);
-		const fileXLarge = this.generateSizePath(filePath, { width: 150 });
-		const fileLarge = this.generateSizePath(filePath, { width: 360 });
-		const fileMedium = this.generateSizePath(filePath, { width: 480 });
-		const fileSmall = this.generateSizePath(filePath, { width: 720 });
-		const fileXSmall = this.generateSizePath(filePath, { width: 1080 });
-
-		await Promise.all([
-			resizeJPG(filePath, fileOriginal.path, null),
-			resizeJPG(filePath, fileXLarge.path, 150),
-			resizeJPG(filePath, fileLarge.path, 360),
-			resizeJPG(filePath, fileMedium.path, 480),
-			resizeJPG(filePath, fileSmall.path, 720),
-			resizeJPG(filePath, fileXSmall.path, 1080),
-		]);
-
-		unlinkSync(filePath);
-
-		return [
-			fileOriginal.fileName,
-			fileXLarge.fileName,
-			fileLarge.fileName,
-			fileMedium.fileName,
-			fileSmall.fileName,
-			fileXSmall.fileName,
-		];
-	},
-
-	/**
-	 * Compress JPG LocalStorage
-	 *
-	 * @param filePath
-	 * @returns
-	 */
-	async compressGIF(filePath: string): Promise<any[]> {
-		const fileOriginal = this.generateSizePath(filePath);
-		const fileXLarge = this.generateSizePath(filePath, { width: 150 });
-		const fileLarge = this.generateSizePath(filePath, { width: 360 });
-		const fileMedium = this.generateSizePath(filePath, { width: 480 });
-		const fileSmall = this.generateSizePath(filePath, { width: 720 });
-		const fileXSmall = this.generateSizePath(filePath, { width: 1080 });
-
-		await Promise.all([
-			resizeGIF(filePath, fileOriginal.path, null),
-			resizeGIF(filePath, fileXLarge.path, 150),
-			resizeGIF(filePath, fileLarge.path, 360),
-			resizeGIF(filePath, fileMedium.path, 480),
-			resizeGIF(filePath, fileSmall.path, 720),
-			resizeGIF(filePath, fileXSmall.path, 1080),
-		]);
-
-		unlinkSync(filePath);
-
-		return [
-			fileOriginal.fileName,
-			fileXLarge.fileName,
-			fileLarge.fileName,
-			fileMedium.fileName,
-			fileSmall.fileName,
-			fileXSmall.fileName,
-		];
-	},
-
-	/**
-	 * compress PNG LocalStorage
-	 *
-	 * @param filePath
-	 * @returns
-	 */
-	async compressPNG(filePath: string): Promise<any[]> {
-		const fileOriginal = this.generateSizePath(filePath);
-		const fileXLarge = this.generateSizePath(filePath, { width: 150 });
-		const fileLarge = this.generateSizePath(filePath, { width: 360 });
-		const fileMedium = this.generateSizePath(filePath, { width: 480 });
-		const fileSmall = this.generateSizePath(filePath, { width: 720 });
-		const fileXSmall = this.generateSizePath(filePath, { width: 1080 });
-
-		await Promise.all([
-			resizePNG(filePath, fileOriginal.path, null),
-			resizePNG(filePath, fileXLarge.path, 150),
-			resizePNG(filePath, fileLarge.path, 360),
-			resizePNG(filePath, fileMedium.path, 480),
-			resizePNG(filePath, fileSmall.path, 720),
-			resizePNG(filePath, fileXSmall.path, 1080),
-		]);
-
-		unlinkSync(filePath);
-
-		return [
-			fileOriginal.fileName,
-			fileXLarge.fileName,
-			fileLarge.fileName,
-			fileMedium.fileName,
-			fileSmall.fileName,
-			fileXSmall.fileName,
-		];
-	},
-
-	/**
-	 * Generate size path
-	 *
-	 * @param filePath
-	 * @param options
-	 * @returns
-	 */
-	generateSizePath(filePath: string, options = {}) {
-		const keyName = Object.keys(options)
-			.map((key) => {
-				return `${key[0]}_${options[key]}`;
-			})
-			.join(",");
-
-		const fileName = this.genUniqueFilenameResize(filePath, keyName);
-
-		const path = join(this.publicDir, "uploads", "images", fileName);
-
-		return { fileName, path };
 	},
 
 	/**

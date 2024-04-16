@@ -1,20 +1,26 @@
-import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
+import {
+	DeleteObjectCommand,
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Readable } from "stream";
 
 import {
 	AppConfig,
 	StorageServerEnum,
 } from "src/configurations/app-config.type";
 import { appConfigName } from "src/configurations/app.config";
+import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+import { StorageService } from "../storage.service";
 import { AwsConfig } from "./config/aws-config.type";
 import { awsConfigName } from "./config/aws.config";
 
 @Injectable()
-export class S3Service {
+export class S3Service implements StorageService {
 	private s3Client: S3Client;
 	private awsConfig: AwsConfig;
 	private appConfig: AppConfig;
@@ -27,6 +33,14 @@ export class S3Service {
 		this.appConfig = this.configService.get<AppConfig>(appConfigName);
 
 		this.initS3();
+	}
+	delete(resourceId: string): Promise<{ deletedAt: number; message: string }> {
+		throw new Error(`"Method not implemented.", ${resourceId}`);
+	}
+	deleteMany(
+		resourceIds: string[],
+	): Promise<{ deletedAt: number; message: string }[]> {
+		throw new Error(`"Method not implemented.", ${resourceIds}`);
 	}
 
 	initS3() {
@@ -47,18 +61,27 @@ export class S3Service {
 		this.logger.log("S3Module init success", S3Service.name);
 	}
 
+	async saveFile(file: FileFormatted) {
+		return { files: [file] } as any;
+	}
+
 	async upload(file: { fileName: string; fileFolder: string; buffer: Buffer }) {
-		const upload = new Upload({
-			params: {
-				Bucket: this.awsConfig.bucketName,
-				Key: `${file.fileFolder}/${file.fileName}`,
-				Body: Readable.from(file.buffer),
-			},
-			client: this.s3Client,
-			queueSize: 3,
+		const putCommand = new PutObjectCommand({
+			Bucket: this.awsConfig.bucketName,
+			Key: `${file.fileFolder}/${file.fileName}`,
+			Body: file.buffer,
 		});
 
-		return upload.done();
+		await this.s3Client.send(putCommand);
+
+		const getCommand = new GetObjectCommand({
+			Bucket: this.awsConfig.bucketName,
+			Key: `${file.fileFolder}/${file.fileName}`,
+		});
+
+		return getSignedUrl(this.s3Client, getCommand, {
+			expiresIn: 5,
+		});
 	}
 
 	async deleteByResourceId(resourceId: string) {

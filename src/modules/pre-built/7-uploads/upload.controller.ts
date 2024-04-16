@@ -1,7 +1,7 @@
-import { ApiUploadFiles } from "src/common/swaggers/api-upload-files.swagger";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 
 import {
+	Body,
 	Controller,
 	HttpCode,
 	HttpStatus,
@@ -10,19 +10,12 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import {
-	ApiBearerAuth,
-	ApiConsumes,
-	ApiOperation,
-	ApiTags,
-} from "@nestjs/swagger";
 
 import { UserFileService } from "../7-user-files/user-file.service";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
 import { UploadService } from "./upload.service";
 
-@ApiTags("Uploads")
 @Controller("uploads")
 export class UploadController {
 	constructor(
@@ -30,15 +23,12 @@ export class UploadController {
 		private readonly userFileService: UserFileService,
 	) {}
 
-	@ApiBearerAuth()
-	@ApiConsumes("multipart/form-data")
-	@ApiOperation({ summary: "Upload files" })
-	@ApiUploadFiles(["files"])
 	@Post()
 	@UseInterceptors(FilesInterceptor("files", 10))
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: string,
+		@Body() body: Record<string, string>,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
@@ -46,6 +36,8 @@ export class UploadController {
 		const filesUploaded = await Promise.all(
 			inputs.map((file) => this.uploadService.uploadFile(file)),
 		);
+
+		console.log({ body });
 
 		return this._handleSaveFileUploaded(filesUploaded, userId);
 	}
@@ -65,11 +57,7 @@ export class UploadController {
 				results.push({
 					originalname: res.originalname,
 					fileSize: res.fileSize,
-					fileOriginal: res.fileOriginal,
-					fileLg: res.fileLg,
-					fileMd: res.fileMd,
-					fileSm: res.fileSm,
-					fileXs: res.fileXs,
+					files: res.files,
 				});
 
 				// Add the uploaded file to the fileItems array

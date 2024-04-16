@@ -37,7 +37,7 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 		// configs
 		ServeStaticModule.forRoot({
 			rootPath: join(process.cwd(), "public"),
-			serveRoot: "/public",
+			serveRoot: "/static",
 		}),
 
 		ThrottlerModule.forRoot([{ ttl: 60, limit: 10 }]),

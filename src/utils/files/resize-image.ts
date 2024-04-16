@@ -1,67 +1,33 @@
 import * as sharp from "sharp";
 
-/**
- * resize image PNG
- * @param filePath
- * @param filePathNew
- * @param size
- * @returns
- */
 const resizePNG = async (
-	filePath: string,
-	filePathNew: string,
-	size: number | null,
+	fileBuffer: Buffer,
+	resizeOption: sharp.ResizeOptions,
+	quality = 80,
 ) => {
-	const quality = 80;
-
-	const semiTransparentRedPng = await sharp(filePath)
-		.resize(size)
-		.png({ quality })
-		.toFile(filePathNew);
-
-	return semiTransparentRedPng;
+	return sharp(fileBuffer).resize(resizeOption).png({ quality }).toBuffer();
 };
 
-/**
- * Resize image JPG
- * @param filePath
- * @param filePathNew
- * @param size
- * @returns
- */
 const resizeJPG = async (
-	filePath: string,
-	filePathNew: string,
-	size: number | null,
+	fileBuffer: Buffer,
+	resizeOption: sharp.ResizeOptions,
+	quality = 80,
 ) => {
-	const quality = 80;
-
-	const semiTransparentRedJpg = await sharp(filePath)
-		.resize(size)
-		.jpeg({ quality })
-		.toFile(filePathNew);
-
-	return semiTransparentRedJpg;
+	return sharp(fileBuffer).resize(resizeOption).jpeg({ quality }).toBuffer();
 };
 
-/**
- * resize image PNG
- * @param filePath
- * @param filePathNew
- * @param size
- * @returns
- */
 const resizeGIF = async (
-	filePath: string,
-	filePathNew: string,
-	size: number | null,
+	fileBuffer: Buffer,
+	resizeOption: sharp.ResizeOptions,
 ) => {
-	const semiTransparentRedPng = await sharp(filePath)
-		.resize(size)
-		.gif()
-		.toFile(filePathNew);
-
-	return semiTransparentRedPng;
+	return sharp(fileBuffer).resize(resizeOption).gif().toBuffer();
 };
 
-export { resizeGIF, resizeJPG, resizePNG };
+const resizeFile = async (
+	fileBuffer: Buffer,
+	resizeOption: sharp.ResizeOptions,
+) => {
+	return sharp(fileBuffer).resize(resizeOption).toBuffer();
+};
+
+export { resizeFile, resizeGIF, resizeJPG, resizePNG };

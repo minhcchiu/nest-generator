@@ -1,3 +1,5 @@
+import * as crypto from "crypto";
+
 export const getFileExtension = (originalname: string): string => {
 	return originalname.split(".").pop()?.toLowerCase() || "";
 };
@@ -10,15 +12,13 @@ export const genUniqueFilename = (originalname: string) => {
 	const lastIndexOfSlash = originalname.lastIndexOf(".");
 	const oName = originalname.slice(0, lastIndexOfSlash);
 
-	const randomNamePre = Array(24)
-		.fill(null)
-		.map(() => Math.round(Math.random() * 16).toString(16))
-		.join("");
+	const randomNamePre = crypto.randomBytes(24).toString("hex");
 
-	const fileName = `${Date.now()}-${randomNamePre}-${oName}`
+	const fileName = `${randomNamePre}-${oName
 		.replace(/[^\w\s]/gi, "")
 		.replace(/\s+/g, "-")
-		.toLowerCase();
+		.toLowerCase()}`;
+
 	const fileExt = getFileExtension(originalname);
 
 	return `${fileName}.${fileExt}`;
@@ -26,4 +26,15 @@ export const genUniqueFilename = (originalname: string) => {
 
 export const getFileName = (filePath: string) => {
 	return filePath.split("/").pop();
+};
+
+export const genResizeImageName = (
+	fileName: string,
+	options: { width?: number; height?: number } = {},
+) => {
+	const keyName = Object.keys(options)
+		.map((key) => `${key[0]}_${options[key]}`)
+		.join(",");
+
+	return `${keyName}_${fileName}`;
 };
