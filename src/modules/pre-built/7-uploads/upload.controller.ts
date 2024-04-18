@@ -1,7 +1,6 @@
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 
 import {
-	Body,
 	Controller,
 	HttpCode,
 	HttpStatus,
@@ -28,7 +27,6 @@ export class UploadController {
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: string,
-		@Body() body: Record<string, string>,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
@@ -36,8 +34,6 @@ export class UploadController {
 		const filesUploaded = await Promise.all(
 			inputs.map((file) => this.uploadService.uploadFile(file)),
 		);
-
-		console.log({ body });
 
 		return this._handleSaveFileUploaded(filesUploaded, userId);
 	}
@@ -57,7 +53,12 @@ export class UploadController {
 				results.push({
 					originalname: res.originalname,
 					fileSize: res.fileSize,
-					files: res.files,
+					url: res.url,
+					urlXLarge: res.urlXLarge,
+					urlLarge: res.urlLarge,
+					urlMedium: res.urlMedium,
+					urlSmall: res.urlSmall,
+					urlXSmall: res.urlXSmall,
 				});
 
 				// Add the uploaded file to the fileItems array
@@ -65,8 +66,9 @@ export class UploadController {
 			} else results.push(file);
 		}
 
+		console.log({ fileItems });
 		// save files
-		this.userFileService.createMany(fileItems).catch();
+		// this.userFileService.createMany(fileItems).catch();
 
 		return { results, fileItems };
 	}

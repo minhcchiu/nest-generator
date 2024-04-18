@@ -18,11 +18,6 @@ import { FileFormatted } from "./types/file-formatted.type";
 import { UploadedError } from "./types/upload.error.type";
 import { UploadedResult } from "./types/upload.result.type";
 
-// import sizeOf from "image-size";
-// const dimensions = sizeOf(inputs[0].buffer);
-// const dimensions2 = sizeOf(inputs[1].buffer);
-// console.log({ dimensions, dimensions2 });
-
 @Injectable()
 export class UploadService {
 	private fileFilter: Record<UploadType, FileOption> | object = {};
@@ -58,17 +53,24 @@ export class UploadService {
 
 		switch (this.appConfig.storageServer) {
 			case StorageServerEnum.S3:
-				return this.s3Service.saveFile(fileFormatted);
+				return this.s3Service.saveFile(fileFormatted, [
+					"XLarge",
+					"Large",
+					"Medium",
+					"Small",
+					"XSmall",
+				]);
 
 			// case StorageServerEnum.Cloudinary:
 			// 	return this._uploadToCloudinary(fileFormatted);
 
 			case StorageServerEnum.Local:
 				return this.localService.saveFile(fileFormatted, [
-					{ width: 150 },
-					{ width: 360 },
-					{ width: 480 },
-					{ width: 720 },
+					"XLarge",
+					"Large",
+					"Medium",
+					"Small",
+					"XSmall",
 				]);
 
 			default:
@@ -121,21 +123,6 @@ export class UploadService {
 	// 	}
 	// }
 
-	private async _uploadToS3(
-		input: FileFormatted,
-	): Promise<UploadedResult | UploadedError> {
-		// upload file to S3
-		const res = await this.s3Service.upload({
-			buffer: input.buffer,
-			fileName: input.fileName,
-			fileFolder: input.fileFolder,
-		});
-
-		console.log({ res });
-
-		return this.localService.saveFile(input);
-	}
-
 	validateFile(file: Express.Multer.File): FileFormatted {
 		const fileExt = getFileExtension(file.originalname);
 		const uploadType = this._getUploadType(fileExt);
@@ -145,16 +132,12 @@ export class UploadService {
 
 		if (fileSizeInMB > maxSize || !allowedExtensions.includes(fileExt)) {
 			throw new BadRequestException(
-				`Invalid file. Maximum size: ${maxSize}MB, allowed extensions: ${allowedExtensions.join(
-					", ",
-				)}`,
+				`Invalid file. Maximum size: ${maxSize}MB, allowed extensions: ${allowedExtensions.join(", ")}`,
 			);
 		}
 
 		const fileFolder = this.storageFolders[uploadType];
 		const fileName = genUniqueFilename(file.originalname);
-
-		console.log({ fileFolder, fileName });
 
 		return {
 			mimetype: file.mimetype,

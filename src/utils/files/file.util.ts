@@ -24,10 +24,6 @@ export const genUniqueFilename = (originalname: string) => {
 	return `${fileName}.${fileExt}`;
 };
 
-export const getFileName = (filePath: string) => {
-	return filePath.split("/").pop();
-};
-
 export const genResizeImageName = (
 	fileName: string,
 	options: { width?: number; height?: number } = {},
@@ -36,5 +32,8 @@ export const genResizeImageName = (
 		.map((key) => `${key[0]}_${options[key]}`)
 		.join(",");
 
-	return `${keyName}_${fileName}`;
+	const fileNameWithoutExtension = removeFileExtension(fileName);
+	const fileExt = getFileExtension(fileName);
+
+	return `${fileNameWithoutExtension}_${keyName}.${fileExt}`;
 };

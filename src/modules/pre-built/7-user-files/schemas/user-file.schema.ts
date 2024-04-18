@@ -16,6 +16,9 @@ export class UserFile {
 	@Prop({ type: String, required: true, unique: true })
 	resourceId: string;
 
+	@Prop({ type: [String], default: [] })
+	resourceIds: string[];
+
 	@Prop({ type: String, required: true })
 	fileName: string;
 

@@ -1,14 +1,46 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { rmSync, writeFileSync } from "fs";
+import sizeOf from "image-size";
 import { ResizeOptions } from "sharp";
 import { AppConfig } from "src/configurations/app-config.type";
 import { appConfigName } from "src/configurations/app.config";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
+import { UploadedError } from "~modules/pre-built/7-uploads/types/upload.error.type";
+import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { compressImage } from "~utils/files/file.helper";
 import { genResizeImageName } from "~utils/files/file.util";
 import { StorageService } from "../storage.service";
+
+export type ImageSize = "XLarge" | "Large" | "Medium" | "Small" | "XSmall";
+export const ImageSizeOptions: { width: number; name: ImageSize }[] = [
+	{ width: 150, name: "XSmall" },
+	{ width: 360, name: "Small" },
+	{ width: 480, name: "Medium" },
+	{ width: 720, name: "Large" },
+	{ width: 1080, name: "XLarge" },
+];
+
+export const getResizeOptions = (buffer: Buffer, imageSizes: ImageSize[]) => {
+	const imageDimensions = sizeOf(buffer);
+	const sizeOptions = ImageSizeOptions.filter((option) =>
+		imageSizes.includes(option.name),
+	);
+
+	const resizeOptions: ResizeOptions[] = [];
+	const resizeNames: ImageSize[] = [];
+
+	for (const option of sizeOptions) {
+		resizeNames.push(option.name);
+
+		if (imageDimensions.width > option.width) {
+			resizeOptions.push({ width: option.width });
+		}
+	}
+
+	return { resizeOptions, resizeNames };
+};
 
 @Injectable()
 export class LocalService implements StorageService {
@@ -20,31 +52,44 @@ export class LocalService implements StorageService {
 
 	async saveFile(
 		file: FileFormatted,
-		resizeOptions: ResizeOptions[] = [], // 150, 360, 480, 720
-	) {
+		imageSizes: ImageSize[] = [],
+	): Promise<UploadedResult | UploadedError> {
 		try {
 			// path storage
-
 			const fileOriginal = `${file.fileFolder}/${file.fileName}`;
 			writeFileSync(`public/${fileOriginal}`, file.buffer);
+			const url = `${this.serverUrl}/static/${fileOriginal}`;
 
-			const filesSaved = [fileOriginal];
+			const resourceIds = [fileOriginal];
 
-			// write image resize
-			if (file.uploadType === "image" && resizeOptions.length) {
+			// Handle image resize
+			const resizeUrls: Record<string, string> = {};
+			if (file.uploadType === "image" && imageSizes.length) {
+				const { resizeOptions, resizeNames } = getResizeOptions(
+					file.buffer,
+					imageSizes,
+				);
+
 				const imagesResized = await this._resizeImages(file, resizeOptions);
 
-				filesSaved.push(...imagesResized);
+				resizeNames.forEach((name, index) => {
+					resizeUrls[`url${name}`] = imagesResized[index]?.url || url;
+
+					// Add key to resource
+					if (imagesResized[index]?.key)
+						resourceIds.push(imagesResized[index].key);
+				});
 			}
 
 			return {
-				files: filesSaved.map((file) => `${this.serverUrl}/static/${file}`),
+				...resizeUrls,
+				url,
+				resourceIds,
 				fileFolder: file.fileFolder,
 				fileName: file.fileName,
 				fileSize: file.size,
 				fileType: file.mimetype,
 				originalname: file.originalname,
-				resourceId: filesSaved[0],
 				storageLocation: StorageLocationEnum.Local,
 				uploadedAt: new Date().toISOString(),
 				uploadType: file.uploadType,
@@ -85,16 +130,20 @@ export class LocalService implements StorageService {
 			resizeOptions,
 		);
 
-		const res: string[] = [];
+		const imagesResized: { url: string; key: string }[] = [];
 
 		resizeOptions.forEach((resizeOption, index) => {
 			const imageName = genResizeImageName(file.fileName, resizeOption);
 			const filePath = `${file.fileFolder}/${imageName}`;
 
 			writeFileSync(`public/${filePath}`, imagesCompressed[index]);
-			res.push(filePath);
+
+			imagesResized.push({
+				url: `${this.serverUrl}/static/${filePath}`,
+				key: filePath,
+			});
 		});
 
-		return res;
+		return imagesResized;
 	}
 }

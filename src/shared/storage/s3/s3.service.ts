@@ -1,20 +1,21 @@
-import {
-	DeleteObjectCommand,
-	GetObjectCommand,
-	PutObjectCommand,
-	S3Client,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-
+import { ResizeOptions } from "sharp";
 import {
 	AppConfig,
 	StorageServerEnum,
 } from "src/configurations/app-config.type";
 import { appConfigName } from "src/configurations/app.config";
+import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
+import { UploadedError } from "~modules/pre-built/7-uploads/types/upload.error.type";
+import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+import { compressImage } from "~utils/files/file.helper";
+import { genResizeImageName } from "~utils/files/file.util";
+import { ImageSize, getResizeOptions } from "../local-storage/local.service";
 import { StorageService } from "../storage.service";
 import { AwsConfig } from "./config/aws-config.type";
 import { awsConfigName } from "./config/aws.config";
@@ -61,27 +62,57 @@ export class S3Service implements StorageService {
 		this.logger.log("S3Module init success", S3Service.name);
 	}
 
-	async saveFile(file: FileFormatted) {
-		return { files: [file] } as any;
-	}
+	async saveFile(
+		file: FileFormatted,
+		imageSizes: ImageSize[] = [],
+	): Promise<UploadedResult | UploadedError> {
+		try {
+			const fileOriginal = `${file.fileFolder}/${file.fileName}`;
+			const { url, key } = await this._uploadToS3(fileOriginal, file.buffer);
 
-	async upload(file: { fileName: string; fileFolder: string; buffer: Buffer }) {
-		const putCommand = new PutObjectCommand({
-			Bucket: this.awsConfig.bucketName,
-			Key: `${file.fileFolder}/${file.fileName}`,
-			Body: file.buffer,
-		});
+			const resourceIds = [key];
 
-		await this.s3Client.send(putCommand);
+			// handle image resize
+			const resizeUrls: Record<string, string> = {};
+			if (file.uploadType === "image" && imageSizes.length) {
+				const { resizeOptions, resizeNames } = getResizeOptions(
+					file.buffer,
+					imageSizes,
+				);
 
-		const getCommand = new GetObjectCommand({
-			Bucket: this.awsConfig.bucketName,
-			Key: `${file.fileFolder}/${file.fileName}`,
-		});
+				const imagesResized = await this._resizeImages(file, resizeOptions);
 
-		return getSignedUrl(this.s3Client, getCommand, {
-			expiresIn: 5,
-		});
+				resizeNames.forEach((name, index) => {
+					resizeUrls[`url${name}`] = imagesResized[index]?.url || url;
+
+					// Add key to resource
+					if (imagesResized[index]?.key)
+						resourceIds.push(imagesResized[index].key);
+				});
+			}
+
+			return {
+				...resizeUrls,
+				url,
+				resourceIds,
+				fileFolder: file.fileFolder,
+				fileName: file.fileName,
+				fileSize: file.size,
+				fileType: file.mimetype,
+				originalname: file.originalname,
+				storageLocation: StorageLocationEnum.S3,
+				uploadedAt: new Date().toISOString(),
+				uploadType: file.uploadType,
+				isUploadedSuccess: true,
+			};
+		} catch (error) {
+			return {
+				error: error?.message || "Local upload failed",
+				originalname: file.originalname,
+				fileSize: file.size,
+				isUploadedSuccess: false,
+			};
+		}
 	}
 
 	async deleteByResourceId(resourceId: string) {
@@ -93,11 +124,7 @@ export class S3Service implements StorageService {
 
 			const result = await this.s3Client.send(deleteObjectCommand);
 
-			console.log(
-				`File ${resourceId} deleted successfully from S3 bucket ${this.awsConfig.bucketName}.`,
-			);
-
-			console.log(result);
+			return result;
 		} catch (error) {
 			this.logger.warn(S3Service.name, error);
 			throw error;
@@ -112,5 +139,46 @@ export class S3Service implements StorageService {
 		} catch (error) {
 			this.logger.warn(S3Service.name, error);
 		}
+	}
+
+	private async _uploadToS3(key: string, buffer: Buffer) {
+		const uploaded = new Upload({
+			client: this.s3Client,
+			params: {
+				Bucket: this.awsConfig.bucketName,
+				Key: key,
+				Body: buffer,
+			},
+		});
+
+		const res = await uploaded.done();
+
+		return {
+			key: res.Key,
+			bucket: res.Bucket,
+			url: res.Location,
+		};
+	}
+
+	private async _resizeImages(
+		file: FileFormatted,
+		resizeOptions: ResizeOptions[] = [], // 150, 360, 480, 720
+	) {
+		const imagesCompressed = await compressImage(
+			file.fileExt,
+			file.buffer,
+			resizeOptions,
+		);
+
+		const imagesResizedUrls = await Promise.all(
+			resizeOptions.map((resizeOption, index) => {
+				const imageName = genResizeImageName(file.fileName, resizeOption);
+				const filePath = `${file.fileFolder}/${imageName}`;
+
+				return this._uploadToS3(filePath, imagesCompressed[index]);
+			}),
+		);
+
+		return imagesResizedUrls;
 	}
 }
