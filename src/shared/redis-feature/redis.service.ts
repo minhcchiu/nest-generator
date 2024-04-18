@@ -1,25 +1,24 @@
 import { Redis } from "ioredis";
 
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { RedisConfig } from "./config/redis-config.type";
-import { redisConfigName } from "./config/redis.config";
+import { EnvStatic } from "src/configurations/static.env";
 
 @Injectable()
-export class RedisFeatureService {
+export class RedisService {
 	private redis: Redis;
 	private publisher: Redis;
 	private subscriber: Redis;
-	private redisConfig: RedisConfig;
 
 	isSubscribed = false;
 
-	constructor(private readonly configService: ConfigService) {
-		this.redisConfig = this.configService.get<RedisConfig>(redisConfigName);
+	constructor() {
+		this.init();
 	}
 
-	initRedis() {
-		const redisUrl = this.redisConfig.redisUrl;
+	init() {
+		if (!EnvStatic.getRedisConfig().isEnable) return;
+
+		const redisUrl = EnvStatic.getRedisConfig().url;
 
 		this.redis = new Redis(redisUrl);
 		this.publisher = new Redis(redisUrl);

@@ -1,15 +1,8 @@
 // file.dto.ts
 
-import {
-	IsEnum,
-	IsISO8601,
-	IsNotEmpty,
-	IsNumber,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
-import { UploadType } from "~types/upload-type";
 
 export class CreateUserFileDto {
 	@IsNotEmpty()
@@ -17,8 +10,8 @@ export class CreateUserFileDto {
 	userId: string;
 
 	@IsNotEmpty()
-	@IsString()
-	resourceId: string;
+	@IsString({ each: true })
+	resourceIds: string;
 
 	@IsNotEmpty()
 	@IsString()
@@ -29,43 +22,34 @@ export class CreateUserFileDto {
 	fileType: string;
 
 	@IsNotEmpty()
-	@IsString()
-	uploadType: UploadType;
+	@IsEnum(ResourceTypeEnum)
+	resourceType: ResourceTypeEnum;
 
 	@IsOptional()
 	@IsString()
-	fileOriginal: string;
+	urlXSmall?: string;
 
 	@IsOptional()
 	@IsString()
-	fileXs?: string;
+	urlSmall?: string;
 
 	@IsOptional()
 	@IsString()
-	fileSm?: string;
+	urlMedium?: string;
 
 	@IsOptional()
 	@IsString()
-	fileMd?: string;
+	urlLarge?: string;
 
 	@IsOptional()
 	@IsString()
-	fileLg?: string;
-
-	@IsNumber()
-	fileSize: number;
-
-	@IsISO8601()
-	uploadedAt: Date;
+	urlXLarge?: string;
 
 	@IsNotEmpty()
 	@IsString()
-	fileFolder: string;
+	url: string;
 
+	@IsNotEmpty()
 	@IsEnum(StorageLocationEnum)
 	storageLocation: StorageLocationEnum;
-
-	@IsNotEmpty()
-	@IsString()
-	isUploadedSuccess: string;
 }

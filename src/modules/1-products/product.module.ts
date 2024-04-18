@@ -1,6 +1,6 @@
 import { InventoryModule } from "~modules/5-inventories/inventory.module";
 import { DiscountModule } from "~modules/6-discounts/discount.module";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { RedisService } from "~shared/redis-feature/redis.service";
 
 import { Module } from "@nestjs/common";
 import { forwardRef } from "@nestjs/common/utils";
@@ -37,7 +37,7 @@ import { Product, ProductSchema } from "./schemas/product.schema";
 		forwardRef(() => DiscountModule),
 	],
 	controllers: [ProductController],
-	providers: [ProductService, RedisFeatureService],
+	providers: [ProductService, RedisService],
 	exports: [ProductService],
 })
 export class ProductModule {}

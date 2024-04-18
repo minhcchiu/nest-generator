@@ -1,24 +1,11 @@
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { differenceInMinutes } from "date-fns";
-import { AppConfig } from "src/configurations/app-config.type";
-import { appConfigName } from "src/configurations/app.config";
-import { MailerConfig } from "./config/mail-config.type";
-import { mailerConfigName } from "./config/mail.config";
+import { EnvStatic } from "src/configurations/static.env";
 
 @Injectable()
 export class MailService {
-	private appConfig: AppConfig;
-	private mailerConfig: MailerConfig;
-
-	constructor(
-		private mailerService: MailerService,
-		private configService: ConfigService,
-	) {
-		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
-		this.appConfig = this.configService.get<AppConfig>(appConfigName);
-	}
+	constructor(private mailerService: MailerService) {}
 
 	sendMail(options: ISendMailOptions) {
 		return this.mailerService.sendMail(options);
@@ -30,7 +17,7 @@ export class MailService {
 		subject: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
 		const params = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
 			to,
@@ -48,8 +35,8 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
-		const { verifyAccountUrl } = this.appConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
+		const { verifyAccountUrl } = EnvStatic.getAppConfig();
 
 		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const verificationLink = `${verifyAccountUrl}?token=${body.token}`;
@@ -72,8 +59,8 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
-		const { resetPasswordUrl } = this.appConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
+		const { resetPasswordUrl } = EnvStatic.getAppConfig();
 
 		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;

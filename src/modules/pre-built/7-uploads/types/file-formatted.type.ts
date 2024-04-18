@@ -1,10 +1,10 @@
-import { UploadType } from "~types/upload-type";
+import { ResourceTypeEnum } from "../enum/resource-type.enum";
 
 export type FileFormatted = {
 	mimetype: string;
 	buffer: Buffer;
 	size: number;
-	uploadType: UploadType;
+	resourceType: ResourceTypeEnum;
 	fileFolder: any;
 	fileExt: string;
 	fileName: string;

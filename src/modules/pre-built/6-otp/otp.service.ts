@@ -8,14 +8,11 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 
 import { differenceInSeconds } from "date-fns";
-import { AppConfig, NodeEnv } from "src/configurations/app-config.type";
-import { appConfigName } from "src/configurations/app.config";
-import { OtpConfig } from "./config/otp-config.type";
-import { otpConfigName } from "./config/otp.config";
+import { NodeEnv } from "src/configurations/enums/config.enum";
+import { EnvStatic } from "src/configurations/static.env";
 import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { OtpType } from "./enums/otp-type";
@@ -23,17 +20,10 @@ import { Otp } from "./schemas/otp.schema";
 
 @Injectable()
 export class OtpService {
-	private otpConfig: OtpConfig;
-	private appConfig: AppConfig;
-
 	constructor(
 		@InjectModel(Otp.name) private otpModel: Model<Otp>,
-		private mailService: MailService,
-		private configService: ConfigService,
-	) {
-		this.otpConfig = this.configService.get<OtpConfig>(otpConfigName);
-		this.appConfig = this.configService.get<AppConfig>(appConfigName);
-	}
+		private readonly mailService: MailService,
+	) {}
 
 	async sendOtp({ otpType, ...credential }: CreateOtpDto) {
 		const { otpCode } = await this.create(credential, otpType);
@@ -44,9 +34,8 @@ export class OtpService {
 		else if (credential.email)
 			await this._sendEmailVerify(credential.email, otpCode);
 
-		const { nodeEnv } = this.appConfig;
-
-		if (nodeEnv === NodeEnv.Development) return { otpCode, otpType };
+		if (EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development)
+			return { otpCode, otpType };
 
 		return {
 			message: `OTP code has been successfully sent to the ${credential}.`,
@@ -73,10 +62,10 @@ export class OtpService {
 	}
 
 	private async create(credential: any, otpType: OtpType) {
-		const { expiresIn } = this.otpConfig;
+		const { otpExpiration } = EnvStatic.getAppConfig();
 
 		const otpCode = generateOTP();
-		const expiredAt = Date.now() + expiresIn;
+		const expiredAt = Date.now() + otpExpiration;
 
 		const otpDoc = await this.otpModel.findOne({
 			...credential,

@@ -1,37 +1,30 @@
-import { UploadApiResponse, v2 } from "cloudinary";
+import { v2 } from "cloudinary";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { UploadType } from "~types/upload-type";
 
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { removeFileExtension } from "~utils/files/file.util";
 
-import {
-	AppConfig,
-	StorageServerEnum,
-} from "src/configurations/app-config.type";
-import { appConfigName } from "src/configurations/app.config";
-import { CloudinaryConfig } from "./config/cloudinary-config.type";
-import { cloudinaryConfigName } from "./config/cloudinary.config";
+import { ResizeOptions } from "sharp";
+import { StorageServerEnum } from "src/configurations/enums/config.enum";
+import { EnvStatic } from "src/configurations/static.env";
+import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
+import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
+import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
+import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
+import { ImageSize, getResizeOptions } from "../local-storage/local.service";
+import { StorageService } from "../storage.service";
 
 @Injectable()
-export class CloudinaryService {
-	private cloudinaryConfig: CloudinaryConfig;
-	private appConfig: AppConfig;
-
-	constructor(
-		readonly configService: ConfigService,
-		private readonly logger: CustomLoggerService,
-	) {
-		this.cloudinaryConfig =
-			this.configService.get<CloudinaryConfig>(cloudinaryConfigName);
-		this.appConfig = this.configService.get<AppConfig>(appConfigName);
-
-		this.initCloudinary();
+export class CloudinaryService implements StorageService {
+	constructor(private readonly logger: CustomLoggerService) {
+		this.init();
 	}
 
-	initCloudinary() {
-		if (this.appConfig.storageServer !== StorageServerEnum.Cloudinary) {
+	init() {
+		if (
+			EnvStatic.getAppConfig().storageServer !== StorageServerEnum.Cloudinary
+		) {
 			this.logger.warn(
 				"CloudinaryModule module was not init",
 				CloudinaryService.name,
@@ -40,28 +33,75 @@ export class CloudinaryService {
 			return;
 		}
 
-		v2.config(this.cloudinaryConfig.config);
+		v2.config(EnvStatic.getCloudinaryConfig().config);
 
 		this.logger.log("CloudinaryModule init success", CloudinaryService.name);
 	}
 
-	uploadStream(file: {
+	async saveFile(
+		file: FileFormatted,
+		imageSizes?: ImageSize[],
+	): Promise<UploadedResult> {
+		const { url, key } = await this._uploadToCloudinary({
+			buffer: file.buffer,
+			fileFolder: file.fileFolder,
+			fileName: file.fileName,
+			resourceType: file.resourceType,
+		});
+
+		// handle image resize
+		const resizeUrls: Record<string, string> = {};
+		if (file.resourceType === ResourceTypeEnum.Image && imageSizes.length) {
+			const { resizeOptions, resizeNames } = getResizeOptions(
+				file.buffer,
+				imageSizes,
+			);
+
+			const imagesResized = await this._resizeImages(key, resizeOptions);
+
+			resizeNames.forEach((name, index) => {
+				resizeUrls[`url${name}`] = imagesResized[index]?.url || url;
+			});
+		}
+
+		return {
+			...resizeUrls,
+			url,
+			resourceIds: [key],
+			fileFolder: file.fileFolder,
+			fileName: file.fileName,
+			fileSize: file.size,
+			fileType: file.mimetype,
+			originalname: file.originalname,
+			storageLocation: StorageLocationEnum.Cloudinary,
+			resourceType: file.resourceType,
+		};
+	}
+	delete(resourceId: string): Promise<{ deletedAt: number; message: string }> {
+		console.log({ resourceId });
+		throw new Error("Method not implemented.");
+	}
+	deleteMany(
+		resourceIds: string[],
+	): Promise<{ deletedAt: number; message: string }[]> {
+		console.log({ resourceIds });
+		throw new Error("Method not implemented.");
+	}
+
+	_uploadToCloudinary(file: {
 		fileName: string;
-		fileType: UploadType;
+		resourceType: ResourceTypeEnum;
 		fileFolder: string;
 		buffer: Buffer;
-	}): Promise<UploadApiResponse> {
-		let fileName = file.fileName;
-		let fileType = file.fileType;
-
+	}): Promise<{ url: string; key: string }> {
 		// remove file extension
-		if (file.fileType !== "raw") {
-			fileName = removeFileExtension(fileName);
+		if (file.resourceType !== ResourceTypeEnum.Raw) {
+			file.fileName = removeFileExtension(file.fileName);
 		}
 
 		// check file type
-		if (fileType === "audio") {
-			fileType = "video";
+		if (file.resourceType === ResourceTypeEnum.Audio) {
+			file.resourceType = ResourceTypeEnum.Video;
 		}
 
 		return new Promise((resolve, reject) => {
@@ -69,14 +109,17 @@ export class CloudinaryService {
 				v2.uploader
 					.upload_stream(
 						{
-							resource_type: <any>fileType,
+							resource_type: <any>file.resourceType,
 							folder: file.fileFolder,
-							public_id: fileName,
+							public_id: file.fileName,
 						},
-						(error, uploadResult) => {
+						(error, uploaded) => {
 							if (error) return reject(error);
 
-							return resolve(uploadResult);
+							return resolve({
+								url: uploaded.url,
+								key: uploaded.public_id,
+							});
 						},
 					)
 					.end(file.buffer);
@@ -86,21 +129,12 @@ export class CloudinaryService {
 		});
 	}
 
-	resizeImage(id: string, width: number) {
-		return v2.url(id, {
-			width,
-			opacity: 80,
-			crop: "fill",
-			format: "jpg",
-		});
-	}
-
 	genImagesResize(public_id: string) {
 		return {
-			fileXs: this.resizeImage(public_id, 150),
-			fileSm: this.resizeImage(public_id, 360),
-			fileMd: this.resizeImage(public_id, 480),
-			fileLg: this.resizeImage(public_id, 1080),
+			fileXs: this._resizeImage(public_id, 150),
+			fileSm: this._resizeImage(public_id, 360),
+			fileMd: this._resizeImage(public_id, 480),
+			fileLg: this._resizeImage(public_id, 1080),
 		};
 	}
 
@@ -130,5 +164,26 @@ export class CloudinaryService {
 		} catch (error) {
 			this.logger.warn(CloudinaryService.name, error);
 		}
+	}
+
+	private async _resizeImages(
+		key: string, // public_id
+		resizeOptions: ResizeOptions[] = [],
+	) {
+		const imagesResizedUrls = resizeOptions.map((resizeOption) => {
+			return this._resizeImage(key, resizeOption.width);
+		});
+
+		return imagesResizedUrls;
+	}
+
+	private _resizeImage(id: string, width: number) {
+		const url = v2.url(id, {
+			width,
+			opacity: 80,
+			crop: "fill",
+		});
+
+		return { url };
 	}
 }

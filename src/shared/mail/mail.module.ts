@@ -3,18 +3,15 @@ import { join } from "path";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 
-import { MailerConfig } from "./config/mail-config.type";
-import { mailerConfigName } from "./config/mail.config";
+import { EnvStatic } from "src/configurations/static.env";
 import { MailService } from "./mail.service";
 
 @Module({
 	imports: [
 		MailerModule.forRootAsync({
-			useFactory: async (config: ConfigService) => {
-				const { transport, defaults } =
-					config.get<MailerConfig>(mailerConfigName);
+			useFactory: async () => {
+				const { transport, defaults } = EnvStatic.getMailerConfig();
 
 				// return options
 				const options = {
@@ -29,8 +26,6 @@ import { MailService } from "./mail.service";
 
 				return options;
 			},
-
-			inject: [ConfigService],
 		}),
 	],
 	providers: [MailService],

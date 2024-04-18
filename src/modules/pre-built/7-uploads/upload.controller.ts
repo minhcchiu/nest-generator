@@ -5,71 +5,39 @@ import {
 	HttpCode,
 	HttpStatus,
 	Post,
+	UploadedFile,
 	UploadedFiles,
 	UseInterceptors,
 } from "@nestjs/common";
-import { FilesInterceptor } from "@nestjs/platform-express";
-
-import { UserFileService } from "../7-user-files/user-file.service";
-import { UploadedError } from "./types/upload.error.type";
-import { UploadedResult } from "./types/upload.result.type";
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
+import { EnvStatic } from "src/configurations/static.env";
 import { UploadService } from "./upload.service";
-
+console.log({ filesLimit: EnvStatic.getUploadConfig().filesLimit });
 @Controller("uploads")
 export class UploadController {
-	constructor(
-		private readonly uploadService: UploadService,
-		private readonly userFileService: UserFileService,
-	) {}
+	constructor(private readonly uploadService: UploadService) {}
 
-	@Post()
-	@UseInterceptors(FilesInterceptor("files", 10))
+	@Post("files")
+	@UseInterceptors(
+		FilesInterceptor("files", EnvStatic.getUploadConfig().filesLimit),
+	)
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: string,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
-		// upload files
-		const filesUploaded = await Promise.all(
-			inputs.map((file) => this.uploadService.uploadFile(file)),
-		);
-
-		return this._handleSaveFileUploaded(filesUploaded, userId);
+		return this.uploadService.uploadFiles(inputs, userId);
 	}
 
-	// Handle the results of file uploads
-	private _handleSaveFileUploaded(
-		filesUploaded: (UploadedResult | UploadedError)[],
-		userId: string,
+	@Post("file")
+	@UseInterceptors(FileInterceptor("file"))
+	@HttpCode(HttpStatus.CREATED)
+	async uploadFile(
+		@GetCurrentUserId() userId: string,
+		@UploadedFile()
+		input: Express.Multer.File,
 	) {
-		const results: Record<string, any>[] = [];
-		const fileItems: Record<string, any>[] = [];
-
-		for (const file of filesUploaded) {
-			if (file.isUploadedSuccess) {
-				const res = file as UploadedResult;
-
-				results.push({
-					originalname: res.originalname,
-					fileSize: res.fileSize,
-					url: res.url,
-					urlXLarge: res.urlXLarge,
-					urlLarge: res.urlLarge,
-					urlMedium: res.urlMedium,
-					urlSmall: res.urlSmall,
-					urlXSmall: res.urlXSmall,
-				});
-
-				// Add the uploaded file to the fileItems array
-				fileItems.push({ ...res, userId });
-			} else results.push(file);
-		}
-
-		console.log({ fileItems });
-		// save files
-		// this.userFileService.createMany(fileItems).catch();
-
-		return { results, fileItems };
+		return this.uploadService.uploadFile(input, userId);
 	}
 }

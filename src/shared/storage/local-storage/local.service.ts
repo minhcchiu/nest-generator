@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { rmSync, writeFileSync } from "fs";
 import sizeOf from "image-size";
 import { ResizeOptions } from "sharp";
-import { AppConfig } from "src/configurations/app-config.type";
-import { appConfigName } from "src/configurations/app.config";
+import { EnvStatic } from "src/configurations/static.env";
+import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
-import { UploadedError } from "~modules/pre-built/7-uploads/types/upload.error.type";
 import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { compressImage } from "~utils/files/file.helper";
 import { genResizeImageName } from "~utils/files/file.util";
@@ -44,65 +42,54 @@ export const getResizeOptions = (buffer: Buffer, imageSizes: ImageSize[]) => {
 
 @Injectable()
 export class LocalService implements StorageService {
-	private serverUrl: string = "";
+	private serverUrl: string;
 
-	constructor(private readonly configService: ConfigService) {
-		this.serverUrl = this.configService.get<AppConfig>(appConfigName).serverUrl;
+	constructor() {
+		this.serverUrl = EnvStatic.getAppConfig().serverUrl;
 	}
 
 	async saveFile(
 		file: FileFormatted,
 		imageSizes: ImageSize[] = [],
-	): Promise<UploadedResult | UploadedError> {
-		try {
-			// path storage
-			const fileOriginal = `${file.fileFolder}/${file.fileName}`;
-			writeFileSync(`public/${fileOriginal}`, file.buffer);
-			const url = `${this.serverUrl}/static/${fileOriginal}`;
+	): Promise<UploadedResult> {
+		// path storage
+		const fileOriginal = `${file.fileFolder}/${file.fileName}`;
+		writeFileSync(`public/${fileOriginal}`, file.buffer);
+		const url = `${this.serverUrl}/static/${fileOriginal}`;
 
-			const resourceIds = [fileOriginal];
+		const resourceIds = [fileOriginal];
 
-			// Handle image resize
-			const resizeUrls: Record<string, string> = {};
-			if (file.uploadType === "image" && imageSizes.length) {
-				const { resizeOptions, resizeNames } = getResizeOptions(
-					file.buffer,
-					imageSizes,
-				);
+		// Handle image resize
+		const resizeUrls: Record<string, string> = {};
+		if (file.resourceType === ResourceTypeEnum.Image && imageSizes.length) {
+			const { resizeOptions, resizeNames } = getResizeOptions(
+				file.buffer,
+				imageSizes,
+			);
 
-				const imagesResized = await this._resizeImages(file, resizeOptions);
+			const imagesResized = await this._resizeImages(file, resizeOptions);
 
-				resizeNames.forEach((name, index) => {
-					resizeUrls[`url${name}`] = imagesResized[index]?.url || url;
+			resizeNames.forEach((name, index) => {
+				resizeUrls[`url${name}`] = imagesResized[index]?.url || url;
 
-					// Add key to resource
-					if (imagesResized[index]?.key)
-						resourceIds.push(imagesResized[index].key);
-				});
-			}
-
-			return {
-				...resizeUrls,
-				url,
-				resourceIds,
-				fileFolder: file.fileFolder,
-				fileName: file.fileName,
-				fileSize: file.size,
-				fileType: file.mimetype,
-				originalname: file.originalname,
-				storageLocation: StorageLocationEnum.Local,
-				uploadedAt: new Date().toISOString(),
-				uploadType: file.uploadType,
-				isUploadedSuccess: true,
-			};
-		} catch (error) {
-			return {
-				error: error?.message || "Local upload failed",
-				originalname: file.originalname,
-				fileSize: file.size,
-				isUploadedSuccess: false,
-			};
+				// Add key to resource
+				if (imagesResized[index]?.key)
+					resourceIds.push(imagesResized[index].key);
+			});
 		}
+
+		return {
+			...resizeUrls,
+			url,
+			resourceIds,
+			fileFolder: file.fileFolder,
+			fileName: file.fileName,
+			fileSize: file.size,
+			fileType: file.mimetype,
+			originalname: file.originalname,
+			storageLocation: StorageLocationEnum.Local,
+			resourceType: file.resourceType,
+		};
 	}
 
 	async delete(resourceId: string) {

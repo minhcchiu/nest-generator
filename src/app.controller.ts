@@ -1,6 +1,6 @@
 import { Public } from "~decorators/public.decorator";
 import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { RedisService } from "~shared/redis-feature/redis.service";
 
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
@@ -8,7 +8,7 @@ import { ApiTags } from "@nestjs/swagger";
 @ApiTags("App")
 @Controller()
 export class AppController {
-	constructor(private readonly redisFeatureService: RedisFeatureService) {}
+	constructor(private readonly redisFeatureService: RedisService) {}
 
 	@Get("publish")
 	async publish() {

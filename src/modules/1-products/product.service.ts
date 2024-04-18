@@ -3,7 +3,7 @@ import { BaseService } from "~base-inherit/base.service";
 import { CreateInventoryDto } from "~modules/5-inventories/dto/create-inventory.dto";
 import { InventoryService } from "~modules/5-inventories/inventory.service";
 import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { RedisService } from "~shared/redis-feature/redis.service";
 
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -31,7 +31,7 @@ export class ProductService extends BaseService<ProductDocument> {
 		_furnitureModel: PaginateModel<FurnitureDocument>,
 
 		private readonly inventoryService: InventoryService,
-		private readonly redisFeatureService: RedisFeatureService,
+		private readonly redisFeatureService: RedisService,
 	) {
 		super(_productModel);
 

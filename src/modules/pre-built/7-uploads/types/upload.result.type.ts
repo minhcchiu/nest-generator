@@ -1,4 +1,4 @@
-import { UploadType } from "~types/upload-type";
+import { ResourceTypeEnum } from "../enum/resource-type.enum";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
 export type UploadedResult = {
@@ -14,9 +14,7 @@ export type UploadedResult = {
 	resourceIds: string[];
 	fileName: string;
 	fileType: string;
-	uploadType: UploadType;
+	resourceType: ResourceTypeEnum;
 	originalname: string;
 	storageLocation: StorageLocationEnum;
-	uploadedAt: string;
-	isUploadedSuccess: boolean;
 };
