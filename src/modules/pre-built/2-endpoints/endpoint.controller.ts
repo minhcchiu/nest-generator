@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
-import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,15 +9,18 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { Types } from "mongoose";
+
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { PermissionService } from "../2-permissions/permission.service";
 import { CreateEndpointDto } from "./dto/create-endpoint.dto";
 import { UpdateEndpointDto } from "./dto/update-endpoint.dto";
 import { EndpointService } from "./endpoint.service";
 
-@ApiTags("Endpoints")
 @Controller("endpoints")
 export class EndpointController {
 	constructor(
@@ -33,28 +29,22 @@ export class EndpointController {
 	) {}
 
 	//  ----- Method: GET -----
-	@ApiBearerAuth()
-	@ApiQueryParams()
+
 	@Get()
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.endpointService.findMany(filter, options);
 	}
 
-	@ApiBearerAuth()
-	@ApiQueryParams()
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.endpointService.paginate(filter, options);
 	}
 
-	@ApiBearerAuth()
 	@Get("count")
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.endpointService.count(filter);
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Get(":id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -64,7 +54,7 @@ export class EndpointController {
 	}
 
 	//  ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateEndpointDto) {
@@ -72,8 +62,7 @@ export class EndpointController {
 	}
 
 	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -84,8 +73,7 @@ export class EndpointController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -94,8 +82,6 @@ export class EndpointController {
 		});
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

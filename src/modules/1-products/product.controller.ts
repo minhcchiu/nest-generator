@@ -1,9 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -15,14 +9,17 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
 
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductService } from "./product.service";
 
-@ApiTags("Products")
 @Controller("products")
 export class ProductController {
 	constructor(private readonly productService: ProductService) {}

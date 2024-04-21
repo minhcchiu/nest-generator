@@ -1,11 +1,9 @@
-import { PaginateModel, Types } from "mongoose";
-import { BaseService } from "~base-inherit/base.service";
-
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
-
+import { PaginateModel, Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
+import { BaseService } from "~base-inherit/base.service";
 import { User } from "../1-users/schemas/user.schema";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";

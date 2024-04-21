@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetLanguage } from "~decorators/language.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-import { LanguageEnum } from "~enums/language.enum";
-
 import {
 	Body,
 	Controller,
@@ -16,20 +9,24 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetLanguage } from "~decorators/language.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
+import { LanguageEnum } from "~enums/language.enum";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
 import { NotificationService } from "./notification.service";
 
-@ApiTags("Notifications")
 @Controller("notifications")
 export class NotificationController {
 	constructor(private readonly notificationService: NotificationService) {}
 
 	//  ----- Method: GET -----
-	@ApiBearerAuth()
+
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(
@@ -45,14 +42,12 @@ export class NotificationController {
 		return pagination;
 	}
 
-	@ApiBearerAuth()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.notificationService.count(filter);
 	}
 
-	@ApiBearerAuth()
 	@Get(":id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
@@ -74,7 +69,6 @@ export class NotificationController {
 
 	//  ----- Method: POST -----
 	@HttpCode(HttpStatus.CREATED)
-	@ApiBearerAuth()
 	@Post()
 	async create(@Body() body: CreateNotificationDto) {
 		return this.notificationService.createNotification(body);

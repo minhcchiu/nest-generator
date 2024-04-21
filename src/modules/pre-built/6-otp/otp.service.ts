@@ -1,7 +1,3 @@
-import { FilterQuery, Model, QueryOptions } from "mongoose";
-import { generateOTP } from "~helpers/generate-otp";
-import { MailService } from "~shared/mail/mail.service";
-
 import {
 	BadRequestException,
 	Injectable,
@@ -9,10 +5,12 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-
 import { differenceInSeconds } from "date-fns";
+import { FilterQuery, Model, QueryOptions } from "mongoose";
 import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
+import { generateOTP } from "~helpers/generate-otp";
+import { MailService } from "~shared/mail/mail.service";
 import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { OtpType } from "./enums/otp-type";

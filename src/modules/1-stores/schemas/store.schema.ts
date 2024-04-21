@@ -1,15 +1,12 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { LocationDto } from "~dto/location.dto";
 import { Ward } from "~pre-built/10-wards/schemas/ward.schema";
 import { Province } from "~pre-built/8-provinces/schemas/province.schema";
 import { District } from "~pre-built/9-districts/schemas/district.schema";
 import { NullableType } from "~types/nullable.type";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { OpenCloseTimeDto } from "../dto/open-close-time.dto";
 import { LocationTypeEnum } from "../enums/location-type.enum";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -47,7 +44,6 @@ export class Store {
 		default: [],
 	})
 	openCloseTimes: OpenCloseTimeDto[];
-
 	@Prop({
 		type: {
 			type: String,
@@ -60,25 +56,19 @@ export class Store {
 		},
 	})
 	location: LocationDto;
-
 	@Prop({ type: String, ref: Province.name, default: null })
 	provinceId: NullableType<string>;
-
 	@Prop({ type: String, ref: District.name, default: null })
 	districtId: NullableType<string>;
-
 	@Prop({ type: String, ref: Ward.name, default: null })
 	wardId: NullableType<string>;
-
 	@Prop({ type: String, default: "" })
 	street: string;
 
 	@Prop({ type: Number, default: 0 })
 	totalRatings: number;
-
 	@Prop({ type: Number, default: 0 })
 	countReviews: number;
-
 	@Prop({ type: Number, default: 0 })
 	countSales: number;
 }

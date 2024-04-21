@@ -1,9 +1,7 @@
-import { HydratedDocument } from "mongoose";
-import { Endpoint } from "~pre-built/2-endpoints/schemas/endpoint.schema";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
-
+import { Endpoint } from "~pre-built/2-endpoints/schemas/endpoint.schema";
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -21,7 +19,6 @@ export class Permission {
 		default: [],
 	})
 	readonly endpoints: string[];
-
 	@Prop({ type: String, default: "" })
 	readonly description: string;
 
@@ -30,12 +27,10 @@ export class Permission {
 		default: [RoleEnum.SupperAdmin],
 	})
 	readonly roles: RoleEnum[];
-
 	@Prop({ type: Number, default: 0 })
 	readonly position: number;
 }
 
 type PermissionDocument = HydratedDocument<Permission>;
 const PermissionSchema = SchemaFactory.createForClass(Permission);
-
 export { PermissionDocument, PermissionSchema };

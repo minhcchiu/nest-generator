@@ -1,11 +1,8 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { Store } from "~modules/1-stores/schemas/store.schema";
 import { ProductGroup } from "~modules/5-product-groups/schemas/product-group.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { UnitPriceEnum } from "../enums/unit-price.enum";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -26,10 +23,8 @@ export class Product {
 
 	@Prop({ type: Number, required: true })
 	price: number;
-
 	@Prop({ type: String, enum: UnitPriceEnum, default: UnitPriceEnum.VND })
 	unitPrice: UnitPriceEnum;
-
 	@Prop({ type: String, required: true })
 	description: string;
 }

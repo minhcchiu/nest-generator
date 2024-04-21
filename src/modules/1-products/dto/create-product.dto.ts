@@ -7,7 +7,6 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
-
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {

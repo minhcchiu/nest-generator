@@ -21,7 +21,6 @@ export type Message = {
 	auto: string;
 	isDeleted: boolean;
 };
-
 // const data = {
 // 	"sender": {
 // 		"_id": "645548ee732c55aa88d2bed4",

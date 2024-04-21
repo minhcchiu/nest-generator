@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
-import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,41 +9,35 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { UpdatePermissionDto } from "./dto/update-permission.dto";
 import { PermissionService } from "./permission.service";
-
-@ApiTags("Permissions")
 @Controller("permissions")
 export class PermissionController {
 	constructor(private readonly permissionService: PermissionService) {}
 
 	//  ----- Method: GET -----
-	@ApiBearerAuth()
-	@ApiQueryParams()
+
 	@Get()
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.permissionService.findMany(filter, options);
 	}
 
-	@ApiBearerAuth()
-	@ApiQueryParams()
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.permissionService.paginate(filter, options);
 	}
 
-	@ApiBearerAuth()
 	@Get("count")
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.permissionService.count(filter);
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Get(":id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -60,7 +47,7 @@ export class PermissionController {
 	}
 
 	//  ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreatePermissionDto) {
@@ -68,8 +55,7 @@ export class PermissionController {
 	}
 
 	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -80,8 +66,7 @@ export class PermissionController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -90,8 +75,6 @@ export class PermissionController {
 		});
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

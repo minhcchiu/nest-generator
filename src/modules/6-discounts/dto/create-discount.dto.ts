@@ -10,7 +10,6 @@ import {
 	IsString,
 	ValidateIf,
 } from "class-validator";
-
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
 

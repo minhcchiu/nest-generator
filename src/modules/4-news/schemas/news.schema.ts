@@ -1,9 +1,7 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { Store } from "~modules/1-stores/schemas/store.schema";
 import { User } from "~pre-built/1-users/schemas/user.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,

@@ -1,7 +1,3 @@
-import { Server, Socket } from "socket.io";
-import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
-import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
 import { UseFilters } from "@nestjs/common";
 import {
 	MessageBody,
@@ -12,7 +8,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from "@nestjs/websockets";
-
+import { Server, Socket } from "socket.io";
+import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { SocketEvent } from "./enums/socket-event.enum";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";

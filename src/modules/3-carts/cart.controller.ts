@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,12 +9,14 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CartService } from "./cart.service";
 import { CartProductDto } from "./dto/cart-product.dto";
-
-@ApiTags("Carts")
 @Controller("carts")
 export class CartController {
 	constructor(private readonly cartService: CartService) {}

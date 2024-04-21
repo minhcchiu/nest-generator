@@ -1,8 +1,7 @@
-import { HydratedDocument } from "mongoose";
-import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
+import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
 @Schema({
 	timestamps: true,

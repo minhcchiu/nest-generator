@@ -1,11 +1,3 @@
-import { Types } from "mongoose";
-import { ApiParamId } from "src/common/swaggers/api-param-id.swagger";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -17,28 +9,31 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
+import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { AccountStatus } from "./enums/account-status.enum";
 import { UserService } from "./user.service";
 
-@ApiTags("Users")
 @Controller("users")
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	//  ----- Method: GET -----
-	@ApiBearerAuth()
+
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userService.findMany(filter, options);
 	}
 
-	@ApiBearerAuth()
 	@Get("/me")
 	@HttpCode(HttpStatus.OK)
 	async getMe(
@@ -51,15 +46,12 @@ export class UserController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userService.paginate(filter, options);
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Get(":id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
@@ -70,7 +62,7 @@ export class UserController {
 	}
 
 	//  ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateUserDto) {
@@ -80,8 +72,7 @@ export class UserController {
 	}
 
 	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -93,7 +84,6 @@ export class UserController {
 		return this.userService.updateById(id, body);
 	}
 
-	@ApiBearerAuth()
 	@Patch("password")
 	@HttpCode(HttpStatus.OK)
 	async updatePassword(
@@ -104,8 +94,7 @@ export class UserController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
-	@ApiParamId()
+
 	@Delete(":ids/soft_ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManySoftByIds(@Param("ids") ids: string) {
@@ -115,8 +104,6 @@ export class UserController {
 		);
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -125,8 +112,6 @@ export class UserController {
 		});
 	}
 
-	@ApiBearerAuth()
-	@ApiParamId()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

@@ -1,5 +1,3 @@
-// file.dto.ts
-
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";

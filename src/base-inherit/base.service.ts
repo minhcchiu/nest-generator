@@ -5,14 +5,15 @@ import {
 	UpdateOptions,
 } from "mongodb";
 import {
+	AggregateOptions,
 	FilterQuery,
 	PaginateModel,
+	PipelineStage,
 	QueryOptions,
 	Types,
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
 } from "mongoose";
-
 import { PaginateOptions } from "./base.interface";
 
 export class BaseService<T> {
@@ -31,6 +32,10 @@ export class BaseService<T> {
 		const result = await this.model.create(inputs);
 
 		return result;
+	}
+
+	async aggregate(pipeline?: PipelineStage[], options?: AggregateOptions) {
+		return this.model.aggregate(pipeline, options);
 	}
 
 	async findMany(

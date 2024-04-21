@@ -1,9 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Controller,
 	Delete,
@@ -12,12 +6,13 @@ import {
 	HttpStatus,
 	Param,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { UserFileService } from "./user-file.service";
-
-@ApiTags("User files")
 @Controller("user_files")
 export class UserFileController {
 	constructor(private readonly userFileService: UserFileService) {}
@@ -46,21 +41,19 @@ export class UserFileController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":url/url")
 	@HttpCode(HttpStatus.OK)
 	async deleteByUrl(@Param("url") url: string) {
 		return this.userFileService.deleteByUrl(url);
 	}
 
-	@ApiBearerAuth()
 	@Delete(":urls/urls")
 	@HttpCode(HttpStatus.OK)
 	async deleteByUrls(@Param("urls") urls: string) {
 		return this.userFileService.deleteByUrls(urls.split(","));
 	}
 
-	@ApiBearerAuth()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -71,7 +64,6 @@ export class UserFileController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

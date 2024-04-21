@@ -1,11 +1,8 @@
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
-
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Throttle } from "@nestjs/throttler";
-
 import { AuthService } from "./auth.service";
 import { EmailDto } from "./dto/email.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -14,8 +11,6 @@ import { RegisterDto } from "./dto/register.dto";
 import { SendRegisterTokenDto } from "./dto/send-register-token.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
-
-@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
@@ -64,7 +59,6 @@ export class AuthController {
 		return this.authService.activateRegisterToken(token);
 	}
 
-	@ApiBearerAuth()
 	@Post("logout")
 	@HttpCode(HttpStatus.OK)
 	async logout(

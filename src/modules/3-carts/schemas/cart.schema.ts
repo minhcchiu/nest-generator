@@ -1,11 +1,8 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { CartState } from "~modules/3-carts/enums/cart-state.enum";
 import { User } from "~pre-built/1-users/schemas/user.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { CartProductDto } from "../dto/cart-product.dto";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,

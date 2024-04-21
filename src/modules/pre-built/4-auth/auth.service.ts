@@ -1,17 +1,15 @@
-import { Types } from "mongoose";
-import { generateRandomKey } from "~helpers/generate-random-key";
-import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
-import { TokenService } from "~pre-built/5-tokens/token.service";
-import { FirebaseService } from "~shared/firebase/firebase.service";
-import { MailService } from "~shared/mail/mail.service";
-
 import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
-
+import { Types } from "mongoose";
+import { generateRandomKey } from "~helpers/generate-random-key";
+import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
+import { TokenService } from "~pre-built/5-tokens/token.service";
+import { FirebaseService } from "~shared/firebase/firebase.service";
+import { MailService } from "~shared/mail/mail.service";
 import { AccountType } from "../1-users/enums/account-type.enum";
 import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";

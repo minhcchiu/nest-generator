@@ -1,8 +1,6 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { Store } from "~modules/1-stores/schemas/store.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -20,7 +18,6 @@ export class ProductGroup {
 
 	@Prop({ type: Number, required: true })
 	position: number;
-
 	@Prop({ type: String, default: "" })
 	description: string;
 }

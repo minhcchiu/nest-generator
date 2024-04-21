@@ -1,12 +1,9 @@
-import { UserModule } from "~pre-built/1-users/user.module";
-
 import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-
+import { UserModule } from "~pre-built/1-users/user.module";
 import { Store, StoreSchema } from "./schemas/store.schema";
 import { StoreController } from "./store.controller";
 import { StoreService } from "./store.service";
-
 @Module({
 	imports: [
 		MongooseModule.forFeature([

@@ -1,5 +1,3 @@
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-
 import {
 	Controller,
 	HttpCode,
@@ -11,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { EnvStatic } from "src/configurations/static.env";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { UploadService } from "./upload.service";
 console.log({ filesLimit: EnvStatic.getUploadConfig().filesLimit });
 @Controller("uploads")

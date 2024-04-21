@@ -1,3 +1,5 @@
+import { Injectable } from "@nestjs/common";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
@@ -7,10 +9,6 @@ import { MenuService } from "~pre-built/3-menus/menu.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
-import { Injectable } from "@nestjs/common";
-
-import { existsSync, readFileSync } from "fs";
 import { IEndpoint } from "./interfaces/endpoint.interface";
 import { IPermission } from "./interfaces/permission.interface";
 

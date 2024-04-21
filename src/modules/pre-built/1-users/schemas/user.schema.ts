@@ -1,10 +1,8 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { hash } from "argon2";
 import { HydratedDocument } from "mongoose";
 import { Store } from "~modules/1-stores/schemas/store.schema";
 import { NullableType } from "~types/nullable.type";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";

@@ -1,29 +1,42 @@
-# Stage 1: Build 
-FROM node:21.5.0 as builder
+# Builder stage
+FROM node:20.12.2 as builder
 
 WORKDIR /home/app
 
 COPY package*.json ./
 
-RUN npm install --force && npm cache clean --force
+COPY tsconfig.json .
 
 COPY . .
 
-RUN npm build
+# Install dependencies and build the application
+RUN npm install --force && npm run build
 
-# Stage 2: Production
-FROM node:21.5.0 as production
+# Production stage
+FROM node:20.12.2 as production
 
-ARG SERVER_ENV=PRODUCTION
-ENV SERVER_ENV=${SERVER_ENV}
+ARG NODE_ENV=PRODUCTION
+
+ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /home/app
 
 COPY package*.json ./
 
-RUN npm install --omit=dev --force && npm cache clean --force
+COPY tsconfig.json .
+
+# Install only production dependencies
+RUN npm cache clean --force
+RUN npm install --only=production --force
 
 COPY --from=builder /home/app/dist ./dist
 COPY --from=builder /home/app/.env .
+COPY --from=builder /home/app/public ./public
 
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Install Nest.js CLI in the production stage
+RUN npm install -g @nestjs/cli
+
+# Start your application
+CMD ["npm", "start"]

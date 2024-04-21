@@ -1,13 +1,11 @@
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateInventoryDto } from "~modules/5-inventories/dto/create-inventory.dto";
 import { InventoryService } from "~modules/5-inventories/inventory.service";
 import { ChannelName } from "~shared/redis-feature/channel";
 import { RedisService } from "~shared/redis-feature/redis.service";
-
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-
 import { CreateProductDto } from "./dto/create-product.dto";
 import { ProductType } from "./enums/product-type.enum";
 import { Clothing, ClothingDocument } from "./schemas/clothing.schema";

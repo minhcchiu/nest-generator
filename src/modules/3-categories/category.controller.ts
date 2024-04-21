@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,20 +9,20 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
-
-@ApiTags("Categories")
 @Controller("categories")
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
 
 	// ----- Method: GET -----
-	@ApiQueryParams([{ name: "isActive", type: Boolean, required: false }])
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -55,7 +48,7 @@ export class CategoryController {
 	}
 
 	// ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateCategoryDto) {
@@ -63,7 +56,7 @@ export class CategoryController {
 	}
 
 	// ----- Method: PATCH -----
-	@ApiBearerAuth()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -74,7 +67,7 @@ export class CategoryController {
 	}
 
 	// ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -83,7 +76,6 @@ export class CategoryController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

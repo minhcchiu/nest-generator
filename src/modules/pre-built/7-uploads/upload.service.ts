@@ -1,16 +1,14 @@
-import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
-import { genUniqueFilename, getFileExtension } from "~utils/files/file.util";
-
 import { BadRequestException, Injectable } from "@nestjs/common";
-
 import { StorageServerEnum } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
+import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import {
 	ImageSize,
 	LocalService,
 } from "~shared/storage/local-storage/local.service";
 import { S3Service } from "~shared/storage/s3/s3.service";
+import { genUniqueFilename, getFileExtension } from "~utils/files/file.util";
 import { ResourceTypeEnum } from "./enum/resource-type.enum";
 import { FileFormatted } from "./types/file-formatted.type";
 import { FileOption } from "./types/file-option.type";

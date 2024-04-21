@@ -1,6 +1,5 @@
 import { GenderEnum } from "../enums/gender.enum";
 import { RoleEnum } from "../enums/role.enum";
-
 export interface IUser {
 	password: string;
 	email: string;

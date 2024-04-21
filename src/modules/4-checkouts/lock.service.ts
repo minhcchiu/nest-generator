@@ -1,7 +1,5 @@
-import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
 import { Injectable } from "@nestjs/common";
-
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 @Injectable()
 export class LockService {
 	constructor(private readonly logger: CustomLoggerService) {}
@@ -15,28 +13,16 @@ export class LockService {
 	): Promise<boolean> {
 		// const lockKey = `product:${productId}:lock`;
 		// const lockValue = `${quantity}:${cartId}`;
-		console.log({ quantity, cartId });
-
-		// const retries = 0;
-
-		// while (retries < maxRetries) {
+		console.log({ quantity, cartId }); // const retries = 0		// while (retries < maxRetries) {
 		// 	try {
-		// 		const setnxResult = await this.redisService.setnx(lockKey, expireTime);
-
-		// 		if (setnxResult === 1) {
-		// 			this.logger.log(`Lock acquired for product ${productId}`);
-
-		// 			const isReservation =
+		// 		const setnxResult = await this.redisService.setnx(lockKey, expireTime)		// 		if (setnxResult === 1) {
+		// 			this.logger.log(`Lock acquired for product ${productId}`)		// 			const isReservation =
 		// 				await this.inventoryService.reservationInventory({
 		// 					productId,
 		// 					quantity,
 		// 					cartId,
-		// 				});
-
-		// 			if (isReservation) {
-		// 				this.redisService.pexpire(lockKey, expireTime, "NX");
-
-		// 				return true;
+		// 				})		// 			if (isReservation) {
+		// 				this.redisService.pexpire(lockKey, expireTime, "NX")		// 				return true;
 		// 			}
 
 		// 			return false;

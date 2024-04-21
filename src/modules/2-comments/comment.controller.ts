@@ -1,11 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetCurrentUser } from "~decorators/get-current-user";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-import { TokenPayload } from "~pre-built/5-tokens/interface";
-
 import {
 	Body,
 	Controller,
@@ -17,15 +9,20 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
 
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUser } from "~decorators/get-current-user";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
+import { TokenPayload } from "~pre-built/5-tokens/interface";
 import { CommentService } from "./comment.service";
 import { AuthorDto } from "./dto/author.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 
-@ApiTags("Comments")
 @Controller("comments")
 export class CommentController {
 	constructor(private readonly commentService: CommentService) {}

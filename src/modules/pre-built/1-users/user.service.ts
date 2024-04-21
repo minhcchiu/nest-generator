@@ -1,18 +1,16 @@
-import * as argon2 from "argon2";
-import { PaginateModel, QueryOptions, Types } from "mongoose";
-import { BaseService } from "~base-inherit/base.service";
-import { StoreService } from "~modules/1-stores/store.service";
-
 import {
 	BadRequestException,
-	forwardRef,
 	Inject,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
+	forwardRef,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-
+import * as argon2 from "argon2";
+import { PaginateModel, QueryOptions, Types } from "mongoose";
+import { BaseService } from "~base-inherit/base.service";
+import { StoreService } from "~modules/1-stores/store.service";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { AuthKeys, IAuthKeys } from "./enums/unique-keys";
 import { User, UserDocument } from "./schemas/user.schema";

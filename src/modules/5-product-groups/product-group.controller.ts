@@ -1,9 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -15,14 +9,15 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CreateProductGroupDto } from "./dto/create-product-group.dto";
 import { UpdateProductGroupDto } from "./dto/update-product-group.dto";
 import { ProductGroupService } from "./product-group.service";
-
-@ApiTags("Product Groups")
 @Controller("product_groups")
 export class ProductGroupController {
 	constructor(private readonly productGroupService: ProductGroupService) {}
@@ -60,7 +55,7 @@ export class ProductGroupController {
 	}
 
 	// ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateProductGroupDto) {
@@ -68,7 +63,7 @@ export class ProductGroupController {
 	}
 
 	// ----- Method: PATCH -----
-	@ApiBearerAuth()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -79,7 +74,7 @@ export class ProductGroupController {
 	}
 
 	// ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -88,7 +83,6 @@ export class ProductGroupController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

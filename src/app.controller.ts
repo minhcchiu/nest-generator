@@ -1,11 +1,7 @@
+import { Controller, Get } from "@nestjs/common";
 import { Public } from "~decorators/public.decorator";
 import { ChannelName } from "~shared/redis-feature/channel";
 import { RedisService } from "~shared/redis-feature/redis.service";
-
-import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-
-@ApiTags("App")
 @Controller()
 export class AppController {
 	constructor(private readonly redisFeatureService: RedisService) {}

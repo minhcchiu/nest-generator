@@ -1,10 +1,8 @@
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { LanguageEnum } from "~enums/language.enum";
-
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { NotificationType } from "./enums/noti-type.enum";
 import {

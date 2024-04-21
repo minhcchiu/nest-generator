@@ -1,7 +1,6 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { User } from "~pre-built/1-users/schemas/user.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 type TokenDocument = HydratedDocument<Token>;
 

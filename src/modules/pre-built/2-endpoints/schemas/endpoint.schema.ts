@@ -1,10 +1,7 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { HttpMethod } from "../enum/http-method";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -22,7 +19,6 @@ export class Endpoint {
 
 	@Prop({ type: String, enum: HttpMethod, default: HttpMethod.GET })
 	readonly method: HttpMethod;
-
 	@Prop({ type: String, default: "" })
 	readonly description?: string;
 
@@ -31,14 +27,11 @@ export class Endpoint {
 		default: [RoleEnum.SupperAdmin, RoleEnum.User],
 	})
 	readonly userRoles: RoleEnum[];
-
 	@Prop({ type: Boolean, default: false })
 	readonly isPublic: boolean;
 }
 
 type EndpointDocument = HydratedDocument<Endpoint>;
 const EndpointSchema = SchemaFactory.createForClass(Endpoint);
-
 EndpointSchema.index({ path: 1, method: 1 }, { unique: true });
-
 export { EndpointDocument, EndpointSchema };

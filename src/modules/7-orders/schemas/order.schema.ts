@@ -1,10 +1,7 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { User } from "~pre-built/1-users/schemas/user.schema";
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
 import { OrderStatusEnum } from "../enums/order-status.enum";
-
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -27,7 +24,6 @@ export class Order {
 		totalApplyDiscount: number;
 		feeShip: number;
 	};
-
 	@Prop({
 		type: { street: String, province: String, state: String, country: String },
 		default: {},
@@ -38,13 +34,10 @@ export class Order {
 		state: string;
 		country: string;
 	};
-
 	@Prop({ type: Object, default: {} })
 	readonly payment: any;
-
 	@Prop({ type: Array, default: [] })
 	products: any[];
-
 	@Prop({ type: String, default: "#0000118052023" })
 	trackingNumber: string;
 
