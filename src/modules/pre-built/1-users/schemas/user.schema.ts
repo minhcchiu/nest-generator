@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { hash } from "argon2";
 import { HydratedDocument } from "mongoose";
-import { Store } from "~modules/1-stores/schemas/store.schema";
-import { NullableType } from "~types/nullable.type";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountType } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
@@ -21,16 +19,16 @@ export class User implements IUser {
 	authKeys: string[];
 
 	@Prop({ type: String, default: null })
-	username: NullableType<string>;
+	username: string;
 
 	@Prop({ type: String, default: null })
-	email: NullableType<string>;
+	email: string;
 
 	@Prop({ type: String, default: null })
-	phone: NullableType<string>;
+	phone: string;
 
 	@Prop({ type: String, default: null, select: false })
-	socialID: NullableType<string>;
+	socialID: string;
 
 	@Prop({ type: String, enum: AccountType, default: AccountType.Local })
 	accountType: AccountType;
@@ -59,7 +57,7 @@ export class User implements IUser {
 	roles: RoleEnum[];
 
 	@Prop({ type: String, default: null })
-	avatar: NullableType<string>;
+	avatar: string;
 
 	@Prop({ type: [String], default: [] })
 	fcmTokens: string[];
@@ -76,15 +74,6 @@ export class User implements IUser {
 
 	@Prop({ type: Boolean, default: false })
 	isNotificationActive: boolean;
-
-	@Prop({ type: String, ref: Store.name, default: null })
-	storeId: NullableType<string>;
-
-	@Prop({
-		type: [{ type: String, ref: Store.name }],
-		default: [],
-	})
-	favoriteStores: string[];
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

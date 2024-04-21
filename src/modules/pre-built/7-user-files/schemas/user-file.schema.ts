@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
@@ -9,11 +9,11 @@ import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.en
 	collection: "userfiles",
 })
 export class UserFile {
-	@Prop({ type: String, ref: "User", required: true })
-	userId: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: "User", required: true })
+	userId: Types.ObjectId;
 
 	@Prop({ type: [String], required: true })
-	resourceIds: string[];
+	resourceKeys: string[];
 
 	@Prop({ type: String, required: true })
 	fileName: string;

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 import { MenuLevel } from "../enum/menu-level";
 @Schema({
@@ -8,8 +8,8 @@ import { MenuLevel } from "../enum/menu-level";
 	collection: "menus",
 })
 export class Menu {
-	@Prop({ type: String, ref: Menu.name })
-	readonly parentId?: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: Menu.name })
+	readonly parentId?: Types.ObjectId;
 
 	@Prop({ type: String, default: "" })
 	readonly name: string;

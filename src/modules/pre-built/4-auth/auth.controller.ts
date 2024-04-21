@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Types } from "mongoose";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AuthService } from "./auth.service";
@@ -62,10 +62,10 @@ export class AuthController {
 	@Post("logout")
 	@HttpCode(HttpStatus.OK)
 	async logout(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Body("fcmToken") fcmToken?: string,
 	) {
-		return this.authService.logout(stringIdToObjectId(userId), fcmToken);
+		return this.authService.logout(userId, fcmToken);
 	}
 
 	@Public()

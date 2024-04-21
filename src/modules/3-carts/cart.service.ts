@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel, Types } from "mongoose";
-import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
 import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
@@ -48,8 +47,8 @@ export class CartService extends BaseService<CartDocument> {
 	async updateProductQuantity(
 		cartId: Types.ObjectId,
 		input: {
-			userId: string;
-			productId: string;
+			userId: Types.ObjectId;
+			productId: Types.ObjectId;
 			quantity: number;
 		},
 	) {
@@ -74,7 +73,7 @@ export class CartService extends BaseService<CartDocument> {
 	}
 
 	async updateCartProduct(input: {
-		userId: string;
+		userId: Types.ObjectId;
 		product: UpdateCartProductDto;
 	}) {
 		const { userId, product } = input;
@@ -95,7 +94,7 @@ export class CartService extends BaseService<CartDocument> {
 		);
 	}
 
-	async deleteCartProduct(userId: string, productId: string) {
+	async deleteCartProduct(userId: Types.ObjectId, productId: Types.ObjectId) {
 		const filter = { userId: userId, state: CartState.Active },
 			$pull = {
 				products: productId,
@@ -108,7 +107,7 @@ export class CartService extends BaseService<CartDocument> {
 		return Promise.all(
 			items.map(async (product) => {
 				const foundProduct = await this.productService.findById(
-					stringIdToObjectId(product.productId),
+					product.productId,
 				);
 
 				if (foundProduct) {

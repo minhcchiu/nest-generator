@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { Types } from "mongoose";
 import { StorageServerEnum } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
@@ -45,7 +46,7 @@ export class UploadService {
 		};
 	}
 
-	async uploadFiles(fileInputs: Express.Multer.File[], userId: string) {
+	async uploadFiles(fileInputs: Express.Multer.File[], userId: Types.ObjectId) {
 		const promiseSettled = await Promise.allSettled(
 			fileInputs.map((fileInput) => this._saveFile(fileInput)),
 		);
@@ -97,7 +98,7 @@ export class UploadService {
 		};
 	}
 
-	async uploadFile(fileInput: Express.Multer.File, userId: string) {
+	async uploadFile(fileInput: Express.Multer.File, userId: Types.ObjectId) {
 		const fileSaved = await this._saveFile(fileInput);
 
 		this.eventEmitterService.emitFileUploaded([fileSaved], userId);

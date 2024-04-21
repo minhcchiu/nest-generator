@@ -15,26 +15,33 @@ import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { CreateNewsDto } from "./dto/create-news.dto";
-import { UpdateNewsDto } from "./dto/update-news.dto";
-import { NewsService } from "./news.service";
-@Controller("news")
-export class NewsController {
-	constructor(private readonly newsService: NewsService) {}
+import { CreateTestDto } from "./dto/create-test.dto";
+import { UpdateTestDto } from "./dto/update-test.dto";
+import { TestService } from "./test.service";
+
+@Controller("tests")
+export class TestController {
+	constructor(private readonly testService: TestService) {}
 
 	// ----- Method: GET -----
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.testService.findMany(filter, options);
+	}
+
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.newsService.paginate(filter, options);
+		return this.testService.paginate(filter, options);
 	}
 
 	@Public()
 	@Get("count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.newsService.count(filter);
+		return this.testService.count(filter);
 	}
 
 	@Public()
@@ -44,15 +51,17 @@ export class NewsController {
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
-		return this.newsService.findById(id, { projection, populate });
+		return this.testService.findById(id, { projection, populate });
 	}
 
 	// ----- Method: POST -----
 
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateNewsDto) {
-		return this.newsService.create(body);
+	async create(@Body() body: CreateTestDto) {
+		const created = await this.testService.create(body);
+
+		return created;
 	}
 
 	// ----- Method: PATCH -----
@@ -61,9 +70,9 @@ export class NewsController {
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateNewsDto,
+		@Body() body: UpdateTestDto,
 	) {
-		return this.newsService.updateById(id, body);
+		return this.testService.updateById(id, body);
 	}
 
 	// ----- Method: DELETE -----
@@ -71,7 +80,7 @@ export class NewsController {
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.newsService.deleteMany({
+		return this.testService.deleteMany({
 			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
@@ -79,6 +88,6 @@ export class NewsController {
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.newsService.deleteById(id);
+		return this.testService.deleteById(id);
 	}
 }

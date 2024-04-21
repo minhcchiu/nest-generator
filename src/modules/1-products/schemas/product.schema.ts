@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { ProductType } from "../enums/product-type.enum";
 @Schema({
@@ -8,8 +8,8 @@ import { ProductType } from "../enums/product-type.enum";
 	collection: "products",
 })
 export class Product {
-	@Prop({ type: String, ref: Shop.name })
-	readonly shopId: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: Shop.name })
+	readonly shopId: Types.ObjectId;
 
 	@Prop({ type: String, required: true })
 	readonly name: string;
@@ -22,12 +22,16 @@ export class Product {
 
 	@Prop({ type: Number, required: true })
 	readonly price: number;
+
 	@Prop({ type: Number, required: true })
 	readonly quantity: number;
+
 	@Prop({ type: String, enum: ProductType, required: true })
 	readonly type: ProductType;
+
 	@Prop({ type: mongoose.Schema.Types.Mixed })
 	readonly attributes: Record<string, any>;
+
 	@Prop({ type: Boolean, default: true })
 	readonly isPublished: boolean;
 }

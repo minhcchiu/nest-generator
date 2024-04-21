@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { EndpointPermissionType } from "./types/endpoint-permission.type";
 
 @Injectable()
@@ -54,7 +55,10 @@ export class AppGuard implements CanActivate {
 			if (!this.isAccessAllowed(decoded.roles, endpoint))
 				throw new UnauthorizedException();
 
-			request.user = decoded;
+			request.user = {
+				...decoded,
+				_id: stringIdToObjectId(decoded._id),
+			};
 
 			return true;
 		} catch (error) {

@@ -11,7 +11,7 @@ export type UploadedResult = {
 
 	fileFolder: string;
 	fileSize: number;
-	resourceIds: string[];
+	resourceKeys: string[];
 	fileName: string;
 	fileType: string;
 	resourceType: ResourceTypeEnum;

@@ -33,7 +33,7 @@ export class OrderController {
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Body() body: CreateOrderDto,
 	) {
 		return this.orderService.create({ ...body, orderedBy: userId });

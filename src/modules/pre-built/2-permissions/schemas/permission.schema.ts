@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
 import { Endpoint } from "~pre-built/2-endpoints/schemas/endpoint.schema";
 @Schema({
@@ -15,10 +15,11 @@ export class Permission {
 	readonly name: string;
 
 	@Prop({
-		type: [{ type: String, ref: Endpoint.name }],
+		type: [{ type: SchemaTypes.ObjectId, ref: Endpoint.name }],
 		default: [],
 	})
-	readonly endpoints: string[];
+	readonly endpoints: Types.ObjectId[];
+
 	@Prop({ type: String, default: "" })
 	readonly description: string;
 
@@ -27,6 +28,7 @@ export class Permission {
 		default: [RoleEnum.SupperAdmin],
 	})
 	readonly roles: RoleEnum[];
+
 	@Prop({ type: Number, default: 0 })
 	readonly position: number;
 }

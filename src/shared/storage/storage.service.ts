@@ -9,11 +9,13 @@ export abstract class StorageService {
 		file: FileFormatted,
 		imageSizes?: ImageSize[],
 	): Promise<UploadedResult | UploadedError>;
-	abstract delete(resourceId: string): Promise<{
+
+	abstract deleteByKey(resourceKey: string): Promise<{
 		deletedAt: number;
 		message: string;
 	}>;
-	abstract deleteMany(resourceIds: string[]): Promise<
+
+	abstract deleteManyByKeys(resourceKeys: string[]): Promise<
 		{
 			deletedAt: number;
 			message: string;

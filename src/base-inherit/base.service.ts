@@ -132,7 +132,7 @@ export class BaseService<T> {
 		return deleted;
 	}
 
-	async paginate(filter: FilterQuery<T>, pageOptions?: PaginateOptions) {
+	async paginate(filter: FilterQuery<T>, pageOptions: PaginateOptions = {}) {
 		const {
 			projection,
 			limit = 10,

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { LocalService } from "~shared/storage/local-storage/local.service";
@@ -25,7 +25,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	}
 
 	@OnEvent("file.uploaded")
-	handleFileUploadedEvent(files: UploadedResult[], userId: string) {
+	handleFileUploadedEvent(files: UploadedResult[], userId: Types.ObjectId) {
 		console.log({ files, userId });
 		throw new Error("Method not implemented.");
 	}
@@ -42,14 +42,14 @@ export class UserFileService extends BaseService<UserFileDocument> {
 
 		switch (file.storageLocation) {
 			case StorageLocationEnum.Local:
-			// return this.localService.delete(file.resourceId);
+			// return this.localService.delete(file.resourceKey);
 
 			case StorageLocationEnum.S3:
-			// return this.s3Service.deleteByResourceId(file.resourceId);
+			// return this.s3Service.deleteByResourceKey(file.resourceKey);
 
 			case StorageLocationEnum.Cloudinary:
-			// return this.cloudinaryService.deleteByResourceId({
-			// publicId: file.resourceId,
+			// return this.cloudinaryService.deleteByResourceKey({
+			// publicId: file.resourceKey,
 			// fileType: file.uploadType,
 			// });
 
@@ -61,30 +61,30 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	async deleteByUrls(urls: string[]) {
 		console.log({ urls });
 		// // const files = await this.findMany({ url: { $in: urls } });
-		// // const resourceIdsLocal: string[] = [];
-		// // const resourceIdsS3: string[] = [];
-		// // const resourceIdsCloudinary: { publicId: string; fileType: UploadType }[] =
+		// // const resourceKeysLocal: string[] = [];
+		// // const resourceKeysS3: string[] = [];
+		// // const resourceKeysCloudinary: { publicId: string; fileType: UploadType }[] =
 		// // 	[];
 		// // files.forEach((file) => {
 		// // 	switch (file.storageLocation) {
 		// // 		case StorageLocationEnum.Local:
-		// // 			resourceIdsLocal.push(file.resourceId);
+		// // 			resourceKeysLocal.push(file.resourceKey);
 		// // 			break;
 		// // 		case StorageLocationEnum.S3:
-		// // 			resourceIdsS3.push(file.resourceId);
+		// // 			resourceKeysS3.push(file.resourceKey);
 		// // 			break;
 		// // 		case StorageLocationEnum.Cloudinary:
-		// // 			resourceIdsCloudinary.push({
-		// // 				publicId: file.resourceId,
+		// // 			resourceKeysCloudinary.push({
+		// // 				publicId: file.resourceKey,
 		// // 				fileType: file.uploadType,
 		// // 			});
 		// // 			break;
 		// // 	}
 		// });
 		// await Promise.allSettled([
-		// 	this.localService.deleteMany(resourceIdsLocal),
-		// 	this.cloudinaryService.deleteByResourceIds(resourceIdsCloudinary),
-		// 	this.s3Service.deleteByResourceIds(resourceIdsS3),
+		// 	this.localService.deleteMany(resourceKeysLocal),
+		// 	this.cloudinaryService.deleteByResourceKeys(resourceKeysCloudinary),
+		// 	this.s3Service.deleteByResourceKeys(resourceKeysS3),
 		// ]);
 		// return this.deleteMany({ url: { $in: urls } });
 	}

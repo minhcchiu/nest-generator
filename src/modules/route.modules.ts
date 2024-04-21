@@ -1,10 +1,7 @@
-import { StoreModule } from "./1-stores/store.module";
+import { TestModule } from "./0-tests/test.module";
+import { ProductModule } from "./1-products/product.module";
+import { ShopModule } from "./1-shops/shop.module";
 import { BannerModule } from "./2-banners/banner.module";
-import { CategoryModule } from "./3-categories/category.module";
-import { NewsModule } from "./4-news/news.module";
-import { ProductGroupModule } from "./5-product-groups/product-group.module";
-import { ProductModule } from "./6-products/product.module";
-import { ReviewModule } from "./7-reviews/review.module";
 import { UserModule } from "./pre-built/1-users/user.module";
 import { WardModule } from "./pre-built/10-wards/ward.module";
 import { SettingModule } from "./pre-built/11-settings/setting.module";
@@ -37,12 +34,9 @@ export const RouteModules = [
 	NotificationModule,
 
 	// features
-	StoreModule,
+	ShopModule,
 	BannerModule,
-	CategoryModule,
-	NewsModule,
-	ProductGroupModule,
 	ProductModule,
-	ReviewModule,
 	UserFileModule,
+	TestModule,
 ];

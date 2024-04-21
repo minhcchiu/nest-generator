@@ -14,7 +14,7 @@ import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetCurrentUser } from "~decorators/get-current-user";
+import { GetCurrentUser } from "~decorators/get-current-user.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { TokenPayload } from "~pre-built/5-tokens/interface";
@@ -41,7 +41,7 @@ export class CommentController {
 		@Body() body: CreateCommentDto,
 	) {
 		const author: AuthorDto = {
-			userId: user._id,
+			userId: stringIdToObjectId(user._id),
 			avatar: user.avatar,
 			fullName: user.fullName,
 		};

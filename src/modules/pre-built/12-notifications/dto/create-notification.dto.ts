@@ -7,17 +7,18 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
+import { Types } from "mongoose";
 import { NotificationType } from "../enums/noti-type.enum";
 import { TargetType } from "../enums/target-type.enum";
 
 export class CreateNotificationDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	senderId: string;
+	senderId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsMongoId()
-	recipientId: string;
+	recipientId: Types.ObjectId;
 
 	@IsObject()
 	@IsNotEmpty()
@@ -41,7 +42,7 @@ export class CreateNotificationDto {
 
 	@IsOptional()
 	@IsMongoId()
-	entityId: string;
+	entityId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsString()

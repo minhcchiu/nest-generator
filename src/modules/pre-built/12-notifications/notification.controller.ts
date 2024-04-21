@@ -16,7 +16,7 @@ import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetLanguage } from "~decorators/language.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { LanguageEnum } from "~enums/language.enum";
+import { LanguageCodeEnum } from "~enums/language.enum";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
 import { NotificationService } from "./notification.service";
@@ -31,7 +31,7 @@ export class NotificationController {
 	@HttpCode(HttpStatus.OK)
 	async paginate(
 		@GetAqp() { filter, ...options }: PaginationDto,
-		@GetLanguage() language: LanguageEnum,
+		@GetLanguage() language: LanguageCodeEnum,
 	) {
 		const pagination = await this.notificationService.paginate(filter, options);
 
@@ -53,7 +53,7 @@ export class NotificationController {
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
-		@GetLanguage() language: LanguageEnum,
+		@GetLanguage() language: LanguageCodeEnum,
 	) {
 		const notification = await this.notificationService.findById(id, {
 			projection,

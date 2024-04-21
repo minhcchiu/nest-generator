@@ -49,7 +49,7 @@ export class S3Service implements StorageService {
 		const fileOriginal = `${file.fileFolder}/${file.fileName}`;
 		const { url, key } = await this._uploadToS3(fileOriginal, file.buffer);
 
-		const resourceIds = [key];
+		const resourceKeys = [key];
 
 		// handle image resize
 		const resizeUrls: Record<string, string> = {};
@@ -66,14 +66,14 @@ export class S3Service implements StorageService {
 
 				// Add key to resource
 				if (imagesResized[index]?.key)
-					resourceIds.push(imagesResized[index].key);
+					resourceKeys.push(imagesResized[index].key);
 			});
 		}
 
 		return {
 			...resizeUrls,
 			url,
-			resourceIds,
+			resourceKeys,
 			fileFolder: file.fileFolder,
 			fileName: file.fileName,
 			fileSize: file.size,
@@ -84,21 +84,23 @@ export class S3Service implements StorageService {
 		};
 	}
 
-	delete(resourceId: string): Promise<{ deletedAt: number; message: string }> {
-		throw new Error(`"Method not implemented.", ${resourceId}`);
+	deleteByKey(
+		resourceKey: string,
+	): Promise<{ deletedAt: number; message: string }> {
+		throw new Error(`"Method not implemented.", ${resourceKey}`);
 	}
 
-	deleteMany(
-		resourceIds: string[],
+	deleteManyByKeys(
+		resourceKeys: string[],
 	): Promise<{ deletedAt: number; message: string }[]> {
-		throw new Error(`"Method not implemented.", ${resourceIds}`);
+		throw new Error(`"Method not implemented.", ${resourceKeys}`);
 	}
 
-	async deleteByResourceId(resourceId: string) {
+	async deleteByResourceKey(resourceKey: string) {
 		try {
 			const deleteObjectCommand = new DeleteObjectCommand({
 				Bucket: EnvStatic.getAwsConfig().bucketName,
-				Key: resourceId,
+				Key: resourceKey,
 			});
 
 			const result = await this.s3Client.send(deleteObjectCommand);
@@ -110,10 +112,10 @@ export class S3Service implements StorageService {
 		}
 	}
 
-	async deleteByResourceIds(publicIds: string[]) {
+	async deleteByResourceKeys(publicIds: string[]) {
 		try {
 			return Promise.all(
-				publicIds.map((publicId) => this.deleteByResourceId(publicId)),
+				publicIds.map((publicId) => this.deleteByResourceKey(publicId)),
 			);
 		} catch (error) {
 			this.logger.warn(S3Service.name, error);

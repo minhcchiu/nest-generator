@@ -24,7 +24,7 @@ export class CartController {
 	@HttpCode(HttpStatus.CREATED)
 	@Post("add_product")
 	async create(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Body() product: CartProductDto,
 	) {
 		return this.cartService.addProductToCart({ userId, product });
@@ -33,9 +33,9 @@ export class CartController {
 	@HttpCode(HttpStatus.CREATED)
 	@Patch("carts/:cartId/products/:productId")
 	async updateProductQuantity(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Param("cartId", ParseObjectIdPipe) cartId: Types.ObjectId,
-		@Param("productId") productId: string,
+		@Param("productId", ParseObjectIdPipe) productId: Types.ObjectId,
 		@Body("quantity", ParseIntPipe) quantity: number,
 	) {
 		return this.cartService.updateProductQuantity(cartId, {
@@ -47,7 +47,7 @@ export class CartController {
 
 	@Get(":userId/user")
 	async findOne(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@GetAqp() { filter, populate, projection }: PaginationDto,
 	) {
 		return this.cartService.findOne(

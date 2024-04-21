@@ -4,9 +4,10 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
+import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
 import { CreateDiscountDto } from "./dto/create-discount.dto";
 import { DiscountAppliesToEnum } from "./enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "./enums/discount-type.enum";
@@ -72,9 +73,9 @@ export class DiscountService extends BaseService<DiscountDocument> {
 
 	async getDiscountAmount(data: {
 		code: string;
-		userId: string;
-		shopId: string;
-		products: { price: number; quantity: number; productId: string }[];
+		userId: Types.ObjectId;
+		shopId: Types.ObjectId;
+		products: ShopOrderItemDto[];
 	}) {
 		const foundDiscount = await this.discountModel
 			.findOne({
@@ -116,7 +117,9 @@ export class DiscountService extends BaseService<DiscountDocument> {
 			);
 
 		if (maxUsersPerUser > 0) {
-			const userUsedDiscount = usersUsed.includes(data.userId);
+			const userUsedDiscount = usersUsed.some(
+				(userId) => userId.toString() === data.userId.toString(),
+			);
 
 			if (userUsedDiscount) {
 				// ...

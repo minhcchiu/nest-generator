@@ -1,4 +1,4 @@
-import { PaginateModel } from "mongoose";
+import { PaginateModel, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
 import { Injectable } from "@nestjs/common";
@@ -16,9 +16,9 @@ export class InventoryService extends BaseService<InventoryDocument> {
 	}
 
 	async reservationInventory(data: {
-		productId: string;
+		productId: Types.ObjectId;
+		cartId: Types.ObjectId;
 		quantity: number;
-		cartId: string;
 	}) {
 		const filter = {
 				productId: data.productId,

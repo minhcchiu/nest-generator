@@ -7,12 +7,13 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
+import { Types } from "mongoose";
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly shopId: string;
+	readonly shopId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsString()

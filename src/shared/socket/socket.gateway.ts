@@ -44,7 +44,7 @@ export class SocketGateway
 			if (!user) client.disconnect(true);
 
 			// join room
-			client.join(user._id);
+			client.join(user._id.toString());
 
 			this.logger.log(
 				`User ${client.id} has connected room #${user._id}.`,
@@ -62,7 +62,7 @@ export class SocketGateway
 			if (!user) client.disconnect(true);
 
 			// leave room
-			client.leave(user._id);
+			client.leave(user._id.toString());
 
 			this.logger.log(
 				`User ${client.id} left room #${user._id}.`,

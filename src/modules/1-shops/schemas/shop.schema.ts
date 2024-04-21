@@ -20,6 +20,7 @@ export class Shop {
 		},
 	})
 	location: LocationDto;
+
 	@Prop({ type: String, required: true })
 	contactInfo: string;
 }

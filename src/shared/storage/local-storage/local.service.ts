@@ -57,7 +57,7 @@ export class LocalService implements StorageService {
 		writeFileSync(`public/${fileOriginal}`, file.buffer);
 		const url = `${this.serverUrl}/static/${fileOriginal}`;
 
-		const resourceIds = [fileOriginal];
+		const resourceKeys = [fileOriginal];
 
 		// Handle image resize
 		const resizeUrls: Record<string, string> = {};
@@ -74,14 +74,14 @@ export class LocalService implements StorageService {
 
 				// Add key to resource
 				if (imagesResized[index]?.key)
-					resourceIds.push(imagesResized[index].key);
+					resourceKeys.push(imagesResized[index].key);
 			});
 		}
 
 		return {
 			...resizeUrls,
 			url,
-			resourceIds,
+			resourceKeys,
 			fileFolder: file.fileFolder,
 			fileName: file.fileName,
 			fileSize: file.size,
@@ -92,8 +92,8 @@ export class LocalService implements StorageService {
 		};
 	}
 
-	async delete(resourceId: string) {
-		const localFilePath = `${process.cwd()}/${resourceId}`;
+	async deleteByKey(resourceKey: string) {
+		const localFilePath = `${process.cwd()}/${resourceKey}`;
 
 		rmSync(localFilePath);
 
@@ -103,8 +103,8 @@ export class LocalService implements StorageService {
 		};
 	}
 
-	async deleteMany(resourceIds: string[]) {
-		return Promise.all(resourceIds.map(this.delete));
+	async deleteManyByKeys(resourceKeys: string[]) {
+		return Promise.all(resourceKeys.map(this.deleteByKey));
 	}
 
 	private async _resizeImages(

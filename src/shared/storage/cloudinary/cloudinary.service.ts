@@ -65,7 +65,7 @@ export class CloudinaryService implements StorageService {
 		return {
 			...resizeUrls,
 			url,
-			resourceIds: [key],
+			resourceKeys: [key],
 			fileFolder: file.fileFolder,
 			fileName: file.fileName,
 			fileSize: file.size,
@@ -75,14 +75,18 @@ export class CloudinaryService implements StorageService {
 			resourceType: file.resourceType,
 		};
 	}
-	delete(resourceId: string): Promise<{ deletedAt: number; message: string }> {
-		console.log({ resourceId });
+
+	deleteByKey(
+		resourceKey: string,
+	): Promise<{ deletedAt: number; message: string }> {
+		console.log({ resourceKey });
 		throw new Error("Method not implemented.");
 	}
-	deleteMany(
-		resourceIds: string[],
+
+	deleteManyByKeys(
+		resourceKeys: string[],
 	): Promise<{ deletedAt: number; message: string }[]> {
-		console.log({ resourceIds });
+		console.log({ resourceKeys });
 		throw new Error("Method not implemented.");
 	}
 
@@ -136,7 +140,7 @@ export class CloudinaryService implements StorageService {
 		};
 	}
 
-	async deleteByResourceId(input: { publicId: string; fileType: UploadType }) {
+	async deleteByResourceKey(input: { publicId: string; fileType: UploadType }) {
 		// check file type
 		if (input.fileType === "audio") {
 			input.fileType = "video";
@@ -151,14 +155,16 @@ export class CloudinaryService implements StorageService {
 		}
 	}
 
-	async deleteByResourceIds(
+	async deleteByResourceKeys(
 		inputs: {
 			publicId: string;
 			fileType: UploadType;
 		}[],
 	) {
 		try {
-			return Promise.all(inputs.map((input) => this.deleteByResourceId(input)));
+			return Promise.all(
+				inputs.map((input) => this.deleteByResourceKey(input)),
+			);
 		} catch (error) {
 			this.logger.warn(CloudinaryService.name, error);
 		}

@@ -8,6 +8,7 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
+import { Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { UploadService } from "./upload.service";
@@ -22,7 +23,7 @@ export class UploadController {
 	)
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
@@ -33,7 +34,7 @@ export class UploadController {
 	@UseInterceptors(FileInterceptor("file"))
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFile(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@UploadedFile()
 		input: Express.Multer.File,
 	) {

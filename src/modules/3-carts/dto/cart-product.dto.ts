@@ -6,19 +6,24 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
+import { Types } from "mongoose";
 export class CartProductDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	productId: string;
+	productId: Types.ObjectId;
+
 	@IsNotEmpty()
 	@IsMongoId()
-	shopId: string;
+	shopId: Types.ObjectId;
+
 	@IsOptional()
 	@IsNumber()
 	quantity: number;
+
 	@IsOptional()
 	@IsString()
 	name: string;
+
 	@IsOptional()
 	@IsNumber()
 	price: number;
