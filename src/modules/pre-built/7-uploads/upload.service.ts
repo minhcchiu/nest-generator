@@ -81,7 +81,6 @@ export class UploadService {
 
 				fileItems.push(uploaded.value);
 			} else {
-				console.log({ uploaded });
 				filesFailed.push({
 					originalname: uploaded.reason.response?.originalname,
 					fileSize: uploaded.reason.response?.fileSize,
@@ -118,19 +117,31 @@ export class UploadService {
 				"XSmall",
 			];
 
+			let uploaded: UploadedResult;
 			switch (this.storageServer) {
 				case StorageServerEnum.S3:
-					return this.s3Service.saveFile(fileFormatted, imageSizes);
+					uploaded = await this.s3Service.saveFile(fileFormatted, imageSizes);
+					break;
 
 				case StorageServerEnum.Cloudinary:
-					return this.cloudinaryService.saveFile(fileFormatted, imageSizes);
+					uploaded = await this.cloudinaryService.saveFile(
+						fileFormatted,
+						imageSizes,
+					);
+					break;
 
 				case StorageServerEnum.Local:
-					return this.localService.saveFile(fileFormatted, imageSizes);
+					uploaded = await this.localService.saveFile(
+						fileFormatted,
+						imageSizes,
+					);
+					break;
 
 				default:
 					throw new BadRequestException("Storage server not found");
 			}
+
+			return uploaded;
 		} catch (error) {
 			throw new BadRequestException({
 				error: error?.message || "Something went wrong",

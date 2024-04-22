@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	NotFoundException,
 	Param,
 } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -41,32 +42,45 @@ export class UserFileController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":url/url")
+	@Delete("filename/:filename")
 	@HttpCode(HttpStatus.OK)
-	async deleteByUrl(@Param("url") url: string) {
-		return this.userFileService.deleteByUrl(url);
-	}
+	async deleteByFileName(@Param("filename") fileName: string) {
+		const file = await this.userFileService.findOne({
+			fileName,
+		});
 
-	@Delete(":urls/urls")
-	@HttpCode(HttpStatus.OK)
-	async deleteByUrls(@Param("urls") urls: string) {
-		return this.userFileService.deleteByUrls(urls.split(","));
+		if (!file) throw new NotFoundException("File not found.");
+
+		await this.userFileService.deleteFiles([file]);
+
+		return file;
 	}
 
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.userFileService.deleteMany({
+		const files = await this.userFileService.findMany({
 			_id: {
 				$in: ids.split(",").map(stringIdToObjectId),
 			},
 		});
+
+		if (!files?.length) throw new NotFoundException("Files not found.");
+
+		await this.userFileService.deleteFiles(files);
+
+		return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
 	}
 
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userFileService.deleteById(id);
+		const file = await this.userFileService.deleteById(id);
+
+		if (!file) throw new NotFoundException("File not found.");
+
+		await this.userFileService.deleteFiles([file]);
+
+		return file;
 	}
 }

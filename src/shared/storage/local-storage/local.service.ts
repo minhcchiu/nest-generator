@@ -93,7 +93,7 @@ export class LocalService implements StorageService {
 	}
 
 	async deleteByKey(resourceKey: string) {
-		const localFilePath = `${process.cwd()}/${resourceKey}`;
+		const localFilePath = `${process.cwd()}/public/${resourceKey}`;
 
 		rmSync(localFilePath);
 

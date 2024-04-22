@@ -140,14 +140,17 @@ export class CloudinaryService implements StorageService {
 		};
 	}
 
-	async deleteByResourceKey(input: { publicId: string; fileType: UploadType }) {
+	async deleteByResourceKey(input: {
+		resourceKey: string;
+		fileType: UploadType;
+	}) {
 		// check file type
 		if (input.fileType === "audio") {
 			input.fileType = "video";
 		}
 
 		try {
-			return v2.uploader.destroy(input.publicId, {
+			return v2.uploader.destroy(input.resourceKey, {
 				resource_type: input.fileType,
 			});
 		} catch (error) {
@@ -157,7 +160,7 @@ export class CloudinaryService implements StorageService {
 
 	async deleteByResourceKeys(
 		inputs: {
-			publicId: string;
+			resourceKey: string;
 			fileType: UploadType;
 		}[],
 	) {

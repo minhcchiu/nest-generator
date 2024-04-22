@@ -12,7 +12,7 @@ import { Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { UploadService } from "./upload.service";
-console.log({ filesLimit: EnvStatic.getUploadConfig().filesLimit });
+
 @Controller("uploads")
 export class UploadController {
 	constructor(private readonly uploadService: UploadService) {}

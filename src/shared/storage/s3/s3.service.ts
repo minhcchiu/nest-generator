@@ -32,7 +32,6 @@ export class S3Service implements StorageService {
 
 		this.s3Client = new S3Client({
 			region: awsConfig.region,
-			endpoint: awsConfig.endpoint,
 			credentials: {
 				accessKeyId: awsConfig.accessKeyId,
 				secretAccessKey: awsConfig.secretAccessKey,
@@ -133,6 +132,7 @@ export class S3Service implements StorageService {
 		});
 
 		const res = await uploaded.done();
+		console.log({ res });
 
 		return {
 			key: res.Key,

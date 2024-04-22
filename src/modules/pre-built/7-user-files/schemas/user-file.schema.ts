@@ -44,6 +44,15 @@ export class UserFile {
 
 	@Prop({ type: String, enum: StorageLocationEnum, required: true })
 	storageLocation: StorageLocationEnum;
+
+	@Prop({ type: String, default: "" })
+	fileFolder: string;
+
+	@Prop({ type: Number, default: "" })
+	fileSize: number;
+
+	@Prop({ type: String, default: "" })
+	originalname: string;
 }
 
 export type UserFileDocument = UserFile & HydratedDocument<UserFile>;
