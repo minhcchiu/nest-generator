@@ -20,4 +20,8 @@ export class AwsConfigDto {
 	@IsNotEmpty()
 	@IsString()
 	S3_BUCKET_NAME: string;
+
+	@IsNotEmpty()
+	@IsString()
+	S3_CLOUD_FONT: string;
 }

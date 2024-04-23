@@ -121,26 +121,6 @@ export class S3Service implements StorageService {
 		}
 	}
 
-	private async _uploadToS3(key: string, buffer: Buffer) {
-		const uploaded = new Upload({
-			client: this.s3Client,
-			params: {
-				Bucket: EnvStatic.getAwsConfig().bucketName,
-				Key: key,
-				Body: buffer,
-			},
-		});
-
-		const res = await uploaded.done();
-		console.log({ res });
-
-		return {
-			key: res.Key,
-			bucket: res.Bucket,
-			url: res.Location,
-		};
-	}
-
 	private async _resizeImages(
 		file: FileFormatted,
 		resizeOptions: ResizeOptions[] = [], // 150, 360, 480, 720
@@ -161,5 +141,24 @@ export class S3Service implements StorageService {
 		);
 
 		return imagesResizedUrls;
+	}
+
+	private async _uploadToS3(key: string, buffer: Buffer) {
+		const uploaded = new Upload({
+			client: this.s3Client,
+			params: {
+				Bucket: EnvStatic.getAwsConfig().bucketName,
+				Key: key,
+				Body: buffer,
+			},
+		});
+
+		const res = await uploaded.done();
+
+		return {
+			key: res.Key,
+			bucket: res.Bucket,
+			url: EnvStatic.getAwsConfig().cloudFont + res.Key,
+		};
 	}
 }
