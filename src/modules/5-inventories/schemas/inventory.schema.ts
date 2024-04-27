@@ -3,6 +3,7 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { Product } from "~modules/1-products/schemas/product.schema";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { Cart } from "~modules/3-carts/schemas/cart.schema";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -20,6 +21,7 @@ export class Inventory {
 
 	@Prop({ type: Number, required: true })
 	stock: number;
+
 	@Prop({
 		type: [
 			{

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { AuthorDto } from "../dto/author.dto";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -18,6 +19,7 @@ export class Comment {
 		},
 	})
 	readonly author: AuthorDto;
+
 	@Prop({ type: String, default: null })
 	readonly text: string;
 

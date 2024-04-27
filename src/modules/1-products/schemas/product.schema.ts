@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { ProductType } from "../enums/product-type.enum";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,

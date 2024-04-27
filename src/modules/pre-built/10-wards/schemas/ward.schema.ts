@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { Province } from "~pre-built/8-provinces/schemas/province.schema";
 import { District } from "~pre-built/9-districts/schemas/district.schema";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,

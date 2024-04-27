@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -41,16 +42,22 @@ export class Discount {
 
 	@Prop({ type: String, default: null })
 	UsedCount;
+
 	@Prop({ type: String, default: null })
 	MaxUsesPerUser;
+
 	@Prop({ type: String, default: null })
 	MinOrderValue;
+
 	@Prop({ type: String, default: null })
 	isActive: boolean;
+
 	@Prop({ type: String, default: null })
 	applyTo;
+
 	@Prop({ type: String, default: null })
 	productIds;
+
 	@Prop({ type: String, default: null })
 	usersUsed;
 }

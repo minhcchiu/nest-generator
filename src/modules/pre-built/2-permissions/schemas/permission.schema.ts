@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
 import { Endpoint } from "~pre-built/2-endpoints/schemas/endpoint.schema";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -36,3 +37,11 @@ export class Permission {
 type PermissionDocument = HydratedDocument<Permission>;
 const PermissionSchema = SchemaFactory.createForClass(Permission);
 export { PermissionDocument, PermissionSchema };
+
+export class Role {
+	@Prop({ type: String, required: true, index: true, unique: true })
+	readonly name: string;
+
+	@Prop({ type: String, default: "" })
+	readonly description: string;
+}

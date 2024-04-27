@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { LocationDto } from "~dto/location.dto";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,

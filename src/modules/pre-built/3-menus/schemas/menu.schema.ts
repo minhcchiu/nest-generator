@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 import { MenuLevel } from "../enum/menu-level";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
@@ -22,13 +23,16 @@ export class Menu {
 
 	@Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
 	readonly level: MenuLevel;
+
 	@Prop({ type: String, default: "" })
 	readonly url: string;
 
 	@Prop({ type: Number, default: 0 })
 	readonly position: number;
+
 	@Prop({ type: Boolean, default: false })
 	readonly isHorizontal: boolean;
+
 	@Prop({ type: Boolean, default: true })
 	readonly isActive: boolean;
 

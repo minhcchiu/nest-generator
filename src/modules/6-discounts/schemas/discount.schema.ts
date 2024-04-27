@@ -3,6 +3,7 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,

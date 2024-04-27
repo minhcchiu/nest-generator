@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { User } from "~pre-built/1-users/schemas/user.schema";
 import { NotificationType } from "../enums/noti-type.enum";
 import { TargetType } from "../enums/target-type.enum";
+
 @Schema({
 	timestamps: true,
 	versionKey: false,
