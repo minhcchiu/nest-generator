@@ -6,10 +6,10 @@ import { UserModule } from "./pre-built/1-users/user.module";
 import { WardModule } from "./pre-built/10-wards/ward.module";
 import { SettingModule } from "./pre-built/11-settings/setting.module";
 import { NotificationModule } from "./pre-built/12-notifications/notification.module";
-import { EndpointModule } from "./pre-built/2-endpoints/endpoint.module";
-import { PermissionModule } from "./pre-built/2-permissions/permission.module";
-import { MenuModule } from "./pre-built/3-menus/menu.module";
+import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
+import { PolicyModule } from "./pre-built/3-policies/policy.module";
 import { AuthModule } from "./pre-built/4-auth/auth.module";
+import { MenuModule } from "./pre-built/4-menus/menu.module";
 import { TokenModule } from "./pre-built/5-tokens/token.module";
 import { OtpModule } from "./pre-built/6-otp/otp.module";
 import { UploadModule } from "./pre-built/7-uploads/upload.module";
@@ -21,8 +21,8 @@ export const RouteModules = [
 	// pre-built
 	AuthModule,
 	UserModule,
-	PermissionModule,
-	EndpointModule,
+	UserGroupModule,
+	PolicyModule,
 	MenuModule,
 	TokenModule,
 	OtpModule,

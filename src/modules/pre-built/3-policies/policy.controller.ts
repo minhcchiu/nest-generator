@@ -9,33 +9,40 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
+
 import { Types } from "mongoose";
+
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { CreatePermissionDto } from "./dto/create-permission.dto";
-import { UpdatePermissionDto } from "./dto/update-permission.dto";
-import { PermissionService } from "./permission.service";
-@Controller("permissions")
-export class PermissionController {
-	constructor(private readonly permissionService: PermissionService) {}
+import { UserGroupService } from "../2-user-groups/user-group.service";
+import { CreatePolicyDto } from "./dto/create-policy.dto";
+import { UpdatePolicyDto } from "./dto/update-policy.dto";
+import { PolicyService } from "./policy.service";
+
+@Controller("policies")
+export class PolicyController {
+	constructor(
+		private readonly policyService: PolicyService,
+		private readonly userGroupService: UserGroupService,
+	) {}
 
 	//  ----- Method: GET -----
 
 	@Get()
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.permissionService.findMany(filter, options);
+		return this.policyService.findMany(filter, options);
 	}
 
 	@Get("paginate")
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.permissionService.paginate(filter, options);
+		return this.policyService.paginate(filter, options);
 	}
 
 	@Get("count")
 	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.permissionService.count(filter);
+		return this.policyService.count(filter);
 	}
 
 	@Get(":id")
@@ -43,15 +50,15 @@ export class PermissionController {
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
-		return this.permissionService.findById(id, { projection, populate });
+		return this.policyService.findById(id, { projection, populate });
 	}
 
 	//  ----- Method: POST -----
 
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreatePermissionDto) {
-		return this.permissionService.create(body);
+	async create(@Body() body: CreatePolicyDto) {
+		return this.policyService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
@@ -60,9 +67,9 @@ export class PermissionController {
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdatePermissionDto,
+		@Body() body: UpdatePolicyDto,
 	) {
-		return this.permissionService.updateById(id, body);
+		return this.policyService.updateById(id, body);
 	}
 
 	//  ----- Method: DELETE -----
@@ -70,7 +77,7 @@ export class PermissionController {
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.permissionService.deleteMany({
+		return this.policyService.deleteMany({
 			_id: { $in: ids.split(",").map(stringIdToObjectId) },
 		});
 	}
@@ -78,6 +85,14 @@ export class PermissionController {
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.permissionService.deleteById(id);
+		const [deleted] = await Promise.all([
+			this.policyService.deleteById(id),
+			this.userGroupService.updateOne(
+				{ policies: id },
+				{ $pull: { policies: id } },
+			),
+		]);
+
+		return deleted;
 	}
 }

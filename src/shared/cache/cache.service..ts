@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import * as NodeCache from "node-cache";
-import { EndpointPermissionType } from "src/guards/types/endpoint-permission.type";
+import { UserPolicyType } from "src/guards/types/user-policy.type";
 
 @Injectable()
 export class CacheService {
@@ -11,13 +11,13 @@ export class CacheService {
 		this.cache = new NodeCache();
 	}
 
-	setEndpointPermission(key: string, value: EndpointPermissionType) {
+	setUserPolices(key: string, value: UserPolicyType) {
 		const ttl = 8 * 60 * 60; // 8 hours
 
 		return this.cache.set(key, value, ttl);
 	}
 
-	getEndpointPermission(key: string): EndpointPermissionType | undefined {
+	getUserPolicies(key: string): UserPolicyType {
 		return this.cache.get(key);
 	}
 }

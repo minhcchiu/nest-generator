@@ -1,4 +1,4 @@
-export enum AccountType {
+export enum AccountTypeEnum {
 	Local = "LOCAL",
 	Google = "GOOGLE",
 	Facebook = "FACEBOOK",

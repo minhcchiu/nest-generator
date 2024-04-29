@@ -26,7 +26,7 @@ async function bootstrap() {
 	// Get a list of all the registered routes
 	const server = app.getHttpServer();
 	const router = server._events.request._router;
-	await app.get<SeedService>(SeedService).seedEndpoints(router.stack);
+	await app.get<SeedService>(SeedService).seedPolicies(router.stack);
 }
 
 bootstrap();

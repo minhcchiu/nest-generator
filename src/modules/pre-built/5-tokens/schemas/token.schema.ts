@@ -16,8 +16,8 @@ export class Token {
 	@Prop({ type: String, required: true, index: 1 })
 	token: string;
 
-	@Prop({ type: String })
-	expiresAt: string;
+	@Prop({ type: Number })
+	expiresAt: number;
 }
 
 const TokenSchema = SchemaFactory.createForClass(Token);
@@ -25,5 +25,3 @@ const TokenSchema = SchemaFactory.createForClass(Token);
 TokenSchema.index({ expiresAt: 1 }, { expires: "50d" });
 
 export { TokenDocument, TokenSchema };
-
-// TODO: convert use redis or cache in future

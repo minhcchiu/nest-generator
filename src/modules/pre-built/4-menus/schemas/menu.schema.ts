@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
-import { MenuLevel } from "../enum/menu-level";
 
 @Schema({
 	timestamps: true,
@@ -9,8 +8,11 @@ import { MenuLevel } from "../enum/menu-level";
 	collection: "menus",
 })
 export class Menu {
-	@Prop({ type: SchemaTypes.ObjectId, ref: Menu.name })
+	@Prop({ type: SchemaTypes.ObjectId, ref: Menu.name, default: null })
 	readonly parentId?: Types.ObjectId;
+
+	@Prop({ type: Boolean, default: false })
+	readonly isGroup: boolean;
 
 	@Prop({ type: String, default: "" })
 	readonly name: string;
@@ -21,11 +23,8 @@ export class Menu {
 	@Prop({ type: String, default: "" })
 	readonly icon: string;
 
-	@Prop({ type: Number, enum: MenuLevel, default: MenuLevel.ONE })
-	readonly level: MenuLevel;
-
 	@Prop({ type: String, default: "" })
-	readonly url: string;
+	readonly href: string;
 
 	@Prop({ type: Number, default: 0 })
 	readonly position: number;
@@ -34,11 +33,11 @@ export class Menu {
 	readonly isHorizontal: boolean;
 
 	@Prop({ type: Boolean, default: true })
-	readonly isActive: boolean;
+	readonly isShow: boolean;
 
 	@Prop({
 		type: [{ type: String, enum: RoleEnum }],
-		default: [RoleEnum.SupperAdmin, RoleEnum.User],
+		default: [RoleEnum.SupperAdmin],
 	})
 	readonly roles: RoleEnum[];
 }

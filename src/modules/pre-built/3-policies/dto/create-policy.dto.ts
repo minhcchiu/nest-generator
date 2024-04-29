@@ -2,24 +2,29 @@ import {
 	IsArray,
 	IsBoolean,
 	IsEnum,
+	IsNotEmpty,
 	IsOptional,
 	IsString,
 } from "class-validator";
 import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
 import { HttpMethod } from "../enum/http-method";
 
-export class CreateEndpointDto {
-	@IsOptional()
+export class CreatePolicyDto {
+	@IsNotEmpty()
 	@IsString()
-	readonly collectionName: string;
+	readonly policyKey: string;
 
-	@IsOptional()
+	@IsNotEmpty()
 	@IsString()
 	readonly name: string;
 
-	@IsOptional()
+	@IsNotEmpty()
 	@IsString()
-	readonly path: string;
+	readonly collectionName: string;
+
+	@IsNotEmpty()
+	@IsString()
+	readonly endpoint: string;
 
 	@IsEnum(HttpMethod)
 	readonly method: HttpMethod;
@@ -30,9 +35,9 @@ export class CreateEndpointDto {
 
 	@IsArray()
 	@IsEnum(RoleEnum, { each: true })
-	readonly userRoles: RoleEnum[];
+	readonly userRoles?: RoleEnum[];
 
 	@IsOptional()
 	@IsBoolean()
-	readonly isPublic: boolean;
+	readonly isPublic?: boolean;
 }

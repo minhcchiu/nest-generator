@@ -1,35 +1,34 @@
 import {
-	IsArray,
 	IsBoolean,
 	IsEmail,
 	IsEnum,
-	IsMongoId,
+	IsISO8601,
 	IsNotEmpty,
-	IsNumber,
 	IsOptional,
 	IsString,
 	MaxLength,
 	MinLength,
-	ValidateIf,
 } from "class-validator";
-import { NullableType } from "~types/nullable.type";
-import { AccountStatus } from "../enums/account-status.enum";
-import { AccountType } from "../enums/account-type.enum";
+import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
 import { RoleEnum } from "../enums/role.enum";
 
 export class CreateUserDto {
-	@ValidateIf((o) => !o.phone && !o.email)
+	@IsOptional()
 	@IsString()
 	username?: string;
 
-	@ValidateIf((o) => !o.username && !o.phone)
+	@IsOptional()
 	@IsEmail()
 	email?: string;
 
-	@ValidateIf((o) => !o.username && !o.email)
+	@IsOptional()
 	@IsString()
 	phone?: string;
+
+	@IsOptional()
+	@IsString()
+	socialID?: string;
 
 	@IsNotEmpty()
 	@IsString()
@@ -43,39 +42,26 @@ export class CreateUserDto {
 	fullName: string;
 
 	@IsOptional()
-	@IsString()
-	avatar?: string;
+	@IsEnum(RoleEnum)
+	roles?: RoleEnum[];
+
+	@IsNotEmpty()
+	@IsEnum(AccountTypeEnum)
+	accountType: AccountTypeEnum;
 
 	@IsOptional()
-	@IsNumber()
-	dateOfBirth?: number;
+	@IsISO8601()
+	dateBirth?: Date;
 
 	@IsOptional()
 	@IsEnum(GenderEnum)
 	gender?: GenderEnum;
 
-	@IsNotEmpty()
-	@IsEnum(AccountType)
-	accountType: AccountType;
+	@IsOptional()
+	@IsString()
+	avatar?: string;
 
 	@IsOptional()
 	@IsBoolean()
-	isNotificationActive?: boolean;
-
-	@IsOptional()
-	@IsMongoId()
-	storeId?: NullableType<string>;
-
-	@IsOptional()
-	@IsMongoId({ each: true })
-	favoriteStores: string[];
-
-	@IsOptional()
-	@IsArray()
-	@IsEnum(RoleEnum, { each: true })
-	roles?: RoleEnum[];
-
-	@IsOptional()
-	@IsEnum(AccountStatus)
-	status?: AccountStatus;
+	fmcEnabled?: boolean;
 }

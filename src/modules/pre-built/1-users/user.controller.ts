@@ -15,6 +15,7 @@ import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
@@ -27,7 +28,6 @@ export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	//  ----- Method: GET -----
-
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
@@ -46,6 +46,7 @@ export class UserController {
 		});
 	}
 
+	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
@@ -62,7 +63,6 @@ export class UserController {
 	}
 
 	//  ----- Method: POST -----
-
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateUserDto) {
@@ -72,7 +72,6 @@ export class UserController {
 	}
 
 	//  ----- Method: PATCH -----
-
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -87,14 +86,13 @@ export class UserController {
 	@Patch("password")
 	@HttpCode(HttpStatus.OK)
 	async updatePassword(
-		@GetCurrentUserId() id: string,
+		@GetCurrentUserId() id: Types.ObjectId,
 		@Body() body: UpdatePasswordDto,
 	) {
 		return this.userService.updatePasswordById(id, body);
 	}
 
 	//  ----- Method: DELETE -----
-
 	@Delete(":ids/soft_ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManySoftByIds(@Param("ids") ids: string) {

@@ -10,7 +10,9 @@ import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { TokenService } from "~pre-built/5-tokens/token.service";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
-import { AccountType } from "../1-users/enums/account-type.enum";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
+import { AccountTypeEnum } from "../1-users/enums/account-type.enum";
+import { HashingService } from "../1-users/hashing/hashing.service";
 import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
 import { OtpType } from "../6-otp/enums/otp-type";
@@ -29,6 +31,7 @@ export class AuthService {
 		private readonly mailService: MailService,
 		private readonly firebaseService: FirebaseService,
 		private readonly otpService: OtpService,
+		private readonly hashingService: HashingService,
 	) {}
 
 	async register({ fcmToken, ...input }: RegisterDto) {
@@ -41,10 +44,17 @@ export class AuthService {
 		return this.tokenService.generateUserAuth(newUser);
 	}
 
-	async login({ fcmToken, ...credential }: LoginDto) {
+	async login({ fcmToken, authKey, password }: LoginDto) {
 		const user = await this.userService.findOne(
-			{ authKeys: credential.authKey },
-			{ projection: authSelect },
+			{
+				$or: [{ email: authKey }, { phone: authKey }, { username: authKey }],
+			},
+			{
+				projection: {
+					...authSelect,
+					password: 1,
+				},
+			},
 		);
 
 		if (!user) throw new NotFoundException("Incorrect account!");
@@ -52,15 +62,16 @@ export class AuthService {
 		if (user.status === AccountStatus.Deleted)
 			throw new BadRequestException("The account has been removed.");
 
-		const isPasswordValid = await this.userService.comparePassword(
+		const isPasswordValid = await this.hashingService.compare(
 			user.password,
-			credential.password,
+			password,
 		);
 
 		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
 
 		if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
 
+		delete user.password;
 		return this.tokenService.generateUserAuth(user);
 	}
 
@@ -94,7 +105,7 @@ export class AuthService {
 	}
 
 	async activateRegisterToken(token: string) {
-		const decoded = await this.tokenService.verifySignupToken(token);
+		const decoded = await this.tokenService.verifyRegisterToken(token);
 
 		// delete key of token
 		delete decoded.iat;
@@ -115,10 +126,8 @@ export class AuthService {
 
 		if (!foundUser) {
 			const newUser = await this.userService.createUser({
-				status: AccountStatus.Verified,
 				fullName: decodedIdToken.name,
 				socialID: decodedIdToken.sub,
-				authKeys: [decodedIdToken.sub],
 				avatar: decodedIdToken.picture,
 				email: decodedIdToken.email,
 				accountType,
@@ -143,7 +152,7 @@ export class AuthService {
 	}
 
 	async validateSocialLogin(
-		accountType: AccountType,
+		accountType: AccountTypeEnum,
 		socialData: SocialInterface,
 	) {
 		return {
@@ -179,12 +188,7 @@ export class AuthService {
 		}
 
 		const { expiresAt, token } =
-			await this.tokenService.generateForgotPasswordToken({
-				_id: user._id.toString(),
-				roles: user.roles,
-				fullName: user.fullName,
-				avatar: user.avatar,
-			});
+			await this.tokenService.generateForgotPasswordToken(user);
 
 		await this.tokenService.updateOne(
 			{ user: user._id },
@@ -209,26 +213,13 @@ export class AuthService {
 		if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
 
 		const user = await this.userService.resetPassword(
-			decoded._id.toString(),
+			stringIdToObjectId(decoded._id),
 			password,
-			{
-				projection: authSelect,
-			},
+			{ projection: authSelect },
 		);
 
 		const { accessToken, refreshToken } =
-			await this.tokenService.generateAuthTokens({
-				_id: user._id.toString(),
-				roles: user.roles,
-				fullName: user.fullName,
-				avatar: user.avatar,
-			});
-
-		await this.tokenService.updateOne(
-			{ user: user._id, token: refreshToken.token },
-			{ user: user._id, ...refreshToken },
-			{ upsert: true },
-		);
+			await this.tokenService.generateUserAuth(user);
 
 		return { accessToken, refreshToken, user };
 	}

@@ -5,69 +5,88 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import * as argon2 from "argon2";
 import { PaginateModel, QueryOptions, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
-import { AuthKeys, IAuthKeys } from "./enums/unique-keys";
+import { HashingService } from "./hashing/hashing.service";
 import { User, UserDocument } from "./schemas/user.schema";
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
-	private userModel: PaginateModel<UserDocument>;
-	constructor(@InjectModel(User.name) model: PaginateModel<UserDocument>) {
+	private userService: UserService;
+
+	constructor(
+		@InjectModel(User.name) model: PaginateModel<UserDocument>,
+		private readonly hashingService: HashingService,
+	) {
 		super(model);
 
-		this.userModel = model;
+		this.userService = this;
 	}
 
-	async createUser(input: Record<string, any>) {
-		const authKeyObj: IAuthKeys = {
-			email: input.email,
-			phone: input.phone,
-			username: input.username,
-		};
+	async validateCreateUser(input: Record<string, any>) {
+		if (input.email) {
+			const userExist = await this.userService.findOne({ email: input.email });
 
-		Object.assign(input, {
-			authKeys: this._getAuthKeys(authKeyObj).map((item) => item.value),
-		});
+			if (userExist) throw new BadRequestException(`Email already exist.`);
+		}
 
-		return this.userModel.create(input);
+		if (input.phone) {
+			const userExist = await this.userService.findOne({ phone: input.phone });
+
+			if (userExist) throw new BadRequestException(`Phone already exist.`);
+		}
+
+		if (input.username) {
+			const userExist = await this.userService.findOne({
+				username: input.username,
+			});
+
+			if (userExist) throw new BadRequestException(`Username already exist.`);
+		}
 	}
 
-	async validateCreateUser(input: IAuthKeys) {
-		const validatePromises = this._getAuthKeys(input).map((item) =>
-			this._validateAuthKey(
-				item.key,
-				item.value,
-				`${item.key.toUpperCase()} already exists.`,
-			),
-		);
+	async createUser(input: CreateUserDto) {
+		await this.validateCreateUser(input);
 
-		await Promise.all(validatePromises);
+		const hashPassword = await this.hashingService.hash(input.password);
+		Object.assign(input, { password: hashPassword });
+
+		return this.userService.create(input);
 	}
 
 	async updatePasswordById(
-		id: string,
+		id: Types.ObjectId,
 		{ newPassword, oldPassword }: UpdatePasswordDto,
 	) {
-		const user = await this.userModel.findById(id).select("password");
+		const user = await this.userService.findById(id, {
+			projection: "password",
+		});
 
 		if (!user) throw new NotFoundException("User not found.");
 
-		const validOldPass = await this.comparePassword(oldPassword, newPassword);
+		const validPass = await this.hashingService.compare(
+			user.password,
+			oldPassword,
+		);
 
-		if (!validOldPass) throw new UnauthorizedException("Invalid old password.");
+		if (!validPass) throw new UnauthorizedException("Invalid old password.");
 
-		user.password = newPassword;
+		user.password = await this.hashingService.hash(newPassword);
 		return user.save();
 	}
 
-	async resetPassword(id: string, newPassword: string, options?: QueryOptions) {
-		const user = await this.userModel.findById(id, options.projection, options);
+	async resetPassword(
+		id: Types.ObjectId,
+		newPassword: string,
+		options?: QueryOptions,
+	) {
+		const user = await this.userService.findById(id, options);
+
 		if (!user) throw new NotFoundException("User not found.");
 
-		user.password = newPassword;
+		user.password = await this.hashingService.hash(newPassword);
 		return user.save();
 	}
 
@@ -75,7 +94,7 @@ export class UserService extends BaseService<UserDocument> {
 		id: Types.ObjectId,
 		fcmToken: string,
 	): Promise<UserDocument | null> {
-		const updated = await this.updateById(
+		const updated = await this.userService.updateById(
 			id,
 			{ $addToSet: { fcmTokens: fcmToken } },
 			{ projection: { _id: 1, fcmTokens: 1 } },
@@ -85,7 +104,7 @@ export class UserService extends BaseService<UserDocument> {
 	}
 
 	async removeFcmTokens(fcmTokens: string[]) {
-		const updated = await this.updateMany(
+		const updated = await this.userService.updateMany(
 			{
 				fcmTokens: { $in: fcmTokens },
 			},
@@ -94,30 +113,6 @@ export class UserService extends BaseService<UserDocument> {
 			},
 		);
 
-		throw new BadRequestException("error");
-
 		return updated;
-	}
-
-	async comparePassword(hashPassword: string, plainPassword: string) {
-		return argon2.verify(hashPassword, plainPassword);
-	}
-
-	private _getAuthKeys(input: IAuthKeys): Record<string, string>[] {
-		return AuthKeys.filter((key) => input[key] && AuthKeys.includes(key)).map(
-			(key) => ({
-				key,
-				value: input[key].toString(),
-			}),
-		);
-	}
-
-	private async _validateAuthKey(
-		key: string,
-		value: string,
-		errorMessage: string,
-	) {
-		if (await this.count({ [key]: value }))
-			throw new BadRequestException(errorMessage);
 	}
 }
