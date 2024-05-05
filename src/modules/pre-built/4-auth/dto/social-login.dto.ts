@@ -7,6 +7,7 @@ export class SocialLoginDto extends PickType(CreateUserDto, [
 	@IsNotEmpty()
 	@IsString()
 	idToken: string;
+
 	@IsOptional()
 	@IsString()
 	fcmToken?: string;

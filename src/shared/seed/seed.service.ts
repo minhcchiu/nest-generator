@@ -137,19 +137,19 @@ export class SeedService {
 	) {
 		const collectionNameSet = new Set<string>();
 
+		const polices: Record<string, any>[] = [];
 		for (const [_, policy] of policyMap) {
 			collectionNameSet.add(policy.collectionName);
 
-			await this.policyService.updateOne(
-				{
-					endpoint: policy.endpoint,
-					method: policy.method,
-				},
-				policy,
-				{ upsert: true },
-			);
+			const res = await this.policyService.findOne({
+				endpoint: policy.endpoint,
+				method: policy.method,
+			});
+
+			if (!res) polices.push(policy);
 		}
 
+		await this.policyService.createMany(polices);
 		await this._createMenus(Array.from(collectionNameSet));
 	}
 

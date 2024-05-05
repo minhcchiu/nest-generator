@@ -1,4 +1,5 @@
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+// import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { Upload } from "@aws-sdk/lib-storage";
 import { Injectable } from "@nestjs/common";
 import { ResizeOptions } from "sharp";
@@ -155,10 +156,21 @@ export class S3Service implements StorageService {
 
 		const res = await uploaded.done();
 
+		const url = `${EnvStatic.getAwsConfig().cloudFont}/${res.Key}`;
+
+		// const signedUrl = getSignedUrl({
+		// 	url,
+		// 	keyPairId: EnvStatic.getAwsConfig().cloudFontKeyPairId,
+		// 	privateKey: EnvStatic.getAwsConfig().cloudFontPrivateKey,
+		// 	dateLessThan: "2022-04-04",
+		// });
+
+		// console.log({ signedUrl });
+
 		return {
 			key: res.Key,
 			bucket: res.Bucket,
-			url: EnvStatic.getAwsConfig().cloudFont + res.Key,
+			url,
 		};
 	}
 }

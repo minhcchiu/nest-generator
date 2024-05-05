@@ -92,6 +92,8 @@ export class EnvStatic {
 			policy: process.env.S3_ENDPOINT,
 			bucketName: process.env.S3_BUCKET_NAME,
 			cloudFont: process.env.S3_CLOUD_FONT,
+			cloudFontPrivateKey: process.env.S3_CLOUD_FONT_PRIVATE_KEY,
+			cloudFontKeyPairId: process.env.S3_CLOUD_FONT_KEY_PAIR_ID,
 		};
 	}
 

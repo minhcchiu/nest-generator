@@ -54,7 +54,9 @@ export class LocalService implements StorageService {
 	): Promise<UploadedResult> {
 		// path storage
 		const fileOriginal = `${file.fileFolder}/${file.fileName}`;
+
 		writeFileSync(`public/${fileOriginal}`, file.buffer);
+
 		const url = `${this.serverUrl}/static/${fileOriginal}`;
 
 		const resourceKeys = [fileOriginal];

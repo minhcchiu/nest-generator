@@ -24,4 +24,12 @@ export class AwsConfigDto {
 	@IsNotEmpty()
 	@IsString()
 	S3_CLOUD_FONT: string;
+
+	@IsNotEmpty()
+	@IsString()
+	S3_CLOUD_FONT_KEY_PAIR_ID: string;
+
+	@IsNotEmpty()
+	@IsString()
+	S3_CLOUD_FONT_PRIVATE_KEY: string;
 }

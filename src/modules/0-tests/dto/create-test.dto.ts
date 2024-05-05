@@ -1,4 +1,4 @@
-import { IsMongoId } from "class-validator";
+import { IsISO8601, IsMongoId } from "class-validator";
 import { Types } from "mongoose";
 
 export class CreateTestDto {
@@ -7,4 +7,7 @@ export class CreateTestDto {
 
 	@IsMongoId()
 	userId: Types.ObjectId;
+
+	@IsISO8601()
+	dateBirth: string;
 }

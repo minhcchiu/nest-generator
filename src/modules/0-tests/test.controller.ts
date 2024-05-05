@@ -55,7 +55,6 @@ export class TestController {
 	}
 
 	// ----- Method: POST -----
-
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateTestDto) {

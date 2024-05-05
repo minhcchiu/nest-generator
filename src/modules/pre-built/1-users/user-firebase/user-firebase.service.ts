@@ -51,7 +51,7 @@ export class UserFirebaseService {
 		baseMessage: BaseMessage,
 	) {
 		// get tokens from users
-		const tokens = await this.userService.distinct("fcmTokens", {
+		const tokens: string[] = await this.userService.distinct("fcmTokens", {
 			_id: { $in: userIds },
 			isFCMEnabled: true,
 		});

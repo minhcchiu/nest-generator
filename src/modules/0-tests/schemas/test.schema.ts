@@ -12,6 +12,9 @@ export class Test {
 
 	@Prop({ type: SchemaTypes.ObjectId, ref: "User" })
 	userId: Types.ObjectId;
+
+	@Prop({ type: Date, default: Date.now })
+	dateBirth: Date;
 }
 
 export type TestDocument = Test & HydratedDocument<Test>;

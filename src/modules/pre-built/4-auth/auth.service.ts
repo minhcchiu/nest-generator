@@ -5,6 +5,8 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Types } from "mongoose";
+import { NodeEnv } from "src/configurations/enums/config.enum";
+import { EnvStatic } from "src/configurations/static.env";
 import { generateRandomKey } from "~helpers/generate-random-key";
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { TokenService } from "~pre-built/5-tokens/token.service";
@@ -190,18 +192,26 @@ export class AuthService {
 		const { expiresAt, token } =
 			await this.tokenService.generateForgotPasswordToken(user);
 
-		await this.tokenService.updateOne(
-			{ user: user._id },
-			{ user: user._id, token, expiresAt },
-			{ upsert: true },
-		);
-
-		this.mailService.sendForgotPasswordToken(
+		// send email
+		await this.mailService.sendForgotPasswordToken(
 			{ token, expiresAt, fullName: user.fullName },
 			email,
 		);
 
-		return { email };
+		await this.tokenService.updateOne(
+			{ userId: user._id },
+			{ userId: user._id, token, expiresAt },
+			{ upsert: true },
+		);
+
+		return {
+			email,
+			token:
+				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
+					? token
+					: undefined,
+			expiresAt,
+		};
 	}
 
 	async resetPassword(token: string, password: string) {

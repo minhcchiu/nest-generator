@@ -17,7 +17,7 @@ export class CacheService {
 		return this.cache.set(key, value, ttl);
 	}
 
-	getUserPolicies(key: string): UserPolicyType {
+	getUserPolicy(key: string): UserPolicyType {
 		return this.cache.get(key);
 	}
 }

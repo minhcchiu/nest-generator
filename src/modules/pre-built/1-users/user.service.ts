@@ -73,8 +73,9 @@ export class UserService extends BaseService<UserDocument> {
 
 		if (!validPass) throw new UnauthorizedException("Invalid old password.");
 
-		user.password = await this.hashingService.hash(newPassword);
-		return user.save();
+		const hashPassword = await this.hashingService.hash(newPassword);
+
+		return this.userService.updateById(user._id, { password: hashPassword });
 	}
 
 	async resetPassword(
@@ -82,12 +83,17 @@ export class UserService extends BaseService<UserDocument> {
 		newPassword: string,
 		options?: QueryOptions,
 	) {
-		const user = await this.userService.findById(id, options);
+		const hashPassword = await this.hashingService.hash(newPassword);
 
-		if (!user) throw new NotFoundException("User not found.");
+		const updated = await this.userService.updateById(
+			id,
+			{ password: hashPassword },
+			options,
+		);
 
-		user.password = await this.hashingService.hash(newPassword);
-		return user.save();
+		if (!updated) throw new NotFoundException("User not found.");
+
+		return updated;
 	}
 
 	async saveFcmToken(

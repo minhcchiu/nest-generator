@@ -23,6 +23,7 @@ export class AppGuard implements CanActivate {
 		private policyService: PolicyService,
 		private cacheService: CacheService,
 	) {}
+
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
 			context.getHandler(),
@@ -33,13 +34,13 @@ export class AppGuard implements CanActivate {
 
 		const request = context.switchToHttp().getRequest();
 		const { route, method } = request;
-		const path = route.path;
+		const endpoint = route.path;
 
-		const policy = await this.getPolicies(path, method);
+		const policy = await this.getPolicy(endpoint, method);
 
 		if (policy.isPublic) return true;
 
-		return await this.validate(request, policy);
+		return this.validate(request, policy);
 	}
 
 	private async validate(request: any, policy: UserPolicyType) {
@@ -87,19 +88,19 @@ export class AppGuard implements CanActivate {
 		return isHasGroup;
 	}
 
-	private async getPolicies(
-		path: string,
+	private async getPolicy(
+		endpoint: string,
 		method: HttpMethod,
 	): Promise<UserPolicyType> {
-		const cacheKey = `${method}:${path}`;
+		const cacheKey = `${method}:${endpoint}`;
 
 		// check in cache
-		const policyCached = this.cacheService.getUserPolicies(cacheKey);
+		const policyCached = this.cacheService.getUserPolicy(cacheKey);
 
 		if (policyCached) return policyCached;
 
 		// check in db
-		const policy = await this.policyService.findOne({ path, method });
+		const policy = await this.policyService.findOne({ endpoint, method });
 
 		if (!policy) throw new UnauthorizedException("Policy not found!");
 
