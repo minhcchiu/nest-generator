@@ -9,12 +9,11 @@ import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted
 import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { UploadType } from "~types/upload-type";
-import { removeFileExtension } from "~utils/files/file.util";
-import { ImageSize, getResizeOptions } from "../local-storage/local.service";
-import { StorageService } from "../storage.service";
+import { removeFileExtension } from "~utils/file.util";
+import { ImageSize, getResizeOptions } from "~utils/image.util";
 
 @Injectable()
-export class CloudinaryService implements StorageService {
+export class CloudinaryService {
 	constructor(private readonly logger: CustomLoggerService) {
 		this.init();
 	}
@@ -76,16 +75,12 @@ export class CloudinaryService implements StorageService {
 		};
 	}
 
-	deleteByKey(
-		resourceKey: string,
-	): Promise<{ deletedAt: number; message: string }> {
+	async deleteByKey(resourceKey: string) {
 		console.log({ resourceKey });
 		throw new Error("Method not implemented.");
 	}
 
-	deleteManyByKeys(
-		resourceKeys: string[],
-	): Promise<{ deletedAt: number; message: string }[]> {
+	async deleteManyByKeys(resourceKeys: string[]) {
 		console.log({ resourceKeys });
 		throw new Error("Method not implemented.");
 	}
@@ -145,17 +140,11 @@ export class CloudinaryService implements StorageService {
 		fileType: UploadType;
 	}) {
 		// check file type
-		if (input.fileType === "audio") {
-			input.fileType = "video";
-		}
+		if (input.fileType === "audio") input.fileType = "video";
 
-		try {
-			return v2.uploader.destroy(input.resourceKey, {
-				resource_type: input.fileType,
-			});
-		} catch (error) {
-			this.logger.warn(CloudinaryService.name, error);
-		}
+		await v2.uploader.destroy(input.resourceKey, {
+			resource_type: input.fileType,
+		});
 	}
 
 	async deleteByResourceKeys(
@@ -164,13 +153,9 @@ export class CloudinaryService implements StorageService {
 			fileType: UploadType;
 		}[],
 	) {
-		try {
-			return Promise.all(
-				inputs.map((input) => this.deleteByResourceKey(input)),
-			);
-		} catch (error) {
-			this.logger.warn(CloudinaryService.name, error);
-		}
+		await Promise.allSettled(
+			inputs.map((input) => this.deleteByResourceKey(input)),
+		);
 	}
 
 	private async _resizeImages(

@@ -27,6 +27,7 @@ export const RouteModules = [
 	TokenModule,
 	OtpModule,
 	UploadModule,
+	UserFileModule,
 	ProvinceModule,
 	DistrictModule,
 	WardModule,
@@ -37,6 +38,5 @@ export const RouteModules = [
 	ShopModule,
 	BannerModule,
 	ProductModule,
-	UserFileModule,
 	TestModule,
 ];

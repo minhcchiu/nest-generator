@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel, Types } from "mongoose";
@@ -27,32 +27,31 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	}
 
 	@OnEvent("file.uploaded")
-	handleFileUploadedEvent(files: UploadedResult[], userId: Types.ObjectId) {
+	createUserFile(files: UploadedResult[], userId: Types.ObjectId) {
 		return this.userFileService.createMany(
 			files.map((item) => ({ ...item, userId })),
 		);
 	}
 
+	@OnEvent("file.delete.url")
 	async deleteByUrl(url: string) {
 		const file = await this.userFileService.deleteOne({ url });
 
-		if (!file) throw new NotFoundException("File not found.");
-
-		await this.deleteFiles([file]);
+		if (file) await this.deleteFiles([file]);
 
 		return file;
 	}
 
+	@OnEvent("file.delete.urls")
 	async deleteByUrls(urls: string[]) {
 		const files = await this.userFileService.findMany({ url: { $in: urls } });
 
-		if (!files?.length) throw new NotFoundException("File not found.");
-
-		await this.deleteFiles(files);
+		if (files?.length) await this.deleteFiles(files);
 
 		return this.userFileService.deleteMany({ url: { $in: urls } });
 	}
 
+	@OnEvent("file.delete.files")
 	async deleteFiles(
 		inputs: {
 			storageLocation: StorageLocationEnum;
@@ -94,7 +93,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 			}
 
 			if (resourceKeysS3.length > 0) {
-				await this.s3Service.deleteByResourceKeys(resourceKeysS3);
+				await this.s3Service.deleteManyByKeys(resourceKeysS3);
 			}
 
 			if (resourceKeysCloudinary.length > 0) {

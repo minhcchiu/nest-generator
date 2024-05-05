@@ -13,10 +13,14 @@ import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
+import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
 import { UserFileService } from "./user-file.service";
 @Controller("user_files")
 export class UserFileController {
-	constructor(private readonly userFileService: UserFileService) {}
+	constructor(
+		private readonly userFileService: UserFileService,
+		private readonly eventEmitterService: EventEmitterService,
+	) {}
 
 	//  ----- Method: GET -----
 	@Public()
@@ -51,7 +55,7 @@ export class UserFileController {
 
 		if (!file) throw new NotFoundException("File not found.");
 
-		await this.userFileService.deleteFiles([file]);
+		this.eventEmitterService.emitDeleteFiles([file]);
 
 		return file;
 	}
@@ -67,7 +71,7 @@ export class UserFileController {
 
 		if (!files?.length) throw new NotFoundException("Files not found.");
 
-		await this.userFileService.deleteFiles(files);
+		this.eventEmitterService.emitDeleteFiles(files);
 
 		return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
 	}
@@ -79,7 +83,7 @@ export class UserFileController {
 
 		if (!file) throw new NotFoundException("File not found.");
 
-		await this.userFileService.deleteFiles([file]);
+		this.eventEmitterService.emitDeleteFiles([file]);
 
 		return file;
 	}

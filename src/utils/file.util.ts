@@ -23,17 +23,3 @@ export const genUniqueFilename = (originalname: string) => {
 
 	return `${fileName}.${fileExt}`;
 };
-
-export const genResizeImageName = (
-	fileName: string,
-	options: { width?: number; height?: number } = {},
-) => {
-	const keyName = Object.keys(options)
-		.map((key) => `${key[0]}_${options[key]}`)
-		.join(",");
-
-	const fileNameWithoutExtension = removeFileExtension(fileName);
-	const fileExt = getFileExtension(fileName);
-
-	return `${fileNameWithoutExtension}_${keyName}.${fileExt}`;
-};

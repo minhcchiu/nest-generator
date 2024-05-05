@@ -9,7 +9,6 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { Types } from "mongoose";
-import { EnvStatic } from "src/configurations/static.env";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { UploadService } from "./upload.service";
 
@@ -18,9 +17,7 @@ export class UploadController {
 	constructor(private readonly uploadService: UploadService) {}
 
 	@Post("files")
-	@UseInterceptors(
-		FilesInterceptor("files", EnvStatic.getUploadConfig().filesLimit),
-	)
+	@UseInterceptors(FilesInterceptor("files", 10))
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: Types.ObjectId,

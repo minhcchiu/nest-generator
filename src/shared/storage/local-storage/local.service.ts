@@ -1,47 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { rmSync, writeFileSync } from "fs";
-import sizeOf from "image-size";
 import { ResizeOptions } from "sharp";
 import { EnvStatic } from "src/configurations/static.env";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
 import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
-import { compressImage } from "~utils/files/file.helper";
-import { genResizeImageName } from "~utils/files/file.util";
-import { StorageService } from "../storage.service";
-
-export type ImageSize = "XLarge" | "Large" | "Medium" | "Small" | "XSmall";
-export const ImageSizeOptions: { width: number; name: ImageSize }[] = [
-	{ width: 150, name: "XSmall" },
-	{ width: 360, name: "Small" },
-	{ width: 480, name: "Medium" },
-	{ width: 720, name: "Large" },
-	{ width: 1080, name: "XLarge" },
-];
-
-export const getResizeOptions = (buffer: Buffer, imageSizes: ImageSize[]) => {
-	const imageDimensions = sizeOf(buffer);
-	const sizeOptions = ImageSizeOptions.filter((option) =>
-		imageSizes.includes(option.name),
-	);
-
-	const resizeOptions: ResizeOptions[] = [];
-	const resizeNames: ImageSize[] = [];
-
-	for (const option of sizeOptions) {
-		resizeNames.push(option.name);
-
-		if (imageDimensions.width > option.width) {
-			resizeOptions.push({ width: option.width });
-		}
-	}
-
-	return { resizeOptions, resizeNames };
-};
+import {
+	compressImage,
+	genResizeImageName,
+	getResizeOptions,
+	type ImageSize,
+} from "~utils/image.util";
 
 @Injectable()
-export class LocalService implements StorageService {
+export class LocalService {
 	private serverUrl: string;
 
 	constructor() {
@@ -98,15 +71,10 @@ export class LocalService implements StorageService {
 		const localFilePath = `${process.cwd()}/public/${resourceKey}`;
 
 		rmSync(localFilePath);
-
-		return {
-			deletedAt: Date.now(),
-			message: "File deleted successfully",
-		};
 	}
 
 	async deleteManyByKeys(resourceKeys: string[]) {
-		return Promise.all(resourceKeys.map(this.deleteByKey));
+		await Promise.all(resourceKeys.map((item) => this.deleteByKey(item)));
 	}
 
 	private async _resizeImages(

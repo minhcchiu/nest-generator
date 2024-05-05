@@ -10,13 +10,15 @@ import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-loc
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
 import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-import { compressImage } from "~utils/files/file.helper";
-import { genResizeImageName } from "~utils/files/file.util";
-import { ImageSize, getResizeOptions } from "../local-storage/local.service";
-import { StorageService } from "../storage.service";
+import {
+	ImageSize,
+	compressImage,
+	genResizeImageName,
+	getResizeOptions,
+} from "~utils/image.util";
 
 @Injectable()
-export class S3Service implements StorageService {
+export class S3Service {
 	private s3Client: S3Client;
 
 	constructor(private readonly logger: CustomLoggerService) {
@@ -30,7 +32,6 @@ export class S3Service implements StorageService {
 		}
 
 		const awsConfig = EnvStatic.getAwsConfig();
-
 		this.s3Client = new S3Client({
 			region: awsConfig.region,
 			credentials: {
@@ -84,42 +85,12 @@ export class S3Service implements StorageService {
 		};
 	}
 
-	deleteByKey(
-		resourceKey: string,
-	): Promise<{ deletedAt: number; message: string }> {
-		throw new Error(`"Method not implemented.", ${resourceKey}`);
+	async deleteByKey(resourceKey: string) {
+		await this._deleteFromS3(resourceKey);
 	}
 
-	deleteManyByKeys(
-		resourceKeys: string[],
-	): Promise<{ deletedAt: number; message: string }[]> {
-		throw new Error(`"Method not implemented.", ${resourceKeys}`);
-	}
-
-	async deleteByResourceKey(resourceKey: string) {
-		try {
-			const deleteObjectCommand = new DeleteObjectCommand({
-				Bucket: EnvStatic.getAwsConfig().bucketName,
-				Key: resourceKey,
-			});
-
-			const result = await this.s3Client.send(deleteObjectCommand);
-
-			return result;
-		} catch (error) {
-			this.logger.warn(S3Service.name, error);
-			throw error;
-		}
-	}
-
-	async deleteByResourceKeys(publicIds: string[]) {
-		try {
-			return Promise.all(
-				publicIds.map((publicId) => this.deleteByResourceKey(publicId)),
-			);
-		} catch (error) {
-			this.logger.warn(S3Service.name, error);
-		}
+	async deleteManyByKeys(resourceKeys: string[]) {
+		await Promise.all(resourceKeys.map((item) => this.deleteByKey(item)));
 	}
 
 	private async _resizeImages(
@@ -172,5 +143,16 @@ export class S3Service implements StorageService {
 			bucket: res.Bucket,
 			url,
 		};
+	}
+
+	private async _deleteFromS3(key: string) {
+		const deleteObjectCommand = new DeleteObjectCommand({
+			Bucket: EnvStatic.getAwsConfig().bucketName,
+			Key: key,
+		});
+
+		const deleted = await this.s3Client.send(deleteObjectCommand);
+
+		return deleted;
 	}
 }
