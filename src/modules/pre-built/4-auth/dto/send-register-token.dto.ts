@@ -1,8 +1,10 @@
-import { OmitType } from "@nestjs/mapped-types";
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { IsEnum, IsNotEmpty } from "class-validator";
+import { SendOtpToEnum } from "~modules/pre-built/6-otp/enums/send-otp-to";
 import { RegisterDto } from "./register.dto";
-export class SendRegisterTokenDto extends OmitType(RegisterDto, ["email"]) {
+
+export class SendRegisterTokenDto extends PartialType(RegisterDto) {
 	@IsNotEmpty()
-	@IsEmail()
-	readonly email: string;
+	@IsEnum(SendOtpToEnum)
+	sendOtpTo: SendOtpToEnum;
 }

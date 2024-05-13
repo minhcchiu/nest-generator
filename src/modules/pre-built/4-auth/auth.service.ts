@@ -17,7 +17,7 @@ import { AccountTypeEnum } from "../1-users/enums/account-type.enum";
 import { HashingService } from "../1-users/hashing/hashing.service";
 import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
-import { OtpType } from "../6-otp/enums/otp-type";
+import { OtpTypeEnum } from "../6-otp/enums/otp-type.enum";
 import { OtpService } from "../6-otp/otp.service";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
@@ -39,6 +39,19 @@ export class AuthService {
 	async register({ fcmToken, ...input }: RegisterDto) {
 		await this.userService.validateCreateUser(input);
 
+		// Verify otp
+		if (input.otpCode) {
+			await this.otpService.verifyOtp({
+				otpCode: input.otpCode,
+				otpType: OtpTypeEnum.Register,
+				phone: input.phone,
+				email: input.email,
+				sendOtpTo: input.sendOtpTo,
+			});
+
+			Object.assign(input, { status: AccountStatus.Verified });
+		}
+
 		const newUser = await this.userService.createUser(input);
 
 		if (fcmToken) this.userService.saveFcmToken(newUser._id, fcmToken);
@@ -52,10 +65,7 @@ export class AuthService {
 				$or: [{ email: authKey }, { phone: authKey }, { username: authKey }],
 			},
 			{
-				projection: {
-					...authSelect,
-					password: 1,
-				},
+				projection: { ...authSelect, password: 1 },
 			},
 		);
 
@@ -77,47 +87,6 @@ export class AuthService {
 		return this.tokenService.generateUserAuth(user);
 	}
 
-	async sendRegisterToken(input: RegisterDto) {
-		await this.userService.validateCreateUser(input);
-
-		const { token, expiresAt } =
-			await this.tokenService.generateUserToken(input);
-
-		await this.mailService.sendRegisterToken(
-			{
-				token,
-				expiresAt,
-				fullName: input.fullName,
-			},
-			input.email,
-		);
-
-		return input;
-	}
-
-	async sendRegisterOtp(input: SendRegisterTokenDto) {
-		await this.userService.validateCreateUser(input);
-
-		const otpItem: any = { otpType: OtpType.SIGNUP };
-
-		if (input.phone) otpItem.phone = input.phone;
-		else otpItem.email = input.email;
-
-		return this.otpService.sendOtp(otpItem);
-	}
-
-	async activateRegisterToken(token: string) {
-		const decoded = await this.tokenService.verifyRegisterToken(token);
-
-		// delete key of token
-		delete decoded.iat;
-		delete decoded.exp;
-
-		decoded.status = AccountStatus.Verified;
-
-		return this.register(decoded);
-	}
-
 	async socialLogin({ fcmToken, idToken, accountType }: SocialLoginDto) {
 		const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
 
@@ -134,6 +103,7 @@ export class AuthService {
 				email: decodedIdToken.email,
 				accountType,
 				password: generateRandomKey(32),
+				status: AccountStatus.Verified,
 			});
 
 			foundUser = newUser.toObject();
@@ -142,6 +112,57 @@ export class AuthService {
 		if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);
 
 		return this.tokenService.generateUserAuth(foundUser);
+	}
+
+	async sendRegisterToken(input: RegisterDto) {
+		await this.userService.validateCreateUser(input);
+
+		const { token, expiresAt } = await this.tokenService.generateUserToken({
+			...input,
+		});
+
+		await this.mailService.sendRegisterToken(
+			{
+				token,
+				expiresAt,
+				fullName: input.fullName,
+			},
+			input.email,
+		);
+
+		return {
+			...input,
+			token:
+				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
+					? token
+					: undefined,
+			expiresAt,
+		};
+	}
+
+	async activateRegisterToken(token: string) {
+		const decoded = await this.tokenService.verifyRegisterToken(token);
+
+		// delete key of token
+		delete decoded.iat;
+		delete decoded.exp;
+
+		decoded.status = AccountStatus.Verified;
+
+		return this.register(decoded);
+	}
+
+	async sendRegisterOtp(input: SendRegisterTokenDto) {
+		await this.userService.validateCreateUser(input);
+
+		const otpItem = {
+			phone: input.phone,
+			email: input.email,
+			sendOtpTo: input.sendOtpTo,
+			otpType: OtpTypeEnum.Register,
+		};
+
+		return this.otpService.sendOtp(otpItem);
 	}
 
 	async logout(userId: Types.ObjectId, fcmToken?: string) {

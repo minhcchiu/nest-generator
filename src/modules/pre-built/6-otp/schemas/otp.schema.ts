@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as argon2 from "argon2";
 import { HydratedDocument } from "mongoose";
-import { OtpType } from "../enums/otp-type";
+import { OtpTypeEnum } from "../enums/otp-type.enum";
+import { SendOtpToEnum } from "../enums/send-otp-to";
 
 @Schema({
 	timestamps: true,
@@ -15,8 +16,11 @@ export class Otp {
 	@Prop({ type: String })
 	readonly email: string;
 
-	@Prop({ type: String, enum: OtpType, default: OtpType.PHONE })
-	otpType: OtpType;
+	@Prop({ type: String, enum: SendOtpToEnum, default: SendOtpToEnum.Phone })
+	readonly sendOtpTo: SendOtpToEnum;
+
+	@Prop({ type: String, enum: OtpTypeEnum, default: OtpTypeEnum.Phone })
+	otpType: OtpTypeEnum;
 
 	@Prop({ type: String, required: true })
 	otpCode: string;

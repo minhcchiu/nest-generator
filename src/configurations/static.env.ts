@@ -31,7 +31,7 @@ export class EnvStatic {
 			storageServer: process.env.STORAGE_SERVER as StorageServerEnum,
 			resetPasswordUrl: process.env.RESET_PASSWORD_URL,
 			verifyAccountUrl: process.env.VERIFY_ACCOUNT_URL,
-			otpExpiration: +process.env.OTP_EXPIRATION,
+			otpExpiration: eval(process.env.OTP_EXPIRATION),
 		};
 	}
 

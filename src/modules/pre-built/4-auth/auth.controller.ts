@@ -46,17 +46,17 @@ export class AuthController {
 	}
 
 	@Public()
-	@HttpCode(HttpStatus.OK)
-	@Post("send_register_otp")
-	async sendRegisterOtp(@Body() body: SendRegisterTokenDto) {
-		return this.authService.sendRegisterOtp(body);
-	}
-
-	@Public()
 	@HttpCode(HttpStatus.CREATED)
 	@Post("activate_register_token")
 	async activateRegisterToken(@Body() { token }: TokenDto) {
 		return this.authService.activateRegisterToken(token);
+	}
+
+	@Public()
+	@HttpCode(HttpStatus.OK)
+	@Post("send_register_otp")
+	async sendRegisterOtp(@Body() body: SendRegisterTokenDto) {
+		return this.authService.sendRegisterOtp(body);
 	}
 
 	@Post("logout")

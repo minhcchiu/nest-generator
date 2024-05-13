@@ -12,7 +12,10 @@ export class MailService {
 	}
 
 	async sendOTP(
-		verificationCode: string,
+		data: {
+			otpCode: string;
+			expiredAt: number;
+		},
 		to: string,
 		subject: string,
 		from?: string,
@@ -23,7 +26,7 @@ export class MailService {
 			to,
 			subject,
 			template: "./otp/otp.template.hbs",
-			context: { verificationCode },
+			context: { verificationCode: data.otpCode },
 		};
 
 		// send mail

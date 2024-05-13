@@ -9,6 +9,7 @@ import {
 	MaxLength,
 	MinLength,
 } from "class-validator";
+import { AccountStatus } from "../enums/account-status.enum";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
 import { RoleEnum } from "../enums/role.enum";
@@ -64,4 +65,6 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsBoolean()
 	fmcEnabled?: boolean;
+
+	status?: AccountStatus;
 }

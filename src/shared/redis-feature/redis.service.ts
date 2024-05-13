@@ -52,4 +52,12 @@ export class RedisService {
 
 		this.isSubscribed = true;
 	}
+
+	async setnx(lockKey: string, expireTime: number) {
+		return this.redis.setnx(lockKey, expireTime);
+	}
+
+	async pexpire(lockKey: string, expireTime: number) {
+		return this.redis.pexpire(lockKey, expireTime, "NX");
+	}
 }

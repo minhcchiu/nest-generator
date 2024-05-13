@@ -1,13 +1,20 @@
 import { IsEmail, IsEnum, IsNotEmpty, ValidateIf } from "class-validator";
-import { OtpType } from "../enums/otp-type";
+import { OtpTypeEnum } from "../enums/otp-type.enum";
+import { SendOtpToEnum } from "../enums/send-otp-to";
 export class CreateOtpDto {
 	@ValidateIf((o) => !o.email)
 	@IsNotEmpty()
-	readonly phone: string;
+	readonly phone?: string;
+
 	@ValidateIf((o) => !o.phone)
 	@IsEmail()
-	readonly email: string;
+	readonly email?: string;
+
 	@IsNotEmpty()
-	@IsEnum(OtpType)
-	otpType: OtpType;
+	@IsEnum(SendOtpToEnum)
+	readonly sendOtpTo: SendOtpToEnum;
+
+	@IsNotEmpty()
+	@IsEnum(OtpTypeEnum)
+	otpType: OtpTypeEnum;
 }

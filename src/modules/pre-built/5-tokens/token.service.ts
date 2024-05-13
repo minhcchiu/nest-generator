@@ -4,7 +4,12 @@ import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel, Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { BaseService } from "~base-inherit/base.service";
+import { DocumentType } from "~types/document.type";
 import { User } from "../1-users/schemas/user.schema";
+import {
+	getTokenPayloadFromUser,
+	getUserAuth,
+} from "../1-users/select/auth.select";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
@@ -24,6 +29,7 @@ export class TokenService extends BaseService<TokenDocument> {
 	async generateUserToken(payload: any) {
 		const { registerToken } = EnvStatic.getJWTConfig();
 
+		console.log({ payload });
 		return this._generateToken(
 			payload,
 			registerToken.secretKey,
@@ -86,22 +92,8 @@ export class TokenService extends BaseService<TokenDocument> {
 		return this._verifyToken(token, forgotPasswordToken.secretKey);
 	}
 
-	async generateUserAuth(
-		user: User & {
-			_id: Types.ObjectId;
-		},
-	) {
-		const payload: TokenPayload = {
-			_id: user._id.toString(),
-			roles: user.roles,
-			userGroupIds: user.userGroupIds.map((id) => id.toString()),
-			fullName: user.fullName,
-			username: user.username,
-			email: user.email,
-			phone: user.phone,
-			socialID: user.socialID,
-			accountType: user.accountType,
-		};
+	async generateUserAuth(user: DocumentType<User>) {
+		const payload = getTokenPayloadFromUser(user);
 
 		const { accessToken, refreshToken } =
 			await this.generateAuthTokens(payload);
@@ -112,7 +104,7 @@ export class TokenService extends BaseService<TokenDocument> {
 			{ upsert: true },
 		);
 
-		return { accessToken, refreshToken, user };
+		return { accessToken, refreshToken, user: getUserAuth(user) };
 	}
 
 	async _generateToken(payload: any, secret: string, expiresIn: number) {

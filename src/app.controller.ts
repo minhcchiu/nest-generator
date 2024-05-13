@@ -1,10 +1,55 @@
-import { Controller, Get } from "@nestjs/common";
+import { BadRequestException, Controller, Get } from "@nestjs/common";
+import * as AsyncLock from "async-lock";
 import { Public } from "~decorators/public.decorator";
 import { ChannelName } from "~shared/redis-feature/channel";
 import { RedisService } from "~shared/redis-feature/redis.service";
+
+const product = {
+	quantity: 2,
+	name: "Áo sơ mi",
+};
+
 @Controller()
 export class AppController {
-	constructor(private readonly redisFeatureService: RedisService) {}
+	private lock: AsyncLock;
+	constructor(private readonly redisFeatureService: RedisService) {
+		this.lock = new AsyncLock();
+	}
+
+	@Public()
+	@Get("testLock")
+	async testLock() {
+		// const res1 = await this.processRequest(1);
+		// console.log({ res1 });
+		// const res2 = await this.processRequest(2);
+		// console.log({ res1, res2 });
+		// const res = await Promise.allSettled([
+		// 	this.processRequest(3),
+		// 	this.processRequest(4),
+		// 	this.processRequest(5),
+		// 	this.processRequest(6),
+		// ]);
+		// return res1;
+	}
+
+	async processRequest(request: any) {
+		await this.lock.acquire(request, async () => {
+			console.log(`--------------Request ${request} lockAquired`);
+			// Simulating processing time
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+
+			if (product.quantity <= 0) {
+				throw new BadRequestException("Out of stock");
+			}
+
+			console.log(`--------------Request ${request} Done`);
+
+			product.quantity += -1;
+		});
+
+		console.log(`--------------Request ${request} lockReleased`);
+		return product;
+	}
 
 	@Get("publish")
 	async publish() {
