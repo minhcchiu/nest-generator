@@ -75,16 +75,6 @@ export class CloudinaryService {
 		};
 	}
 
-	async deleteByKey(resourceKey: string) {
-		console.log({ resourceKey });
-		throw new Error("Method not implemented.");
-	}
-
-	async deleteManyByKeys(resourceKeys: string[]) {
-		console.log({ resourceKeys });
-		throw new Error("Method not implemented.");
-	}
-
 	_uploadToCloudinary(file: {
 		fileName: string;
 		resourceType: ResourceTypeEnum;
@@ -135,10 +125,7 @@ export class CloudinaryService {
 		};
 	}
 
-	async deleteByResourceKey(input: {
-		resourceKey: string;
-		fileType: UploadType;
-	}) {
+	async deleteByKey(input: { resourceKey: string; fileType: UploadType }) {
 		// check file type
 		if (input.fileType === "audio") input.fileType = "video";
 
@@ -147,15 +134,13 @@ export class CloudinaryService {
 		});
 	}
 
-	async deleteByResourceKeys(
+	async deleteManyByKeys(
 		inputs: {
 			resourceKey: string;
 			fileType: UploadType;
 		}[],
 	) {
-		await Promise.allSettled(
-			inputs.map((input) => this.deleteByResourceKey(input)),
-		);
+		await Promise.allSettled(inputs.map((input) => this.deleteByKey(input)));
 	}
 
 	private async _resizeImages(

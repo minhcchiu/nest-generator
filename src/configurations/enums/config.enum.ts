@@ -1,6 +1,6 @@
 export enum NodeEnv {
-	Production = "PRODUCTION",
-	Development = "DEVELOPMENT",
+	Production = "production",
+	Development = "development",
 }
 
 export enum StorageServerEnum {

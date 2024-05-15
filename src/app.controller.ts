@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Get } from "@nestjs/common";
 import * as AsyncLock from "async-lock";
 import { Public } from "~decorators/public.decorator";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { ChannelName } from "~shared/redis-feature/channel";
 import { RedisService } from "~shared/redis-feature/redis.service";
 
@@ -12,7 +13,10 @@ const product = {
 @Controller()
 export class AppController {
 	private lock: AsyncLock;
-	constructor(private readonly redisFeatureService: RedisService) {
+	constructor(
+		private readonly redisFeatureService: RedisService,
+		private readonly loggerService: CustomLoggerService,
+	) {
 		this.lock = new AsyncLock();
 	}
 
@@ -20,9 +24,9 @@ export class AppController {
 	@Get("testLock")
 	async testLock() {
 		// const res1 = await this.processRequest(1);
-		// console.log({ res1 });
+		// this.loggerService.log({ res1 });
 		// const res2 = await this.processRequest(2);
-		// console.log({ res1, res2 });
+		// this.loggerService.log({ res1, res2 });
 		// const res = await Promise.allSettled([
 		// 	this.processRequest(3),
 		// 	this.processRequest(4),
@@ -32,9 +36,9 @@ export class AppController {
 		// return res1;
 	}
 
-	async processRequest(request: any) {
+	async processRequest(request: string) {
 		await this.lock.acquire(request, async () => {
-			console.log(`--------------Request ${request} lockAquired`);
+			this.loggerService.log(`--------------Request ${request} lockAquired`);
 			// Simulating processing time
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -42,12 +46,12 @@ export class AppController {
 				throw new BadRequestException("Out of stock");
 			}
 
-			console.log(`--------------Request ${request} Done`);
+			this.loggerService.log(`--------------Request ${request} Done`);
 
 			product.quantity += -1;
 		});
 
-		console.log(`--------------Request ${request} lockReleased`);
+		this.loggerService.log(`--------------Request ${request} lockReleased`);
 		return product;
 	}
 
@@ -86,7 +90,7 @@ export class AppController {
 		this.redisFeatureService.subscribeToChannel(
 			ChannelName.Order,
 			(message) => {
-				console.log("Received message:", message);
+				this.loggerService.log("Received message:", message);
 			},
 		);
 		return "Subscribed to channel";
@@ -96,7 +100,7 @@ export class AppController {
 	@Get("subscribe1")
 	async subscribe1() {
 		this.redisFeatureService.subscribeToChannel(ChannelName.Test, (message) => {
-			console.log("Received message:", message);
+			this.loggerService.log("Received message:", message);
 		});
 		return "Subscribed to channel";
 	}
@@ -107,7 +111,7 @@ export class AppController {
 		this.redisFeatureService.subscribeToChannel(
 			ChannelName.Test2,
 			(message) => {
-				console.log("Received message:", message);
+				this.loggerService.log("Received message:", message);
 			},
 		);
 		return "Subscribed to channel";

@@ -97,9 +97,11 @@ export class CustomLoggerService implements LoggerService {
 		const _names = Array.isArray(messages)
 			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
 			: [messages];
+
 		const messageFinal = `${_names.join("\n")}`;
 
-		console.log(messageFinal, context);
+		this.logger.setContext(context);
+		this.logger.log(messageFinal);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import {
 	getTokenPayloadFromUser,
 	getUserAuth,
 } from "../1-users/select/auth.select";
+import { RegisterDto } from "../4-auth/dto/register.dto";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
@@ -26,10 +27,9 @@ export class TokenService extends BaseService<TokenDocument> {
 		this.tokenService = this;
 	}
 
-	async generateUserToken(payload: any) {
+	async generateUserToken(payload: RegisterDto) {
 		const { registerToken } = EnvStatic.getJWTConfig();
 
-		console.log({ payload });
 		return this._generateToken(
 			payload,
 			registerToken.secretKey,

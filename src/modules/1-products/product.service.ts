@@ -66,8 +66,6 @@ export class ProductService extends BaseService<ProductDocument> {
 		productType: ProductType,
 		input: CreateProductDto,
 	) {
-		console.log({ input });
-
 		switch (productType) {
 			case ProductType.clothing:
 				await this.clothingModel.create(input.attributes);

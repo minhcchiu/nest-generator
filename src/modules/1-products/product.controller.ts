@@ -86,8 +86,6 @@ export class ProductController {
 			populate,
 		});
 
-		console.log(product);
-
 		return product;
 	}
 }

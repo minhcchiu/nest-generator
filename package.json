@@ -19,7 +19,7 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"lint:eslint": "eslint . --ext .ts,.js --ignore-path .gitignore",
 		"lint:prettier": "prettier **/*.{ts,js}' --ignore-path .gitignore --check",
-		"format": "prettier '**/*.{ts,js}' --ignore-path .gitignore --list-different",
+		"format": "prettier '**/*.{ts,js}' --ignore-path .gitignore --list-different --write",
 		"lint": "pnpm lint:prettier && pnpm lint:eslint",
 		"lint:fix": "pnpm format && pnpm lint:eslint --fix"
 	},

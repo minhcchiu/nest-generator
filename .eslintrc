@@ -15,7 +15,7 @@
     "node": true,
     "jest": true
   },
-  "ignorePatterns": [".eslintrc.js"],
+  "ignorePatterns": [".ecosystem/"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -30,8 +30,9 @@
         "arrowParens": "always",
         "requirePragma": false,
         "proseWrap": "always"
-      }
+      },
     ],
+    "no-console": "error",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",

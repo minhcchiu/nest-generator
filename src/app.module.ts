@@ -23,6 +23,7 @@ import { VALIDATION_PIPE_OPTIONS } from "~utils/common.constants";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./common/database/database.module";
+import { EnvStatic } from "./configurations/static.env";
 import { AppGuard } from "./guards/app.guard";
 import { CacheService } from "./shared/cache/cache.service.";
 import { CustomLoggerModule } from "./shared/logger/custom-logger.module";
@@ -36,9 +37,7 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
 			rootPath: join(process.cwd(), "public"),
 			serveRoot: "/static",
 		}),
-
-		ThrottlerModule.forRoot([{ ttl: 60, limit: 10 }]),
-
+		ThrottlerModule.forRoot([EnvStatic.getThrottlerConfig()]),
 		DatabaseModule,
 		SeedModule,
 		CustomLoggerModule,

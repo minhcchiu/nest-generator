@@ -117,9 +117,8 @@ export class AuthService {
 	async sendRegisterToken(input: RegisterDto) {
 		await this.userService.validateCreateUser(input);
 
-		const { token, expiresAt } = await this.tokenService.generateUserToken({
-			...input,
-		});
+		const { token, expiresAt } =
+			await this.tokenService.generateUserToken(input);
 
 		await this.mailService.sendRegisterToken(
 			{

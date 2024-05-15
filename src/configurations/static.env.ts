@@ -6,6 +6,7 @@ import { DatabaseConfigDto } from "./dto/database.config.dto";
 import { JWTConfigDto } from "./dto/jwt.config.dto";
 import { MailerConfigDto } from "./dto/mailer.config.dto";
 import { RedisConfigDto } from "./dto/redis.config.dt";
+import { ThrottlerConfigDto } from "./dto/throttler.config.dto";
 import { UploadConfigDto } from "./dto/upload.config.dto";
 import { StorageServerEnum } from "./enums/config.enum";
 
@@ -20,6 +21,7 @@ validateConfig(process.env, AwsConfigDto);
 validateConfig(process.env, CloudinaryConfigDto);
 validateConfig(process.env, JWTConfigDto);
 validateConfig(process.env, MailerConfigDto);
+validateConfig(process.env, ThrottlerConfigDto);
 
 export class EnvStatic {
 	static getAppConfig() {
@@ -159,6 +161,13 @@ export class EnvStatic {
 
 			defaults: { from: process.env.MAILER_FROM_EMAIL },
 			name: process.env.MAILER_NAME_NAME,
+		};
+	}
+
+	static getThrottlerConfig() {
+		return {
+			ttl: +process.env.THROTTLER_TTL,
+			limit: +process.env.THROTTLER_LIMIT,
 		};
 	}
 }

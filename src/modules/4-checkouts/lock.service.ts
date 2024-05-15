@@ -14,7 +14,8 @@ export class LockService {
 	): Promise<boolean> {
 		// const lockKey = `product:${productId}:lock`;
 		// const lockValue = `${quantity}:${cartId}`;
-		console.log({ quantity, cartId }); // const retries = 0		// while (retries < maxRetries) {
+		// console.log({ quantity, cartId });
+		// const retries = 0		// while (retries < maxRetries) {
 		// 	try {
 		// 		const setnxResult = await this.redisService.setnx(lockKey, expireTime)		// 		if (setnxResult === 1) {
 		// 			this.logger.log(`Lock acquired for product ${productId}`)		// 			const isReservation =
@@ -43,7 +44,7 @@ export class LockService {
 		// }
 
 		this.logger.log(
-			`Max retries reached. Failed to acquire lock for product ${productId}`,
+			`Max retries reached. Failed to acquire lock for product ${productId}, ${quantity} x ${cartId}`,
 		);
 		return false;
 	}

@@ -60,8 +60,7 @@ export class InventoryService extends BaseService<InventoryDocument> {
 	}
 
 	async updateInventory(order: any): Promise<void> {
-		console.log("update order", order);
 		// Cập nhật kho hàng dựa trên thông tin đơn hàng
-		// ...
+		return order;
 	}
 }

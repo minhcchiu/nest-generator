@@ -97,9 +97,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 			}
 
 			if (resourceKeysCloudinary.length > 0) {
-				await this.cloudinaryService.deleteByResourceKeys(
-					resourceKeysCloudinary,
-				);
+				await this.cloudinaryService.deleteManyByKeys(resourceKeysCloudinary);
 			}
 		} catch (error) {
 			// TODO: Handle error
