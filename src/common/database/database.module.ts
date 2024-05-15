@@ -2,8 +2,7 @@ import { Logger, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 
-import { DatabaseConfig } from "./config/database-config.type";
-import { databaseConfigName } from "./config/database.config";
+import { EnvStatic } from "src/configurations/static.env";
 import { mongoosePaginateV2 } from "./mongoose-paginate.config";
 
 @Module({
@@ -11,8 +10,8 @@ import { mongoosePaginateV2 } from "./mongoose-paginate.config";
 		MongooseModule.forRootAsync({
 			imports: [ConfigModule],
 
-			useFactory: async (config: ConfigService) => ({
-				uri: config.get<DatabaseConfig>(databaseConfigName).uri,
+			useFactory: async () => ({
+				uri: EnvStatic.getDatabaseConfig().uri,
 				retryWrites: true,
 				autoIndex: true,
 

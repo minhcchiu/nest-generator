@@ -1,7 +1,3 @@
-import { Server, Socket } from "socket.io";
-import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
-import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
 import { UseFilters } from "@nestjs/common";
 import {
 	MessageBody,
@@ -12,7 +8,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from "@nestjs/websockets";
-
+import { Server, Socket } from "socket.io";
+import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { SocketEvent } from "./enums/socket-event.enum";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
@@ -46,7 +44,7 @@ export class SocketGateway
 			if (!user) client.disconnect(true);
 
 			// join room
-			client.join(user._id);
+			client.join(user._id.toString());
 
 			this.logger.log(
 				`User ${client.id} has connected room #${user._id}.`,
@@ -64,7 +62,7 @@ export class SocketGateway
 			if (!user) client.disconnect(true);
 
 			// leave room
-			client.leave(user._id);
+			client.leave(user._id.toString());
 
 			this.logger.log(
 				`User ${client.id} left room #${user._id}.`,

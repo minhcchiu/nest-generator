@@ -10,14 +10,14 @@ import {
 	IsString,
 	ValidateIf,
 } from "class-validator";
-
+import { Types } from "mongoose";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
 
 export class CreateDiscountDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	shopId: string;
+	shopId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsString()

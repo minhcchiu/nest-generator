@@ -1,5 +1,8 @@
-# compiled output
-/dist
+# Enviroment
+.env
+
+#compiled output
+/dist 
 /node_modules
 
 # Logs
@@ -11,6 +14,7 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-lock.yaml
 
 # OS
 .DS_Store
@@ -35,6 +39,3 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Enviroment
-.env
-./ssh/.env

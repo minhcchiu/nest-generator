@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ApiQueryParams } from "src/common/swaggers/api-query-params.swagger";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,26 +9,21 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { BannerService } from "./banner.service";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
-import { AppTypeEnum } from "./enums/app-type.enum";
 
-@ApiTags("Banners")
 @Controller("banners")
 export class BannerController {
 	constructor(private readonly bannerService: BannerService) {}
 
 	// ----- Method: GET -----
-	@ApiQueryParams([
-		{ name: "startAt", type: Number },
-		{ name: "endAt", type: Number },
-		{ name: "isActive", type: Boolean, required: false },
-		{ name: "appType", enum: AppTypeEnum },
-	])
 	@Public()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -43,12 +31,6 @@ export class BannerController {
 		return this.bannerService.findMany(filter, options);
 	}
 
-	@ApiQueryParams([
-		{ name: "startAt", type: Number },
-		{ name: "endAt", type: Number },
-		{ name: "isActive", type: Boolean, required: false },
-		{ name: "appType", enum: AppTypeEnum },
-	])
 	@Public()
 	@Get("paginate")
 	@HttpCode(HttpStatus.OK)
@@ -74,7 +56,7 @@ export class BannerController {
 	}
 
 	// ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateBannerDto) {
@@ -82,7 +64,7 @@ export class BannerController {
 	}
 
 	// ----- Method: PATCH -----
-	@ApiBearerAuth()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -93,7 +75,7 @@ export class BannerController {
 	}
 
 	// ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -102,7 +84,6 @@ export class BannerController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

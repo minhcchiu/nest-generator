@@ -1,11 +1,7 @@
 import { Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
-
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { AppConfig } from "./configurations/app-config.type";
-import { appConfigName } from "./configurations/app.config";
+import { EnvStatic } from "./configurations/static.env";
 import { SeedService } from "./shared/seed/seed.service";
 
 async function bootstrap() {
@@ -17,32 +13,8 @@ async function bootstrap() {
 	// enableCors
 	app.enableCors({ origin: "*" });
 
-	// Validation pipe in global
-	// app.useGlobalPipes(
-	// 	new ValidationPipe({
-	// 		whitelist: true,
-	// 		forbidNonWhitelisted: true,
-	// 		exceptionFactory: (errors: ValidationError[]) =>
-	// 			new ValidationExceptions(errors),
-	// 	}),
-	// );
-
-	// Catch all Exceptions
-	// app.useGlobalFilters(new AllExceptionsFilter());
-
-	// Config swagger
-	const config = new DocumentBuilder()
-		.setTitle("NestA 2023")
-		.setVersion("1.0")
-		.addBearerAuth()
-		.build();
-
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup("api", app, document);
-
 	// Server run at port
-	const configService = app.get(ConfigService);
-	const appConfig = configService.get<AppConfig>(appConfigName);
+	const appConfig = EnvStatic.getAppConfig();
 
 	await app.listen(appConfig.port, () =>
 		Logger.log(
@@ -54,7 +26,7 @@ async function bootstrap() {
 	// Get a list of all the registered routes
 	const server = app.getHttpServer();
 	const router = server._events.request._router;
-	await app.get<SeedService>(SeedService).seedEndpoints(router.stack);
+	await app.get<SeedService>(SeedService).seedPolicies(router.stack);
 }
 
 bootstrap();

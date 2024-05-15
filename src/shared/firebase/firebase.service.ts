@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import * as firebaseAdmin from "firebase-admin";
 import {
 	BatchResponse,
@@ -10,8 +11,6 @@ import {
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
-import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class FirebaseService {

@@ -1,11 +1,8 @@
-import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
+import { Types } from "mongoose";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
-
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Throttle } from "@nestjs/throttler";
-
 import { AuthService } from "./auth.service";
 import { EmailDto } from "./dto/email.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -14,8 +11,6 @@ import { RegisterDto } from "./dto/register.dto";
 import { SendRegisterTokenDto } from "./dto/send-register-token.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
-
-@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
@@ -51,27 +46,26 @@ export class AuthController {
 	}
 
 	@Public()
-	@HttpCode(HttpStatus.OK)
-	@Post("send_register_otp")
-	async sendRegisterOtp(@Body() body: SendRegisterTokenDto) {
-		return this.authService.sendRegisterOtp(body);
-	}
-
-	@Public()
 	@HttpCode(HttpStatus.CREATED)
 	@Post("activate_register_token")
 	async activateRegisterToken(@Body() { token }: TokenDto) {
 		return this.authService.activateRegisterToken(token);
 	}
 
-	@ApiBearerAuth()
+	@Public()
+	@HttpCode(HttpStatus.OK)
+	@Post("send_register_otp")
+	async sendRegisterOtp(@Body() body: SendRegisterTokenDto) {
+		return this.authService.sendRegisterOtp(body);
+	}
+
 	@Post("logout")
 	@HttpCode(HttpStatus.OK)
 	async logout(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Body("fcmToken") fcmToken?: string,
 	) {
-		return this.authService.logout(stringIdToObjectId(userId), fcmToken);
+		return this.authService.logout(userId, fcmToken);
 	}
 
 	@Public()

@@ -1,8 +1,6 @@
-import { HydratedDocument } from "mongoose";
-import { User } from "~pre-built/1-users/schemas/user.schema";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { User } from "~pre-built/1-users/schemas/user.schema";
 import { OrderStatusEnum } from "../enums/order-status.enum";
 
 @Schema({
@@ -11,8 +9,8 @@ import { OrderStatusEnum } from "../enums/order-status.enum";
 	collection: "orders",
 })
 export class Order {
-	@Prop({ type: String, ref: User.name })
-	readonly userId: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: User.name })
+	readonly userId: Types.ObjectId;
 
 	@Prop({
 		type: {

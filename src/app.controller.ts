@@ -1,14 +1,59 @@
+import { BadRequestException, Controller, Get } from "@nestjs/common";
+import * as AsyncLock from "async-lock";
 import { Public } from "~decorators/public.decorator";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
+import { RedisService } from "~shared/redis-feature/redis.service";
 
-import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+const product = {
+	quantity: 2,
+	name: "Áo sơ mi",
+};
 
-@ApiTags("App")
 @Controller()
 export class AppController {
-	constructor(private readonly redisFeatureService: RedisFeatureService) {}
+	private lock: AsyncLock;
+	constructor(
+		private readonly redisFeatureService: RedisService,
+		private readonly loggerService: CustomLoggerService,
+	) {
+		this.lock = new AsyncLock();
+	}
+
+	@Public()
+	@Get("testLock")
+	async testLock() {
+		// const res1 = await this.processRequest(1);
+		// this.loggerService.log({ res1 });
+		// const res2 = await this.processRequest(2);
+		// this.loggerService.log({ res1, res2 });
+		// const res = await Promise.allSettled([
+		// 	this.processRequest(3),
+		// 	this.processRequest(4),
+		// 	this.processRequest(5),
+		// 	this.processRequest(6),
+		// ]);
+		// return res1;
+	}
+
+	async processRequest(request: string) {
+		await this.lock.acquire(request, async () => {
+			this.loggerService.log(`--------------Request ${request} lockAquired`);
+			// Simulating processing time
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+
+			if (product.quantity <= 0) {
+				throw new BadRequestException("Out of stock");
+			}
+
+			this.loggerService.log(`--------------Request ${request} Done`);
+
+			product.quantity += -1;
+		});
+
+		this.loggerService.log(`--------------Request ${request} lockReleased`);
+		return product;
+	}
 
 	@Get("publish")
 	async publish() {
@@ -45,7 +90,7 @@ export class AppController {
 		this.redisFeatureService.subscribeToChannel(
 			ChannelName.Order,
 			(message) => {
-				console.log("Received message:", message);
+				this.loggerService.log("Received message:", message);
 			},
 		);
 		return "Subscribed to channel";
@@ -55,7 +100,7 @@ export class AppController {
 	@Get("subscribe1")
 	async subscribe1() {
 		this.redisFeatureService.subscribeToChannel(ChannelName.Test, (message) => {
-			console.log("Received message:", message);
+			this.loggerService.log("Received message:", message);
 		});
 		return "Subscribed to channel";
 	}
@@ -66,7 +111,7 @@ export class AppController {
 		this.redisFeatureService.subscribeToChannel(
 			ChannelName.Test2,
 			(message) => {
-				console.log("Received message:", message);
+				this.loggerService.log("Received message:", message);
 			},
 		);
 		return "Subscribed to channel";

@@ -10,7 +10,7 @@ import { PopulateOptions } from "mongoose";
 
 export class PaginationDto {
 	@IsOptional()
-	filter?: any;
+	filter?: Record<string, any>;
 
 	@IsOptional()
 	@IsNumber()
@@ -34,6 +34,4 @@ export class PaginationDto {
 	@IsOptional()
 	@IsArray()
 	populate?: string | string[] | PopulateOptions | PopulateOptions[];
-
-	[key: string]: any;
 }

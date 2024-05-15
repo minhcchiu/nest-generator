@@ -1,20 +1,15 @@
+import { PickType } from "@nestjs/mapped-types";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+
 import { CreateUserDto } from "~pre-built/1-users/dto/create-user.dto";
 
-import { ApiProperty, PartialType, PickType } from "@nestjs/swagger";
-
-export class SocialLoginDto extends PartialType(
-	PickType(CreateUserDto, ["accountType"] as const),
-) {
-	@ApiProperty({
-		example:
-			"eyJhbGciOiJSUzI1NiIsImtpZCI6IjdjZjdmODcyNzA5MWU0Yzc3YWE5OTVkYjYwNzQzYjdkZDJiYjcwYjUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiTWluaCBDaGl1IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0kyWHpWUmpwNjYyeUJNR0lVM3VSV1BxbHFpM3N0Q0VXSWNpX3N5dndLYT1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9hbnRmYXN0LTM2ZTdmIiwiYXVkIjoiYW50ZmFzdC0zNmU3ZiIsImF1dGhfdGltZSI6MTcwNTc3ODU0OSwidXNlcl9pZCI6IjF1MTRFcDAyTzloeFc2Wnh6SjdIcUNvRVJSZDIiLCJzdWIiOiIxdTE0RXAwMk85aHhXNlp4eko3SHFDb0VSUmQyIiwiaWF0IjoxNzA1Nzc4NTQ5LCJleHAiOjE3MDU3ODIxNDksImVtYWlsIjoibWluaGNoaXUub2ZmaWNpYWxAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTIyOTI5ODExNjE4ODEzNDA2MzMiXSwiZW1haWwiOlsibWluaGNoaXUub2ZmaWNpYWxAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.OMlMIkczRXV2xLvKo-1oQTXGOPPgTQRErxeFVMDmFMaWqat4_XigA94aCITV5uk1nNsE3GfrM-Yr4Y0nGf-quHsz2GbalXwIzfCje-e4-oSjR89cjRsW9kBzAfn5NLPC2izEF_YhyQMCRC7UJ3NLkIQghlIiv_r6v_vShd_r1gcx-UJx39oPdZnjvoWU8HzVi5dCwtPaEB3_cgskhVqWIrRV4qJDBRpiGm1wayi4EkMVxfiNcIKDHK6iXKBiGRRwVH8bVwD88XzhuwoVZXggk7qMbW23wctCQC6MXpISsnjpM9yBmD28J2ZzDKtLqMpjP61gOGt3B0Pz182GMgu8IQ",
-	})
+export class SocialLoginDto extends PickType(CreateUserDto, [
+	"accountType",
+] as const) {
 	@IsNotEmpty()
 	@IsString()
 	idToken: string;
 
-	@ApiProperty({ example: null })
 	@IsOptional()
 	@IsString()
 	fcmToken?: string;

@@ -1,20 +1,20 @@
-import { UploadType } from "~types/upload-type";
+import { ResourceTypeEnum } from "../enum/resource-type.enum";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
 export type UploadedResult = {
-	fileOriginal?: string;
-	fileLg?: string;
-	fileMd?: string;
-	fileSm?: string;
-	fileXs?: string;
+	url: string;
+	urlXSmall?: string;
+	urlSmall?: string;
+	urlMedium?: string;
+	urlLarge?: string;
+	urlXLarge?: string;
+
 	fileFolder: string;
 	fileSize: number;
-	resourceId: string;
+	resourceKeys: string[];
 	fileName: string;
 	fileType: string;
-	uploadType: UploadType;
+	resourceType: ResourceTypeEnum;
 	originalname: string;
 	storageLocation: StorageLocationEnum;
-	uploadedAt: string;
-	isUploadedSuccess: boolean;
 };

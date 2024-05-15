@@ -10,20 +10,21 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 
+import { Types } from "mongoose";
 import {
 	CheckoutReviewDto,
 	ShopOrderDiscountDto,
 } from "./dto/checkout-review.dto";
 
 type IShopOrderNew = {
-	shopId: string;
+	shopId: Types.ObjectId;
 	shopDiscounts: ShopOrderDiscountDto[];
 	priceRaw: number;
 	priceApplyDiscount: number;
 	items: {
 		price: number;
 		quantity: number;
-		productId: string;
+		productId: Types.ObjectId;
 	}[];
 };
 

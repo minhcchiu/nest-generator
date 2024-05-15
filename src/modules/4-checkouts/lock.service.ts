@@ -1,42 +1,30 @@
-import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
 import { Injectable } from "@nestjs/common";
-
+import { Types } from "mongoose";
+import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 @Injectable()
 export class LockService {
 	constructor(private readonly logger: CustomLoggerService) {}
 
 	async acquireLock(
-		productId: string,
+		productId: Types.ObjectId,
 		quantity: number,
-		cartId: string,
+		cartId: Types.ObjectId,
 		// expireTime: number = 3000,
 		// maxRetries: number = 5,
 	): Promise<boolean> {
 		// const lockKey = `product:${productId}:lock`;
 		// const lockValue = `${quantity}:${cartId}`;
-		console.log({ quantity, cartId });
-
-		// const retries = 0;
-
-		// while (retries < maxRetries) {
+		// console.log({ quantity, cartId });
+		// const retries = 0		// while (retries < maxRetries) {
 		// 	try {
-		// 		const setnxResult = await this.redisService.setnx(lockKey, expireTime);
-
-		// 		if (setnxResult === 1) {
-		// 			this.logger.log(`Lock acquired for product ${productId}`);
-
-		// 			const isReservation =
+		// 		const setnxResult = await this.redisService.setnx(lockKey, expireTime)		// 		if (setnxResult === 1) {
+		// 			this.logger.log(`Lock acquired for product ${productId}`)		// 			const isReservation =
 		// 				await this.inventoryService.reservationInventory({
 		// 					productId,
 		// 					quantity,
 		// 					cartId,
-		// 				});
-
-		// 			if (isReservation) {
-		// 				this.redisService.pexpire(lockKey, expireTime, "NX");
-
-		// 				return true;
+		// 				})		// 			if (isReservation) {
+		// 				this.redisService.pexpire(lockKey, expireTime, "NX")		// 				return true;
 		// 			}
 
 		// 			return false;
@@ -56,12 +44,12 @@ export class LockService {
 		// }
 
 		this.logger.log(
-			`Max retries reached. Failed to acquire lock for product ${productId}`,
+			`Max retries reached. Failed to acquire lock for product ${productId}, ${quantity} x ${cartId}`,
 		);
 		return false;
 	}
 
-	async releaseLock(productId: string): Promise<void> {
+	async releaseLock(productId: Types.ObjectId): Promise<void> {
 		this.logger.log(productId);
 		// const lockKey = `product:${productId}:lock`;
 		// try {

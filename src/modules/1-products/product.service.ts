@@ -1,13 +1,11 @@
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateInventoryDto } from "~modules/5-inventories/dto/create-inventory.dto";
 import { InventoryService } from "~modules/5-inventories/inventory.service";
 import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
-
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-
+import { RedisService } from "~shared/redis-feature/redis.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { ProductType } from "./enums/product-type.enum";
 import { Clothing, ClothingDocument } from "./schemas/clothing.schema";
@@ -31,7 +29,7 @@ export class ProductService extends BaseService<ProductDocument> {
 		_furnitureModel: PaginateModel<FurnitureDocument>,
 
 		private readonly inventoryService: InventoryService,
-		private readonly redisFeatureService: RedisFeatureService,
+		private readonly redisFeatureService: RedisService,
 	) {
 		super(_productModel);
 
@@ -68,8 +66,6 @@ export class ProductService extends BaseService<ProductDocument> {
 		productType: ProductType,
 		input: CreateProductDto,
 	) {
-		console.log({ input });
-
 		switch (productType) {
 			case ProductType.clothing:
 				await this.clothingModel.create(input.attributes);

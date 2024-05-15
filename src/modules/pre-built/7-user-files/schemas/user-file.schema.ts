@@ -1,8 +1,7 @@
-import { HydratedDocument } from "mongoose";
-import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { UploadType } from "~types/upload-type";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
+import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
 @Schema({
 	timestamps: true,
@@ -10,11 +9,11 @@ import { UploadType } from "~types/upload-type";
 	collection: "userfiles",
 })
 export class UserFile {
-	@Prop({ type: String, ref: "User", required: true })
-	userId: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: "User", required: true })
+	userId: Types.ObjectId;
 
-	@Prop({ type: String, required: true, unique: true })
-	resourceId: string;
+	@Prop({ type: [String], required: true })
+	resourceKeys: string[];
 
 	@Prop({ type: String, required: true })
 	fileName: string;
@@ -22,35 +21,38 @@ export class UserFile {
 	@Prop({ type: String, required: true })
 	fileType: string;
 
-	@Prop({ type: String, required: true })
-	uploadType: UploadType;
+	@Prop({ type: String, enum: ResourceTypeEnum, required: true })
+	resourceType: ResourceTypeEnum;
 
 	@Prop({ type: String, default: "" })
-	fileOriginal: string;
+	urlXSmall: string;
 
 	@Prop({ type: String, default: "" })
-	fileXs: string;
+	urlSmall: string;
 
 	@Prop({ type: String, default: "" })
-	fileSm: string;
+	urlMedium: string;
 
 	@Prop({ type: String, default: "" })
-	fileMd: string;
+	urlLarge: string;
 
 	@Prop({ type: String, default: "" })
-	fileLg: string;
+	urlXLarge: string;
 
-	@Prop({ type: Number, required: true })
-	fileSize: number;
-
-	@Prop({ type: Date, required: true })
-	uploadedAt: Date;
-
-	@Prop({ type: String, required: true })
-	fileFolder: string;
+	@Prop({ type: String, required: true, index: true })
+	url: string;
 
 	@Prop({ type: String, enum: StorageLocationEnum, required: true })
 	storageLocation: StorageLocationEnum;
+
+	@Prop({ type: String, default: "" })
+	fileFolder: string;
+
+	@Prop({ type: Number, default: "" })
+	fileSize: number;
+
+	@Prop({ type: String, default: "" })
+	originalname: string;
 }
 
 export type UserFileDocument = UserFile & HydratedDocument<UserFile>;

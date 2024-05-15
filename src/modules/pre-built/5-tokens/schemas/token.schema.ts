@@ -1,7 +1,6 @@
-import { HydratedDocument } from "mongoose";
-import { User } from "~pre-built/1-users/schemas/user.schema";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { User } from "~pre-built/1-users/schemas/user.schema";
 
 type TokenDocument = HydratedDocument<Token>;
 
@@ -11,14 +10,14 @@ type TokenDocument = HydratedDocument<Token>;
 	collection: "tokens",
 })
 export class Token {
-	@Prop({ type: String, ref: User.name, index: 1 })
-	userId: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: User.name, index: 1 })
+	userId: Types.ObjectId;
 
 	@Prop({ type: String, required: true, index: 1 })
 	token: string;
 
-	@Prop({ type: String })
-	expiresAt: string;
+	@Prop({ type: Number })
+	expiresAt: number;
 }
 
 const TokenSchema = SchemaFactory.createForClass(Token);

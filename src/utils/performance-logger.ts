@@ -10,7 +10,7 @@ class PerformanceLogger {
 	end(): void {
 		const duration = performance.now() - this.startTime;
 
-		console.log(`Performance duration: ${duration}ms`);
+		console.log(`Performance duration: ${duration}ms`); // eslint-disable-line
 	}
 }
 
