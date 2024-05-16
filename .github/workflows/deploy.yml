@@ -1,0 +1,62 @@
+name: Node.js CI/CD with PM2
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+jobs:
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install PM2
+        run: npm install pm2@latest -g
+
+      - name: Deploy to Development
+        run: pm2 deploy ecosystem.dev.config.js develop
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install PM2
+        run: npm install pm2@latest -g
+
+      - name: Deploy to Production
+        run: pm2 deploy ecosystem.prod.config.js production
