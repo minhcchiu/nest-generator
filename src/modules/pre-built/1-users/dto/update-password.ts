@@ -1,4 +1,5 @@
 import { IsNotEmpty, Length } from "class-validator";
+
 export class UpdatePasswordDto {
 	@IsNotEmpty()
 	@Length(6, 50)

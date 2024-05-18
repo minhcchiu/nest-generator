@@ -5,7 +5,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel, QueryOptions, Types } from "mongoose";
+import { Model, QueryOptions, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
@@ -17,7 +17,7 @@ export class UserService extends BaseService<UserDocument> {
 	private userService: UserService;
 
 	constructor(
-		@InjectModel(User.name) model: PaginateModel<UserDocument>,
+		@InjectModel(User.name) model: Model<UserDocument>,
 		private readonly hashingService: HashingService,
 	) {
 		super(model);

@@ -1,5 +1,6 @@
 import { PickType } from "@nestjs/mapped-types";
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsMongoId, IsOptional, IsString } from "class-validator";
+import { Types } from "mongoose";
 import { SendOtpToEnum } from "~modules/pre-built/6-otp/enums/send-otp-to";
 import { CreateUserDto } from "~pre-built/1-users/dto/create-user.dto";
 
@@ -25,4 +26,7 @@ export class RegisterDto extends PickType(CreateUserDto, [
 	@IsOptional()
 	@IsEnum(SendOtpToEnum)
 	sendOtpTo?: SendOtpToEnum;
+
+	@IsMongoId()
+	userId?: Types.ObjectId;
 }

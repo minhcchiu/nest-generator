@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { LocalService } from "~shared/storage/local-storage/local.service";
@@ -16,7 +16,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	private userFileService: UserFileService;
 
 	constructor(
-		@InjectModel(UserFile.name) model: PaginateModel<UserFileDocument>,
+		@InjectModel(UserFile.name) model: Model<UserFileDocument>,
 		private readonly localService: LocalService,
 		private readonly cloudinaryService: CloudinaryService,
 		private readonly s3Service: S3Service,

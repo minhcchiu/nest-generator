@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
 import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
@@ -15,9 +15,9 @@ import { Discount, DiscountDocument } from "./schemas/discount.schema";
 
 @Injectable()
 export class DiscountService extends BaseService<DiscountDocument> {
-	private discountModel: PaginateModel<DiscountDocument>;
+	private discountModel: Model<DiscountDocument>;
 	constructor(
-		@InjectModel(Discount.name) _model: PaginateModel<DiscountDocument>,
+		@InjectModel(Discount.name) _model: Model<DiscountDocument>,
 		private readonly productService: ProductService,
 	) {
 		super(_model);

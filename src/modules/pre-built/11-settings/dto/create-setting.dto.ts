@@ -1,4 +1,5 @@
 import { IsOptional, IsString } from "class-validator";
+
 export class CreateSettingDto {
 	@IsOptional()
 	@IsString()
