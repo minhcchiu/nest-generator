@@ -1,5 +1,6 @@
 # Enviroment
 .env
+.env.local
 
 #compiled output
 /dist 

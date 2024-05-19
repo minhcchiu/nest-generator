@@ -10,7 +10,7 @@ COPY package*.json .env.local ./
 
 # Install only production dependencies
 RUN npm cache clean --force
-RUN npm install --force
+RUN npm install
 RUN mv .env.local .env
 
 EXPOSE 8888
