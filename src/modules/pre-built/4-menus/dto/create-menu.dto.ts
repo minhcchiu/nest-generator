@@ -10,6 +10,7 @@ import {
 } from "class-validator";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 import { MenuLevel } from "../enum/menu-level";
+
 export class CreateMenuDto {
 	@IsOptional()
 	@IsMongoId()

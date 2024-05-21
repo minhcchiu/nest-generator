@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { BaseService } from "~base-inherit/base.service";
 import { DocumentType } from "~types/document.type";
@@ -20,7 +20,7 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	constructor(
 		private readonly jwtService: JwtService,
-		@InjectModel(Token.name) model: PaginateModel<TokenDocument>,
+		@InjectModel(Token.name) model: Model<TokenDocument>,
 	) {
 		super(model);
 

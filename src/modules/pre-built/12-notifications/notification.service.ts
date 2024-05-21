@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel } from "mongoose";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { LanguageCodeEnum } from "~enums/language.enum";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
@@ -14,7 +14,7 @@ import { notificationTranslate } from "./trans/nottification.translate";
 @Injectable()
 export class NotificationService extends BaseService<NotificationDocument> {
 	constructor(
-		@InjectModel(Notification.name) model: PaginateModel<NotificationDocument>,
+		@InjectModel(Notification.name) model: Model<NotificationDocument>,
 	) {
 		super(model);
 	}

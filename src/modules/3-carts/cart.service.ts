@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { PaginateModel, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
 import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
@@ -11,10 +11,10 @@ import { Cart, CartDocument } from "./schemas/cart.schema";
 
 @Injectable()
 export class CartService extends BaseService<CartDocument> {
-	private cartModel: PaginateModel<CartDocument>;
+	private cartModel: Model<CartDocument>;
 
 	constructor(
-		@InjectModel(Cart.name) _model: PaginateModel<CartDocument>,
+		@InjectModel(Cart.name) _model: Model<CartDocument>,
 		private readonly productService: ProductService,
 	) {
 		super(_model);

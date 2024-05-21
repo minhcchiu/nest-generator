@@ -7,7 +7,7 @@ import {
 import {
 	AggregateOptions,
 	FilterQuery,
-	PaginateModel,
+	Model,
 	PipelineStage,
 	QueryOptions,
 	Types,
@@ -17,7 +17,7 @@ import {
 import { PaginateOptions } from "./base.interface";
 
 export class BaseService<T> {
-	constructor(private readonly model: PaginateModel<T>) {}
+	constructor(private readonly model: Model<T>) {}
 
 	async create(input: Record<string, any>) {
 		return this.model.create(input);
@@ -119,6 +119,6 @@ export class BaseService<T> {
 			lean: true,
 		};
 
-		return this.model.paginate(filter, options);
+		return (this.model as any).paginate(filter, options);
 	}
 }

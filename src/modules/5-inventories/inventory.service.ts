@@ -1,4 +1,4 @@
-import { PaginateModel, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
 import { Injectable } from "@nestjs/common";
@@ -9,9 +9,7 @@ import { Inventory, InventoryDocument } from "./schemas/inventory.schema";
 
 @Injectable()
 export class InventoryService extends BaseService<InventoryDocument> {
-	constructor(
-		@InjectModel(Inventory.name) _model: PaginateModel<InventoryDocument>,
-	) {
+	constructor(@InjectModel(Inventory.name) _model: Model<InventoryDocument>) {
 		super(_model);
 	}
 

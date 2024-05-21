@@ -20,12 +20,12 @@ module.exports = {
 	deploy: {
 		develop: {
 			user: "root",
-			host: ["YOUR_EC2_PUBLIC_IP"],
+			host: ["13.215.154.137"],
 			ref: "origin/develop",
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
 			path: "/home/awesome-nest-be-development",
 			"post-deploy":
-				"npm install && npm build && pm2 reload ecosystem.dev.config.js --env development",
+				"npm install && npm build && pm2 reload '.ecosystem/ecosystem.dev.config.js' --env development",
 			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
 		},
 	},

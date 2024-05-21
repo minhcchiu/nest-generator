@@ -6,6 +6,7 @@ services:
       context: ..
       dockerfile: .docker/Dockerfile.local
     container_name: awesome-nest-local
+    restart: always
     ports:
       - "8888:8888"
     depends_on:
