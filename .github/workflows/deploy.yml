@@ -32,7 +32,7 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy to Development
-        run: pm2 deploy ecosystem.dev.config.js develop
+        run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
 
   deploy-production:
     name: Deploy to Production
@@ -59,4 +59,4 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy to Production
-        run: pm2 deploy ecosystem.prod.config.js production
+        run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production
