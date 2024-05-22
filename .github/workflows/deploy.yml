@@ -11,6 +11,8 @@ jobs:
     name: Deploy to Development
     runs-on: self-hosted
     if: github.ref == 'refs/heads/develop'
+    env:
+      PM2_DEPLOY_KEY_PATH: ${{ secrets.PM2_DEPLOY_KEY_PATH }}
 
     strategy:
       matrix:
