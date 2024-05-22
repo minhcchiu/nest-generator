@@ -35,9 +35,6 @@ jobs:
           pnpm install
           pnpm run build
 
-      - name: Install PM2
-        run: pnpm install pm2@latest -g
-
       - name: Deploy to Development
         run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop setup
         # run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
