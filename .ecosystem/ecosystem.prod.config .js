@@ -19,7 +19,7 @@ module.exports = {
 	deploy: {
 		production: {
 			user: "root",
-			host: ["13.215.154.137"],
+			host: ["3.0.177.112"],
 			ref: "origin/develop",
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
 			path: "/home/awesome-nest-be-production",
