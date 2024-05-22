@@ -30,10 +30,8 @@ jobs:
           cache: "pnpm"
       - run: npm install -g pm2
 
-      - name: Install dependencies and build
-        run: |
-          pnpm install
-          pnpm run build
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Deploy to Development
         run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop setup
