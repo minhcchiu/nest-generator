@@ -24,7 +24,7 @@ module.exports = {
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
 			path: "/home/awesome-nest-be-production",
 			"post-deploy":
-				"npm install && npm build && pm2 reload '.ecosystem/ecosystem.prod.config.js' --env production",
+				"pnpm install && pnpm build && pm2 reload '.ecosystem/ecosystem.prod.config.js' --env production",
 			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
 		},
 	},
