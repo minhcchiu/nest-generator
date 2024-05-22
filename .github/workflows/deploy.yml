@@ -28,8 +28,11 @@ jobs:
           scope: "@awesome-nest-generator"
           cache: "pnpm"
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
 
       - name: Install PM2
         run: pnpm install pm2@latest -g
@@ -59,8 +62,11 @@ jobs:
           scope: "@awesome-nest-generator"
           cache: "pnpm"
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
 
       - name: Install PM2
         run: pnpm install pm2@latest -g
