@@ -14,10 +14,6 @@ jobs:
     env:
       PM2_DEPLOY_KEY_PATH: ${{ secrets.PM2_DEPLOY_KEY_PATH }}
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,14 +23,17 @@ jobs:
         with:
           version: 9.1.0
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js and PM2
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20.x"
           cache: "pnpm"
+      - run: npm install -g pm2
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install dependencies and build
+        run: |
+          pnpm install
+          pnpm run build
 
       - name: Install PM2
         run: pnpm install pm2@latest -g
