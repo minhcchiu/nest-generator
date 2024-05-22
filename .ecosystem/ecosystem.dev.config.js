@@ -29,7 +29,7 @@ module.exports = {
 			ssh_options: [
 				"StrictHostKeyChecking=no",
 				"PasswordAuthentication=no",
-				`IdentityFile=${secrets.PM2_DEPLOY_KEY_PATH}`,
+				`IdentityFile=${process.env.PM2_DEPLOY_KEY_PATH}`,
 			],
 		},
 	},
