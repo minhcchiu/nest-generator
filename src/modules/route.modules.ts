@@ -8,6 +8,7 @@ import { SettingModule } from "./pre-built/11-settings/setting.module";
 import { NotificationModule } from "./pre-built/12-notifications/notification.module";
 import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
 import { PolicyModule } from "./pre-built/3-policies/policy.module";
+import { PolicyGroupModule } from "./pre-built/3-policy-groups/policy-group.module";
 import { AuthModule } from "./pre-built/4-auth/auth.module";
 import { MenuModule } from "./pre-built/4-menus/menu.module";
 import { TokenModule } from "./pre-built/5-tokens/token.module";
@@ -23,6 +24,7 @@ export const RouteModules = [
 	UserModule,
 	UserGroupModule,
 	PolicyModule,
+	PolicyGroupModule,
 	MenuModule,
 	TokenModule,
 	OtpModule,
