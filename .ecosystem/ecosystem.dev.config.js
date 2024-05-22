@@ -19,14 +19,18 @@ module.exports = {
 
 	deploy: {
 		develop: {
-			user: "root",
-			host: ["3.0.177.112"],
+			user: "ubuntu",
+			host: ["ec2-52-221-182-246.ap-southeast-1.compute.amazonaws.com"],
 			ref: "origin/develop",
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
 			path: "/home/awesome-nest-be-development",
 			"post-deploy":
 				"pnpm install && pnpm build && pm2 reload '.ecosystem/ecosystem.dev.config.js' --env development",
-			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
+			ssh_options: [
+				"StrictHostKeyChecking=no",
+				"PasswordAuthentication=no",
+				`IdentityFile=${process.env.PM2_DEPLOY_KEY_PATH}`,
+			],
 		},
 	},
 };
