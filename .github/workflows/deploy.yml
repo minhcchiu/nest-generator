@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@awesome-nest-generator"
           cache: "npm"
 
       - name: Install dependencies
@@ -33,7 +35,8 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy to Development
-        run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
+        run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop setup
+        # run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
 
   deploy-production:
     name: Deploy to Production
@@ -52,6 +55,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@awesome-nest-generator"
           cache: "npm"
 
       - name: Install dependencies
@@ -61,4 +66,5 @@ jobs:
         run: npm install pm2@latest -g
 
       - name: Deploy to Production
-        run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production
+        run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production setup
+        # run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production
