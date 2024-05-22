@@ -10,6 +10,7 @@ jobs:
   deploy-dev:
     name: Deploy to Development
     runs-on: self-hosted
+    if: github.ref == 'refs/heads/develop'
 
     strategy:
       matrix:
@@ -37,6 +38,7 @@ jobs:
   deploy-production:
     name: Deploy to Production
     runs-on: self-hosted
+    if: github.ref == 'refs/heads/master'
 
     strategy:
       matrix:
