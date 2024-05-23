@@ -8,7 +8,7 @@ module.exports = {
 			watch: false,
 			time: true,
 			max_memory_restart: "1G",
-			cwd: "/home/ubuntu/as-develop",
+			cwd: "/home/ubuntu/as-develop/source",
 			error_file: "/home/ubuntu/as-develop/logs/web.err.log",
 			out_file: "/home/ubuntu/as-develop/logs/web.out.log",
 			exec_mode: "cluster",

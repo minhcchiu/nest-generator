@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_DIR=/home/ubuntu/as-develop
+APP_DIR=/home/ubuntu/as-develop/source
 
 PM2_CONFIG_FILE=$APP_DIR/.ecosystem/ecosystem.dev.config.js
 
