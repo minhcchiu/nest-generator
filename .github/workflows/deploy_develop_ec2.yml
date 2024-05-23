@@ -30,9 +30,6 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      - name: Install pm2
-        run: npm install -g pm2
-
       - name: Copy files to EC2 and deploy development
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -49,6 +46,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            sudo apt-get update
+            sudo apt-get install -y npm
+            sudo npm install -g pnpm pm2
             cd /home/ubuntu/as-develop/source
             pm2 start './.ecosystem/ecosystem.dev.config.js' --env development
 
