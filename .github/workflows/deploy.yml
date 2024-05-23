@@ -1,75 +1,75 @@
-name: Node.js CI/CD with PM2
+# name: Node.js CI/CD with PM2
 
-on:
-  push:
-    branches:
-      - develop
-      - master
+# on:
+#   push:
+#     branches:
+#       - develop
+#       - master
 
-jobs:
-  deploy-dev:
-    name: Deploy to Development
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/develop'
-    env:
-      PM2_DEPLOY_KEY_PATH: ${{ secrets.PM2_DEPLOY_KEY_PATH }}
+# jobs:
+#   deploy-dev:
+#     name: Deploy to Development
+#     runs-on: self-hosted
+#     if: github.ref == 'refs/heads/develop'
+#     env:
+#       PM2_DEPLOY_KEY_PATH: ${{ secrets.PM2_DEPLOY_KEY_PATH }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9.1.0
+#       - name: Setup pnpm
+#         uses: pnpm/action-setup@v2
+#         with:
+#           version: 9.1.0
 
-      - name: Setup Node.js and PM2
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: "pnpm"
-      - run: npm install -g pm2
+#       - name: Setup Node.js and PM2
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: "20.x"
+#           cache: "pnpm"
+#       - run: npm install -g pm2
 
-      - name: Install dependencies
-        run: pnpm install
+#       - name: Install dependencies
+#         run: pnpm install
 
-      - name: Deploy to Development
-        run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop setup
-        # run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
+#       - name: Deploy to Development
+#         run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop setup
+#         # run: pm2 deploy '.ecosystem/ecosystem.dev.config.js' develop
 
-  deploy-production:
-    name: Deploy to Production
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/master'
+#   deploy-production:
+#     name: Deploy to Production
+#     runs-on: self-hosted
+#     if: github.ref == 'refs/heads/master'
 
-    strategy:
-      matrix:
-        node-version: [20.x]
+#     strategy:
+#       matrix:
+#         node-version: [20.x]
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9.1.0
+#       - name: Setup pnpm
+#         uses: pnpm/action-setup@v2
+#         with:
+#           version: 9.1.0
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+#       - name: Setup Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#           cache: "pnpm"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+#       - name: Install pnpm
+#         run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+#       - name: Install dependencies
+#         run: pnpm install
 
-      - name: Install PM2
-        run: pnpm install pm2@latest -g
+#       - name: Install PM2
+#         run: pnpm install pm2@latest -g
 
-      - name: Deploy to Production
-        run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production setup
-        # run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production
+#       - name: Deploy to Production
+#         run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production setup
+#         # run: pm2 deploy '.ecosystem/ecosystem.prod.config.js' production
