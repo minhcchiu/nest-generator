@@ -30,20 +30,20 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      - name: Ensure deployment directories exist
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "Checking existing directories"
-            ls -l /home
-            echo "Creating directories"
-            mkdir -p /home/ubuntu/as-develop/source
-            mkdir -p /home/ubuntu/as-develop/logs
-            echo "Directories created"
-            ls -l /home/ubuntu/as-develop
+      # - name: Ensure deployment directories exist
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ubuntu
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       echo "Checking existing directories"
+      #       ls -l /home
+      #       echo "Creating directories"
+      #       mkdir -p /home/ubuntu/as-develop/source
+      #       mkdir -p /home/ubuntu/as-develop/logs
+      #       echo "Directories created"
+      #       ls -l /home/ubuntu/as-develop
 
       - name: Copy files to EC2 and deploy development
         uses: appleboy/scp-action@v0.1.7
