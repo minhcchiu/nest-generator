@@ -38,7 +38,7 @@ jobs:
           ssh-keyscan 18.141.176.61 >> ~/.ssh/known_hosts
 
       - name: Deploy to EC2
-        run: pm2 deploy ecosystem.dev.config.js develop
+        run: pm2 deploy ./.ecosystem/ecosystem.dev.config.js develop
 
       - name: Notify deployment success
         if: always()
