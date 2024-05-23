@@ -29,3 +29,6 @@ jobs:
 
       - name: Build and Bundle
         run: pnpm run build
+
+      - name: Build completed
+        run: echo "Build process finished successfully"
