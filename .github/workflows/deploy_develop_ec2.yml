@@ -24,17 +24,21 @@ jobs:
           node-version: "20.x"
           cache: "pnpm"
 
+      - name: Install PM2 globally
+        run: npm install -g pm2
+
       - name: Install dependencies
         run: pnpm install
 
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "."
-          target: "home/awesome-nest"
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 18.141.176.61 >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: pm2 deploy ecosystem.dev.config.js develop
 
       - name: Notify deployment success
         if: always()
