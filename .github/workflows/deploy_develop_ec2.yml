@@ -30,7 +30,7 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-        - name: Ensure deployment directories exist
+      - name: Ensure deployment directories exist
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEV_EC2_HOST }}
