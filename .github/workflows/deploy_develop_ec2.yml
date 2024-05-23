@@ -37,6 +37,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 18.141.176.61 >> ~/.ssh/known_hosts
 
+      - name: Ensure deployment directory exists
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@18.141.176.61 'mkdir -p /home/as-develop/source'
+
       - name: Deploy to EC2
         run: pm2 deploy ./.ecosystem/ecosystem.dev.config.js develop
 
