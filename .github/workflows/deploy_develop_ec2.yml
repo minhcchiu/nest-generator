@@ -52,7 +52,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: .
-          target: /home/as-develop/source
+          target: /home/ubuntu/as-develop/source
 
       - name: Connect to EC2 and deploy development
         uses: appleboy/ssh-action@v1.0.3
@@ -61,7 +61,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/as-develop/source
+            cd /home/ubuntu/as-develop/source
             pm2 start './.ecosystem/ecosystem.dev.config.js' --env development
 
       - name: Notify deployment success
