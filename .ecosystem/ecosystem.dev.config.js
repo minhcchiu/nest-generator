@@ -27,9 +27,9 @@ module.exports = {
 			ref: "origin/develop",
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
 			path: "/home/as-develop",
+			"pre-setup": "mkdir -p /home/as-develop/source",
 			"post-deploy":
-				"pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env development",
-			"pre-setup": "mkdir -p /home/as-develop",
+				"pnpm install && pnpm run build && pm2 reload ecosystem.dev.config.js --env development",
 			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
 		},
 	},
