@@ -33,9 +33,9 @@ jobs:
       - name: Ensure deployment directories exist
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEV_EC2_HOST }}
+          host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p /home/ubuntu/as-develop
             mkdir -p /home/ubuntu/as-develop/logs
