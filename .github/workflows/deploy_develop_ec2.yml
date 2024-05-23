@@ -30,6 +30,16 @@ jobs:
       - name: Build project
         run: pnpm run build
 
+        - name: Ensure deployment directories exist
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          script: |
+            mkdir -p /home/ubuntu/as-develop
+            mkdir -p /home/ubuntu/as-develop/logs
+
       - name: Copy files to EC2 and deploy development
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -37,7 +47,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: .
-          target: /home/ubuntu/as-develop/source
+          target: /home/ubuntu/as-develop
 
       - name: Connect to EC2 and deploy development
         uses: appleboy/ssh-action@v1.0.3
@@ -46,8 +56,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo npm install -g pm2
-            cd /home/ubuntu/as-develop/source
+            cd /home/ubuntu/as-develop
+            pnpm install -g pm2
             pm2 start './.ecosystem/ecosystem.dev.config.js' --env development
 
       - name: Notify deployment success
