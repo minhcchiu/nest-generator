@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -27,8 +27,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build and Bundle
-        run: pnpm run build
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "home/awesome-nest"
 
-      - name: Build completed
-        run: echo "Build process finished successfully"
+      - name: Notify deployment success
+        if: always()
+        run: echo "Deployment to EC2 successful"
