@@ -3,7 +3,7 @@ name: Deploy to Development
 on:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   deploy:
@@ -37,8 +37,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p /home/ubuntu/as-develop/source
-            mkdir -p /home/ubuntu/as-develop/logs
+            mkdir -p /home/ubuntu/as-production/source
+            mkdir -p /home/ubuntu/as-production/logs
 
       - name: Copy files to EC2 and deploy development
         uses: appleboy/scp-action@v0.1.7
@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: .
-          target: /home/ubuntu/as-develop/source
+          target: /home/ubuntu/as-production/source
 
       - name: Connect to EC2 and deploy development
         uses: appleboy/ssh-action@v1.0.3
@@ -56,9 +56,9 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/as-develop/source
-            chmod +x ./.scripts/start-dev.sh
-            ./.scripts/start-dev.sh
+            cd /home/ubuntu/as-production/source
+            chmod +x ./.scripts/start-prod.sh
+            ./.scripts/start-prod.sh
 
       - name: Notify deployment success
         if: always()
