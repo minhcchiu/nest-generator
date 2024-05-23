@@ -8,7 +8,7 @@ module.exports = {
 			watch: false,
 			time: true,
 			max_memory_restart: "1G",
-			cwd: "/home/ubuntu/as-develop/current",
+			cwd: "/home/ubuntu/as-develop",
 			error_file: "/home/ubuntu/as-develop/logs/web.err.log",
 			out_file: "/home/ubuntu/as-develop/logs/web.out.log",
 			exec_mode: "cluster",
@@ -20,18 +20,4 @@ module.exports = {
 			},
 		},
 	],
-	deploy: {
-		develop: {
-			user: "ubuntu",
-			host: ["18.141.176.61"],
-			ref: "origin/develop",
-			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
-			path: "/home/ubuntu/as-develop",
-			"pre-setup":
-				"mkdir -p /home/ubuntu/as-develop/source && mkdir -p /home/ubuntu/as-develop/logs",
-			"post-deploy":
-				"pnpm install && pnpm run build && pm2 reload ecosystem.dev.config.js --env development",
-			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
-		},
-	},
 };
