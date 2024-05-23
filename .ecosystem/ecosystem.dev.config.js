@@ -1,36 +1,36 @@
 module.exports = {
 	apps: [
 		{
-			name: "awesome-nest-be-development",
+			name: "as-develop",
 			script: "dist/main.js",
 			instances: 1,
 			autorestart: true,
 			watch: false,
 			time: true,
-			cwd: "/home/awesome-nest-be-development/current",
-			error_file: "/home/awesome-nest-be-development/logs/web.err.log",
-			out_file: "/home/awesome-nest-be-development/logs/web.out.log",
+			max_memory_restart: "1G",
+			cwd: "/home/as-develop/current",
+			error_file: "/home/as-develop/logs/web.err.log",
+			out_file: "/home/as-develop/logs/web.out.log",
 			exec_mode: "cluster",
 			env: {
 				NODE_ENV: "development",
 			},
+			env_development: {
+				NODE_ENV: "development",
+			},
 		},
 	],
-
 	deploy: {
 		develop: {
 			user: "ubuntu",
-			host: ["ec2-52-221-182-246.ap-southeast-1.compute.amazonaws.com"],
+			host: ["18.141.176.61"],
 			ref: "origin/develop",
 			repo: "git@github.com:himinh/awesome-nest-generator-2023.git",
-			path: "/home/awesome-nest-be-development",
+			path: "/home/as-develop",
 			"post-deploy":
-				"pnpm install && pnpm run build && pm2 reload ecosystem.dev.config.js --env development",
-			ssh_options: [
-				"StrictHostKeyChecking=no",
-				"PasswordAuthentication=no",
-				`IdentityFile=${process.env.PM2_DEPLOY_KEY_PATH}`,
-			],
+				"pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env development",
+			"pre-setup": "mkdir -p /home/as-develop",
+			ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
 		},
 	},
 };
