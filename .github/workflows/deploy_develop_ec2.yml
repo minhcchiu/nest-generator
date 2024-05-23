@@ -31,7 +31,7 @@ jobs:
         run: pnpm run build
 
       - name: Copy files to EC2 and deploy development
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
@@ -40,7 +40,7 @@ jobs:
           target: /home/as-develop/source
 
       - name: Connect to EC2 and deploy development
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
