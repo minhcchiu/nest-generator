@@ -40,6 +40,7 @@
 		"class-validator": "^0.14.1",
 		"cloudinary": "^2.2.0",
 		"date-fns": "^3.6.0",
+		"dotenv": "^16.4.5",
 		"firebase-admin": "^12.1.0",
 		"image-size": "^1.1.1",
 		"ioredis": "^5.4.1",
