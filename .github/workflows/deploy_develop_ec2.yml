@@ -27,9 +27,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Ensure execution permission for start-dev.sh
-        run: chmod +x /home/ubuntu/as-develop/.scripts/start-dev.sh
-
       - name: Build project
         run: pnpm run build
 
@@ -51,6 +48,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: .
           target: /home/ubuntu/as-develop
+
+      - name: Ensure execution permission for start-dev.sh
+        run: chmod +x /home/ubuntu/as-develop/.scripts/start-dev.sh
 
       - name: Connect to EC2 and deploy development
         uses: appleboy/ssh-action@v1.0.3
