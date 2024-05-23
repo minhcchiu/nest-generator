@@ -18,16 +18,17 @@ jobs:
         with:
           version: 9.1.0
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version: "20.x"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Ensure execution permission for start-dev.sh
+        run: chmod +x /home/ubuntu/as-develop/.scripts/start-dev.sh
 
       - name: Build project
         run: pnpm run build
