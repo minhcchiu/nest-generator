@@ -68,6 +68,9 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       firebase-admin:
         specifier: ^12.1.0
         version: 12.1.0
