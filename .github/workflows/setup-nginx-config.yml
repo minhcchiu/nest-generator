@@ -24,24 +24,14 @@ jobs:
             echo "setup_required=false" >> $GITHUB_ENV
           fi
 
-      - name: Move nginx.conf to /etc/nginx
-        uses: appleboy/ssh-action@v0.1.7
+      - name: Copy nginx.conf to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cp /home/ubuntu/as-develop/source/.nginx-configs/nginx.conf /etc/nginx/conf.d/awesome-nest.conf
-
-      - name: Verify nginx.conf on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            ls -l /etc/nginx/conf.d/awesome-nest.conf
-            sudo nginx -t
+          source: "./.nginx-configs/as-awesome.conf"
+          target: /home/ubuntu/as-develop
 
       - name: Restart Nginx
         if: env.setup_required == 'true'
