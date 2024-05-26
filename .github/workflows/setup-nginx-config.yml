@@ -26,7 +26,7 @@ jobs:
 
       - name: Copy nginx.conf to EC2
         if: env.setup_required == 'true'
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
