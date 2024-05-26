@@ -1,0 +1,44 @@
+name: Setup Nginx Config
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  setup-nginx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if nginx config is already set up
+        id: check-nginx-config
+        run: |
+          if [ -z "$NGINX_CONFIG_SETUP" ]; then
+            echo "NGINX_CONFIG_SETUP is not set."
+            echo "setup_required=true" >> $GITHUB_ENV
+          else
+            echo "NGINX_CONFIG_SETUP is already set."
+            echo "setup_required=false" >> $GITHUB_ENV
+          fi
+
+      - name: Copy nginx.conf to EC2
+        if: env.setup_required == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ./.nginx-configs/awesome-nest.conf
+          target: /etc/nginx/nginx.conf
+
+      - name: Restart Nginx
+        if: env.setup_required == 'true'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo service nginx restart
