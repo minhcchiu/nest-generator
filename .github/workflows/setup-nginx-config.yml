@@ -24,6 +24,19 @@ jobs:
             echo "setup_required=false" >> $GITHUB_ENV
           fi
 
+      - name: Ensure /etc/nginx directory exists
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            if [ ! -d "/etc/nginx" ]; then
+              echo "Directory /etc/nginx does not exist. Creating it..."
+              sudo mkdir -p /etc/nginx
+            fi
+            sudo chown -R ubuntu:ubuntu /etc/nginx
+
       - name: Copy nginx.conf to EC2
         if: env.setup_required == 'true'
         uses: appleboy/scp-action@v0.1.7
