@@ -34,7 +34,7 @@ jobs:
           source: ./.nginx-configs/awesome-nest.conf
           target: /home/ubuntu/awesome-nest.conf
 
-        - name: Move nginx.conf to /etc/nginx
+      - name: Move Qnginx.conf to /etc/nginx
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
