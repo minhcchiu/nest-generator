@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ./.nginx-configs/awesome-nest.conf
+          source: .nginx-configs/awesome-nest.conf
           target: /etc/nginx/nginx.conf
 
       - name: Restart Nginx
