@@ -34,14 +34,24 @@ jobs:
           source: ./.nginx-configs/awesome-nest.conf
           target: /home/ubuntu/awesome-nest.conf
 
-      - name: Move Qnginx.conf to /etc/nginx
+      - name: Move nginx.conf to /etc/nginx
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv /home/ubuntu/awesome-nest.conf /etc/nginx/conf.d
+            sudo mv /home/ubuntu/awesome-nest.conf /etc/nginx/conf.d/awesome-nest.conf
+
+      - name: Verify nginx.conf on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            ls -l /etc/nginx/conf.d/awesome-nest.conf
+            sudo nginx -t
 
       - name: Restart Nginx
         if: env.setup_required == 'true'
