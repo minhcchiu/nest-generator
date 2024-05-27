@@ -16,7 +16,7 @@ jobs:
       - name: Check if nginx config is already set up
         id: check-nginx-config
         run: |
-          if [ -z "$NGINX_CONFIG_SETUP" ]; then
+          if ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} '[ -f /etc/nginx/sites-available/as-awesome.conf ]'; then
             echo "NGINX_CONFIG_SETUP is not set."
             echo "setup_required=true" >> $GITHUB_ENV
           else
@@ -25,6 +25,7 @@ jobs:
           fi
 
       - name: Copy nginx configuration
+        if: env.setup_required == 'true'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
