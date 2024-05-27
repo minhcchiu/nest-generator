@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      isConfig: false
+      isConfig: true
 
     steps:
       - name: Checkout code
