@@ -1,0 +1,45 @@
+name: Setup Nginx Config
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  setup-nginx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if nginx config is already set up
+        id: check-nginx-config
+        run: |
+          if ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} '[ -f /etc/nginx/sites-available/as-awesome.conf ]'; then
+            echo "NGINX_CONFIG_SETUP is not set."
+            echo "setup_required=true" >> $GITHUB_ENV
+          else
+            echo "NGINX_CONFIG_SETUP is already set."
+            echo "setup_required=false" >> $GITHUB_ENV
+          fi
+
+      - name: Copy nginx configuration
+        if: env.setup_required == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo cp /home/ubuntu/as-production/source/.nginx-configs/as-awesome.conf /etc/nginx/sites-available/as-awesome.conf
+            sudo ln -s /etc/nginx/sites-available/as-awesome.conf /etc/nginx/sites-enabled/as-awesome.conf
+
+      - name: Restart Nginx
+        if: env.setup_required == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo service nginx restart
