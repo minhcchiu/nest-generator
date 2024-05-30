@@ -5,15 +5,16 @@ import {
 	IsNumber,
 	ValidateNested,
 } from "class-validator";
+import { Types } from "mongoose";
 
 export class CheckoutReviewDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly userId: string;
+	readonly userId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly carId: string;
+	readonly carId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@ValidateNested({ each: true })
@@ -24,11 +25,11 @@ export class CheckoutReviewDto {
 export class ShopOrderDiscountDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	shopId: string;
+	shopId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsMongoId()
-	discountId: string;
+	discountId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsMongoId()
@@ -38,7 +39,7 @@ export class ShopOrderDiscountDto {
 export class ShopOrderItemDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	productId: string;
+	productId: Types.ObjectId;
 
 	@IsNotEmpty()
 	@IsNumber()
@@ -50,7 +51,7 @@ export class ShopOrderItemDto {
 }
 
 export class ShopOrderDto {
-	shopId: string;
+	shopId: Types.ObjectId;
 	shopDiscounts: ShopOrderDiscountDto[];
 	items: ShopOrderItemDto[];
 }

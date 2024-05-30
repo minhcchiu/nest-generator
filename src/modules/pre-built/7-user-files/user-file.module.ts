@@ -1,13 +1,10 @@
-import { MailModule } from "~shared/mail/mail.module";
-
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
-
+import { MailModule } from "~shared/mail/mail.module";
 import { UserFile, UserFileSchema } from "./schemas/user-file.schema";
 import { UserFileController } from "./user-file.controller";
 import { UserFileService } from "./user-file.service";
-
 @Module({
 	imports: [
 		ConfigModule,

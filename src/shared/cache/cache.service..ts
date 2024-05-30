@@ -1,26 +1,23 @@
 import { Injectable } from "@nestjs/common";
+import * as NodeCache from "node-cache";
+import { UserPolicyType } from "src/guards/types/user-policy.type";
 
 @Injectable()
 export class CacheService {
-	private cache: Map<string, any>;
+	// const myCache = new NodeCache();
+	private cache: NodeCache;
 
 	constructor() {
-		this.cache = new Map();
+		this.cache = new NodeCache();
 	}
 
-	set(key: string, value: any): void {
-		this.cache.set(key, value);
+	setUserPolices(key: string, value: UserPolicyType) {
+		const ttl = 8 * 60 * 60; // 8 hours
+
+		return this.cache.set(key, value, ttl);
 	}
 
-	get(key: string): any {
+	getUserPolicy(key: string): UserPolicyType {
 		return this.cache.get(key);
-	}
-
-	delete(key: string): boolean {
-		return this.cache.delete(key);
-	}
-
-	has(key: string): boolean {
-		return this.cache.has(key);
 	}
 }

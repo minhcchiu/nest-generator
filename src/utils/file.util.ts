@@ -1,3 +1,5 @@
+import * as crypto from "crypto";
+
 export const getFileExtension = (originalname: string): string => {
 	return originalname.split(".").pop()?.toLowerCase() || "";
 };
@@ -6,19 +8,17 @@ export const removeFileExtension = (originalname: string): string => {
 	return originalname.split(".").slice(0, -1).join(".");
 };
 
-export const generateFileName = (originalname: string) => {
+export const genUniqueFilename = (originalname: string) => {
 	const lastIndexOfSlash = originalname.lastIndexOf(".");
 	const oName = originalname.slice(0, lastIndexOfSlash);
 
-	const randomNamePre = Array(24)
-		.fill(null)
-		.map(() => Math.round(Math.random() * 16).toString(16))
-		.join("");
+	const randomNamePre = crypto.randomBytes(24).toString("hex");
 
-	const fileName = `${Date.now()}-${randomNamePre}-${oName}`
+	const fileName = `${randomNamePre}-${oName
 		.replace(/[^\w\s]/gi, "")
 		.replace(/\s+/g, "-")
-		.toLowerCase();
+		.toLowerCase()}`;
+
 	const fileExt = getFileExtension(originalname);
 
 	return `${fileName}.${fileExt}`;

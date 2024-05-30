@@ -1,8 +1,7 @@
 import { Request } from "express";
 import { IS_PUBLIC_KEY } from "~decorators/public.decorator";
-import { Role } from "~pre-built/1-users/enums/role.enum";
-import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
-import { HttpMethod } from "~pre-built/2-endpoints/enum/http-method";
+import { HttpMethod } from "~pre-built/3-policies/enum/http-method";
+import { PolicyService } from "~pre-built/3-policies/policy.service";
 import { TokenService } from "~pre-built/5-tokens/token.service";
 import { CacheService } from "~shared/cache/cache.service.";
 
@@ -13,20 +12,18 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-
-interface IEndpoint {
-	userRoles: Role[];
-	isPublic: boolean;
-}
+import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
+import { UserPolicyType } from "./types/user-policy.type";
 
 @Injectable()
 export class AppGuard implements CanActivate {
 	constructor(
 		private reflector: Reflector,
 		private tokenService: TokenService,
-		private endpointService: EndpointService,
+		private policyService: PolicyService,
 		private cacheService: CacheService,
 	) {}
+
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
 			context.getHandler(),
@@ -37,16 +34,16 @@ export class AppGuard implements CanActivate {
 
 		const request = context.switchToHttp().getRequest();
 		const { route, method } = request;
-		const path = route.path;
+		const endpoint = route.path;
 
-		const endpoint = await this.getPermissionEndpoint(path, method);
+		const policy = await this.getPolicy(endpoint, method);
 
-		if (endpoint.isPublic) return true;
+		if (policy.isPublic) return true;
 
-		return await this.validate(request, endpoint);
+		return this.validate(request, policy);
 	}
 
-	private async validate(request: any, endpoint: IEndpoint) {
+	private async validate(request: any, policy: UserPolicyType) {
 		const token = this.extractTokenFromHeader(request);
 
 		if (!token)
@@ -55,7 +52,7 @@ export class AppGuard implements CanActivate {
 		try {
 			const decoded = await this.tokenService.verifyAccessToken(token);
 
-			if (!this.isAccessAllowed(decoded.roles, endpoint))
+			if (!this.isAccessAllowed(policy, decoded))
 				throw new UnauthorizedException();
 
 			request.user = decoded;
@@ -77,31 +74,49 @@ export class AppGuard implements CanActivate {
 		return authHeader.slice(textBearer.length);
 	}
 
-	private isAccessAllowed(userRoles: Role[], endpoint: IEndpoint) {
-		return endpoint.userRoles.some((role) => userRoles.includes(role));
+	private isAccessAllowed(policy: UserPolicyType, decoded: DecodedToken) {
+		const isHasRole = policy.userRoles.some((role) =>
+			decoded.roles.includes(role),
+		);
+
+		if (isHasRole) return true;
+
+		const isHasGroup = policy.userGroupIds.some((id) =>
+			decoded.userGroupIds.includes(id),
+		);
+
+		return isHasGroup;
 	}
 
-	private async getPermissionEndpoint(
-		path: string,
+	private async getPolicy(
+		endpoint: string,
 		method: HttpMethod,
-	): Promise<IEndpoint> {
-		const cacheKey = `${path}-${method}`;
+	): Promise<UserPolicyType> {
+		const cacheKey = `${method}:${endpoint}`;
 
 		// check in cache
-		const endpointCache = this.cacheService.get(cacheKey);
+		const policyCached = this.cacheService.getUserPolicy(cacheKey);
 
-		if (endpointCache) return endpointCache;
+		if (policyCached) return policyCached;
 
 		// check in db
-		const endpoint = await this.endpointService.findOne({ path, method });
+		const policy = await this.policyService.findOne({ endpoint, method });
 
-		if (!endpoint) throw new UnauthorizedException("Endpoint not found!");
+		if (!policy) throw new UnauthorizedException("Policy not found!");
 
-		const { isPublic, userRoles } = endpoint;
+		const { isPublic, userRoles, userGroupIds } = policy;
 
 		// save to cache
-		this.cacheService.set(cacheKey, { isPublic, userRoles });
+		this.cacheService.setUserPolices(cacheKey, {
+			isPublic,
+			userRoles,
+			userGroupIds: userGroupIds.map((id) => id.toString()),
+		});
 
-		return { isPublic, userRoles };
+		return {
+			isPublic,
+			userRoles,
+			userGroupIds: userGroupIds.map((id) => id.toString()),
+		};
 	}
 }

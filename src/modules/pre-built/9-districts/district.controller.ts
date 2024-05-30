@@ -1,9 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -15,14 +9,15 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
 import { UpdateDistrictDto } from "./dto/update-district.dto";
-
-@ApiTags("Districts")
 @Controller("districts")
 export class DistrictController {
 	constructor(private readonly districtService: DistrictService) {}
@@ -59,14 +54,14 @@ export class DistrictController {
 	}
 
 	//  ----- Method: POST -----
-	@ApiBearerAuth()
+
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateDistrictDto) {
 		return this.districtService.create(body);
 	}
 	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -77,7 +72,7 @@ export class DistrictController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -86,7 +81,6 @@ export class DistrictController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

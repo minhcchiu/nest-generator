@@ -1,7 +1,5 @@
-import { HydratedDocument } from "mongoose";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
+import { HydratedDocument } from "mongoose";
 import { AppTypeEnum } from "../enums/app-type.enum";
 
 @Schema({

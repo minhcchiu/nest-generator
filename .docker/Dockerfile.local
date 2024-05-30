@@ -1,0 +1,23 @@
+FROM node:20
+
+WORKDIR /home/app
+
+RUN apt-get update
+RUN apt-get install -y libvips-dev
+RUN rm -rf /var/lib/apt/lists/*
+
+COPY . .
+
+# Install only production dependencies
+RUN npm cache clean --force
+RUN npm install
+
+# Build the NestJS application
+RUN npm run build
+
+# Install PM2 globally
+RUN npm install -g pm2
+
+EXPOSE 8888
+
+CMD ["pm2-runtime", "start", "dist/main.js"]

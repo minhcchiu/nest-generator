@@ -1,9 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -15,14 +9,15 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
 import { ProvinceService } from "./province.service";
-
-@ApiTags("Provinces")
 @Controller("provinces")
 export class ProvinceController {
 	constructor(private readonly provinceService: ProvinceService) {}
@@ -60,7 +55,6 @@ export class ProvinceController {
 	}
 
 	//  ----- Method: POST -----
-	@ApiBearerAuth()
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateProvinceDto) {
@@ -68,7 +62,7 @@ export class ProvinceController {
 	}
 
 	//  ----- Method: PATCH -----
-	@ApiBearerAuth()
+
 	@Patch(":id")
 	@HttpCode(HttpStatus.OK)
 	async update(
@@ -79,7 +73,7 @@ export class ProvinceController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
+
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
@@ -88,7 +82,6 @@ export class ProvinceController {
 		});
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {

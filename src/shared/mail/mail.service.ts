@@ -1,46 +1,32 @@
-import * as dayjs from "dayjs";
-
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import {
-	ClientUrlConfig,
-	clientUrlConfigName,
-} from "~configuration/environment/client-url.config";
-import { MailerConfig } from "./config/mail-config.type";
-import { mailerConfigName } from "./config/mail.config";
+import { differenceInMinutes } from "date-fns";
+import { EnvStatic } from "src/configurations/static.env";
 
 @Injectable()
 export class MailService {
-	private clientUrlConfig: ClientUrlConfig;
-	private mailerConfig: MailerConfig;
-
-	constructor(
-		private mailerService: MailerService,
-		private configService: ConfigService,
-	) {
-		this.mailerConfig = this.configService.get<MailerConfig>(mailerConfigName);
-		this.clientUrlConfig =
-			this.configService.get<ClientUrlConfig>(clientUrlConfigName);
-	}
+	constructor(private mailerService: MailerService) {}
 
 	sendMail(options: ISendMailOptions) {
 		return this.mailerService.sendMail(options);
 	}
 
 	async sendOTP(
-		verificationCode: string,
+		data: {
+			otpCode: string;
+			expiredAt: number;
+		},
 		to: string,
 		subject: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
 		const params = {
 			from: from ?? `"${name} ⭐" <${defaults.from}>`,
 			to,
 			subject,
 			template: "./otp/otp.template.hbs",
-			context: { verificationCode },
+			context: { verificationCode: data.otpCode },
 		};
 
 		// send mail
@@ -52,11 +38,10 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
-		const { verifyAccountUrl } = this.clientUrlConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
+		const { verifyAccountUrl } = EnvStatic.getAppConfig();
 
-		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
-
+		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const verificationLink = `${verifyAccountUrl}?token=${body.token}`;
 
 		// options
@@ -77,10 +62,10 @@ export class MailService {
 		to: string,
 		from?: string,
 	) {
-		const { name, defaults } = this.mailerConfig;
-		const { resetPasswordUrl } = this.clientUrlConfig;
+		const { name, defaults } = EnvStatic.getMailerConfig();
+		const { resetPasswordUrl } = EnvStatic.getAppConfig();
 
-		const expiresIn = dayjs(body.expiresAt).diff(dayjs(Date.now()), "minute");
+		const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
 		const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;
 
 		// options

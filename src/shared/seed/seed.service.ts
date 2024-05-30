@@ -1,18 +1,15 @@
+import { Injectable } from "@nestjs/common";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
-import { EndpointService } from "~pre-built/2-endpoints/endpoint.service";
-import { PermissionService } from "~pre-built/2-permissions/permission.service";
-import { MenuService } from "~pre-built/3-menus/menu.service";
+
+import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
+import { PolicyService } from "~pre-built/3-policies/policy.service";
+import { MenuService } from "~pre-built/4-menus/menu.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-
-import { Injectable } from "@nestjs/common";
-
-import { existsSync, readFileSync } from "fs";
-import { IEndpoint } from "./interfaces/endpoint.interface";
-import { IPermission } from "./interfaces/permission.interface";
 
 @Injectable()
 export class SeedService {
@@ -20,8 +17,7 @@ export class SeedService {
 		private provinceService: ProvinceService,
 		private districtService: DistrictService,
 		private wardService: WardService,
-		private permissionService: PermissionService,
-		private endpointService: EndpointService,
+		private policyService: PolicyService,
 		private menuService: MenuService,
 		private logger: CustomLoggerService,
 	) {}
@@ -108,99 +104,69 @@ export class SeedService {
 		};
 	}
 
-	async seedEndpoints(routerStacks: any[]) {
-		const permissionsMap = new Map<string, IPermission>();
-
-		const endpointsMap = new Map<string, IEndpoint>();
+	async seedPolicies(routerStacks: any[]) {
+		const policyMap = new Map<string, CreatePolicyDto>();
 
 		routerStacks
 			.filter(({ route }) => route && route.path)
 			.forEach(({ route }) => {
-				const path = removeTrailingSlash(route.path);
-				const prefix = path.split("/")[2] || "#";
+				const endpoint = removeTrailingSlash(route.path);
+				const collectionName = endpoint.split("/")[2]?.replace("_", "") || "#";
 				const method = route.stack[0]?.method?.toUpperCase();
+				const policyKey = `${collectionName}.${method}:${endpoint}`;
 
-				const endpointItem: IEndpoint = { method, path, prefix, name: prefix };
-				const endpointKey = `${endpointItem.method}-${endpointItem.path}`;
+				const policyItem: CreatePolicyDto = {
+					policyKey,
+					name: policyKey,
+					collectionName: collectionName,
+					endpoint,
+					method,
+				};
 
-				if (!permissionsMap.has(prefix)) {
-					permissionsMap.set(prefix, {
-						prefix,
-						position: permissionsMap.size + 1,
-						name: prefix,
-					});
-				}
-
-				if (!endpointsMap.has(endpointKey))
-					endpointsMap.set(endpointKey, endpointItem);
+				if (!policyMap.has(policyKey)) policyMap.set(policyKey, policyItem);
 			});
 
-		await this._createPermissionsAndMenusFromMap(permissionsMap);
-		await this._createEndpointsFromMap(endpointsMap);
+		await this._createPoliciesAndMenus(policyMap);
 
-		this.logger.log(
-			`Total endpoints/groups: '${endpointsMap.size}/${permissionsMap.size}' `,
-			SeedService.name,
-		);
-
-		permissionsMap.clear();
-		endpointsMap.clear();
+		this.logger.log(`Total policies: '${policyMap.size}'`, SeedService.name);
+		policyMap.clear();
 	}
 
-	private async _createEndpointsFromMap(endpointsMap: Map<string, IEndpoint>) {
-		endpointsMap.forEach(async (endpoint) => {
-			const endpointExist = await this.endpointService.findOne({
-				path: endpoint.path,
-				method: endpoint.method,
-			});
-
-			if (!endpointExist) {
-				const endpointDoc = await this.endpointService.create(endpoint);
-
-				await this.permissionService.updateOne(
-					{ prefix: endpointDoc.prefix },
-					{ $addToSet: { endpoints: endpointDoc._id } },
-				);
-			}
-		});
-	}
-
-	private async _createPermissionsAndMenusFromMap(
-		permissionsMap: Map<string, IPermission>,
+	private async _createPoliciesAndMenus(
+		policyMap: Map<string, CreatePolicyDto>,
 	) {
-		permissionsMap.forEach(async ({ prefix, position }) => {
-			const [permissionExist, menuExist] = await Promise.all([
-				this.permissionService.count({ prefix }),
-				this.menuService.count({ prefix }),
-			]);
+		const collectionNameSet = new Set<string>();
 
-			const permissionItem: IPermission = { prefix, name: prefix, position };
+		const polices: Record<string, any>[] = [];
+		for (const [_, policy] of policyMap) {
+			collectionNameSet.add(policy.collectionName);
 
+			const res = await this.policyService.findOne({
+				endpoint: policy.endpoint,
+				method: policy.method,
+			});
+
+			if (!res) polices.push(policy);
+		}
+
+		await this.policyService.createMany(polices);
+		await this._createMenus(Array.from(collectionNameSet));
+	}
+
+	private async _createMenus(collectionNames: string[]) {
+		collectionNames.forEach(async (collectionName, position) => {
 			const menuItem = {
-				prefix,
-				name: prefix,
-				level: 1,
+				name: collectionName,
+				collectionName,
+				href: collectionName,
 				position,
-				url: `${prefix}`,
 				isHorizontal: false,
-				isActive: true,
+				isShow: true,
 			};
 
-			if (!permissionExist) {
-				await this.permissionService.create(permissionItem);
-			}
-
-			if (!menuExist) {
-				await this.menuService.create(menuItem);
-			}
+			await this.menuService.updateOne({ collectionName }, menuItem, {
+				upsert: true,
+			});
 		});
-	}
-
-	private async _deleteEndpoints() {
-		return Promise.all([
-			this.permissionService.deleteMany({}),
-			this.menuService.deleteMany({}),
-			this.endpointService.deleteMany({}),
-		]);
 	}
 }

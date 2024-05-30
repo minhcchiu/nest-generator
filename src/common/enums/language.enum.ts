@@ -1,4 +1,9 @@
+export enum LanguageCodeEnum {
+	Vi = "vi",
+	En = "en",
+}
+
 export enum LanguageEnum {
-	vi = "vi",
-	en = "en",
+	Vietnamese = "Vietnamese",
+	English = "English",
 }

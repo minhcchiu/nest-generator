@@ -1,10 +1,3 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Body,
 	Controller,
@@ -16,12 +9,14 @@ import {
 	Patch,
 	Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
 import { CartService } from "./cart.service";
 import { CartProductDto } from "./dto/cart-product.dto";
-
-@ApiTags("Carts")
 @Controller("carts")
 export class CartController {
 	constructor(private readonly cartService: CartService) {}
@@ -29,7 +24,7 @@ export class CartController {
 	@HttpCode(HttpStatus.CREATED)
 	@Post("add_product")
 	async create(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Body() product: CartProductDto,
 	) {
 		return this.cartService.addProductToCart({ userId, product });
@@ -38,9 +33,9 @@ export class CartController {
 	@HttpCode(HttpStatus.CREATED)
 	@Patch("carts/:cartId/products/:productId")
 	async updateProductQuantity(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@Param("cartId", ParseObjectIdPipe) cartId: Types.ObjectId,
-		@Param("productId") productId: string,
+		@Param("productId", ParseObjectIdPipe) productId: Types.ObjectId,
 		@Body("quantity", ParseIntPipe) quantity: number,
 	) {
 		return this.cartService.updateProductQuantity(cartId, {
@@ -52,7 +47,7 @@ export class CartController {
 
 	@Get(":userId/user")
 	async findOne(
-		@GetCurrentUserId() userId: string,
+		@GetCurrentUserId() userId: Types.ObjectId,
 		@GetAqp() { filter, populate, projection }: PaginationDto,
 	) {
 		return this.cartService.findOne(

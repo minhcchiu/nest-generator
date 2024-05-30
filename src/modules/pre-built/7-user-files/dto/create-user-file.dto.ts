@@ -1,57 +1,59 @@
-// file.dto.ts
-
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+	IsEnum,
+	IsMongoId,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+} from "class-validator";
+import { Types } from "mongoose";
+import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
-import { ApiProperty } from "@nestjs/swagger";
-
 export class CreateUserFileDto {
-	@ApiProperty({ type: String, description: "User ID", required: true })
 	@IsNotEmpty()
-	@IsString()
-	userId: string;
+	@IsMongoId()
+	userId: Types.ObjectId;
 
-	@ApiProperty({ type: String, description: "Resource ID", required: true })
 	@IsNotEmpty()
-	@IsString()
-	resourceId: string;
+	@IsString({ each: true })
+	resourceKeys: string;
 
-	@ApiProperty({ type: String, description: "File Name", required: true })
 	@IsNotEmpty()
 	@IsString()
 	fileName: string;
 
-	@ApiProperty({ type: String, description: "File Type", required: true })
 	@IsNotEmpty()
 	@IsString()
 	fileType: string;
 
-	@ApiProperty({ type: String, description: "File URL", required: true })
+	@IsNotEmpty()
+	@IsEnum(ResourceTypeEnum)
+	resourceType: ResourceTypeEnum;
+
+	@IsOptional()
+	@IsString()
+	urlXSmall?: string;
+
+	@IsOptional()
+	@IsString()
+	urlSmall?: string;
+
+	@IsOptional()
+	@IsString()
+	urlMedium?: string;
+
+	@IsOptional()
+	@IsString()
+	urlLarge?: string;
+
+	@IsOptional()
+	@IsString()
+	urlXLarge?: string;
+
 	@IsNotEmpty()
 	@IsString()
 	url: string;
 
-	@ApiProperty({ type: Number, description: "File Size", required: true })
-	@IsNotEmpty()
-	@IsNumber()
-	fileSize: number;
-
-	@ApiProperty({ type: Number, description: "Uploaded At", required: true })
-	@IsNotEmpty()
-	@IsNumber()
-	uploadedAt: number;
-
-	@ApiProperty({ type: String, description: "File Folder", required: true })
-	@IsNotEmpty()
-	@IsString()
-	fileFolder: string;
-
-	@ApiProperty({
-		type: String,
-		enum: StorageLocationEnum,
-		description: "Storage Location",
-		required: true,
-	})
 	@IsNotEmpty()
 	@IsEnum(StorageLocationEnum)
 	storageLocation: StorageLocationEnum;

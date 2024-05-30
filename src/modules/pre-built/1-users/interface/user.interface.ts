@@ -1,13 +1,18 @@
+import { Types } from "mongoose";
+import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { Role } from "../enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 
 export interface IUser {
-	password: string;
-	email: string;
-	socialID: string;
-	phone?: string;
+	userGroupIds: Types.ObjectId[];
+	roles: RoleEnum[];
+	accountType: AccountTypeEnum;
 	fullName: string;
+	username?: string;
+	password: string;
+	email?: string;
+	socialID?: string;
+	phone?: string;
 	gender?: GenderEnum;
-	dateOfBirth?: number;
-	roles: Role[];
+	dateBirth?: Date;
 }

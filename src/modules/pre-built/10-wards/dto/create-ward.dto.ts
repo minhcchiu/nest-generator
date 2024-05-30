@@ -1,19 +1,15 @@
 import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
-
-import { ApiProperty } from "@nestjs/swagger";
+import { Types } from "mongoose";
 
 export class CreateWardDto {
-	@ApiProperty({ description: "ID of the associated province" })
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly provinceId: string;
+	readonly provinceId: Types.ObjectId;
 
-	@ApiProperty({ description: "ID of the associated district" })
 	@IsNotEmpty()
 	@IsMongoId()
-	readonly districtId: string;
+	readonly districtId: Types.ObjectId;
 
-	@ApiProperty({ description: "Name of the ward" })
 	@IsNotEmpty()
 	@IsString()
 	readonly name: string;

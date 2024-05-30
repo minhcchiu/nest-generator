@@ -1,14 +1,10 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
-
-import { ApiProperty, OmitType, PartialType } from "@nestjs/swagger";
-
+import { PartialType } from "@nestjs/mapped-types";
+import { IsEnum, IsNotEmpty } from "class-validator";
+import { SendOtpToEnum } from "~modules/pre-built/6-otp/enums/send-otp-to";
 import { RegisterDto } from "./register.dto";
 
-export class SendRegisterTokenDto extends PartialType(
-	OmitType(RegisterDto, ["email"]),
-) {
-	@ApiProperty({ description: "Email address to send the token" })
+export class SendRegisterTokenDto extends PartialType(RegisterDto) {
 	@IsNotEmpty()
-	@IsEmail()
-	readonly email: string;
+	@IsEnum(SendOtpToEnum)
+	sendOtpTo: SendOtpToEnum;
 }

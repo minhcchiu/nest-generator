@@ -1,0 +1,37 @@
+name: Setup Nginx Config
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  setup-nginx:
+    runs-on: ubuntu-latest
+
+    env:
+      isConfig: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy nginx configuration
+        if: env.isConfig == 'false'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo cp /home/ubuntu/as-develop/source/.nginx-configs/as-awesome.conf /etc/nginx/sites-available/as-awesome.conf
+            sudo ln -s /etc/nginx/sites-available/as-awesome.conf /etc/nginx/sites-enabled/as-awesome.conf
+
+      - name: Restart Nginx
+        if: env.isConfig == 'false'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo service nginx restart

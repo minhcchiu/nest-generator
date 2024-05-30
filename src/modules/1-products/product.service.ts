@@ -1,13 +1,11 @@
-import { PaginateModel } from "mongoose";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateInventoryDto } from "~modules/5-inventories/dto/create-inventory.dto";
 import { InventoryService } from "~modules/5-inventories/inventory.service";
 import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisFeatureService } from "~shared/redis-feature/redis-feature.service";
-
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-
+import { RedisService } from "~shared/redis-feature/redis.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { ProductType } from "./enums/product-type.enum";
 import { Clothing, ClothingDocument } from "./schemas/clothing.schema";
@@ -17,21 +15,21 @@ import { Product, ProductDocument } from "./schemas/product.schema";
 
 @Injectable()
 export class ProductService extends BaseService<ProductDocument> {
-	private clothingModel: PaginateModel<ClothingDocument>;
-	private electronicModel: PaginateModel<ElectronicDocument>;
-	private productModel: PaginateModel<ProductDocument>;
-	private furnitureModel: PaginateModel<FurnitureDocument>;
+	private clothingModel: Model<ClothingDocument>;
+	private electronicModel: Model<ElectronicDocument>;
+	private productModel: Model<ProductDocument>;
+	private furnitureModel: Model<FurnitureDocument>;
 
 	constructor(
-		@InjectModel(Product.name) _productModel: PaginateModel<ProductDocument>,
-		@InjectModel(Clothing.name) _clothingModel: PaginateModel<ClothingDocument>,
+		@InjectModel(Product.name) _productModel: Model<ProductDocument>,
+		@InjectModel(Clothing.name) _clothingModel: Model<ClothingDocument>,
 		@InjectModel(Electronic.name)
-		_electronicModel: PaginateModel<ElectronicDocument>,
+		_electronicModel: Model<ElectronicDocument>,
 		@InjectModel(Furniture.name)
-		_furnitureModel: PaginateModel<FurnitureDocument>,
+		_furnitureModel: Model<FurnitureDocument>,
 
 		private readonly inventoryService: InventoryService,
-		private readonly redisFeatureService: RedisFeatureService,
+		private readonly redisFeatureService: RedisService,
 	) {
 		super(_productModel);
 
@@ -68,8 +66,6 @@ export class ProductService extends BaseService<ProductDocument> {
 		productType: ProductType,
 		input: CreateProductDto,
 	) {
-		console.log({ input });
-
 		switch (productType) {
 			case ProductType.clothing:
 				await this.clothingModel.create(input.attributes);

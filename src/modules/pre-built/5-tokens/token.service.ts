@@ -1,32 +1,113 @@
-import { PaginateModel, Types } from "mongoose";
-import { BaseService } from "~base-inherit/base.service";
-
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
-
+import { Model, Types } from "mongoose";
+import { EnvStatic } from "src/configurations/static.env";
+import { BaseService } from "~base-inherit/base.service";
+import { DocumentType } from "~types/document.type";
 import { User } from "../1-users/schemas/user.schema";
-import { JWTConfig } from "./config/jwt-config.type";
-import { jwtConfigName } from "./config/jwt.config";
+import {
+	getTokenPayloadFromUser,
+	getUserAuth,
+} from "../1-users/select/auth.select";
+import { RegisterDto } from "../4-auth/dto/register.dto";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
-	private jwtConfig: JWTConfig;
+	private tokenService: TokenService;
 
 	constructor(
 		private readonly jwtService: JwtService,
-		private readonly configService: ConfigService,
-		@InjectModel(Token.name) model: PaginateModel<TokenDocument>,
+		@InjectModel(Token.name) model: Model<TokenDocument>,
 	) {
 		super(model);
 
-		this.jwtConfig = this.configService.get<JWTConfig>(jwtConfigName);
+		this.tokenService = this;
 	}
 
-	async generateToken(payload: any, secret: string, expiresIn: number) {
+	async generateUserToken(payload: RegisterDto) {
+		const { registerToken } = EnvStatic.getJWTConfig();
+
+		return this._generateToken(
+			payload,
+			registerToken.secretKey,
+			registerToken.expiresIn,
+		);
+	}
+
+	async generateForgotPasswordToken(user: User & { _id: Types.ObjectId }) {
+		const payload: TokenPayload = {
+			_id: user._id.toString(),
+			roles: user.roles,
+			userGroupIds: user.userGroupIds.map((id) => id.toString()),
+			fullName: user.fullName,
+			username: user.username,
+			email: user.email,
+			phone: user.phone,
+			socialID: user.socialID,
+			accountType: user.accountType,
+		};
+
+		const { forgotPasswordToken } = EnvStatic.getJWTConfig();
+
+		return this._generateToken(
+			payload,
+			forgotPasswordToken.secretKey,
+			forgotPasswordToken.expiresIn,
+		);
+	}
+
+	async generateAuthTokens(payload: TokenPayload) {
+		const [accessToken, refreshToken] = await Promise.all([
+			this._generateAccessToken(payload),
+			this._generateRefreshToken(payload),
+		]);
+
+		return { accessToken, refreshToken };
+	}
+
+	async verifyAccessToken(token: string): Promise<DecodedToken> {
+		const { accessToken } = EnvStatic.getJWTConfig();
+
+		return this._verifyToken(token, accessToken.secretKey);
+	}
+
+	async verifyRefreshToken(token: string): Promise<DecodedToken> {
+		const { refreshToken } = EnvStatic.getJWTConfig();
+
+		return this._verifyToken(token, refreshToken.secretKey);
+	}
+
+	async verifyRegisterToken(token: string) {
+		const { registerToken } = EnvStatic.getJWTConfig();
+
+		return this._verifyToken(token, registerToken.secretKey);
+	}
+
+	async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
+		const { forgotPasswordToken } = EnvStatic.getJWTConfig();
+
+		return this._verifyToken(token, forgotPasswordToken.secretKey);
+	}
+
+	async generateUserAuth(user: DocumentType<User>) {
+		const payload = getTokenPayloadFromUser(user);
+
+		const { accessToken, refreshToken } =
+			await this.generateAuthTokens(payload);
+
+		await this.tokenService.updateOne(
+			{ userId: user._id },
+			{ userId: user._id, ...refreshToken },
+			{ upsert: true },
+		);
+
+		return { accessToken, refreshToken, user: getUserAuth(user) };
+	}
+
+	async _generateToken(payload: any, secret: string, expiresIn: number) {
 		const token = await this.jwtService.signAsync(payload, {
 			secret,
 			expiresIn: `${expiresIn}m`,
@@ -37,115 +118,31 @@ export class TokenService extends BaseService<TokenDocument> {
 		return { token, expiresAt };
 	}
 
-	async generateAccessToken(payload: TokenPayload) {
-		const { accessToken } = this.jwtConfig;
+	async _generateAccessToken(payload: TokenPayload) {
+		const { accessToken } = EnvStatic.getJWTConfig();
 
-		return this.generateToken(
+		return this._generateToken(
 			payload,
 			accessToken.secretKey,
 			accessToken.expiresIn,
 		);
 	}
 
-	async generateRefreshToken(payload: TokenPayload) {
-		const { refreshToken } = this.jwtConfig;
+	async _generateRefreshToken(payload: TokenPayload) {
+		const { refreshToken } = EnvStatic.getJWTConfig();
 
-		return this.generateToken(
+		return this._generateToken(
 			payload,
 			refreshToken.secretKey,
 			refreshToken.expiresIn,
 		);
 	}
 
-	async generateUserToken(payload: any) {
-		const { registerToken } = this.jwtConfig;
-
-		return this.generateToken(
-			payload,
-			registerToken.secretKey,
-			registerToken.expiresIn,
-		);
-	}
-
-	async generateForgotPasswordToken(payload: TokenPayload) {
-		const { forgotPasswordToken } = this.jwtConfig;
-
-		return this.generateToken(
-			payload,
-			forgotPasswordToken.secretKey,
-			forgotPasswordToken.expiresIn,
-		);
-	}
-
-	async generateAuthTokens(payload: TokenPayload) {
-		const [accessToken, refreshToken] = await Promise.all([
-			this.generateAccessToken(payload),
-			this.generateRefreshToken(payload),
-		]);
-
-		return { accessToken, refreshToken };
-	}
-
-	async verifyToken(token: string, secretKey?: string) {
-		const config = this.jwtConfig;
+	async _verifyToken(token: string, secretKey?: string) {
+		const config = EnvStatic.getJWTConfig();
 
 		return this.jwtService.verifyAsync(token, {
 			secret: secretKey || config.secretKey,
 		});
-	}
-
-	async verifyAccessToken(token: string): Promise<DecodedToken> {
-		const { accessToken } = this.jwtConfig;
-
-		return this.verifyToken(token, accessToken.secretKey);
-	}
-
-	async verifyRefreshToken(token: string): Promise<DecodedToken> {
-		const { refreshToken } = this.jwtConfig;
-
-		return this.verifyToken(token, refreshToken.secretKey);
-	}
-
-	async verifySignupToken(token: string) {
-		const { registerToken } = this.jwtConfig;
-
-		return this.verifyToken(token, registerToken.secretKey);
-	}
-
-	async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
-		const { forgotPasswordToken } = this.jwtConfig;
-
-		return this.verifyToken(token, forgotPasswordToken.secretKey);
-	}
-
-	async generateUserAuth(
-		user: User & {
-			_id: Types.ObjectId;
-		},
-	) {
-		const payload: TokenPayload = {
-			_id: user._id.toString(),
-			roles: user.roles,
-			email: user.email,
-			phone: user.phone,
-			fullName: user.fullName,
-			avatar: user.avatar,
-			gender: user.gender,
-			dateOfBirth: user.dateOfBirth,
-			status: user.status,
-			accountType: user.accountType,
-			storeId: user.storeId,
-		};
-
-		const { accessToken, refreshToken } =
-			await this.generateAuthTokens(payload);
-
-		await this.updateOne(
-			{ userId: user._id.toString() },
-			{ userId: user._id.toString(), ...refreshToken },
-			{ upsert: true },
-		);
-
-		return { accessToken, refreshToken, user: payload };
 	}
 }

@@ -1,26 +1,26 @@
-import { Types } from "mongoose";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
-import { PaginationDto } from "~dto/pagination.dto";
-
 import {
 	Controller,
 	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
+	NotFoundException,
 	Param,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-
+import { Types } from "mongoose";
+import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { GetAqp } from "~decorators/get-aqp.decorator";
+import { Public } from "~decorators/public.decorator";
+import { PaginationDto } from "~dto/pagination.dto";
+import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
 import { UserFileService } from "./user-file.service";
-
-@ApiTags("User files")
 @Controller("user_files")
 export class UserFileController {
-	constructor(private readonly userFileService: UserFileService) {}
+	constructor(
+		private readonly userFileService: UserFileService,
+		private readonly eventEmitterService: EventEmitterService,
+	) {}
 
 	//  ----- Method: GET -----
 	@Public()
@@ -46,35 +46,45 @@ export class UserFileController {
 	}
 
 	//  ----- Method: DELETE -----
-	@ApiBearerAuth()
-	@Delete(":url/url")
+	@Delete("filename/:filename")
 	@HttpCode(HttpStatus.OK)
-	async deleteByUrl(@Param("url") url: string) {
-		return this.userFileService.deleteByUrl(url);
+	async deleteByFileName(@Param("filename") fileName: string) {
+		const file = await this.userFileService.findOne({
+			fileName,
+		});
+
+		if (!file) throw new NotFoundException("File not found.");
+
+		this.eventEmitterService.emitDeleteFiles([file]);
+
+		return file;
 	}
 
-	@ApiBearerAuth()
-	@Delete(":urls/urls")
-	@HttpCode(HttpStatus.OK)
-	async deleteByUrls(@Param("urls") urls: string) {
-		return this.userFileService.deleteByUrls(urls.split(","));
-	}
-
-	@ApiBearerAuth()
 	@Delete(":ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.userFileService.deleteMany({
+		const files = await this.userFileService.findMany({
 			_id: {
 				$in: ids.split(",").map(stringIdToObjectId),
 			},
 		});
+
+		if (!files?.length) throw new NotFoundException("Files not found.");
+
+		this.eventEmitterService.emitDeleteFiles(files);
+
+		return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
 	}
 
-	@ApiBearerAuth()
 	@Delete(":id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userFileService.deleteById(id);
+		const file = await this.userFileService.deleteById(id);
+
+		if (!file) throw new NotFoundException("File not found.");
+
+		this.eventEmitterService.emitDeleteFiles([file]);
+
+		return file;
 	}
 }

@@ -6,15 +6,16 @@ import {
 	IsOptional,
 	IsString,
 } from "class-validator";
+import { Types } from "mongoose";
 
 export class CreateInventoryDto {
 	@IsNotEmpty()
 	@IsMongoId()
-	shopId: string;
+	shopId: Types.ObjectId;
 
 	@IsMongoId()
 	@IsNotEmpty()
-	productId: string;
+	productId: Types.ObjectId;
 
 	@IsOptional()
 	@IsString()

@@ -1,4 +1,9 @@
-import { PathOrFileDescriptor, appendFile, existsSync, mkdirSync } from "fs";
+import {
+	PathOrFileDescriptor,
+	appendFileSync,
+	existsSync,
+	mkdirSync,
+} from "fs";
 import { join } from "path";
 
 export type LogType = "log" | "error" | "warn";
@@ -21,7 +26,5 @@ export const getLogPath = (logType: LogType): PathOrFileDescriptor => {
 export const writeLogToFile = (logType: LogType, data: string): void => {
 	const logPath = getLogPath(logType);
 
-	appendFile(logPath, data, "utf8", (err) => {
-		console.log(err);
-	});
+	appendFileSync(logPath, data, "utf8");
 };

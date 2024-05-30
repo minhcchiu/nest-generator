@@ -1,7 +1,6 @@
-import { HydratedDocument } from "mongoose";
-import { Province } from "~pre-built/8-provinces/schemas/province.schema";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument, Types } from "mongoose";
+import { Province } from "~pre-built/8-provinces/schemas/province.schema";
 
 @Schema({
 	timestamps: true,
@@ -14,7 +13,7 @@ export class District {
 		ref: Province.name,
 		required: true,
 	})
-	readonly provinceId: string;
+	readonly provinceId: Types.ObjectId;
 
 	@Prop({ type: String, required: true })
 	readonly name: string;

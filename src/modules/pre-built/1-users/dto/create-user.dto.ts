@@ -1,98 +1,70 @@
 import {
-	IsArray,
 	IsBoolean,
 	IsEmail,
 	IsEnum,
-	IsMongoId,
+	IsISO8601,
 	IsNotEmpty,
-	IsNumber,
 	IsOptional,
 	IsString,
 	MaxLength,
 	MinLength,
-	ValidateIf,
 } from "class-validator";
-import { NullableType } from "~types/nullable.type";
-
-import { ApiProperty } from "@nestjs/swagger";
-
 import { AccountStatus } from "../enums/account-status.enum";
-import { AccountType } from "../enums/account-type.enum";
+import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { Role } from "../enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 
 export class CreateUserDto {
-	@ApiProperty({ required: false })
-	@ValidateIf((o) => !o.phone && !o.email)
+	@IsOptional()
 	@IsString()
 	username?: string;
 
-	@ApiProperty({ required: false })
-	@ValidateIf((o) => !o.username && !o.phone)
+	@IsOptional()
 	@IsEmail()
 	email?: string;
 
-	@ApiProperty({ required: false })
-	@ValidateIf((o) => !o.username && !o.email)
+	@IsOptional()
 	@IsString()
 	phone?: string;
 
-	@ApiProperty()
+	@IsOptional()
+	@IsString()
+	socialID?: string;
+
 	@IsNotEmpty()
 	@IsString()
 	@MinLength(6)
 	@MaxLength(50)
 	password: string;
 
-	@ApiProperty()
 	@IsNotEmpty()
 	@IsString()
 	@MinLength(2)
 	fullName: string;
 
-	@ApiProperty({ required: false })
 	@IsOptional()
-	@IsString()
-	avatar?: string;
+	@IsEnum(RoleEnum)
+	roles?: RoleEnum[];
 
-	@ApiProperty({ required: false })
+	@IsNotEmpty()
+	@IsEnum(AccountTypeEnum)
+	accountType: AccountTypeEnum;
+
 	@IsOptional()
-	@IsNumber()
-	dateOfBirth?: number;
+	@IsISO8601()
+	dateBirth?: Date;
 
-	@ApiProperty({ enum: GenderEnum, required: false })
 	@IsOptional()
 	@IsEnum(GenderEnum)
 	gender?: GenderEnum;
 
-	@ApiProperty({ enum: AccountType })
-	@IsNotEmpty()
-	@IsEnum(AccountType)
-	accountType: AccountType;
+	@IsOptional()
+	@IsString()
+	avatar?: string;
 
-	@ApiProperty({ required: false })
 	@IsOptional()
 	@IsBoolean()
-	isNotificationActive?: boolean;
+	fmcEnabled?: boolean;
 
-	@ApiProperty({ required: false })
-	@IsOptional()
-	@IsMongoId()
-	storeId?: NullableType<string>;
-
-	@ApiProperty({ required: false, type: [String] })
-	@IsOptional()
-	@IsMongoId({ each: true })
-	favoriteStores: string[];
-
-	@ApiProperty({ enum: Role, isArray: true, required: false })
-	@IsOptional()
-	@IsArray()
-	@IsEnum(Role, { each: true })
-	roles?: Role[];
-
-	@ApiProperty({ enum: AccountStatus, required: false })
-	@IsOptional()
-	@IsEnum(AccountStatus)
 	status?: AccountStatus;
 }

@@ -1,73 +1,60 @@
-import dayjs from "dayjs";
-import { FilterQuery, Model, QueryOptions } from "mongoose";
-import { generateOTP } from "~helpers/generate-otp";
-import { MailService } from "~shared/mail/mail.service";
-
 import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
-
-import {
-	AppConfig,
-	NodeEnv,
-	appConfigName,
-} from "~configuration/environment/app.config";
-import {
-	OtpConfig,
-	otpConfigName,
-} from "~configuration/environment/otp.config";
+import { differenceInSeconds } from "date-fns";
+import { FilterQuery, Model, QueryOptions } from "mongoose";
+import { NodeEnv } from "src/configurations/enums/config.enum";
+import { EnvStatic } from "src/configurations/static.env";
+import { generateOTP } from "~helpers/generate-otp";
+import { MailService } from "~shared/mail/mail.service";
 import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
-import { OtpType } from "./enums/otp-type";
+import { SendOtpToEnum } from "./enums/send-otp-to";
 import { Otp } from "./schemas/otp.schema";
 
 @Injectable()
 export class OtpService {
-	private otpConfig: OtpConfig;
-	private appConfig: AppConfig;
-
 	constructor(
 		@InjectModel(Otp.name) private otpModel: Model<Otp>,
-		private mailService: MailService,
-		private configService: ConfigService,
-	) {
-		this.otpConfig = this.configService.get<OtpConfig>(otpConfigName);
-		this.appConfig = this.configService.get<AppConfig>(appConfigName);
+		private readonly mailService: MailService,
+	) {}
+
+	async sendOtp(input: CreateOtpDto) {
+		const { otpCode, expiredAt } = await this._createOtp(input);
+
+		switch (input.sendOtpTo) {
+			case SendOtpToEnum.Phone:
+				return this._sendPhoneVerify(input.phone, {
+					otpCode,
+					expiredAt,
+				});
+
+			case SendOtpToEnum.Email:
+				return this._sendEmailVerify(input.email, {
+					otpCode,
+					expiredAt,
+				});
+
+			default:
+				throw new BadRequestException("Invalid send otp to.");
+		}
 	}
 
-	async sendOtp({ otpType, ...credential }: CreateOtpDto) {
-		const { otpCode } = await this.create(credential, otpType);
+	async verifyOtp({ otpCode, otpType, sendOtpTo, email, phone }: VerifyOtpDto) {
+		const filter = { otpType };
 
-		// send verify
-		if (credential.phone)
-			await this._sendPhoneVerify(credential.phone, otpCode);
-		else if (credential.email)
-			await this._sendEmailVerify(credential.email, otpCode);
+		if (sendOtpTo === SendOtpToEnum.Email) Object.assign(filter, { email });
+		else Object.assign(filter, { phone });
 
-		const { nodeEnv } = this.appConfig;
-
-		if (nodeEnv === NodeEnv.Development) return { otpCode, otpType };
-
-		return {
-			message: `OTP code has been successfully sent to the ${credential}.`,
-		};
-	}
-
-	async verifyOtp({ otpCode, otpType, ...credential }: VerifyOtpDto) {
-		const otpDoc = await this.otpModel.findOne({
-			...credential,
-			otpType,
-		});
+		const otpDoc = await this.otpModel.findOne(filter);
 
 		if (!otpDoc) throw new NotFoundException("OTP does not exist.");
 
-		const currentTimestamp = Date.now();
-		if (otpDoc.expiredAt > currentTimestamp)
+		if (otpDoc.expiredAt > Date.now())
 			throw new UnauthorizedException("The OTP has expired!");
 
 		const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
@@ -77,16 +64,13 @@ export class OtpService {
 		throw new BadRequestException("Invalid otp code.");
 	}
 
-	private async create(credential: any, otpType: OtpType) {
-		const { expiresIn } = this.otpConfig;
-
+	private async _createOtp(input: CreateOtpDto) {
 		const otpCode = generateOTP();
-		const expiredAt = Date.now() + expiresIn;
+		const expiredAt = Date.now() + EnvStatic.getAppConfig().otpExpiration;
 
 		const otpDoc = await this.otpModel.findOne({
-			...credential,
+			...input,
 			otpCode,
-			otpType,
 		});
 
 		if (otpDoc) {
@@ -99,23 +83,58 @@ export class OtpService {
 			await otpDoc.save();
 		} else {
 			await this.otpModel.create({
-				...credential,
+				...input,
 				otpCode,
-				otpType,
 				expiredAt,
 			});
 		}
 
-		return { otpCode, otpType };
+		return {
+			otpCode,
+			otpType: input.otpType,
+			expiredAt,
+		};
 	}
 
-	private async _sendPhoneVerify(phone: string, otp: string): Promise<boolean> {
+	findMany(filter: FilterQuery<Otp>, options?: QueryOptions<Otp>) {
+		return this.otpModel.find(filter, options?.projection, options).lean();
+	}
+
+	private async _sendPhoneVerify(
+		phone: string,
+		data: {
+			otpCode: string;
+			expiredAt: number;
+		},
+	) {
 		// TODO: Implement sending OTP to the phone.
-		return !!(phone && otp);
+		return {
+			phone,
+			otpCode:
+				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
+					? data.otpCode
+					: undefined,
+			expiresAt: data.expiredAt,
+		};
 	}
 
-	private async _sendEmailVerify(email: string, otp: string) {
-		return this.mailService.sendOTP(otp, email, "Verify OTP");
+	private async _sendEmailVerify(
+		email: string,
+		data: {
+			otpCode: string;
+			expiredAt: number;
+		},
+	) {
+		await this.mailService.sendOTP(data, email, "Verify OTP");
+
+		return {
+			email,
+			otpCode:
+				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
+					? data.otpCode
+					: undefined,
+			expiresAt: data.expiredAt,
+		};
 	}
 
 	/**
@@ -125,7 +144,7 @@ export class OtpService {
 	 * @returns
 	 */
 	private _validateTimeResendOtp(updatedAt: string) {
-		const secondsLeft = dayjs().diff(dayjs(updatedAt), "second");
+		const secondsLeft = differenceInSeconds(new Date(), new Date(updatedAt));
 		const isValidTime = secondsLeft < 10;
 
 		if (isValidTime) {
@@ -135,16 +154,5 @@ export class OtpService {
 		}
 
 		return isValidTime;
-	}
-
-	/**
-	 * Find all
-	 *
-	 * @param filter
-	 * @param options
-	 * @returns
-	 */
-	findMany(filter: FilterQuery<Otp>, options?: QueryOptions<Otp>) {
-		return this.otpModel.find(filter, options?.projection, options).lean();
 	}
 }

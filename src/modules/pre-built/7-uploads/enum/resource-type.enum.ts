@@ -1,6 +1,7 @@
 export enum ResourceTypeEnum {
-	FILE = "file",
-	IMAGE = "image",
-	VIDEO = "video",
-	AUTO = "auto",
+	Image = "image",
+	Video = "video",
+	Raw = "raw",
+	Auto = "auto",
+	Audio = "audio",
 }

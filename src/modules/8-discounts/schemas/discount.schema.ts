@@ -1,6 +1,5 @@
-import { HydratedDocument } from "mongoose";
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 
 @Schema({
 	timestamps: true,
@@ -8,8 +7,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 	collection: "categories",
 })
 export class Discount {
-	@Prop({ type: String, required: true })
-	storeId: string;
+	@Prop({ type: SchemaTypes.ObjectId, required: true })
+	storeId: Types.ObjectId;
 
 	@Prop({ type: String, required: true })
 	code: string;

@@ -1,11 +1,14 @@
-# compiled output
-/dist
+# Enviroment
+.env
+.env.local
+
+#compiled output
+/dist 
 /node_modules
 
 # Logs
 logs
 *.log
-/yarn.lock
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
@@ -35,6 +38,3 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Enviroment
-.env
-./ssh/.env

@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile.local
+    container_name: awesome-nest-local
+    restart: always
+    ports:
+      - "8888:8888"
+    depends_on:
+      - redis
+      - mongodb
+    environment:
+      NODE_ENV: development
+      DATABASE_URI: mongodb://mongodb:27017/awesome-nest
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../:/home/app
+      - /home/app/node_modules
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:6
+    restart: always
+    ports:
+      - 6379:6379
+
+volumes:
+  mongodb_data:
