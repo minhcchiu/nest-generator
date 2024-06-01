@@ -54,7 +54,7 @@ export class OtpService {
 
 		if (!otpDoc) throw new NotFoundException("OTP does not exist.");
 
-		if (otpDoc.expiredAt > Date.now())
+		if (Date.now() > otpDoc.expiredAt)
 			throw new UnauthorizedException("The OTP has expired!");
 
 		const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
@@ -69,8 +69,9 @@ export class OtpService {
 		const expiredAt = Date.now() + EnvStatic.getAppConfig().otpExpiration;
 
 		const otpDoc = await this.otpModel.findOne({
-			...input,
-			otpCode,
+			[input.sendOtpTo.toLowerCase()]: input[input.sendOtpTo.toLowerCase()],
+			sendOtpTo: input.sendOtpTo,
+			otpType: input.otpType,
 		});
 
 		if (otpDoc) {
@@ -145,11 +146,11 @@ export class OtpService {
 	 */
 	private _validateTimeResendOtp(updatedAt: string) {
 		const secondsLeft = differenceInSeconds(new Date(), new Date(updatedAt));
-		const isValidTime = secondsLeft < 10;
+		const isValidTime = secondsLeft < 30;
 
 		if (isValidTime) {
 			throw new BadRequestException(
-				`Please try again in ${10 - secondsLeft} seconds`,
+				`Please try again in ${30 - secondsLeft} seconds`,
 			);
 		}
 

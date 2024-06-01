@@ -27,12 +27,12 @@ export class CommentController {
 
 	@HttpCode(HttpStatus.OK)
 	@Public()
-	@Get()
+	@Get("/")
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.commentService.findMany(filter, options);
 	}
 
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(
 		@GetCurrentUserId() userId: Types.ObjectId,
@@ -40,7 +40,7 @@ export class CommentController {
 	) {
 		return this.commentService.create({ ...body, authorId: userId });
 	}
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -49,36 +49,36 @@ export class CommentController {
 		return this.commentService.updateById(id, body);
 	}
 
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.commentService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.commentService.deleteById(id);
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.commentService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.commentService.count(filter);
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,

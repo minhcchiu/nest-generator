@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import { NodeEnv, StorageServerEnum } from "../enums/config.enum";
 
 export class AppConfigDto {
@@ -33,4 +39,8 @@ export class AppConfigDto {
 	@IsNotEmpty()
 	@IsString()
 	OTP_EXPIRATION: string;
+
+	@IsOptional()
+	@IsString()
+	SUPPER_ADMIN_LIST?: string;
 }

@@ -9,14 +9,14 @@ import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { generateRandomKey } from "~helpers/generate-random-key";
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
-import { TokenService } from "~pre-built/5-tokens/token.service";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { AccountTypeEnum } from "../1-users/enums/account-type.enum";
+import { RoleEnum } from "../1-users/enums/role.enum";
 import { HashingService } from "../1-users/hashing/hashing.service";
 import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
+import { TokenService } from "../5-tokens/token.service";
 import { OtpTypeEnum } from "../6-otp/enums/otp-type.enum";
 import { OtpService } from "../6-otp/otp.service";
 import { LoginDto } from "./dto/login.dto";
@@ -36,25 +36,28 @@ export class AuthService {
 		private readonly hashingService: HashingService,
 	) {}
 
-	async register({ fcmToken, ...input }: RegisterDto) {
+	async register({ fcmToken, otpCode, sendOtpTo, ...input }: RegisterDto) {
 		await this.userService.validateCreateUser(input);
 
 		// Verify otp
-		if (input.otpCode) {
+		if (otpCode) {
 			await this.otpService.verifyOtp({
-				otpCode: input.otpCode,
+				otpCode,
+				sendOtpTo,
 				otpType: OtpTypeEnum.Register,
 				phone: input.phone,
 				email: input.email,
-				sendOtpTo: input.sendOtpTo,
 			});
 
 			Object.assign(input, { status: AccountStatus.Verified });
 		}
 
-		const newUser = await this.userService.createUser(input);
+		if (fcmToken) Object.assign(input, { fcmTokens: [fcmToken] });
 
-		if (fcmToken) this.userService.saveFcmToken(newUser._id, fcmToken);
+		const newUser = await this.userService.createUser({
+			...input,
+			roles: [RoleEnum.User],
+		});
 
 		return this.tokenService.generateUserAuth(newUser);
 	}
@@ -104,6 +107,7 @@ export class AuthService {
 				accountType,
 				password: generateRandomKey(32),
 				status: AccountStatus.Verified,
+				roles: [RoleEnum.User],
 			});
 
 			foundUser = newUser.toObject();
@@ -187,7 +191,7 @@ export class AuthService {
 		const [tokenDoc] = await Promise.all([
 			this.tokenService.findOne(
 				{ token },
-				{ populate: { path: "user", select: authSelect } },
+				{ populate: { path: "userId", select: authSelect } },
 			),
 			this.tokenService.verifyRefreshToken(token),
 		]);
@@ -242,11 +246,9 @@ export class AuthService {
 
 		if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
 
-		const user = await this.userService.resetPassword(
-			stringIdToObjectId(decoded._id),
-			password,
-			{ projection: authSelect },
-		);
+		const user = await this.userService.resetPassword(decoded._id, password, {
+			projection: authSelect,
+		});
 
 		const { accessToken, refreshToken } =
 			await this.tokenService.generateUserAuth(user);

@@ -15,7 +15,6 @@
     "node": true,
     "jest": true
   },
-  "ignorePatterns": [".ecosystem/"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -30,7 +29,7 @@
         "arrowParens": "always",
         "requirePragma": false,
         "proseWrap": "always"
-      },
+      }
     ],
     "no-console": "error",
     "@typescript-eslint/interface-name-prefix": "off",

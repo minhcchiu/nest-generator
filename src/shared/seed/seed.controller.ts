@@ -1,5 +1,6 @@
 import { Controller, HttpCode, Post } from "@nestjs/common";
 import { SeedService } from "./seed.service";
+
 @Controller("seeds")
 export class SeedController {
 	constructor(private seedService: SeedService) {}

@@ -17,28 +17,13 @@ import { PaginationDto } from "~dto/pagination.dto";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { MenuService } from "./menu.service";
+
 @Controller("menus")
 export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
 	//  ----- Method: GET -----
-
-	@Get()
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.menuService.findMany(filter, options);
-	}
-
-	@Get("paginate")
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.menuService.paginate(filter, options);
-	}
-
-	@Get("count")
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.menuService.count(filter);
-	}
-
-	@Get(":id")
+	@Get("/:id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
@@ -46,17 +31,22 @@ export class MenuController {
 		return this.menuService.findById(id, { projection, populate });
 	}
 
-	//  ----- Method: POST -----
+	@Get("/")
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		const menus = await this.menuService.findMany(filter, options);
 
-	@Post()
+		return this.menuService.formatMenus(menus);
+	}
+
+	//  ----- Method: POST -----
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateMenuDto) {
 		return this.menuService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -66,16 +56,15 @@ export class MenuController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.menuService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.menuService.deleteById(id);

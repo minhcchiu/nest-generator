@@ -18,6 +18,7 @@ import { PaginationDto } from "~dto/pagination.dto";
 import { CreateSettingDto } from "./dto/create-setting.dto";
 import { UpdateSettingDto } from "./dto/update-setting.dto";
 import { SettingService } from "./setting.service";
+
 @Controller("settings")
 export class SettingController {
 	constructor(private readonly settingService: SettingService) {}
@@ -31,7 +32,7 @@ export class SettingController {
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -41,15 +42,13 @@ export class SettingController {
 	}
 
 	//  ----- Method: POST -----
-
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateSettingDto) {
 		return this.settingService.create(body);
 	}
 	//  ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -59,16 +58,15 @@ export class SettingController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.settingService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.settingService.deleteById(id);

@@ -5,6 +5,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	NotFoundException,
 	Param,
 	Patch,
 	Post,
@@ -29,23 +30,12 @@ export class PolicyController {
 	) {}
 
 	//  ----- Method: GET -----
-
-	@Get()
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.policyService.findMany(filter, options);
-	}
-
-	@Get("paginate")
+	@Get("/paginate")
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.policyService.paginate(filter, options);
 	}
 
-	@Get("count")
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.policyService.count(filter);
-	}
-
-	@Get(":id")
+	@Get("/:id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
@@ -53,46 +43,53 @@ export class PolicyController {
 		return this.policyService.findById(id, { projection, populate });
 	}
 
-	//  ----- Method: POST -----
+	@Get("/")
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.policyService.findMany(filter, options);
+	}
 
-	@Post()
+	//  ----- Method: POST -----
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreatePolicyDto) {
+		body.policyKey = `${body.method}:${body.endpoint}`;
+
 		return this.policyService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdatePolicyDto,
 	) {
+		const found = await this.policyService.findById(id);
+
+		if (!found) throw new NotFoundException("Policy not found!");
+
+		if (body.method || body.endpoint) {
+			const method = body.method || found.method;
+			const endpoint = body.endpoint || found.endpoint;
+
+			body.policyKey = `${method}:${endpoint}`;
+		}
+
 		return this.policyService.updateById(id, body);
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.policyService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		const [deleted] = await Promise.all([
-			this.policyService.deleteById(id),
-			this.userGroupService.updateOne(
-				{ policies: id },
-				{ $pull: { policies: id } },
-			),
-		]);
-
-		return deleted;
+		return this.policyService.deleteById(id);
 	}
 }

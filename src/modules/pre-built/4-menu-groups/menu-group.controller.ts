@@ -13,68 +13,61 @@ import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
-import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { DistrictService } from "./district.service";
-import { CreateDistrictDto } from "./dto/create-district.dto";
-import { UpdateDistrictDto } from "./dto/update-district.dto";
+import { CreateMenuGroupDto } from "./dto/create-menu-group.dto";
+import { UpdateMenuGroupDto } from "./dto/update-menu-group.dto";
+import { MenuGroupService } from "./menu-group.service";
 
-@Controller("districts")
-export class DistrictController {
-	constructor(private readonly districtService: DistrictService) {}
+@Controller("menu_groups")
+export class MenuGroupController {
+	constructor(private readonly menuGroupService: MenuGroupService) {}
+
 	//  ----- Method: GET -----
-	@Public()
 	@Get("/")
-	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.districtService.findMany(filter, options);
+		return this.menuGroupService.findMany(filter, options);
 	}
 
-	@Public()
 	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.districtService.paginate(filter, options);
+		return this.menuGroupService.paginate(filter, options);
 	}
 
-	@Public()
 	@Get("/count")
-	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.districtService.count(filter);
+		return this.menuGroupService.count(filter);
 	}
 
-	@Public()
 	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
-		return this.districtService.findById(id, { projection, populate });
+		return this.menuGroupService.findById(id, { projection, populate });
 	}
 
 	//  ----- Method: POST -----
 	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateDistrictDto) {
-		return this.districtService.create(body);
+	async create(@Body() body: CreateMenuGroupDto) {
+		return this.menuGroupService.create(body);
 	}
+
 	//  ----- Method: PATCH -----
 	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateDistrictDto,
+		@Body() body: UpdateMenuGroupDto,
 	) {
-		return this.districtService.updateById(id, body);
+		return this.menuGroupService.updateById(id, body);
 	}
 
 	//  ----- Method: DELETE -----
 	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.districtService.deleteMany({
+		return this.menuGroupService.deleteMany({
 			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
@@ -82,6 +75,6 @@ export class DistrictController {
 	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.districtService.deleteById(id);
+		return this.menuGroupService.deleteById(id);
 	}
 }
