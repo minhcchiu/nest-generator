@@ -4,7 +4,7 @@ import { GenderEnum } from "../enums/gender.enum";
 import { RoleEnum } from "../enums/role.enum";
 
 export interface IUser {
-	userGroupIds: Types.ObjectId[];
+	userGroupIds?: Types.ObjectId[];
 	roles: RoleEnum[];
 	accountType: AccountTypeEnum;
 	fullName: string;

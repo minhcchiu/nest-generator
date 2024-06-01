@@ -6,8 +6,7 @@ import { stringIdToObjectId } from "./stringId_to_objectId";
 export class ParseObjectIdPipe implements PipeTransform<any, Types.ObjectId> {
 	public transform(value: string): Types.ObjectId {
 		try {
-			const objectId = new Types.ObjectId(value);
-			return stringIdToObjectId(objectId.toString());
+			return stringIdToObjectId(value);
 		} catch (error) {
 			throw new BadRequestException("Validation failed (string is expected)");
 		}

@@ -15,6 +15,7 @@ import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
 import { UserFileService } from "./user-file.service";
+
 @Controller("user_files")
 export class UserFileController {
 	constructor(
@@ -24,19 +25,13 @@ export class UserFileController {
 
 	//  ----- Method: GET -----
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userFileService.paginate(filter, options);
 	}
 
-	@Get("count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.userFileService.count(filter);
-	}
-
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -60,12 +55,12 @@ export class UserFileController {
 		return file;
 	}
 
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		const files = await this.userFileService.findMany({
 			_id: {
-				$in: ids.split(",").map(stringIdToObjectId),
+				$in: ids.split(",").map((id) => stringIdToObjectId(id)),
 			},
 		});
 
@@ -76,7 +71,7 @@ export class UserFileController {
 		return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		const file = await this.userFileService.deleteById(id);

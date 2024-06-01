@@ -2,6 +2,7 @@ import { TestModule } from "./0-tests/test.module";
 import { ProductModule } from "./1-products/product.module";
 import { ShopModule } from "./1-shops/shop.module";
 import { BannerModule } from "./2-banners/banner.module";
+import { AuthModule } from "./pre-built/1-auth/auth.module";
 import { UserModule } from "./pre-built/1-users/user.module";
 import { WardModule } from "./pre-built/10-wards/ward.module";
 import { SettingModule } from "./pre-built/11-settings/setting.module";
@@ -9,7 +10,7 @@ import { NotificationModule } from "./pre-built/12-notifications/notification.mo
 import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
 import { PolicyModule } from "./pre-built/3-policies/policy.module";
 import { PolicyGroupModule } from "./pre-built/3-policy-groups/policy-group.module";
-import { AuthModule } from "./pre-built/4-auth/auth.module";
+import { MenuGroupModule } from "./pre-built/4-menu-groups/menu-group.module";
 import { MenuModule } from "./pre-built/4-menus/menu.module";
 import { TokenModule } from "./pre-built/5-tokens/token.module";
 import { OtpModule } from "./pre-built/6-otp/otp.module";
@@ -25,6 +26,7 @@ export const RouteModules = [
 	UserGroupModule,
 	PolicyModule,
 	PolicyGroupModule,
+	MenuGroupModule,
 	MenuModule,
 	TokenModule,
 	OtpModule,

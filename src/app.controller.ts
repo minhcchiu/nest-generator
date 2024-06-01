@@ -10,7 +10,7 @@ const product = {
 	name: "Áo sơ mi",
 };
 
-@Controller()
+@Controller("apps")
 export class AppController {
 	private lock: AsyncLock;
 	constructor(

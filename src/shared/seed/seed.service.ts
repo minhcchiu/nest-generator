@@ -4,6 +4,7 @@ import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 
+import { EnvStatic } from "src/configurations/static.env";
 import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
 import { PolicyService } from "~pre-built/3-policies/policy.service";
 import { MenuService } from "~pre-built/4-menus/menu.service";
@@ -113,22 +114,23 @@ export class SeedService {
 				const endpoint = removeTrailingSlash(route.path);
 				const collectionName = endpoint.split("/")[2]?.replace("_", "") || "#";
 				const method = route.stack[0]?.method?.toUpperCase();
-				const policyKey = `${collectionName}.${method}:${endpoint}`;
+
+				const policyKey = `${method}:${endpoint}`;
 
 				const policyItem: CreatePolicyDto = {
-					policyKey,
-					name: policyKey,
+					name: `${method}:${endpoint}`,
 					collectionName: collectionName,
 					endpoint,
 					method,
+					policyKey,
 				};
 
 				if (!policyMap.has(policyKey)) policyMap.set(policyKey, policyItem);
 			});
 
 		await this._createPoliciesAndMenus(policyMap);
+		await this._addSupperAdminToPolicies();
 
-		this.logger.log(`Total policies: '${policyMap.size}'`, SeedService.name);
 		policyMap.clear();
 	}
 
@@ -162,11 +164,28 @@ export class SeedService {
 				position,
 				isHorizontal: false,
 				isShow: true,
+				isSystem: true,
 			};
 
 			await this.menuService.updateOne({ collectionName }, menuItem, {
 				upsert: true,
 			});
 		});
+	}
+
+	private async _addSupperAdminToPolicies() {
+		const policies = await this.policyService.updateMany(
+			{},
+			{
+				$addToSet: {
+					userIds: EnvStatic.getAppConfig().supperAdminIds,
+				},
+			},
+		);
+
+		this.logger.log(
+			`Total policies: '${policies.matchedCount}'`,
+			SeedService.name,
+		);
 	}
 }

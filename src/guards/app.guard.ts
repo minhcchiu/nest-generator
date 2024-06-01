@@ -2,7 +2,6 @@ import { Request } from "express";
 import { IS_PUBLIC_KEY } from "~decorators/public.decorator";
 import { HttpMethod } from "~pre-built/3-policies/enum/http-method";
 import { PolicyService } from "~pre-built/3-policies/policy.service";
-import { TokenService } from "~pre-built/5-tokens/token.service";
 import { CacheService } from "~shared/cache/cache.service.";
 
 import {
@@ -13,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
+import { TokenService } from "~modules/pre-built/5-tokens/token.service";
 import { UserPolicyType } from "./types/user-policy.type";
 
 @Injectable()
@@ -75,14 +75,29 @@ export class AppGuard implements CanActivate {
 	}
 
 	private isAccessAllowed(policy: UserPolicyType, decoded: DecodedToken) {
-		const isHasRole = policy.userRoles.some((role) =>
-			decoded.roles.includes(role),
+		const { userGroupIds, userIds, blockedUserGroupIds, blockedUserIds } =
+			policy;
+
+		const isHasBlockedUser = blockedUserIds?.some(
+			(id) => id.toString() === decoded._id.toString(),
 		);
 
-		if (isHasRole) return true;
+		if (isHasBlockedUser) return false;
 
-		const isHasGroup = policy.userGroupIds.some((id) =>
-			decoded.userGroupIds.includes(id),
+		const isHasUser = userIds.some(
+			(id) => id.toString() === decoded._id.toString(),
+		);
+
+		if (isHasUser) return true;
+
+		const isHasBlockedGroup = blockedUserGroupIds?.some((id) =>
+			decoded.userGroupIds.some((gid) => gid.toString() === id.toString()),
+		);
+
+		if (isHasBlockedGroup) return false;
+
+		const isHasGroup = userGroupIds.some((id) =>
+			decoded.userGroupIds.some((gid) => gid.toString() === id.toString()),
 		);
 
 		return isHasGroup;
@@ -104,19 +119,23 @@ export class AppGuard implements CanActivate {
 
 		if (!policy) throw new UnauthorizedException("Policy not found!");
 
-		const { isPublic, userRoles, userGroupIds } = policy;
+		const {
+			isPublic,
+			userIds,
+			userGroupIds,
+			blockedUserGroupIds,
+			blockedUserIds,
+		} = policy;
 
 		// save to cache
 		this.cacheService.setUserPolices(cacheKey, {
 			isPublic,
-			userRoles,
-			userGroupIds: userGroupIds.map((id) => id.toString()),
+			userGroupIds,
+			userIds,
+			blockedUserGroupIds,
+			blockedUserIds,
 		});
 
-		return {
-			isPublic,
-			userRoles,
-			userGroupIds: userGroupIds.map((id) => id.toString()),
-		};
+		return policy;
 	}
 }

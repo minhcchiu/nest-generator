@@ -15,15 +15,14 @@ import { IUser } from "../interface/user.interface";
 export class User implements IUser {
 	@Prop({
 		type: [{ type: String, enum: RoleEnum }],
-		default: [RoleEnum.SupperAdmin],
+		default: [RoleEnum.User],
 	})
-	roles: RoleEnum[] = [RoleEnum.SupperAdmin];
+	roles: RoleEnum[];
 
 	@Prop({
 		type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
-		default: [],
 	})
-	userGroupIds: Types.ObjectId[] = [];
+	userGroupIds?: Types.ObjectId[];
 
 	@Prop({ type: String })
 	username?: string;
@@ -38,7 +37,7 @@ export class User implements IUser {
 	socialID?: string;
 
 	@Prop({ type: String, enum: AccountTypeEnum, default: AccountTypeEnum.Local })
-	accountType: AccountTypeEnum = AccountTypeEnum.Local;
+	accountType: AccountTypeEnum;
 
 	@Prop({ type: String, minlength: 6, required: true, select: false })
 	password: string;
@@ -46,7 +45,7 @@ export class User implements IUser {
 	@Prop({ type: String, required: true })
 	fullName: string;
 
-	@Prop({ type: Date, default: Date.now })
+	@Prop({ type: Date })
 	dateBirth?: Date;
 
 	@Prop({ type: String, enum: GenderEnum })
@@ -55,7 +54,7 @@ export class User implements IUser {
 	@Prop({ type: String, default: "" })
 	avatar?: string;
 
-	@Prop({ type: [String], default: [] })
+	@Prop({ type: [String] })
 	fcmTokens?: string[];
 
 	@Prop({ type: Boolean, default: true })

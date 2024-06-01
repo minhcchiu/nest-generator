@@ -11,6 +11,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { SendRegisterTokenDto } from "./dto/send-register-token.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
+
 @Controller("auth")
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}

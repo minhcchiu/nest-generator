@@ -5,12 +5,9 @@ import { Model, Types } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { BaseService } from "~base-inherit/base.service";
 import { DocumentType } from "~types/document.type";
+import { RegisterDto } from "../1-auth/dto/register.dto";
 import { User } from "../1-users/schemas/user.schema";
-import {
-	getTokenPayloadFromUser,
-	getUserAuth,
-} from "../1-users/select/auth.select";
-import { RegisterDto } from "../4-auth/dto/register.dto";
+import { getTokenPayloadFromUser } from "../1-users/select/auth.select";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
@@ -39,9 +36,9 @@ export class TokenService extends BaseService<TokenDocument> {
 
 	async generateForgotPasswordToken(user: User & { _id: Types.ObjectId }) {
 		const payload: TokenPayload = {
-			_id: user._id.toString(),
+			_id: user._id,
 			roles: user.roles,
-			userGroupIds: user.userGroupIds.map((id) => id.toString()),
+			userGroupIds: user.userGroupIds,
 			fullName: user.fullName,
 			username: user.username,
 			email: user.email,
@@ -104,7 +101,7 @@ export class TokenService extends BaseService<TokenDocument> {
 			{ upsert: true },
 		);
 
-		return { accessToken, refreshToken, user: getUserAuth(user) };
+		return { accessToken, refreshToken, user: getTokenPayloadFromUser(user) };
 	}
 
 	async _generateToken(payload: any, secret: string, expiresIn: number) {

@@ -6,8 +6,8 @@ import {
 	HttpCode,
 	HttpStatus,
 	Param,
+	ParseEnumPipe,
 	Patch,
-	Post,
 } from "@nestjs/common";
 
 import { Types } from "mongoose";
@@ -28,12 +28,6 @@ export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	//  ----- Method: GET -----
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userService.findMany(filter, options);
-	}
-
 	@Get("/me")
 	@HttpCode(HttpStatus.OK)
 	async getMe(
@@ -47,13 +41,14 @@ export class UserController {
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.userService.paginate(filter, options);
 	}
 
-	@Get(":id")
+	@Public()
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -62,8 +57,13 @@ export class UserController {
 		return this.userService.findById(id, { projection, populate });
 	}
 
-	//  ----- Method: POST -----
-	@Post()
+	@Get("/")
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.userService.findMany(filter, options);
+	}
+
+	//  ----- Method: @Get("/count")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateUserDto) {
 		await this.userService.validateCreateUser(body);
@@ -72,7 +72,25 @@ export class UserController {
 	}
 
 	//  ----- Method: PATCH -----
-	@Patch(":id")
+	@Patch("password")
+	@HttpCode(HttpStatus.OK)
+	async updatePassword(
+		@GetCurrentUserId() id: Types.ObjectId,
+		@Body() body: UpdatePasswordDto,
+	) {
+		return this.userService.updatePasswordById(id, body);
+	}
+
+	@Patch(":id/status")
+	@HttpCode(HttpStatus.OK)
+	async updateStatus(
+		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+		@Body("status", new ParseEnumPipe(AccountStatus)) status: AccountStatus,
+	) {
+		return this.userService.updateById(id, { status });
+	}
+
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -83,36 +101,39 @@ export class UserController {
 		return this.userService.updateById(id, body);
 	}
 
-	@Patch("password")
+	//  ----- Method: DELETE -----
+	@Delete("me")
 	@HttpCode(HttpStatus.OK)
-	async updatePassword(
-		@GetCurrentUserId() id: Types.ObjectId,
-		@Body() body: UpdatePasswordDto,
-	) {
-		return this.userService.updatePasswordById(id, body);
+	async deleteMe(@GetCurrentUserId() id: Types.ObjectId) {
+		return this.userService.updateById(id, { status: AccountStatus.Deleted });
 	}
 
-	//  ----- Method: DELETE -----
-	@Delete(":ids/soft_ids")
+	@Delete(":ids/ids/hard")
+	@HttpCode(HttpStatus.OK)
+	async deleteManyByIds(@Param("ids") ids: string) {
+		return this.userService.deleteMany({
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
+		});
+	}
+
+	@Delete(":id/hard")
+	@HttpCode(HttpStatus.OK)
+	async deleteHardById(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.userService.deleteById(id);
+	}
+
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManySoftByIds(@Param("ids") ids: string) {
 		return this.userService.updateMany(
-			{ _id: { $in: ids.split(",").map(stringIdToObjectId) } },
+			{ _id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) } },
 			{ status: AccountStatus.Deleted },
 		);
 	}
 
-	@Delete(":ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.userService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
-		});
-	}
-
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userService.deleteById(id);
+		return this.userService.updateById(id, { status: AccountStatus.Deleted });
 	}
 }

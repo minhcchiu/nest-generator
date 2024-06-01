@@ -8,13 +8,11 @@ import {
 } from "firebase-admin/lib/messaging/messaging-api";
 import { Types } from "mongoose";
 import { FirebaseService } from "~shared/firebase/firebase.service";
-import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { UserService } from "../user.service";
 
 @Injectable()
 export class UserFirebaseService {
 	constructor(
-		private logger: CustomLoggerService,
 		private firebaseService: FirebaseService,
 		private userService: UserService,
 	) {}

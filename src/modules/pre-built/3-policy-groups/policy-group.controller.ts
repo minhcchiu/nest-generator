@@ -21,7 +21,7 @@ import { CreatePolicyGroupDto } from "./dto/create-policy-group.dto";
 import { UpdatePolicyGroupDto } from "./dto/update-policy-group.dto";
 import { PolicyGroupService } from "./policy-group.service";
 
-@Controller("policies")
+@Controller("policy_groups")
 export class PolicyGroupController {
 	constructor(
 		private readonly policyGroupService: PolicyGroupService,
@@ -29,23 +29,17 @@ export class PolicyGroupController {
 	) {}
 
 	//  ----- Method: GET -----
-
-	@Get()
+	@Get("/")
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.policyGroupService.findMany(filter, options);
 	}
 
-	@Get("paginate")
+	@Get("/paginate")
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.policyGroupService.paginate(filter, options);
 	}
 
-	@Get("count")
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.policyGroupService.count(filter);
-	}
-
-	@Get(":id")
+	@Get("/:id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
@@ -54,15 +48,14 @@ export class PolicyGroupController {
 	}
 
 	//  ----- Method: POST -----
-
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreatePolicyGroupDto) {
 		return this.policyGroupService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -72,16 +65,15 @@ export class PolicyGroupController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.policyGroupService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		const [deleted] = await Promise.all([

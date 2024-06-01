@@ -1,3 +1,4 @@
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { validateConfig } from "~utils/validate-config";
 import { AppConfigDto } from "./dto/app.config.dto";
 import { AwsConfigDto } from "./dto/aws.config.dto";
@@ -34,6 +35,9 @@ export class EnvStatic {
 			resetPasswordUrl: process.env.RESET_PASSWORD_URL,
 			verifyAccountUrl: process.env.VERIFY_ACCOUNT_URL,
 			otpExpiration: eval(process.env.OTP_EXPIRATION),
+			supperAdminIds: process.env.SUPPER_ADMIN_IDS?.split(",")?.map((id) =>
+				stringIdToObjectId(id),
+			),
 		};
 	}
 
