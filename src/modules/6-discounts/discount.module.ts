@@ -5,6 +5,7 @@ import { ProductModule } from "~modules/1-products/product.module";
 import { DiscountController } from "./discount.controller";
 import { DiscountService } from "./discount.service";
 import { Discount, DiscountSchema } from "./schemas/discount.schema";
+
 @Module({
 	imports: [
 		MongooseModule.forFeature([

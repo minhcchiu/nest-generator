@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Types } from "mongoose";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+
 @Injectable()
 export class LockService {
 	constructor(private readonly logger: CustomLoggerService) {}

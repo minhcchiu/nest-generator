@@ -23,19 +23,27 @@ export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
 	//  ----- Method: GET -----
+	@Get("/")
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.menuService.findMany(filter, options);
+	}
+
+	@Get("/paginate")
+	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.menuService.paginate(filter, options);
+	}
+
+	@Get("/count")
+	async count(@GetAqp("filter") filter: PaginationDto) {
+		return this.menuService.count(filter);
+	}
+
 	@Get("/:id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.menuService.findById(id, { projection, populate });
-	}
-
-	@Get("/")
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		const menus = await this.menuService.findMany(filter, options);
-
-		return this.menuService.formatMenus(menus);
 	}
 
 	//  ----- Method: POST -----

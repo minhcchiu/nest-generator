@@ -4,6 +4,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Token, TokenSchema } from "./schemas/token.schema";
 import { TokenService } from "./token.service";
+
 @Module({
 	imports: [
 		ConfigModule,

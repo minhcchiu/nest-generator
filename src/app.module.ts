@@ -30,6 +30,7 @@ import { CustomLoggerModule } from "./shared/logger/custom-logger.module";
 import { MailModule } from "./shared/mail/mail.module";
 import { SeedModule } from "./shared/seed/seed.module";
 import { LocalModule } from "./shared/storage/local-storage/local.module";
+
 @Module({
 	imports: [
 		// configs

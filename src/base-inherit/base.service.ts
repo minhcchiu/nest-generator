@@ -31,15 +31,9 @@ export class BaseService<T> {
 		return this.model.aggregate(pipeline, options);
 	}
 
-	async findMany(
-		filter: FilterQuery<T>,
-		options: QueryOptions<T> = {
-			page: 1,
-			limit: 400,
-		},
-	) {
-		const { page, limit, ...option } = options;
-		const skip = (page - 1) * limit;
+	async findMany(filter: FilterQuery<T>, options: QueryOptions<T> = {}) {
+		const { page, ...option } = options;
+		const skip = (page - 1) * options?.limit;
 
 		Object.assign(option, { skip: option.skip || skip });
 
