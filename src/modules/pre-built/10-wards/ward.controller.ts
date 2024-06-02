@@ -25,24 +25,10 @@ export class WardController {
 
 	//  ----- Method: GET -----
 	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.wardService.findMany(filter, options);
-	}
-
-	@Public()
 	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.wardService.paginate(filter, options);
-	}
-
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.wardService.count(filter);
 	}
 
 	@Public()
@@ -53,6 +39,13 @@ export class WardController {
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.wardService.findById(id, { projection, populate });
+	}
+
+	@Public()
+	@Get("/")
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.wardService.findMany(filter, options);
 	}
 
 	//  ----- Method: POST -----

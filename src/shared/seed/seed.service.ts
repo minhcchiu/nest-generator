@@ -25,84 +25,184 @@ export class SeedService {
 
 	async seedProvincesDistrictsWards() {
 		const jsonPath = join(
-			__dirname,
-			"../../",
-			"utils/json/provinces-districts-wards.json",
+			process.cwd(),
+			"src",
+			"utils",
+			"json",
+			"data_vn_units.json",
 		);
 		const isFileExist = existsSync(jsonPath);
 
 		//  check file exist
-		if (!isFileExist)
+		if (!isFileExist) {
 			this.logger.error(
-				SeedService.name,
 				`${jsonPath} was not found, cannot seed provinces`,
+				SeedService.name,
 			);
+
+			return;
+		}
 
 		//  Read data file
 		const dataString = readFileSync(jsonPath).toString().trim();
 
 		// Convert data string to JSON
-		const { data } = JSON.parse(dataString);
+		const data: Record<string, any>[] = JSON.parse(dataString);
 
-		// Delete all provinces,district, wards
-		await Promise.all([
-			this.provinceService.deleteMany({}),
-			this.districtService.deleteMany({}),
-			this.wardService.deleteMany({}),
-		]);
+		let provincePosition = 0;
+		let totalDistricts = 0;
+		let totalWards = 0;
+		for (const pItem of data) {
+			provincePosition++;
 
-		await Promise.all(
-			data.map(async (province: any) => {
-				const provinceItem = {
-					name: province.name,
-					type: province.type,
-				};
+			const provinceItem = {
+				position: provincePosition,
+				name: pItem.Name,
+				nameEn: pItem.NameEn,
+				fullName: pItem.FullName,
+				fullNameEn: pItem.FullNameEn,
+				codeName: pItem.CodeName,
+				administrativeUnit: pItem.AdministrativeUnit?.ShortName,
+				administrativeUnitEn: pItem.AdministrativeUnit?.ShortNameEn,
+				administrativeRegion: pItem.AdministrativeRegion?.Name,
+				administrativeRegionEn: pItem.AdministrativeRegion?.NameEn,
+			};
 
-				// Save province
-				const provinceSaved = await this.provinceService.create(provinceItem);
+			const provinceCreated = await this.provinceService.updateOne(
+				{
+					codeName: provinceItem.codeName,
+				},
+				provinceItem,
+				{ upsert: true, new: true },
+			);
 
-				// Get provinceId
-				const provinceId = provinceSaved._id;
-
-				const createDistrictsAndWardsPromises = province.districts.map(
-					async (district: any) => {
+			// Create Districts and Wards
+			await Promise.all(
+				pItem.District.map(
+					async (dItem: Record<string, any>, districtPosition: number) => {
+						// Create District
 						const districtItem = {
-							provinceId,
-							name: district.name,
-							type: district.type,
+							provinceId: provinceCreated._id,
+							position: districtPosition + 1,
+							name: dItem.Name,
+							nameEn: dItem.nameEn,
+							fullName: dItem.FullName,
+							fullNameEn: dItem.FullNameEn,
+							codeName: dItem.CodeName,
+							administrativeUnit: dItem.AdministrativeUnit?.ShortName,
+							administrativeUnitEn: dItem.AdministrativeUnit?.ShortNameEn,
 						};
 
-						// Save district
-						const districtSaved =
-							await this.districtService.create(districtItem);
+						const districtCreated = await this.districtService.updateOne(
+							{
+								codeName: districtItem.codeName,
+							},
+							districtItem,
+							{ upsert: true, new: true },
+						);
 
-						// Get districtId
-						const districtId = districtSaved._id;
+						// Create Wards
+						await Promise.all(
+							dItem.Ward.map(
+								(wItem: Record<string, any>, wardPosition: number) => {
+									totalWards++;
 
-						// Store wards of districts
-						const wardSavedPromises = district.wards.map((ward: any) => {
-							const wardItem = {
-								provinceId,
-								districtId,
-								name: ward.name,
-								type: ward.type,
-							};
+									const wardItem = {
+										provinceId: provinceCreated._id,
+										districtId: districtCreated._id,
+										name: wItem.Name,
+										nameEn: wItem.NameEn,
+										fullName: wItem.FullName,
+										fullNameEn: wItem.FullNameEn,
+										codeName: wItem.CodeName,
+										position: wardPosition + 1,
+										administrativeUnit: wItem.AdministrativeUnit?.ShortName,
+										administrativeUnitEn: wItem.AdministrativeUnit?.ShortNameEn,
+									};
 
-							return this.wardService.create(wardItem);
-						});
+									return this.wardService.updateOne(
+										{
+											codeName: wardItem.codeName,
+										},
+										wardItem,
+										{ upsert: true, new: true },
+									);
+								},
+							),
+						);
 
-						// Save wards
-						await Promise.all(wardSavedPromises);
+						totalDistricts++;
+
+						return districtCreated;
 					},
-				);
+				),
+			);
+		}
 
-				await Promise.all(createDistrictsAndWardsPromises);
-			}),
+		// Delete all provinces,district, wards
+		// await Promise.all([
+		// 	this.provinceService.deleteMany({}),
+		// 	this.districtService.deleteMany({}),
+		// 	this.wardService.deleteMany({}),
+		// ]);
+
+		// await Promise.all(
+		// 	data.map(async (province: any) => {
+		// 		const provinceItem = {
+		// 			name: province.name,
+		// 			type: province.type,
+		// 		};
+
+		// 		// Save province
+		// 		const provinceSaved = await this.provinceService.create(provinceItem);
+
+		// 		// Get provinceId
+		// 		const provinceId = provinceSaved._id;
+
+		// 		const createDistrictsAndWardsPromises = province.districts.map(
+		// 			async (district: any) => {
+		// 				const districtItem = {
+		// 					provinceId,
+		// 					name: district.name,
+		// 					type: district.type,
+		// 				};
+
+		// 				// Save district
+		// 				const districtSaved =
+		// 					await this.districtService.create(districtItem);
+
+		// 				// Get districtId
+		// 				const districtId = districtSaved._id;
+
+		// 				// Store wards of districts
+		// 				const wardSavedPromises = district.wards.map((ward: any) => {
+		// 					const wardItem = {
+		// 						provinceId,
+		// 						districtId,
+		// 						name: ward.name,
+		// 						type: ward.type,
+		// 					};
+
+		// 					return this.wardService.create(wardItem);
+		// 				});
+
+		// 				// Save wards
+		// 				await Promise.all(wardSavedPromises);
+		// 			},
+		// 		);
+
+		// 		await Promise.all(createDistrictsAndWardsPromises);
+		// 	}),
+		// );
+
+		this.logger.log(
+			{
+				totalProvinces: provincePosition,
+				totalDistricts,
+				totalWards,
+			},
+			"Seeded(provinces,districts,wards)",
 		);
-
-		return {
-			message: "Seed data for all provinces, districts, wards successfully!",
-		};
 	}
 
 	async seedPolicies(routerStacks: any[]) {

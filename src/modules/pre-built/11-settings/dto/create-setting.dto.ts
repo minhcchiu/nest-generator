@@ -7,7 +7,7 @@ export class CreateSettingDto {
 
 	@IsOptional()
 	@IsString()
-	serverName: string;
+	appName: string;
 
 	@IsOptional()
 	@IsString()

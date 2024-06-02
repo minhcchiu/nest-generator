@@ -13,11 +13,7 @@ export class CustomLoggerService implements LoggerService {
 	 * @param messages
 	 */
 	log(messages: any, context?: string) {
-		const _names = Array.isArray(messages)
-			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
-			: [messages];
-
-		const messageFinal = `${_names.join("\n")}`;
+		const messageFinal = this._formatMessage(messages);
 
 		this.logger.setContext(context);
 		this.logger.log(messageFinal);
@@ -30,10 +26,7 @@ export class CustomLoggerService implements LoggerService {
 	 * @param messages
 	 */
 	error(messages: any, context?: string) {
-		const _names = Array.isArray(messages)
-			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
-			: [messages];
-		const messageFinal = `${_names.join("\n")}`;
+		const messageFinal = this._formatMessage(messages);
 
 		this.logger.setContext(context);
 		this.logger.error(messageFinal);
@@ -46,10 +39,7 @@ export class CustomLoggerService implements LoggerService {
 	 * @param messages
 	 */
 	warn(messages: any, context?: string) {
-		const _names = Array.isArray(messages)
-			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
-			: [messages];
-		const messageFinal = `${_names.join("\n")}`;
+		const messageFinal = this._formatMessage(messages);
 
 		this.logger.setContext(context);
 		this.logger.warn(messageFinal);
@@ -62,10 +52,7 @@ export class CustomLoggerService implements LoggerService {
 	 * @param messages
 	 */
 	debug(messages: any, context?: string) {
-		const _names = Array.isArray(messages)
-			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
-			: [messages];
-		const messageFinal = `${_names.join("\n")}`;
+		const messageFinal = this._formatMessage(messages);
 
 		this.logger.setContext(context);
 		this.logger.debug(messageFinal);
@@ -78,10 +65,7 @@ export class CustomLoggerService implements LoggerService {
 	 * @param messages
 	 */
 	verbose(messages: any, context?: string) {
-		const _names = Array.isArray(messages)
-			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
-			: [messages];
-		const messageFinal = `${_names.join("\n")}`;
+		const messageFinal = this._formatMessage(messages);
 
 		this.logger.setContext(context);
 		this.logger.verbose(messageFinal);
@@ -120,5 +104,13 @@ export class CustomLoggerService implements LoggerService {
 	 */
 	setContext(context: string) {
 		this.logger.setContext(context);
+	}
+
+	_formatMessage(messages: any) {
+		const _message = Array.isArray(messages)
+			? messages.map((item: any) => JSON.stringify(item, null, "\t"))
+			: [JSON.stringify(messages, null, "\t")];
+
+		return `${_message.join("\n")}`;
 	}
 }

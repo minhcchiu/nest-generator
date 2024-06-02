@@ -20,7 +20,7 @@ export class Notification {
 	recipientId: Types.ObjectId;
 
 	@Prop({ type: String, enum: NotificationType, required: true })
-	type: NotificationType;
+	notificationType: NotificationType;
 
 	@Prop({ type: String })
 	entityType: string;
@@ -34,11 +34,11 @@ export class Notification {
 	@Prop({ type: String, default: "" })
 	description: string;
 
-	@Prop({ type: String, default: "" })
-	thumbnail: string;
+	@Prop({ type: String })
+	thumbnail?: string;
 
-	@Prop({ type: mongoose.Schema.Types.Mixed, required: true })
-	options: Record<string, any>;
+	@Prop({ type: mongoose.Schema.Types.Mixed })
+	options?: Record<string, any>;
 
 	@Prop({ type: Boolean, default: false })
 	isRead: boolean;

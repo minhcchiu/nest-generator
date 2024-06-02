@@ -5,7 +5,6 @@ import { WardModule } from "~pre-built/10-wards/ward.module";
 import { PolicyModule } from "~pre-built/3-policies/policy.module";
 import { ProvinceModule } from "~pre-built/8-provinces/province.module";
 import { DistrictModule } from "~pre-built/9-districts/district.module";
-import { SeedController } from "./seed.controller";
 import { SeedService } from "./seed.service";
 
 @Module({
@@ -17,7 +16,6 @@ import { SeedService } from "./seed.service";
 		DistrictModule,
 		WardModule,
 	],
-	controllers: [SeedController],
 	providers: [SeedService],
 })
 export class SeedModule {}

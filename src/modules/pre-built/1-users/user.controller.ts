@@ -63,7 +63,7 @@ export class UserController {
 		return this.userService.findMany(filter, options);
 	}
 
-	//  ----- Method: @Get("/count")
+	//  ----- Method: POST -----
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateUserDto) {
 		await this.userService.validateCreateUser(body);

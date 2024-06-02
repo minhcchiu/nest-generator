@@ -24,24 +24,10 @@ export class DistrictController {
 	constructor(private readonly districtService: DistrictService) {}
 	//  ----- Method: GET -----
 	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.districtService.findMany(filter, options);
-	}
-
-	@Public()
 	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.districtService.paginate(filter, options);
-	}
-
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.districtService.count(filter);
 	}
 
 	@Public()
@@ -54,12 +40,20 @@ export class DistrictController {
 		return this.districtService.findById(id, { projection, populate });
 	}
 
+	@Public()
+	@Get("/")
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.districtService.findMany(filter, options);
+	}
+
 	//  ----- Method: POST -----
 	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateDistrictDto) {
 		return this.districtService.create(body);
 	}
+
 	//  ----- Method: PATCH -----
 	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)

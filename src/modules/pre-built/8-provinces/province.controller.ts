@@ -47,7 +47,7 @@ export class ProvinceController {
 		return this.provinceService.findMany(filter, options);
 	}
 
-	//  ----- Method: @Get("/count")
+	//  ----- Method: POST -----
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateProvinceDto) {
 		return this.provinceService.create(body);

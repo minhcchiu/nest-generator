@@ -7,17 +7,17 @@ import { HydratedDocument } from "mongoose";
 	collection: "settings",
 })
 export class Setting {
-	@Prop({ type: String, default: "" })
-	logoUrl: string;
+	@Prop({ type: String })
+	logoUrl?: string;
 
-	@Prop({ type: String, default: "" })
-	serverName: string;
+	@Prop({ type: String })
+	appName?: string;
 
-	@Prop({ type: String, default: "" })
-	termsOfUse: string;
+	@Prop({ type: String })
+	termsOfUse?: string;
 
-	@Prop({ type: String, default: "" })
-	privacyPolicy: string;
+	@Prop({ type: String })
+	privacyPolicy?: string;
 }
 
 export type SettingDocument = Setting & HydratedDocument<Setting>;

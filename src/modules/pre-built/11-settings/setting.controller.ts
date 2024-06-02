@@ -47,6 +47,7 @@ export class SettingController {
 	async create(@Body() body: CreateSettingDto) {
 		return this.settingService.create(body);
 	}
+
 	//  ----- Method: PATCH -----
 	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
