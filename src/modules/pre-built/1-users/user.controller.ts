@@ -118,7 +118,7 @@ export class UserController {
 
 	@Delete(":id/hard")
 	@HttpCode(HttpStatus.OK)
-	async deleteHardById(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.userService.deleteById(id);
 	}
 
@@ -133,7 +133,7 @@ export class UserController {
 
 	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+	async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.userService.updateById(id, { status: AccountStatus.Deleted });
 	}
 }

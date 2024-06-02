@@ -14,6 +14,7 @@ import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
+import { formatMenus } from "~helpers/format-menu";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { MenuService } from "./menu.service";
@@ -23,27 +24,19 @@ export class MenuController {
 	constructor(private readonly menuService: MenuService) {}
 
 	//  ----- Method: GET -----
-	@Get("/")
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.menuService.findMany(filter, options);
-	}
-
-	@Get("/paginate")
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.menuService.paginate(filter, options);
-	}
-
-	@Get("/count")
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.menuService.count(filter);
-	}
-
 	@Get("/:id")
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
 		return this.menuService.findById(id, { projection, populate });
+	}
+
+	@Get("/")
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		const systemMenus = await this.menuService.findMany(filter, options);
+
+		return formatMenus(systemMenus);
 	}
 
 	//  ----- Method: POST -----

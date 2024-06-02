@@ -14,6 +14,7 @@ import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
+import { formatMenus } from "~helpers/format-menu";
 import { CreateSystemMenuDto } from "./dto/create-system-menu.dto";
 import { UpdateSystemMenuDto } from "./dto/update-system-menu.dto";
 import { SystemMenuService } from "./system-menu.service";
@@ -38,7 +39,7 @@ export class SystemMenuController {
 			options,
 		);
 
-		return this.systemSystemMenuService.formatMenus(systemMenus);
+		return formatMenus(systemMenus);
 	}
 
 	//  ----- Method: POST -----
@@ -59,7 +60,7 @@ export class SystemMenuController {
 	}
 
 	//  ----- Method: DELETE -----
-	@Delete("/:ids/ids")
+	@Delete(":ids/ids/hard")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.systemSystemMenuService.deleteMany({
@@ -67,9 +68,30 @@ export class SystemMenuController {
 		});
 	}
 
+	@Delete(":id/hard")
+	@HttpCode(HttpStatus.OK)
+	async deleteHardById(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.systemSystemMenuService.deleteById(id);
+	}
+
+	@Delete("/:ids/ids")
+	@HttpCode(HttpStatus.OK)
+	async deleteManySoftByIds(@Param("ids") ids: string) {
+		return this.systemSystemMenuService.updateMany(
+			{
+				_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
+			},
+			{
+				deleted: true,
+			},
+		);
+	}
+
 	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.systemSystemMenuService.deleteById(id);
+	async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.systemSystemMenuService.updateById(id, {
+			deleted: true,
+		});
 	}
 }

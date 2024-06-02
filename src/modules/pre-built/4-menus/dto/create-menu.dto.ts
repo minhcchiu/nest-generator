@@ -1,4 +1,10 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+	IsBoolean,
+	IsMongoId,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import { Types } from "mongoose";
 
 export class CreateMenuDto {
@@ -10,19 +16,19 @@ export class CreateMenuDto {
 	@IsMongoId()
 	readonly menuId?: Types.ObjectId;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	readonly name?: string;
 
 	@IsOptional()
-	@IsString()
+	@IsNumber()
 	readonly position?: number;
 
 	@IsOptional()
-	@IsString()
+	@IsBoolean()
 	readonly isHorizontal?: boolean;
 
 	@IsOptional()
-	@IsString()
+	@IsBoolean()
 	readonly isShow?: boolean;
 }
