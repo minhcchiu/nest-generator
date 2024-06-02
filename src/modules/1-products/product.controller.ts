@@ -26,18 +26,18 @@ export class ProductController {
 
 	@HttpCode(HttpStatus.OK)
 	@Public()
-	@Get()
+	@Get("/")
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		await this.productService.placeOrder();
 		return this.productService.findMany(filter, options);
 	}
 
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateProductDto) {
 		return this.productService.createProduct(body);
 	}
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -46,36 +46,36 @@ export class ProductController {
 		return this.productService.updateById(id, body);
 	}
 
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.productService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.productService.deleteById(id);
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.productService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.productService.count(filter);
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,

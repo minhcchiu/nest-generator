@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { UploadType } from "~types/upload-type";
+
 @Injectable()
 export class EventEmitterService {
 	constructor(private eventEmitter: EventEmitter2) {}

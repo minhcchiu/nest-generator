@@ -6,6 +6,7 @@ import {
 	Notification,
 	NotificationSchema,
 } from "./schemas/notification.schema";
+
 @Module({
 	imports: [
 		MongooseModule.forFeature([

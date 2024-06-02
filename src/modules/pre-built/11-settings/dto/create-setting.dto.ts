@@ -4,12 +4,15 @@ export class CreateSettingDto {
 	@IsOptional()
 	@IsString()
 	logoUrl: string;
+
 	@IsOptional()
 	@IsString()
-	serverName: string;
+	appName: string;
+
 	@IsOptional()
 	@IsString()
 	termsOfUse: string;
+
 	@IsOptional()
 	@IsString()
 	privacyPolicy: string;

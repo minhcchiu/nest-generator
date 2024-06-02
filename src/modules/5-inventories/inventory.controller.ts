@@ -18,23 +18,24 @@ import { PaginationDto } from "~dto/pagination.dto";
 import { CreateInventoryDto } from "./dto/create-inventory.dto";
 import { UpdateInventoryDto } from "./dto/update-inventory.dto";
 import { InventoryService } from "./inventory.service";
+
 @Controller("inventories")
 export class InventoryController {
 	constructor(private readonly inventoryService: InventoryService) {}
 
 	@HttpCode(HttpStatus.OK)
 	@Public()
-	@Get()
+	@Get("/")
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.inventoryService.findMany(filter, options);
 	}
 
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateInventoryDto) {
 		return this.inventoryService.addStockToInventory(body);
 	}
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -43,36 +44,36 @@ export class InventoryController {
 		return this.inventoryService.updateById(id, body);
 	}
 
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.inventoryService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.inventoryService.deleteById(id);
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.inventoryService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.inventoryService.count(filter);
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,

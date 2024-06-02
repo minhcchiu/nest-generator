@@ -7,7 +7,6 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -24,28 +23,28 @@ export class TestController {
 	constructor(private readonly testService: TestService) {}
 
 	// ----- Method: GET -----
-	@Get()
+	@Get("/")
 	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.testService.findMany(filter, options);
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.testService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.testService.count(filter);
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -54,8 +53,7 @@ export class TestController {
 		return this.testService.findById(id, { projection, populate });
 	}
 
-	// ----- Method: POST -----
-	@Post()
+	// ----- Method: @Get("/count")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateTestDto) {
 		const created = await this.testService.create(body);
@@ -64,8 +62,7 @@ export class TestController {
 	}
 
 	// ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -75,16 +72,15 @@ export class TestController {
 	}
 
 	// ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.testService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.testService.deleteById(id);

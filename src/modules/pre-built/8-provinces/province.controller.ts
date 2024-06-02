@@ -7,7 +7,6 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -18,34 +17,21 @@ import { PaginationDto } from "~dto/pagination.dto";
 import { CreateProvinceDto } from "./dto/create-province.dto";
 import { UpdateProvinceDto } from "./dto/update-province.dto";
 import { ProvinceService } from "./province.service";
+
 @Controller("provinces")
 export class ProvinceController {
 	constructor(private readonly provinceService: ProvinceService) {}
 
 	//  ----- Method: GET -----
 	@Public()
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.provinceService.findMany(filter, options);
-	}
-
-	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.provinceService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.provinceService.count(filter);
-	}
-
-	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -54,16 +40,21 @@ export class ProvinceController {
 		return this.provinceService.findById(id, { projection, populate });
 	}
 
+	@Public()
+	@Get("/")
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.provinceService.findMany(filter, options);
+	}
+
 	//  ----- Method: POST -----
-	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateProvinceDto) {
 		return this.provinceService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -73,16 +64,15 @@ export class ProvinceController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.provinceService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.provinceService.deleteById(id);

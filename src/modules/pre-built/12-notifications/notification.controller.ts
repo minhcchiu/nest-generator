@@ -26,8 +26,7 @@ export class NotificationController {
 	constructor(private readonly notificationService: NotificationService) {}
 
 	//  ----- Method: GET -----
-
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(
 		@GetAqp() { filter, ...options }: PaginationDto,
@@ -42,13 +41,13 @@ export class NotificationController {
 		return pagination;
 	}
 
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.notificationService.count(filter);
 	}
 
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -69,13 +68,13 @@ export class NotificationController {
 
 	//  ----- Method: POST -----
 	@HttpCode(HttpStatus.CREATED)
-	@Post()
+	@Post("/")
 	async create(@Body() body: CreateNotificationDto) {
 		return this.notificationService.createNotification(body);
 	}
 
 	//  ----- Method: PATCH -----
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -85,15 +84,15 @@ export class NotificationController {
 	}
 
 	//  ----- Method: DELETE -----
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.notificationService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.notificationService.deleteById(id);

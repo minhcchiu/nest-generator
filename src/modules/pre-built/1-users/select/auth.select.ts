@@ -18,23 +18,9 @@ export const getTokenPayloadFromUser = (
 	user: DocumentType<User>,
 ): TokenPayload => {
 	return {
-		_id: user._id.toString(),
+		_id: user._id,
 		roles: user.roles,
-		userGroupIds: user.userGroupIds.map((id) => id.toString()),
-		fullName: user.fullName,
-		username: user.username,
-		email: user.email,
-		phone: user.phone,
-		socialID: user.socialID,
-		accountType: user.accountType,
-	};
-};
-
-export const getUserAuth = (user: DocumentType<User>) => {
-	return {
-		_id: user._id.toString(),
-		roles: user.roles,
-		userGroupIds: user.userGroupIds.map((id) => id.toString()),
+		userGroupIds: user.userGroupIds,
 		fullName: user.fullName,
 		username: user.username,
 		email: user.email,

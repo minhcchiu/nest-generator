@@ -17,6 +17,7 @@ import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { CartService } from "./cart.service";
 import { CartProductDto } from "./dto/cart-product.dto";
+
 @Controller("carts")
 export class CartController {
 	constructor(private readonly cartService: CartService) {}
@@ -60,7 +61,7 @@ export class CartController {
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.cartService.count(filter);

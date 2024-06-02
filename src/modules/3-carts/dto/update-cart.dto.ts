@@ -6,6 +6,7 @@ export class UpdateCartDto extends PartialType(CreateCartDto) {
 	@IsOptional()
 	@IsNumber()
 	oldQuantity: number;
+
 	@IsOptional()
 	@IsNumber()
 	oldPrice: number;

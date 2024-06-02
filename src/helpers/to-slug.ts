@@ -8,6 +8,7 @@ export const toSlug = (str: string): string => {
 	_str = _str.replace(/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/g, "u");
 	_str = _str.replace(/(ỳ|ý|ỵ|ỷ|ỹ)/g, "y");
 	_str = _str.replace(/(đ)/g, "d");
+	_str = _str.replace(/[^a-z0-9]+/g, "-");
 	_str = _str.replace(/([^0-9a-z-\s])/g, "");
 	_str = _str.replace(/(\s+)/g, "-");
 	_str = _str.replace(/^-+/g, "");

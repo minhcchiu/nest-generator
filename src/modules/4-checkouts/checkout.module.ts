@@ -6,6 +6,7 @@ import { DiscountModule } from "~modules/6-discounts/discount.module";
 import { OrderModule } from "~modules/7-orders/order.module";
 import { CheckoutController } from "./checkout.controller";
 import { CheckoutService } from "./checkout.service";
+
 @Module({
 	imports: [CartModule, DiscountModule, InventoryModule, OrderModule],
 	controllers: [CheckoutController],

@@ -3,6 +3,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserGroup, UserGroupSchema } from "./schemas/user-group.schema";
 import { UserGroupController } from "./user-group.controller";
 import { UserGroupService } from "./user-group.service";
+
 @Module({
 	imports: [
 		MongooseModule.forFeature([

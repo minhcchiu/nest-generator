@@ -1,7 +1,9 @@
-import { RoleEnum } from "~modules/pre-built/1-users/enums/role.enum";
+import { Types } from "mongoose";
 
 export type UserPolicyType = {
-	userGroupIds: string[];
-	userRoles: RoleEnum[];
+	userIds: Types.ObjectId[];
+	userGroupIds: Types.ObjectId[];
+	blockedUserGroupIds?: Types.ObjectId[];
+	blockedUserIds?: Types.ObjectId[];
 	isPublic: boolean;
 };

@@ -18,34 +18,21 @@ import { PaginationDto } from "~dto/pagination.dto";
 import { CreateWardDto } from "./dto/create-ward.dto";
 import { UpdateWardDto } from "./dto/update-ward.dto";
 import { WardService } from "./ward.service";
+
 @Controller("wards")
 export class WardController {
 	constructor(private readonly wardService: WardService) {}
 
 	//  ----- Method: GET -----
 	@Public()
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.wardService.findMany(filter, options);
-	}
-
-	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.wardService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.wardService.count(filter);
-	}
-
-	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -54,17 +41,22 @@ export class WardController {
 		return this.wardService.findById(id, { projection, populate });
 	}
 
-	//  ----- Method: POST -----
+	@Public()
+	@Get("/")
+	@HttpCode(HttpStatus.OK)
+	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+		return this.wardService.findMany(filter, options);
+	}
 
-	@Post()
+	//  ----- Method: POST -----
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateWardDto) {
 		return this.wardService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -74,16 +66,15 @@ export class WardController {
 	}
 
 	//  ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.wardService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.wardService.deleteById(id);

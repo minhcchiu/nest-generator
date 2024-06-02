@@ -25,28 +25,28 @@ export class BannerController {
 
 	// ----- Method: GET -----
 	@Public()
-	@Get()
+	@Get("/")
 	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.bannerService.findMany(filter, options);
 	}
 
 	@Public()
-	@Get("paginate")
+	@Get("/paginate")
 	@HttpCode(HttpStatus.OK)
 	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
 		return this.bannerService.paginate(filter, options);
 	}
 
 	@Public()
-	@Get("count")
+	@Get("/count")
 	@HttpCode(HttpStatus.OK)
 	async count(@GetAqp("filter") filter: PaginationDto) {
 		return this.bannerService.count(filter);
 	}
 
 	@Public()
-	@Get(":id")
+	@Get("/:id")
 	@HttpCode(HttpStatus.OK)
 	async findOneById(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -56,16 +56,14 @@ export class BannerController {
 	}
 
 	// ----- Method: POST -----
-
-	@Post()
+	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateBannerDto) {
 		return this.bannerService.create(body);
 	}
 
 	// ----- Method: PATCH -----
-
-	@Patch(":id")
+	@Patch("/:id")
 	@HttpCode(HttpStatus.OK)
 	async update(
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
@@ -75,16 +73,15 @@ export class BannerController {
 	}
 
 	// ----- Method: DELETE -----
-
-	@Delete(":ids/ids")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
 		return this.bannerService.deleteMany({
-			_id: { $in: ids.split(",").map(stringIdToObjectId) },
+			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id")
+	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
 	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
 		return this.bannerService.deleteById(id);

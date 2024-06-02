@@ -10,6 +10,7 @@ import { Clothing, ClothingSchema } from "./schemas/clothing.schema";
 import { Electronic, ElectronicSchema } from "./schemas/electronic.schema";
 import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
 import { Product, ProductSchema } from "./schemas/product.schema";
+
 @Module({
 	imports: [
 		MongooseModule.forFeature([
