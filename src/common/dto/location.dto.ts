@@ -8,7 +8,7 @@ import {
 } from "class-validator";
 
 export enum LocationTypeEnum {
-	POINT = "Point",
+	Point = "Point",
 }
 
 export class LocationDto {
