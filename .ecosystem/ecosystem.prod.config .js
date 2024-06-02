@@ -1,16 +1,16 @@
 module.exports = {
 	apps: [
 		{
-			name: "as-develop",
+			name: "asnest-prod",
 			script: "dist/main.js",
 			instances: 1,
 			autorestart: true,
 			watch: false,
 			time: true,
 			max_memory_restart: "1G",
-			cwd: "/home/ubuntu/as-production/source",
-			error_file: "/home/ubuntu/as-production/logs/web.err.log",
-			out_file: "/home/ubuntu/as-production/logs/web.out.log",
+			cwd: "/home/ubuntu/asnest-prod/source",
+			error_file: "/home/ubuntu/asnest-prod/logs/web.err.log",
+			out_file: "/home/ubuntu/asnest-prod/logs/web.out.log",
 			exec_mode: "cluster",
 			env: {
 				NODE_ENV: "production",

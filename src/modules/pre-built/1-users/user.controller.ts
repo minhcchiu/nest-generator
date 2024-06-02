@@ -8,6 +8,7 @@ import {
 	Param,
 	ParseEnumPipe,
 	Patch,
+	Post,
 } from "@nestjs/common";
 
 import { Types } from "mongoose";
@@ -64,6 +65,7 @@ export class UserController {
 	}
 
 	//  ----- Method: POST -----
+	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateUserDto) {
 		await this.userService.validateCreateUser(body);

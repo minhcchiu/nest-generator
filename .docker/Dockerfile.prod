@@ -22,7 +22,7 @@ COPY package*.json .env.dev ./
 COPY ./public ./public
 
 RUN npm install --only=production \
-    && rm -rf /etc/nginx/sites-enabled/awesome-nest-be \
+    && rm -rf /etc/nginx/sites-enabled/asnest-be \
     && mv .env.dev .env \
     && rm -rf ./public/audios/* \
     && rm -rf ./public/images/* \
@@ -32,6 +32,6 @@ RUN npm install --only=production \
 
 COPY --from=builder /home/app/dist ./dist
 
-COPY .nginx/nginx.conf /etc/nginx/conf.d/awesome-nest-be.conf
+COPY .nginx/setup.conf /etc/nginx/conf.d/asnest-be.conf
 
 RUN chmod -R 777 ./public/*
