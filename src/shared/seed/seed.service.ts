@@ -6,8 +6,8 @@ import { WardService } from "~pre-built/10-wards/ward.service";
 
 import { EnvStatic } from "src/configurations/static.env";
 import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
+import { SystemMenuService } from "~modules/pre-built/4-system-menus/system-menu.service";
 import { PolicyService } from "~pre-built/3-policies/policy.service";
-import { MenuService } from "~pre-built/4-menus/menu.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
@@ -19,7 +19,7 @@ export class SeedService {
 		private districtService: DistrictService,
 		private wardService: WardService,
 		private policyService: PolicyService,
-		private menuService: MenuService,
+		private systemMenuService: SystemMenuService,
 		private logger: CustomLoggerService,
 	) {}
 
@@ -167,7 +167,7 @@ export class SeedService {
 				isSystem: true,
 			};
 
-			await this.menuService.updateOne({ collectionName }, menuItem, {
+			await this.systemMenuService.updateOne({ collectionName }, menuItem, {
 				upsert: true,
 			});
 		});

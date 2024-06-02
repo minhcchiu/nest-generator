@@ -5,6 +5,7 @@ import { MailModule } from "~shared/mail/mail.module";
 import { UserFile, UserFileSchema } from "./schemas/user-file.schema";
 import { UserFileController } from "./user-file.controller";
 import { UserFileService } from "./user-file.service";
+
 @Module({
 	imports: [
 		ConfigModule,

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { SystemMenu } from "~modules/pre-built/4-system-menus/schemas/system-menu.schema";
 
 @Schema({
 	timestamps: true,
@@ -10,35 +11,20 @@ export class Menu {
 	@Prop({ type: SchemaTypes.ObjectId, ref: Menu.name })
 	readonly parentId?: Types.ObjectId;
 
-	@Prop({ type: String, required: true, unique: true })
-	readonly name: string;
+	@Prop({ type: SchemaTypes.ObjectId, ref: SystemMenu.name })
+	readonly menuId?: Types.ObjectId;
 
 	@Prop({ type: String })
-	readonly collectionName?: string;
+	readonly name?: string;
 
-	@Prop({ type: Boolean, default: false })
-	readonly isGroup: boolean;
-
-	@Prop({ type: String })
-	readonly icon?: string;
-
-	@Prop({ type: String })
-	readonly href?: string;
-
-	@Prop({ type: Number, default: 0 })
-	readonly position: number;
+	@Prop({ type: Number })
+	readonly position?: number;
 
 	@Prop({ type: Boolean, default: false })
 	readonly isHorizontal: boolean;
 
 	@Prop({ type: Boolean, default: true })
 	readonly isShow: boolean;
-
-	@Prop({ type: Boolean, default: false })
-	readonly deleted: boolean;
-
-	@Prop({ type: Boolean, default: false })
-	readonly isSystem: boolean;
 }
 
 export type MenuDocument = HydratedDocument<Menu>;

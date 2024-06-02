@@ -6,6 +6,7 @@ import {
 	Conversation,
 	ConversationDocument,
 } from "./schemas/conversation.schema";
+
 @Injectable()
 export class ConversationService extends BaseService<ConversationDocument> {
 	constructor(
