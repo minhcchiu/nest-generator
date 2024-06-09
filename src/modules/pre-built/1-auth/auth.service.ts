@@ -11,6 +11,7 @@ import { generateRandomKey } from "~helpers/generate-random-key";
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { AccountTypeEnum } from "../1-users/enums/account-type.enum";
 import { RoleEnum } from "../1-users/enums/role.enum";
 import { HashingService } from "../1-users/hashing/hashing.service";
@@ -246,9 +247,13 @@ export class AuthService {
 
 		if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
 
-		const user = await this.userService.resetPassword(decoded._id, password, {
-			projection: authSelect,
-		});
+		const user = await this.userService.resetPassword(
+			stringIdToObjectId(decoded._id),
+			password,
+			{
+				projection: authSelect,
+			},
+		);
 
 		const { accessToken, refreshToken } =
 			await this.tokenService.generateUserAuth(user);

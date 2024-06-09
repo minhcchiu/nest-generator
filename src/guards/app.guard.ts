@@ -11,8 +11,9 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
+import { TokenPayload } from "~modules/pre-built/5-tokens/interface";
 import { TokenService } from "~modules/pre-built/5-tokens/token.service";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { UserPolicyType } from "./types/user-policy.type";
 
 @Injectable()
@@ -52,10 +53,18 @@ export class AppGuard implements CanActivate {
 		try {
 			const decoded = await this.tokenService.verifyAccessToken(token);
 
-			if (!this.isAccessAllowed(policy, decoded))
-				throw new UnauthorizedException();
+			const tokenPayload: TokenPayload = {
+				...decoded,
+				_id: stringIdToObjectId(decoded._id),
+				userGroupIds: decoded.userGroupIds?.map((grid) =>
+					stringIdToObjectId(grid),
+				),
+			};
 
-			request.user = decoded;
+			request.user = tokenPayload;
+
+			if (!this.isAccessAllowed(policy, request.user))
+				throw new UnauthorizedException();
 
 			return true;
 		} catch (error) {
@@ -74,30 +83,30 @@ export class AppGuard implements CanActivate {
 		return authHeader.slice(textBearer.length);
 	}
 
-	private isAccessAllowed(policy: UserPolicyType, decoded: DecodedToken) {
+	private isAccessAllowed(policy: UserPolicyType, user: TokenPayload) {
 		const { userGroupIds, userIds, blockedUserGroupIds, blockedUserIds } =
 			policy;
 
 		const isHasBlockedUser = blockedUserIds?.some(
-			(id) => id.toString() === decoded._id.toString(),
+			(id) => id.toString() === user._id.toString(),
 		);
 
 		if (isHasBlockedUser) return false;
 
 		const isHasUser = userIds.some(
-			(id) => id.toString() === decoded._id.toString(),
+			(id) => id.toString() === user._id.toString(),
 		);
 
 		if (isHasUser) return true;
 
 		const isHasBlockedGroup = blockedUserGroupIds?.some((id) =>
-			decoded.userGroupIds.some((gid) => gid.toString() === id.toString()),
+			user.userGroupIds.some((gid) => gid.toString() === id.toString()),
 		);
 
 		if (isHasBlockedGroup) return false;
 
 		const isHasGroup = userGroupIds.some((id) =>
-			decoded.userGroupIds.some((gid) => gid.toString() === id.toString()),
+			user.userGroupIds.some((gid) => gid.toString() === id.toString()),
 		);
 
 		return isHasGroup;
