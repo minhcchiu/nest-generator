@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: ..
-      dockerfile: .docker/Dockerfile.local
+      dockerfile: .docker/Dockerfile.prod
     container_name: asnest-prod
     restart: always
     ports:
@@ -12,25 +12,25 @@ services:
 
     environment:
       NODE_ENV: production
-      DATABASE_URI: mongodb://mongodb_asnest_local:27017/asnest-prod
+      DATABASE_URI: mongodb://mongodb_asnest_prod:27017/asnest-prod
       REDIS_URL: redis://redis_asnest_prod:6379
 
     depends_on:
-      - mongodb_asnest_local
+      - mongodb_asnest_prod
       - redis_asnest_prod
 
     volumes:
       - ../:/home/asnest-prod
       - /home/asnest-prod/node_modules
 
-  mongodb_asnest_local:
-    container_name: mongodb_asnest_local
+  mongodb_asnest_prod:
+    container_name: mongodb_asnest_prod
     image: mongo:latest
     restart: always
     ports:
       - 27017:27017
     volumes:
-      - mongodb_asnest_local_data:/data/db
+      - mongodb_asnest_prod_data:/data/db
 
   redis_asnest_prod:
     container_name: redis_asnest_prod
@@ -42,5 +42,5 @@ services:
       - redis_asnest_prod_data:/data
 
 volumes:
-  mongodb_asnest_local:
+  mongodb_asnest_prod:
   redis_asnest_prod_data:
