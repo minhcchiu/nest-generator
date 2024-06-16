@@ -1,4 +1,5 @@
 import {
+	IsArray,
 	IsBoolean,
 	IsMongoId,
 	IsNumber,
@@ -9,12 +10,17 @@ import { Types } from "mongoose";
 
 export class CreateMenuDto {
 	@IsOptional()
+	@IsArray()
+	@IsMongoId({ each: true })
+	readonly menuGroupIds: Types.ObjectId[];
+
+	@IsOptional()
 	@IsMongoId()
 	readonly parentId?: Types.ObjectId;
 
 	@IsOptional()
 	@IsMongoId()
-	readonly menuId?: Types.ObjectId;
+	readonly systemMenuId?: Types.ObjectId;
 
 	@IsOptional()
 	@IsString()

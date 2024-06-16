@@ -8,11 +8,14 @@ import { SystemMenu } from "~modules/pre-built/4-system-menus/schemas/system-men
 	collection: "menus",
 })
 export class Menu {
+	@Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Menu.name }], default: [] })
+	readonly menuGroupIds?: Types.ObjectId[];
+
 	@Prop({ type: SchemaTypes.ObjectId, ref: Menu.name })
 	readonly parentId?: Types.ObjectId;
 
 	@Prop({ type: SchemaTypes.ObjectId, ref: SystemMenu.name })
-	readonly menuId?: Types.ObjectId;
+	readonly systemMenuId?: Types.ObjectId;
 
 	@Prop({ type: String })
 	readonly name?: string;

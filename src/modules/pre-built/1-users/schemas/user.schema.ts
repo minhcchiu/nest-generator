@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { UserGroup } from "~modules/pre-built/2-user-groups/schemas/user-group.schema";
+import { MenuGroup } from "~modules/pre-built/4-menu-groups/schemas/menu-group.schema";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
@@ -23,6 +24,12 @@ export class User implements IUser {
 		type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
 	})
 	userGroupIds?: Types.ObjectId[];
+
+	@Prop({
+		type: SchemaTypes.ObjectId,
+		ref: MenuGroup.name,
+	})
+	menuGroupId?: Types.ObjectId;
 
 	@Prop({ type: String })
 	username?: string;

@@ -1,7 +1,9 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
 
-export class CreatePolicyGroupDto {
+export class CreateMenuGroupDto {
+	createdBy: Types.ObjectId;
+
 	@IsNotEmpty()
 	@IsString()
 	readonly name: string;
@@ -9,6 +11,4 @@ export class CreatePolicyGroupDto {
 	@IsOptional()
 	@IsString()
 	readonly description?: string;
-
-	createdBy: Types.ObjectId;
 }

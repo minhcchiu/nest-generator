@@ -15,6 +15,7 @@ import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { UserGroupService } from "../2-user-groups/user-group.service";
 import { CreatePolicyGroupDto } from "./dto/create-policy-group.dto";
@@ -50,7 +51,12 @@ export class PolicyGroupController {
 	//  ----- Method: POST -----
 	@Post("/")
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreatePolicyGroupDto) {
+	async create(
+		@GetCurrentUserId() userId: Types.ObjectId,
+		@Body() body: CreatePolicyGroupDto,
+	) {
+		Object.assign(body, { createdBy: userId });
+
 		return this.policyGroupService.create(body);
 	}
 

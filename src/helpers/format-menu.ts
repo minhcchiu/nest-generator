@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 type MenuType = {
 	_id: Types.ObjectId;
 	parentId?: Types.ObjectId;
-	menuId?: Record<string, any>; // use for user menu
+	systemMenuId?: Record<string, any>; // use for user menu
 	[key: string]: any;
 };
 
@@ -44,7 +44,8 @@ function getChildrenByParentId(submenus: MenuType[], parentId: Types.ObjectId) {
 function sortMenus(menus: MenuType[]) {
 	menus.sort(
 		(a, b) =>
-			(a.menuId?.position || a.position) - (b.menuId?.position || b.position),
+			(a.systemMenuId?.position || a.position) -
+			(b.menuId?.position || b.position),
 	);
 
 	return menus;

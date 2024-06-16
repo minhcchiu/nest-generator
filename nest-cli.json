@@ -3,7 +3,7 @@
 	"collection": "@nestjs/schematics",
 	"sourceRoot": "src",
 	"compilerOptions": {
-		"assets": ["shared/mail/templates/**/*", "**/*.json"],
+		"assets": ["**/*.json", "**/*.hbs"],
 		"watchAssets": true
 	}
 }

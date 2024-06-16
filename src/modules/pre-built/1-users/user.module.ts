@@ -4,6 +4,7 @@ import { HashingService } from "./hashing/hashing.service";
 import { User, UserSchema } from "./schemas/user.schema";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
+
 @Global()
 @Module({
 	imports: [
