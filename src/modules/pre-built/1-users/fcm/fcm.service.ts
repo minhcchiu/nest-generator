@@ -11,7 +11,7 @@ import { FirebaseService } from "~shared/firebase/firebase.service";
 import { UserService } from "../user.service";
 
 @Injectable()
-export class UserFirebaseService {
+export class FcmService {
 	constructor(
 		private firebaseService: FirebaseService,
 		private userService: UserService,

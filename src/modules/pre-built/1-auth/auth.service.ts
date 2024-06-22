@@ -50,14 +50,13 @@ export class AuthService {
 				email: input.email,
 			});
 
-			Object.assign(input, { status: AccountStatus.Verified });
+			input.status = AccountStatus.Verified;
 		}
-
-		if (fcmToken) Object.assign(input, { fcmTokens: [fcmToken] });
 
 		const newUser = await this.userService.createUser({
 			...input,
 			roles: [RoleEnum.User],
+			fcmTokens: fcmToken ? [fcmToken] : [],
 		});
 
 		return this.tokenService.generateUserAuth(newUser);
@@ -95,7 +94,16 @@ export class AuthService {
 		const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
 
 		let foundUser = await this.userService.findOne(
-			{ socialID: decodedIdToken.sub },
+			{
+				$or: [
+					{
+						socialID: decodedIdToken.sub,
+					},
+					{
+						email: decodedIdToken.email,
+					},
+				],
+			},
 			{ projection: authSelect },
 		);
 

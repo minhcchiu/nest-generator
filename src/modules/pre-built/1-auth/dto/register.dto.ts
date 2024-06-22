@@ -13,6 +13,7 @@ export class RegisterDto extends PickType(CreateUserDto, [
 	"gender",
 	"avatar",
 	"accountType",
+	"status",
 ] as const) {
 	@IsOptional()
 	@IsString()

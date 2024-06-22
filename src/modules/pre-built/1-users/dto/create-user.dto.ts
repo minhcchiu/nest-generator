@@ -36,7 +36,7 @@ export class CreateUserDto {
 	@IsString()
 	socialID?: string;
 
-	@IsOptional()
+	@IsNotEmpty()
 	@IsString()
 	accountType: AccountTypeEnum;
 
@@ -66,4 +66,5 @@ export class CreateUserDto {
 	fmcEnabled?: boolean;
 
 	status?: AccountStatus;
+	fcmTokens?: string[];
 }

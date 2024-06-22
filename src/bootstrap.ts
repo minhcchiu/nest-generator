@@ -16,7 +16,7 @@ export async function bootstrap() {
 	// Server run at port
 	const appConfig = EnvStatic.getAppConfig();
 
-	await app.listen(appConfig.port, () =>
+	await app.listen(appConfig.port, "0.0.0.0", () =>
 		Logger.log(
 			`Server running in ${appConfig.nodeEnv} mode on port ${appConfig.port}`,
 			"Main",
