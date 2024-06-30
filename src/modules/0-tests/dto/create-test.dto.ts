@@ -1,4 +1,4 @@
-import { IsISO8601, IsMongoId } from "class-validator";
+import { IsISO8601, IsMongoId, IsNumber } from "class-validator";
 import { Types } from "mongoose";
 
 export class CreateTestDto {
@@ -10,4 +10,7 @@ export class CreateTestDto {
 
 	@IsISO8601()
 	dateBirth: string;
+
+	@IsNumber()
+	position: number;
 }

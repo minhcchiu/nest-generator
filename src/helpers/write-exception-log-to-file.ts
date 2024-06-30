@@ -19,7 +19,7 @@ export const writeExceptionLogToFile = (
   ============== ${timeStamp} ===================
   {
     Title: "${title}"
-    Message: "${details}"
+    Message: "${JSON.stringify(details)}"
     Code: "${statusCode}"
     URL: "${url}"
     Method: "${method}"

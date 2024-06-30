@@ -10,6 +10,7 @@ import {
 	HttpStatus,
 } from "@nestjs/common";
 
+import { ErrorDetail } from "~types/error-detail.type";
 import { HttpExceptionResponse } from "./http-exception-response.interface";
 
 enum ExceptionType {
@@ -33,21 +34,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 		const errorMessage =
 			exception?.message || "Critical internal server error occurred!";
-		const title =
-			exception instanceof HttpException
-				? exception.getResponse()["error"]
-				: "Internal Server Error";
-		const statusCode =
-			exception instanceof HttpException
-				? exception.getStatus()
-				: HttpStatus.INTERNAL_SERVER_ERROR;
+
+		let title = "Internal Server Error";
+		let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+
+		if (exception instanceof HttpException) {
+			title = exception.getResponse()["error"];
+			statusCode = exception.getStatus();
+		}
 
 		const exceptionResponse: HttpExceptionResponse = {
 			title,
 			statusCode,
 			url,
 			method,
-			details: [errorMessage],
+			details: [
+				{
+					property: exception?.path || exception?.name || title || "unknown",
+					error: errorMessage,
+				},
+			],
 			timeStamp: new Date(),
 			user: JSON.stringify(request["user"]) ?? "Not signed in",
 			stack: exception?.stack,
@@ -62,20 +68,21 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 			case ExceptionType.ValidationError:
 				exceptionResponse.title = "Validation Error";
-				exceptionResponse.details = Object.values(exception.errors).map(
-					(val) => val["message"],
-				);
 				exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
+				exceptionResponse.details = this._getValidationError(exception);
 				break;
 
 			case ExceptionType.CastError:
 				exceptionResponse.title = `Cast Error`;
-				exceptionResponse.statusCode = HttpStatus.NOT_FOUND;
+				exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
+				exceptionResponse.details = this._getCastError(exception);
 				break;
+
 			default:
 				if (exception.code === MONGODB_CODES.BULK_WRITE_ERROR) {
 					exceptionResponse.title = "Duplicate Field Value Entered";
 					exceptionResponse.statusCode = HttpStatus.CONFLICT;
+					exceptionResponse.details = this._getBulkWriteError(exception);
 				}
 				break;
 		}
@@ -86,7 +93,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			details: exceptionResponse.details,
 		};
 
-		this.logException(exceptionResponse?.stack);
+		this._logException(exceptionResponse?.stack);
 		writeExceptionLogToFile(exceptionResponse);
 
 		return response
@@ -94,7 +101,37 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			.json(prodErrorResponse);
 	}
 
-	private logException(exceptionStack?: any) {
+	private _logException(exceptionStack?: any) {
 		new ConsoleLogger().error(exceptionStack);
+	}
+
+	private _getValidationError(exception: any): ErrorDetail[] {
+		return Object.values(exception.errors).map((val: any) => {
+			return {
+				value: val.value,
+				property: val.path,
+				error: val["message"],
+			};
+		});
+	}
+
+	private _getCastError(exception: any): ErrorDetail[] {
+		return [
+			{
+				value: exception.value,
+				property: exception.path,
+				error: exception?.message || "Cast Error",
+			},
+		];
+	}
+
+	private _getBulkWriteError(exception: any): ErrorDetail[] {
+		return Object.keys(exception.keyValue).map((key) => {
+			return {
+				value: exception?.keyValue[key],
+				property: key,
+				error: exception?.message || "Duplicate Field Value",
+			};
+		});
 	}
 }

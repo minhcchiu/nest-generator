@@ -1,6 +1,5 @@
 import { UseFilters } from "@nestjs/common";
 import {
-	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 	OnGatewayInit,
@@ -11,7 +10,8 @@ import {
 import { Server, Socket } from "socket.io";
 import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-import { SocketEvent } from "./enums/socket-event.enum";
+import { SOCKET_EVENTS } from "./constants/socket-event.constant";
+import { socketHelper } from "./helpers/socker.helper";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
@@ -37,94 +37,95 @@ export class SocketGateway
 		this.logger.log("Socket initialized", SocketGateway.name);
 	}
 
-	async handleConnection(client: Socket) {
-		try {
-			const user = await this.socketService.getUserFromSocket(client);
+	async handleConnection(socket: Socket) {
+		const user = await this.socketService
+			.getUserFromSocket(socket)
+			.catch(() => {
+				socket.disconnect(true);
+			});
 
-			if (!user) client.disconnect(true);
+		if (!user) return socket.disconnect(true);
 
-			// join room
-			client.join(user._id.toString());
+		const userId = user._id.toString();
 
-			this.logger.log(
-				`User ${client.id} has connected room #${user._id}.`,
-				SocketGateway.name,
-			);
-		} catch (e) {
-			client.disconnect(true);
-		}
+		// Step 01: Join room
+		socket.join(userId);
+
+		// Step 02: Add socket id
+		socketHelper.addSocketId(userId, socket.id);
+
+		// Step 03: Emit to user after login
+		socket.emit(SOCKET_EVENTS.UsersOnline, socketHelper.getUsersOnline());
+
+		// Step 04: Emit to all another users
+		socket.broadcast.emit(SOCKET_EVENTS.NewUserOnline, userId);
 	}
 
-	async handleDisconnect(client: Socket) {
-		try {
-			const user = await this.socketService.getUserFromSocket(client);
+	async handleDisconnect(socket: Socket) {
+		const user = await this.socketService
+			.getUserFromSocket(socket)
+			.catch(() => {
+				socket.disconnect(true);
+			});
 
-			if (!user) client.disconnect(true);
+		if (!user) return socket.disconnect(true);
 
-			// leave room
-			client.leave(user._id.toString());
+		const userId = user._id.toString();
 
-			this.logger.log(
-				`User ${client.id} left room #${user._id}.`,
-				SocketGateway.name,
-			);
-		} catch (e) {
-			client.disconnect(true);
+		// Step 01: Remove socket id
+		socketHelper.removeSocketId(userId, socket.id);
+
+		// Step 02: Emit to all another users
+		const userSocketId = socketHelper.getSocketIdsByClientId(userId);
+		if (!userSocketId) {
+			socket.leave(userId);
+			socket.broadcast.emit(SOCKET_EVENTS.NewUserOffline, userId);
 		}
 	}
 
 	// Join chat
-	@SubscribeMessage(SocketEvent.JoinChat)
-	handleJoinChat(client: Socket, chatId: string) {
-		client.join(chatId);
+	@SubscribeMessage(SOCKET_EVENTS.JoinChat)
+	handleJoinChat(socket: Socket, data: { chatId: string }) {
+		socket.join(data.chatId);
+	}
+
+	// Leave chat
+	@SubscribeMessage(SOCKET_EVENTS.LeaveChat)
+	handleLeaveChat(socket: Socket, data: { chatId: string }) {
+		socket.leave(data.chatId);
 	}
 
 	// Rename chat
-	@SubscribeMessage(SocketEvent.RenameChat)
+	@SubscribeMessage(SOCKET_EVENTS.RenameChat)
 	handleRenameChat(client: Socket, data: RenameChat) {
-		client.to(data.chatId).emit(SocketEvent.RenameChat, data);
+		client.to(data.chatId).emit(SOCKET_EVENTS.RenameChat, data);
 	}
 
 	// Typing
-	@SubscribeMessage(SocketEvent.Typing)
-	handleTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(SocketEvent.Typing);
+	@SubscribeMessage(SOCKET_EVENTS.Typing)
+	handleTyping(client: Socket, data: { chatId: string }) {
+		client.to(data.chatId).emit(SOCKET_EVENTS.Typing);
 	}
 
 	// Stop typing
-	@SubscribeMessage(SocketEvent.StopTyping)
-	handleStopTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(SocketEvent.StopTyping);
-	}
-
-	// Notification
-	@SubscribeMessage(SocketEvent.NewNotification)
-	handleStopNotificationReceived(client: Socket, userId: string) {
-		client.to(userId).emit(SocketEvent.NewNotification, userId);
+	@SubscribeMessage(SOCKET_EVENTS.StopTyping)
+	handleStopTyping(client: Socket, data: { chatId: string }) {
+		client.to(data.chatId).emit(SOCKET_EVENTS.StopTyping);
 	}
 
 	// New message
-	@SubscribeMessage(SocketEvent.NewMessage)
+	@SubscribeMessage(SOCKET_EVENTS.NewMessage)
 	handleNewMessage(client: Socket, data: Message) {
 		// check members exist
 		if (!data.chat?.members) {
-			client.emit(SocketEvent.Error, "Chat not found.");
+			client.emit(SOCKET_EVENTS.SocketError, "Chat not found.");
 			return;
 		}
 
 		// send message to all members
 		data.chat.members.forEach(({ user }) => {
 			if (user._id === data.sender._id) return;
-			client.to(user._id).emit(SocketEvent.NewMessage, data);
+			client.to(user._id).emit(SOCKET_EVENTS.NewMessage, data);
 		});
-	}
-
-	@SubscribeMessage("events")
-	onEvent(@MessageBody() data: string): string {
-		return data;
-	}
-
-	onSocketInAPI(data: any) {
-		this.server.sockets.emit("send_message", data);
 	}
 }

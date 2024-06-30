@@ -13,6 +13,12 @@ export class Test {
 	@Prop({ type: SchemaTypes.ObjectId, ref: "User" })
 	userId: Types.ObjectId;
 
+	@Prop({ type: Number, unique: true })
+	position: number;
+
+	@Prop({ type: Boolean, required: true })
+	update: boolean;
+
 	@Prop({ type: Date, default: Date.now })
 	dateBirth: Date;
 }
