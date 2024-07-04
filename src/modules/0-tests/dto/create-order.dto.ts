@@ -2,13 +2,13 @@ import { PartialType } from "@nestjs/mapped-types";
 import { Type } from "class-transformer";
 import {
 	IsEnum,
-	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	IsString,
 	ValidateNested,
 } from "class-validator";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { PaymentMethodEnum } from "../enums/payment-method.enum";
 import { ProductClassificationEnum } from "../enums/product-classification.enum";
 import { ShippingTypeEnum } from "../enums/shipping-type.enum";
@@ -21,7 +21,8 @@ import { PickTimesDto } from "./pickup-times.dto";
 
 export class CreateOrderDto extends PartialType(CreateTestDto) {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	storeId: string;
 
 	@IsNotEmpty()
@@ -61,7 +62,8 @@ export class CreateOrderDto extends PartialType(CreateTestDto) {
 	coins?: number;
 
 	@IsOptional()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	discountId?: string;
 
 	@IsOptional()

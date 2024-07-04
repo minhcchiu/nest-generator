@@ -1,6 +1,5 @@
 import {
 	IsEnum,
-	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsObject,
@@ -8,11 +7,13 @@ import {
 	IsString,
 } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	readonly shopId: Types.ObjectId;
 
 	@IsNotEmpty()

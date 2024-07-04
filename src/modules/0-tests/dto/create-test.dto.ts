@@ -1,16 +1,16 @@
-import { IsISO8601, IsMongoId, IsNumber } from "class-validator";
+import { IsISO8601 } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateTestDto {
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	userString: string;
 
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	userId: Types.ObjectId;
 
 	@IsISO8601()
 	dateBirth: string;
-
-	@IsNumber()
-	position: number;
 }

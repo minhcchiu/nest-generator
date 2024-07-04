@@ -1,19 +1,17 @@
 import { Type } from "class-transformer";
-import {
-	IsMongoId,
-	IsNotEmpty,
-	IsNumber,
-	ValidateNested,
-} from "class-validator";
+import { IsNotEmpty, IsNumber, ValidateNested } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CheckoutReviewDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	readonly userId: Types.ObjectId;
 
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	readonly carId: Types.ObjectId;
 
 	@IsNotEmpty()
@@ -24,21 +22,25 @@ export class CheckoutReviewDto {
 
 export class ShopOrderDiscountDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	shopId: Types.ObjectId;
 
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	discountId: Types.ObjectId;
 
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	code: string;
 }
 
 export class ShopOrderItemDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	productId: Types.ObjectId;
 
 	@IsNotEmpty()

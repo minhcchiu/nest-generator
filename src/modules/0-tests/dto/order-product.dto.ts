@@ -1,8 +1,10 @@
-import { IsMongoId, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class OrderProductDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	productId: string;
 
 	@IsNotEmpty()

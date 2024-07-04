@@ -1,10 +1,12 @@
-import { IsMongoId, IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { OrderStatusEnum } from "../enums/order-status.enum";
 
 export class CreateOrderDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	readonly userId: Types.ObjectId;
 
 	@IsOptional()

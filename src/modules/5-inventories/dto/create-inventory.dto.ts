@@ -1,19 +1,21 @@
 import {
 	IsArray,
-	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	IsString,
 } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateInventoryDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	shopId: Types.ObjectId;
 
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	@IsNotEmpty()
 	productId: Types.ObjectId;
 

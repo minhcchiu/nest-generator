@@ -1,25 +1,23 @@
 import { Type } from "class-transformer";
-import {
-	IsBoolean,
-	IsMongoId,
-	IsNotEmpty,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { LocationDto } from "~dto/location.dto";
 
 export default class CreateShippingAddressDto {
 	@IsOptional()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	provinceId?: Types.ObjectId;
 
 	@IsOptional()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	districtId?: Types.ObjectId;
 
 	@IsOptional()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	wardId?: Types.ObjectId;
 
 	@IsOptional()

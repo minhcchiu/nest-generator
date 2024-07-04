@@ -1,16 +1,17 @@
 import {
 	IsBoolean,
-	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	IsString,
 } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateSystemMenuDto {
 	@IsOptional()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	readonly parentId?: Types.ObjectId;
 
 	@IsNotEmpty()

@@ -7,6 +7,7 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
+	Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -55,6 +56,7 @@ export class TestController {
 
 	// ----- Method: @Get("/count")
 	@HttpCode(HttpStatus.CREATED)
+	@Post("/")
 	async create(@Body() body: CreateTestDto) {
 		const created = await this.testService.create(body);
 

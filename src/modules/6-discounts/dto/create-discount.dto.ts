@@ -11,12 +11,14 @@ import {
 	ValidateIf,
 } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
 
 export class CreateDiscountDto {
 	@IsNotEmpty()
-	@IsMongoId()
+	@IsObjectId()
+	@ToObjectId()
 	shopId: Types.ObjectId;
 
 	@IsNotEmpty()
