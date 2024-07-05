@@ -12,14 +12,14 @@ export const writeExceptionLogToFile = (
 	const isPathExist = existsSync(errorLogPath);
 	if (!isPathExist) mkdirSync(errorLogPath, { recursive: true });
 
-	const { statusCode, details, method, url, title, timeStamp, user } =
+	const { statusCode, errors, method, url, title, timeStamp, user } =
 		exceptionResponse;
 
 	const errorLog = `
   ============== ${timeStamp} ===================
   {
     Title: "${title}"
-    Message: "${JSON.stringify(details)}"
+    Message: "${JSON.stringify(errors)}"
     Code: "${statusCode}"
     URL: "${url}"
     Method: "${method}"

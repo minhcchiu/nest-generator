@@ -24,6 +24,7 @@ export class TestController {
 	constructor(private readonly testService: TestService) {}
 
 	// ----- Method: GET -----
+	@Public()
 	@Get("/")
 	@HttpCode(HttpStatus.OK)
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
@@ -54,13 +55,12 @@ export class TestController {
 		return this.testService.findById(id, { projection, populate });
 	}
 
-	// ----- Method: @Get("/count")
-	@HttpCode(HttpStatus.CREATED)
+	// ----- Method: POST -----
+	// @Public()
 	@Post("/")
+	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() body: CreateTestDto) {
-		const created = await this.testService.create(body);
-
-		return created;
+		return this.testService.create(body);
 	}
 
 	// ----- Method: PATCH -----

@@ -48,10 +48,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			statusCode,
 			url,
 			method,
-			details: [
+			errors: [
 				{
 					property: exception?.path || exception?.name || title || "unknown",
-					error: errorMessage,
+					message: errorMessage,
 				},
 			],
 			timeStamp: new Date(),
@@ -62,27 +62,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		switch (exception.name) {
 			case ExceptionType.ValidationExceptions:
 				exceptionResponse.title = "Validation Exceptions";
-				exceptionResponse.details = exception.getResponse().errors;
+				exceptionResponse.errors = exception.getResponse().errors;
 				exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
 				break;
 
 			case ExceptionType.ValidationError:
 				exceptionResponse.title = "Validation Error";
 				exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
-				exceptionResponse.details = this._getValidationError(exception);
+				exceptionResponse.errors = this._getValidationError(exception);
 				break;
 
 			case ExceptionType.CastError:
 				exceptionResponse.title = `Cast Error`;
 				exceptionResponse.statusCode = HttpStatus.BAD_REQUEST;
-				exceptionResponse.details = this._getCastError(exception);
+				exceptionResponse.errors = this._getCastError(exception);
 				break;
 
 			default:
 				if (exception.code === MONGODB_CODES.BULK_WRITE_ERROR) {
 					exceptionResponse.title = "Duplicate Field Value Entered";
 					exceptionResponse.statusCode = HttpStatus.CONFLICT;
-					exceptionResponse.details = this._getBulkWriteError(exception);
+					exceptionResponse.errors = this._getBulkWriteError(exception);
 				}
 				break;
 		}
@@ -90,7 +90,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		const prodErrorResponse = {
 			type: exception.name,
 			title: exceptionResponse.title,
-			details: exceptionResponse.details,
+			errors: exceptionResponse.errors,
 		};
 
 		this._logException(exceptionResponse?.stack);
@@ -108,9 +108,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 	private _getValidationError(exception: any): ErrorDetail[] {
 		return Object.values(exception.errors).map((val: any) => {
 			return {
-				value: val.value,
 				property: val.path,
-				error: val["message"],
+				message: val["message"],
 			};
 		});
 	}
@@ -118,9 +117,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 	private _getCastError(exception: any): ErrorDetail[] {
 		return [
 			{
-				value: exception.value,
 				property: exception.path,
-				error: exception?.message || "Cast Error",
+				message: exception?.message || "Cast Error",
 			},
 		];
 	}
@@ -128,9 +126,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 	private _getBulkWriteError(exception: any): ErrorDetail[] {
 		return Object.keys(exception.keyValue).map((key) => {
 			return {
-				value: exception?.keyValue[key],
 				property: key,
-				error: exception?.message || "Duplicate Field Value",
+				message: exception?.message || "Duplicate Field Value",
 			};
 		});
 	}

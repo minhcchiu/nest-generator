@@ -1,7 +1,7 @@
 import { HttpStatus } from "@nestjs/common";
 
 export interface ErrorResponse {
-	details?: any[] | null;
+	errors?: any[] | null;
 
 	statusCode: HttpStatus;
 
