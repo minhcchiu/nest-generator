@@ -34,7 +34,7 @@ export class NotificationController {
 	) {
 		const pagination = await this.notificationService.paginate(filter, options);
 
-		pagination.docs.forEach((item) => {
+		pagination.data.forEach((item) => {
 			this.notificationService.addNotificationDetail(item, language);
 		});
 

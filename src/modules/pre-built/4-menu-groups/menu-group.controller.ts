@@ -21,7 +21,7 @@ import { MenuGroupService } from "./menu-group.service";
 
 @Controller("menu_groups")
 export class MenuGroupController {
-	constructor(private readonly menuGroupGroupService: MenuGroupService) {}
+	constructor(private readonly menuGroupService: MenuGroupService) {}
 
 	//  ----- Method: GET -----
 	@Get("/:id")
@@ -29,12 +29,12 @@ export class MenuGroupController {
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@GetAqp() { projection, populate }: PaginationDto,
 	) {
-		return this.menuGroupGroupService.findById(id, { projection, populate });
+		return this.menuGroupService.findById(id, { projection, populate });
 	}
 
 	@Get("/")
 	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.menuGroupGroupService.findMany(filter, options);
+		return this.menuGroupService.findMany(filter, options);
 	}
 
 	//  ----- Method: POST -----
@@ -46,7 +46,7 @@ export class MenuGroupController {
 	) {
 		Object.assign(body, { createdBy: userId });
 
-		return this.menuGroupGroupService.create(body);
+		return this.menuGroupService.create(body);
 	}
 
 	//  ----- Method: PATCH -----
@@ -56,42 +56,21 @@ export class MenuGroupController {
 		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
 		@Body() body: UpdateMenuGroupDto,
 	) {
-		return this.menuGroupGroupService.updateById(id, body);
+		return this.menuGroupService.updateById(id, body);
 	}
 
 	//  ----- Method: DELETE -----
-	@Delete(":ids/ids/hard")
+	@Delete("/:ids/ids")
 	@HttpCode(HttpStatus.OK)
 	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.menuGroupGroupService.deleteMany({
+		return this.menuGroupService.deleteMany({
 			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
 		});
 	}
 
-	@Delete(":id/hard")
-	@HttpCode(HttpStatus.OK)
-	async deleteHardById(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.menuGroupGroupService.deleteById(id);
-	}
-
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManySoftByIds(@Param("ids") ids: string) {
-		return this.menuGroupGroupService.updateMany(
-			{
-				_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-			},
-			{
-				deleted: true,
-			},
-		);
-	}
-
 	@Delete("/:id")
 	@HttpCode(HttpStatus.OK)
-	async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.menuGroupGroupService.updateById(id, {
-			deleted: true,
-		});
+	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+		return this.menuGroupService.deleteById(id);
 	}
 }
