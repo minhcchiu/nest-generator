@@ -8,7 +8,7 @@ import { EmailDto } from "./dto/email.dto";
 import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordDto } from "./dto/password.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { SendRegisterTokenDto } from "./dto/send-register-token.dto";
+import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
 
@@ -41,23 +41,23 @@ export class AuthController {
 
 	@Public()
 	@HttpCode(HttpStatus.OK)
-	@Post("send_register_token")
-	async sendRegisterToken(@Body() body: RegisterDto) {
-		return this.authService.sendRegisterToken(body);
+	@Post("send_token")
+	async sendToken(@Body() body: RegisterDto) {
+		return this.authService.sendToken(body);
 	}
 
 	@Public()
 	@HttpCode(HttpStatus.CREATED)
-	@Post("activate_register_token")
-	async activateRegisterToken(@Body() { token }: TokenDto) {
-		return this.authService.activateRegisterToken(token);
+	@Post("activate_token")
+	async activateToken(@Body() { token }: TokenDto) {
+		return this.authService.activateToken(token);
 	}
 
 	@Public()
 	@HttpCode(HttpStatus.OK)
-	@Post("send_register_otp")
-	async sendRegisterOtp(@Body() body: SendRegisterTokenDto) {
-		return this.authService.sendRegisterOtp(body);
+	@Post("send_otp")
+	async sendOtp(@Body() body: SendOtpDto) {
+		return this.authService.sendOtp(body);
 	}
 
 	@Post("logout")

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
+import { UploadType } from "~types/upload-type";
 
 @Schema({
 	timestamps: true,
@@ -19,7 +20,7 @@ export class UserFile {
 	fileName: string;
 
 	@Prop({ type: String, required: true })
-	fileType: string;
+	fileType: UploadType;
 
 	@Prop({ type: String, enum: ResourceTypeEnum, required: true })
 	resourceType: ResourceTypeEnum;

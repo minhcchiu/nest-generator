@@ -33,7 +33,7 @@ export class MailService {
 		return this.sendMail(params);
 	}
 
-	async sendRegisterToken(
+	async sendUserToken(
 		body: { token: string; expiresAt: number; fullName: string },
 		to: string,
 		from?: string,

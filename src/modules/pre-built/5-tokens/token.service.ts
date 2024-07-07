@@ -77,7 +77,7 @@ export class TokenService extends BaseService<TokenDocument> {
 		return this._verifyToken(token, refreshToken.secretKey);
 	}
 
-	async verifyRegisterToken(token: string) {
+	async verifyUserToken(token: string) {
 		const { registerToken } = EnvStatic.getJWTConfig();
 
 		return this._verifyToken(token, registerToken.secretKey);
