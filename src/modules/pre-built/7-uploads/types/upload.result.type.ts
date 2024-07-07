@@ -1,7 +1,7 @@
 import { ResourceTypeEnum } from "../enum/resource-type.enum";
 import { StorageLocationEnum } from "../enum/store-location.enum";
 
-export type UploadedResult = {
+export type FileUploaded = {
 	url: string;
 	urlXSmall?: string;
 	urlSmall?: string;

@@ -3,7 +3,6 @@ import {
 	IsBoolean,
 	IsDateString,
 	IsEnum,
-	IsMongoId,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
@@ -59,8 +58,9 @@ export class CreateDiscountDto {
 	usesCount: number;
 
 	@IsOptional()
-	@IsMongoId({ each: true })
-	usersUsed?: string[] = [];
+	@IsObjectId({ each: true })
+	@ToObjectId({ each: true })
+	usersUsed?: Types.ObjectId[] = [];
 
 	@IsOptional()
 	@IsNumber()
@@ -81,6 +81,7 @@ export class CreateDiscountDto {
 	@ValidateIf((o) => o.appliesTo === DiscountAppliesToEnum.SPECIFIC)
 	@IsNotEmpty()
 	@IsArray()
-	@IsMongoId({ each: true })
-	productIds: string[];
+	@IsObjectId({ each: true })
+	@ToObjectId({ each: true })
+	productIds: Types.ObjectId[];
 }

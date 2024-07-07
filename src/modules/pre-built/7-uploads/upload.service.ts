@@ -11,8 +11,8 @@ import { ImageSize } from "~utils/image.util";
 import { ResourceTypeEnum } from "./enum/resource-type.enum";
 import { FileFormatted } from "./types/file-formatted.type";
 import { FileOption } from "./types/file-option.type";
-import { UploadedError } from "./types/upload.error.type";
-import { UploadedResult } from "./types/upload.result.type";
+import { FileFailed } from "./types/upload.error.type";
+import { FileUploaded } from "./types/upload.result.type";
 
 @Injectable()
 export class UploadService {
@@ -60,8 +60,8 @@ export class UploadService {
 			urlXSmall?: string;
 			resourceType: ResourceTypeEnum;
 		}[] = [];
-		const filesFailed: UploadedError[] = [];
-		const fileItems: UploadedResult[] = [];
+		const filesFailed: FileFailed[] = [];
+		const fileItems: FileUploaded[] = [];
 
 		for (const uploaded of promiseSettled) {
 			if (uploaded.status === "fulfilled") {
@@ -103,7 +103,7 @@ export class UploadService {
 		return fileSaved;
 	}
 
-	async _saveFile(fileInput: Express.Multer.File): Promise<UploadedResult> {
+	async _saveFile(fileInput: Express.Multer.File): Promise<FileUploaded> {
 		try {
 			// validate file
 			const fileFormatted = this._validateFile(fileInput);
@@ -115,7 +115,7 @@ export class UploadService {
 				"XSmall",
 			];
 
-			let uploaded: UploadedResult;
+			let uploaded: FileUploaded;
 			switch (this.storageServer) {
 				case StorageServerEnum.S3:
 					uploaded = await this.s3Service.saveFile(fileFormatted, imageSizes);

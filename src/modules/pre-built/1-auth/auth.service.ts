@@ -174,7 +174,19 @@ export class AuthService {
 			otpType: OtpTypeEnum.Register,
 		};
 
-		return this.otpService.sendOtp(otpItem);
+		const { expiresAt, otpCode, ...rest } =
+			await this.otpService.sendOtp(otpItem);
+
+		return {
+			...input,
+			...otpItem,
+			...rest,
+			otpCode:
+				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
+					? otpCode
+					: undefined,
+			expiresAt,
+		};
 	}
 
 	async logout(userId: Types.ObjectId, fcmToken?: string) {

@@ -8,7 +8,7 @@ import { LocalService } from "~shared/storage/local-storage/local.service";
 import { S3Service } from "~shared/storage/s3/s3.service";
 import { UploadType } from "~types/upload-type";
 import { StorageLocationEnum } from "../7-uploads/enum/store-location.enum";
-import { UploadedResult } from "../7-uploads/types/upload.result.type";
+import { FileUploaded } from "../7-uploads/types/upload.result.type";
 import { UserFile, UserFileDocument } from "./schemas/user-file.schema";
 
 @Injectable()
@@ -27,7 +27,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
 	}
 
 	@OnEvent("file.uploaded")
-	createUserFile(files: UploadedResult[], userId: Types.ObjectId) {
+	createUserFile(files: FileUploaded[], userId: Types.ObjectId) {
 		return this.userFileService.createMany(
 			files.map((item) => ({ ...item, userId })),
 		);

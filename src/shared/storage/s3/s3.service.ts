@@ -8,7 +8,7 @@ import { EnvStatic } from "src/configurations/static.env";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";
-import { UploadedResult } from "~modules/pre-built/7-uploads/types/upload.result.type";
+import { FileUploaded } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import {
 	ImageSize,
@@ -46,7 +46,7 @@ export class S3Service {
 	async saveFile(
 		file: FileFormatted,
 		imageSizes: ImageSize[] = [],
-	): Promise<UploadedResult> {
+	): Promise<FileUploaded> {
 		const fileOriginal = `${file.fileFolder}/${file.fileName}`;
 		const { url, key } = await this._uploadToS3(fileOriginal, file.buffer);
 

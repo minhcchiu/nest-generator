@@ -1,7 +1,6 @@
 import {
 	IsArray,
 	IsBoolean,
-	IsMongoId,
 	IsNumber,
 	IsOptional,
 	IsString,
@@ -12,7 +11,8 @@ import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 export class CreateMenuDto {
 	@IsOptional()
 	@IsArray()
-	@IsMongoId({ each: true })
+	@IsObjectId({ each: true })
+	@ToObjectId({ each: true })
 	readonly menuGroupIds: Types.ObjectId[];
 
 	@IsOptional()

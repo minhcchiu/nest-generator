@@ -104,11 +104,18 @@ export class TokenService extends BaseService<TokenDocument> {
 		return { accessToken, refreshToken, user: getTokenPayloadFromUser(user) };
 	}
 
-	async _generateToken(payload: any, secret: string, expiresIn: number) {
-		const token = await this.jwtService.signAsync(payload, {
-			secret,
-			expiresIn: `${expiresIn}m`,
-		});
+	async _generateToken(
+		payload: Record<string, any>,
+		secret: string,
+		expiresIn: number,
+	) {
+		const token = await this.jwtService.signAsync(
+			{ ...payload },
+			{
+				secret,
+				expiresIn: `${expiresIn}m`,
+			},
+		);
 
 		const expiresAt = new Date().getTime() + expiresIn * 60 * 1000;
 
