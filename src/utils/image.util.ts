@@ -2,14 +2,20 @@ import sizeOf from "image-size";
 import * as sharp from "sharp";
 import { getFileExtension, removeFileExtension } from "./file.util";
 
-export type ImageSize = "XLarge" | "Large" | "Medium" | "Small" | "XSmall";
+export enum ImageSize {
+	XLarge = "XLarge",
+	Large = "Large",
+	Medium = "Medium",
+	Small = "Small",
+	XSmall = "XSmall",
+}
 
 export const ImageSizeOptions: { width: number; name: ImageSize }[] = [
-	{ width: 150, name: "XSmall" },
-	{ width: 360, name: "Small" },
-	{ width: 480, name: "Medium" },
-	{ width: 720, name: "Large" },
-	{ width: 1080, name: "XLarge" },
+	{ width: 150, name: ImageSize.XSmall },
+	{ width: 360, name: ImageSize.Small },
+	{ width: 480, name: ImageSize.Medium },
+	{ width: 720, name: ImageSize.Large },
+	{ width: 1080, name: ImageSize.XLarge },
 ];
 
 export const getResizeOptions = (buffer: Buffer, imageSizes: ImageSize[]) => {

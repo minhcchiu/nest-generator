@@ -44,40 +44,21 @@ export class UploadService {
 		};
 	}
 
-	async uploadFiles(fileInputs: Express.Multer.File[], userId: Types.ObjectId) {
+	async uploadFiles(
+		fileInputs: Express.Multer.File[],
+		userId: Types.ObjectId,
+		imageSizes?: ImageSize[],
+	) {
 		const promiseSettled = await Promise.allSettled(
-			fileInputs.map((fileInput) => this._saveFile(fileInput)),
+			fileInputs.map((fileInput) => this._saveFile(fileInput, imageSizes)),
 		);
 
-		const filesUploaded: {
-			originalname: string;
-			fileSize: number;
-			url: string;
-			urlXLarge?: string;
-			urlLarge?: string;
-			urlMedium?: string;
-			urlSmall?: string;
-			urlXSmall?: string;
-			resourceType: ResourceTypeEnum;
-		}[] = [];
 		const filesFailed: FileFailed[] = [];
-		const fileItems: FileUploaded[] = [];
+		const filesUploaded: FileUploaded[] = [];
 
 		for (const uploaded of promiseSettled) {
 			if (uploaded.status === "fulfilled") {
-				filesUploaded.push({
-					originalname: uploaded.value.originalname,
-					fileSize: uploaded.value.fileSize,
-					url: uploaded.value.url,
-					urlXLarge: uploaded.value.urlXLarge,
-					urlLarge: uploaded.value.urlLarge,
-					urlMedium: uploaded.value.urlMedium,
-					urlSmall: uploaded.value.urlSmall,
-					urlXSmall: uploaded.value.urlXSmall,
-					resourceType: uploaded.value.resourceType,
-				});
-
-				fileItems.push(uploaded.value);
+				filesUploaded.push(uploaded.value);
 			} else {
 				filesFailed.push({
 					originalname: uploaded.reason.response?.originalname,
@@ -87,7 +68,7 @@ export class UploadService {
 			}
 		}
 
-		this.eventEmitterService.emitFileUploaded(fileItems, userId);
+		this.eventEmitterService.emitFileUploaded(filesUploaded, userId);
 
 		return {
 			filesUploaded,
@@ -95,25 +76,25 @@ export class UploadService {
 		};
 	}
 
-	async uploadFile(fileInput: Express.Multer.File, userId: Types.ObjectId) {
-		const fileSaved = await this._saveFile(fileInput);
+	async uploadFile(
+		fileInput: Express.Multer.File,
+		userId: Types.ObjectId,
+		imageSizes?: ImageSize[],
+	) {
+		const fileSaved = await this._saveFile(fileInput, imageSizes);
 
 		this.eventEmitterService.emitFileUploaded([fileSaved], userId);
 
 		return fileSaved;
 	}
 
-	async _saveFile(fileInput: Express.Multer.File): Promise<FileUploaded> {
+	async _saveFile(
+		fileInput: Express.Multer.File,
+		imageSizes?: ImageSize[],
+	): Promise<FileUploaded> {
 		try {
 			// validate file
 			const fileFormatted = this._validateFile(fileInput);
-			const imageSizes: ImageSize[] = [
-				"XLarge",
-				"Large",
-				"Medium",
-				"Small",
-				"XSmall",
-			];
 
 			let uploaded: FileUploaded;
 			switch (this.storageServer) {

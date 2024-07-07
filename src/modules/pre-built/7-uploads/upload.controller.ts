@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	HttpCode,
 	HttpStatus,
@@ -10,6 +11,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { Types } from "mongoose";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { UploadDto } from "./dto/upload.dto";
 import { UploadService } from "./upload.service";
 
 @Controller("uploads")
@@ -21,10 +23,11 @@ export class UploadController {
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFiles(
 		@GetCurrentUserId() userId: Types.ObjectId,
+		@Body() body: UploadDto,
 		@UploadedFiles()
 		inputs: Array<Express.Multer.File>,
 	) {
-		return this.uploadService.uploadFiles(inputs, userId);
+		return this.uploadService.uploadFiles(inputs, userId, body.imageSizes);
 	}
 
 	@Post("file")
@@ -32,9 +35,10 @@ export class UploadController {
 	@HttpCode(HttpStatus.CREATED)
 	async uploadFile(
 		@GetCurrentUserId() userId: Types.ObjectId,
+		@Body() body: UploadDto,
 		@UploadedFile()
 		input: Express.Multer.File,
 	) {
-		return this.uploadService.uploadFile(input, userId);
+		return this.uploadService.uploadFile(input, userId, body.imageSizes);
 	}
 }
