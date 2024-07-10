@@ -13,6 +13,7 @@ import {
 	Types,
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
+	UpdateWriteOpResult,
 } from "mongoose";
 import { PaginateOptions } from "./base.interface";
 
@@ -76,7 +77,7 @@ export class BaseService<T> {
 		filter: FilterQuery<T>,
 		input: UpdateQuery<T> | UpdateWithAggregationPipeline,
 		options?: UpdateOptions | any,
-	) {
+	): Promise<UpdateWriteOpResult> {
 		return this.model.updateMany(filter, input, options);
 	}
 

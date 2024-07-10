@@ -17,17 +17,13 @@ import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { UserGroupService } from "../2-user-groups/user-group.service";
 import { CreatePolicyDto } from "./dto/create-policy.dto";
 import { UpdatePolicyDto } from "./dto/update-policy.dto";
 import { PolicyService } from "./policy.service";
 
 @Controller("policies")
 export class PolicyController {
-	constructor(
-		private readonly policyService: PolicyService,
-		private readonly userGroupService: UserGroupService,
-	) {}
+	constructor(private readonly policyService: PolicyService) {}
 
 	//  ----- Method: GET -----
 	@Get("/paginate")
