@@ -6,56 +6,56 @@ import { PolicyGroup } from "~modules/pre-built/3-policy-groups/schemas/policy-g
 import { HttpMethod } from "../enum/http-method";
 
 @Schema({
-	timestamps: true,
-	versionKey: false,
-	collection: "policies",
+  timestamps: true,
+  versionKey: false,
+  collection: "policies",
 })
 export class Policy {
-	@Prop({ type: SchemaTypes.ObjectId, ref: PolicyGroup.name })
-	readonly policyGroupId: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, ref: PolicyGroup.name })
+  readonly policyGroupId: Types.ObjectId;
 
-	@Prop({ type: String, unique: true, required: true })
-	readonly policyKey: string;
+  @Prop({ type: String, unique: true, required: true })
+  readonly policyKey: string;
 
-	@Prop({ type: String, unique: true, required: true })
-	readonly name: string;
+  @Prop({ type: String, unique: true, required: true })
+  readonly name: string;
 
-	@Prop({ type: String, default: "#" })
-	readonly collectionName: string;
+  @Prop({ type: String, default: "#" })
+  readonly collectionName: string;
 
-	@Prop({ type: String, required: true })
-	readonly endpoint: string;
+  @Prop({ type: String, required: true })
+  readonly endpoint: string;
 
-	@Prop({ type: String, enum: HttpMethod, required: true })
-	readonly method: HttpMethod;
+  @Prop({ type: String, enum: HttpMethod, required: true })
+  readonly method: HttpMethod;
 
-	@Prop({ type: String })
-	readonly description?: string;
+  @Prop({ type: String })
+  readonly description?: string;
 
-	@Prop({
-		type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
-		default: [],
-	})
-	userIds: Types.ObjectId[] = [];
+  @Prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
+    default: [],
+  })
+  userIds: Types.ObjectId[] = [];
 
-	@Prop({
-		type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
-		default: [],
-	})
-	userGroupIds: Types.ObjectId[] = [];
+  @Prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
+    default: [],
+  })
+  userGroupIds: Types.ObjectId[] = [];
 
-	@Prop({ type: Boolean, default: false })
-	readonly isPublic: boolean;
+  @Prop({ type: Boolean, default: false })
+  readonly isPublic: boolean;
 
-	@Prop({
-		type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
-	})
-	blockedUserGroupIds?: Types.ObjectId[];
+  @Prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
+  })
+  blockedUserGroupIds?: Types.ObjectId[];
 
-	@Prop({
-		type: [{ type: SchemaTypes.ObjectId, ref: User.name }],
-	})
-	blockedUserIds?: Types.ObjectId[];
+  @Prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: User.name }],
+  })
+  blockedUserIds?: Types.ObjectId[];
 }
 
 type PolicyDocument = HydratedDocument<Policy>;

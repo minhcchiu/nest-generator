@@ -5,16 +5,16 @@ import { BannerService } from "./banner.service";
 import { Banner, BannerSchema } from "./schemas/banner.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Banner.name,
-				schema: BannerSchema,
-			},
-		]),
-	],
-	controllers: [BannerController],
-	providers: [BannerService],
-	exports: [BannerService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Banner.name,
+        schema: BannerSchema,
+      },
+    ]),
+  ],
+  controllers: [BannerController],
+  providers: [BannerService],
+  exports: [BannerService],
 })
 export class BannerModule {}

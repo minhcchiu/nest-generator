@@ -6,7 +6,7 @@ import { Menu } from "./schemas/menu.schema";
 
 @Injectable()
 export class MenuService extends BaseService<Menu> {
-	constructor(@InjectModel(Menu.name) model: Model<Menu>) {
-		super(model);
-	}
+  constructor(@InjectModel(Menu.name) model: Model<Menu>) {
+    super(model);
+  }
 }

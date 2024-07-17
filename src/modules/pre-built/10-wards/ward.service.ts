@@ -6,7 +6,7 @@ import { Ward, WardDocument } from "./schemas/ward.schema";
 
 @Injectable()
 export class WardService extends BaseService<WardDocument> {
-	constructor(@InjectModel(Ward.name) model: Model<WardDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Ward.name) model: Model<WardDocument>) {
+    super(model);
+  }
 }

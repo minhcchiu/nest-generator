@@ -1,8 +1,8 @@
 import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { NodeEnv } from "src/configurations/enums/config.enum";
@@ -28,256 +28,229 @@ import { SocialInterface } from "./interfaces/social.interface";
 
 @Injectable()
 export class AuthService {
-	constructor(
-		private readonly userService: UserService,
-		private readonly tokenService: TokenService,
-		private readonly mailService: MailService,
-		private readonly firebaseService: FirebaseService,
-		private readonly otpService: OtpService,
-		private readonly hashingService: HashingService,
-	) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+    private readonly mailService: MailService,
+    private readonly firebaseService: FirebaseService,
+    private readonly otpService: OtpService,
+    private readonly hashingService: HashingService,
+  ) {}
 
-	async register({ fcmToken, otpCode, sendOtpTo, ...input }: RegisterDto) {
-		await this.userService.validateCreateUser(input);
+  async register({ fcmToken, otpCode, sendOtpTo, ...input }: RegisterDto) {
+    await this.userService.validateCreateUser(input);
 
-		// Verify otp
-		if (otpCode) {
-			await this.otpService.verifyOtp({
-				otpCode,
-				sendOtpTo,
-				otpType: OtpTypeEnum.Register,
-				phone: input.phone,
-				email: input.email,
-			});
+    // Verify otp
+    if (otpCode) {
+      await this.otpService.verifyOtp({
+        otpCode,
+        sendOtpTo,
+        otpType: OtpTypeEnum.Register,
+        phone: input.phone,
+        email: input.email,
+      });
 
-			input.status = AccountStatus.Verified;
-		}
+      input.status = AccountStatus.Verified;
+    }
 
-		const newUser = await this.userService.createUser({
-			...input,
-			roles: [RoleEnum.User],
-			fcmTokens: fcmToken ? [fcmToken] : [],
-		});
+    const newUser = await this.userService.createUser({
+      ...input,
+      roles: [RoleEnum.User],
+      fcmTokens: fcmToken ? [fcmToken] : [],
+    });
 
-		return this.tokenService.generateUserAuth(newUser);
-	}
+    return this.tokenService.generateUserAuth(newUser);
+  }
 
-	async login({ fcmToken, authKey, password }: LoginDto) {
-		const user = await this.userService.findOne(
-			{
-				$or: [{ email: authKey }, { phone: authKey }, { username: authKey }],
-			},
-			{
-				projection: { ...authSelect, password: 1 },
-			},
-		);
+  async login({ fcmToken, authKey, password }: LoginDto) {
+    const user = await this.userService.findOne(
+      {
+        $or: [{ email: authKey }, { phone: authKey }, { username: authKey }],
+      },
+      {
+        projection: { ...authSelect, password: 1 },
+      },
+    );
 
-		if (!user) throw new NotFoundException("Incorrect account!");
+    if (!user) throw new NotFoundException("Incorrect account!");
 
-		if (user.status === AccountStatus.Deleted)
-			throw new BadRequestException("The account has been removed.");
+    if (user.status === AccountStatus.Deleted)
+      throw new BadRequestException("The account has been removed.");
 
-		const isPasswordValid = await this.hashingService.compare(
-			user.password,
-			password,
-		);
+    const isPasswordValid = await this.hashingService.compare(user.password, password);
 
-		if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
+    if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
 
-		if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
+    if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
 
-		delete user.password;
-		return this.tokenService.generateUserAuth(user);
-	}
+    delete user.password;
+    return this.tokenService.generateUserAuth(user);
+  }
 
-	async socialLogin({ fcmToken, idToken, accountType }: SocialLoginDto) {
-		const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
+  async socialLogin({ fcmToken, idToken, accountType }: SocialLoginDto) {
+    const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
 
-		let foundUser = await this.userService.findOne(
-			{
-				$or: [
-					{
-						socialID: decodedIdToken.sub,
-					},
-					{
-						email: decodedIdToken.email,
-					},
-				],
-			},
-			{ projection: authSelect },
-		);
+    let foundUser = await this.userService.findOne(
+      {
+        $or: [
+          {
+            socialID: decodedIdToken.sub,
+          },
+          {
+            email: decodedIdToken.email,
+          },
+        ],
+      },
+      { projection: authSelect },
+    );
 
-		if (!foundUser) {
-			const newUser = await this.userService.createUser({
-				fullName: decodedIdToken.name,
-				socialID: decodedIdToken.sub,
-				avatar: decodedIdToken.picture,
-				email: decodedIdToken.email,
-				accountType,
-				password: generateRandomKey(32),
-				status: AccountStatus.Verified,
-				roles: [RoleEnum.User],
-			});
+    if (!foundUser) {
+      const newUser = await this.userService.createUser({
+        fullName: decodedIdToken.name,
+        socialID: decodedIdToken.sub,
+        avatar: decodedIdToken.picture,
+        email: decodedIdToken.email,
+        accountType,
+        password: generateRandomKey(32),
+        status: AccountStatus.Verified,
+        roles: [RoleEnum.User],
+      });
 
-			foundUser = newUser.toObject();
-		}
+      foundUser = newUser.toObject();
+    }
 
-		if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);
+    if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);
 
-		return this.tokenService.generateUserAuth(foundUser);
-	}
+    return this.tokenService.generateUserAuth(foundUser);
+  }
 
-	async sendToken(input: RegisterDto) {
-		await this.userService.validateCreateUser(input);
+  async sendToken(input: RegisterDto) {
+    await this.userService.validateCreateUser(input);
 
-		const { token, expiresAt } =
-			await this.tokenService.generateUserToken(input);
+    const { token, expiresAt } = await this.tokenService.generateUserToken(input);
 
-		await this.mailService.sendUserToken(
-			{
-				token,
-				expiresAt,
-				fullName: input.fullName,
-			},
-			input.email,
-		);
+    await this.mailService.sendUserToken(
+      {
+        token,
+        expiresAt,
+        fullName: input.fullName,
+      },
+      input.email,
+    );
 
-		return {
-			...input,
-			token:
-				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
-					? token
-					: undefined,
-			expiresAt,
-		};
-	}
+    return {
+      ...input,
+      token: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? token : undefined,
+      expiresAt,
+    };
+  }
 
-	async activateToken(token: string) {
-		const decoded = await this.tokenService.verifyUserToken(token);
+  async activateToken(token: string) {
+    const decoded = await this.tokenService.verifyUserToken(token);
 
-		// delete key of token
-		delete decoded.iat;
-		delete decoded.exp;
+    // delete key of token
+    delete decoded.iat;
+    delete decoded.exp;
 
-		decoded.status = AccountStatus.Verified;
+    decoded.status = AccountStatus.Verified;
 
-		return this.register(decoded);
-	}
+    return this.register(decoded);
+  }
 
-	async sendOtp(input: SendOtpDto) {
-		await this.userService.validateCreateUser(input);
+  async sendOtp(input: SendOtpDto) {
+    await this.userService.validateCreateUser(input);
 
-		const otpItem = {
-			phone: input.phone,
-			email: input.email,
-			sendOtpTo: input.sendOtpTo,
-			otpType: OtpTypeEnum.Register,
-		};
+    const otpItem = {
+      phone: input.phone,
+      email: input.email,
+      sendOtpTo: input.sendOtpTo,
+      otpType: OtpTypeEnum.Register,
+    };
 
-		const { expiresAt, otpCode, ...rest } =
-			await this.otpService.sendOtp(otpItem);
+    const { expiresAt, otpCode, ...rest } = await this.otpService.sendOtp(otpItem);
 
-		return {
-			...input,
-			...otpItem,
-			...rest,
-			otpCode:
-				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
-					? otpCode
-					: undefined,
-			expiresAt,
-		};
-	}
+    return {
+      ...input,
+      ...otpItem,
+      ...rest,
+      otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? otpCode : undefined,
+      expiresAt,
+    };
+  }
 
-	async logout(userId: Types.ObjectId, fcmToken?: string) {
-		Promise.all([
-			this.userService.removeFcmTokens([fcmToken]),
-			this.tokenService.deleteOne({ user: userId }),
-		]);
+  async logout(userId: Types.ObjectId, fcmToken?: string) {
+    Promise.all([
+      this.userService.removeFcmTokens([fcmToken]),
+      this.tokenService.deleteOne({ user: userId }),
+    ]);
 
-		return { message: "Logout success!" };
-	}
+    return { message: "Logout success!" };
+  }
 
-	async validateSocialLogin(
-		accountType: AccountTypeEnum,
-		socialData: SocialInterface,
-	) {
-		return {
-			accountType,
-			...socialData,
-		};
-	}
+  async validateSocialLogin(accountType: AccountTypeEnum, socialData: SocialInterface) {
+    return {
+      accountType,
+      ...socialData,
+    };
+  }
 
-	async refreshToken(token: string) {
-		const [tokenDoc] = await Promise.all([
-			this.tokenService.findOne(
-				{ token },
-				{ populate: { path: "userId", select: authSelect } },
-			),
-			this.tokenService.verifyRefreshToken(token),
-		]);
+  async refreshToken(token: string) {
+    const [tokenDoc] = await Promise.all([
+      this.tokenService.findOne({ token }, { populate: { path: "userId", select: authSelect } }),
+      this.tokenService.verifyRefreshToken(token),
+    ]);
 
-		if (!tokenDoc?.userId)
-			throw new UnauthorizedException("Invalid refresh token!");
+    if (!tokenDoc?.userId) throw new UnauthorizedException("Invalid refresh token!");
 
-		return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
-	}
+    return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
+  }
 
-	async forgotPassword(email: string) {
-		const user = await this.userService.findOne({ email });
+  async forgotPassword(email: string) {
+    const user = await this.userService.findOne({ email });
 
-		if (!user) {
-			throw new NotFoundException("User not found.");
-		}
+    if (!user) {
+      throw new NotFoundException("User not found.");
+    }
 
-		if (user.status === AccountStatus.Deleted) {
-			throw new BadRequestException("The account has been removed.");
-		}
+    if (user.status === AccountStatus.Deleted) {
+      throw new BadRequestException("The account has been removed.");
+    }
 
-		const { expiresAt, token } =
-			await this.tokenService.generateForgotPasswordToken(user);
+    const { expiresAt, token } = await this.tokenService.generateForgotPasswordToken(user);
 
-		// send email
-		await this.mailService.sendForgotPasswordToken(
-			{ token, expiresAt, fullName: user.fullName },
-			email,
-		);
+    // send email
+    await this.mailService.sendForgotPasswordToken(
+      { token, expiresAt, fullName: user.fullName },
+      email,
+    );
 
-		await this.tokenService.updateOne(
-			{ userId: user._id },
-			{ userId: user._id, token, expiresAt },
-			{ upsert: true },
-		);
+    await this.tokenService.updateOne(
+      { userId: user._id },
+      { userId: user._id, token, expiresAt },
+      { upsert: true },
+    );
 
-		return {
-			email,
-			token:
-				EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development
-					? token
-					: undefined,
-			expiresAt,
-		};
-	}
+    return {
+      email,
+      token: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? token : undefined,
+      expiresAt,
+    };
+  }
 
-	async resetPassword(token: string, password: string) {
-		const [decoded, tokenDoc] = await Promise.all([
-			this.tokenService.verifyForgotPasswordToken(token),
-			this.tokenService.deleteOne({ token }),
-		]);
+  async resetPassword(token: string, password: string) {
+    const [decoded, tokenDoc] = await Promise.all([
+      this.tokenService.verifyForgotPasswordToken(token),
+      this.tokenService.deleteOne({ token }),
+    ]);
 
-		if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
+    if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
 
-		const user = await this.userService.resetPassword(
-			stringIdToObjectId(decoded._id),
-			password,
-			{
-				projection: authSelect,
-			},
-		);
+    const user = await this.userService.resetPassword(stringIdToObjectId(decoded._id), password, {
+      projection: authSelect,
+    });
 
-		const { accessToken, refreshToken } =
-			await this.tokenService.generateUserAuth(user);
+    const { accessToken, refreshToken } = await this.tokenService.generateUserAuth(user);
 
-		return { accessToken, refreshToken, user };
-	}
+    return { accessToken, refreshToken, user };
+  }
 }

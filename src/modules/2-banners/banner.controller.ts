@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -21,69 +21,66 @@ import { UpdateBannerDto } from "./dto/update-banner.dto";
 
 @Controller("banners")
 export class BannerController {
-	constructor(private readonly bannerService: BannerService) {}
+  constructor(private readonly bannerService: BannerService) {}
 
-	// ----- Method: GET -----
-	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.bannerService.findMany(filter, options);
-	}
+  // ----- Method: GET -----
+  @Public()
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.bannerService.findMany(filter, options);
+  }
 
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.bannerService.paginate(filter, options);
-	}
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.bannerService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.bannerService.count(filter);
-	}
+  @Public()
+  @Get("/count")
+  @HttpCode(HttpStatus.OK)
+  async count(@GetAqp("filter") filter: PaginationDto) {
+    return this.bannerService.count(filter);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.bannerService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.bannerService.findById(id, { projection, populate });
+  }
 
-	// ----- Method: POST -----
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateBannerDto) {
-		return this.bannerService.create(body);
-	}
+  // ----- Method: POST -----
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateBannerDto) {
+    return this.bannerService.create(body);
+  }
 
-	// ----- Method: PATCH -----
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateBannerDto,
-	) {
-		return this.bannerService.updateById(id, body);
-	}
+  // ----- Method: PATCH -----
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateBannerDto) {
+    return this.bannerService.updateById(id, body);
+  }
 
-	// ----- Method: DELETE -----
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.bannerService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  // ----- Method: DELETE -----
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.bannerService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.bannerService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.bannerService.deleteById(id);
+  }
 }

@@ -21,28 +21,28 @@ import { ProvinceModule } from "./pre-built/8-provinces/province.module";
 import { DistrictModule } from "./pre-built/9-districts/district.module";
 
 export const RouteModules = [
-	// pre-built
-	AuthModule,
-	UserModule,
-	UserGroupModule,
-	PolicyModule,
-	PolicyGroupModule,
-	MenuGroupModule,
-	MenuModule,
-	SystemMenuModule,
-	TokenModule,
-	OtpModule,
-	UploadModule,
-	UserFileModule,
-	ProvinceModule,
-	DistrictModule,
-	WardModule,
-	SettingModule,
-	NotificationModule,
+  // pre-built
+  AuthModule,
+  UserModule,
+  UserGroupModule,
+  PolicyModule,
+  PolicyGroupModule,
+  MenuGroupModule,
+  MenuModule,
+  SystemMenuModule,
+  TokenModule,
+  OtpModule,
+  UploadModule,
+  UserFileModule,
+  ProvinceModule,
+  DistrictModule,
+  WardModule,
+  SettingModule,
+  NotificationModule,
 
-	// features
-	ShopModule,
-	BannerModule,
-	ProductModule,
-	TestModule,
+  // features
+  ShopModule,
+  BannerModule,
+  ProductModule,
+  TestModule,
 ];

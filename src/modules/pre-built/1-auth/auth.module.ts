@@ -10,15 +10,8 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 
 @Module({
-	imports: [
-		ConfigModule,
-		UserModule,
-		JwtModule,
-		MailModule,
-		OtpModule,
-		TokenModule,
-	],
-	providers: [AuthService, HashingService],
-	controllers: [AuthController],
+  imports: [ConfigModule, UserModule, JwtModule, MailModule, OtpModule, TokenModule],
+  providers: [AuthService, HashingService],
+  controllers: [AuthController],
 })
 export class AuthModule {}

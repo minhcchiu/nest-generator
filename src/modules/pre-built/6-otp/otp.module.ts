@@ -7,18 +7,18 @@ import { OtpService } from "./otp.service";
 import { Otp, OtpSchema } from "./schemas/otp.schema";
 
 @Module({
-	imports: [
-		ConfigModule,
-		MongooseModule.forFeature([
-			{
-				name: Otp.name,
-				schema: OtpSchema,
-			},
-		]),
-		MailModule,
-	],
-	controllers: [OtpController],
-	providers: [OtpService],
-	exports: [OtpService],
+  imports: [
+    ConfigModule,
+    MongooseModule.forFeature([
+      {
+        name: Otp.name,
+        schema: OtpSchema,
+      },
+    ]),
+    MailModule,
+  ],
+  controllers: [OtpController],
+  providers: [OtpService],
+  exports: [OtpService],
 })
 export class OtpModule {}

@@ -6,7 +6,7 @@ import { Comment, CommentDocument } from "./schemas/comment.schema";
 
 @Injectable()
 export class CommentService extends BaseService<CommentDocument> {
-	constructor(@InjectModel(Comment.name) model: Model<CommentDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Comment.name) model: Model<CommentDocument>) {
+    super(model);
+  }
 }

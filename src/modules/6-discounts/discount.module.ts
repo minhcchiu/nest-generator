@@ -7,17 +7,17 @@ import { DiscountService } from "./discount.service";
 import { Discount, DiscountSchema } from "./schemas/discount.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Discount.name,
-				schema: DiscountSchema,
-			},
-		]),
-		forwardRef(() => ProductModule),
-	],
-	controllers: [DiscountController],
-	providers: [DiscountService],
-	exports: [DiscountService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Discount.name,
+        schema: DiscountSchema,
+      },
+    ]),
+    forwardRef(() => ProductModule),
+  ],
+  controllers: [DiscountController],
+  providers: [DiscountService],
+  exports: [DiscountService],
 })
 export class DiscountModule {}

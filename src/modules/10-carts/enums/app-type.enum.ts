@@ -1,4 +1,4 @@
 export enum AppTypeEnum {
-	Customer = "CUSTOMER",
-	Store = "STORE",
+  Customer = "CUSTOMER",
+  Store = "STORE",
 }

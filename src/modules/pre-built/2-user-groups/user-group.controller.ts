@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -20,56 +20,56 @@ import { UserGroupService } from "./user-group.service";
 
 @Controller("user_groups")
 export class UserGroupController {
-	constructor(private readonly userGroupService: UserGroupService) {}
+  constructor(private readonly userGroupService: UserGroupService) {}
 
-	//  ----- Method: GET -----
-	@Get("/paginate")
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userGroupService.paginate(filter, options);
-	}
+  //  ----- Method: GET -----
+  @Get("/paginate")
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.userGroupService.paginate(filter, options);
+  }
 
-	@Get("/:id")
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.userGroupService.findById(id, { projection, populate });
-	}
+  @Get("/:id")
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.userGroupService.findById(id, { projection, populate });
+  }
 
-	@Get("/")
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userGroupService.findMany(filter, options);
-	}
+  @Get("/")
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.userGroupService.findMany(filter, options);
+  }
 
-	//  ----- Method: POST -----
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateUserGroupDto) {
-		return this.userGroupService.create(body);
-	}
+  //  ----- Method: POST -----
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateUserGroupDto) {
+    return this.userGroupService.create(body);
+  }
 
-	//  ----- Method: PATCH -----
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateUserGroupDto,
-	) {
-		return this.userGroupService.updateById(id, body);
-	}
+  //  ----- Method: PATCH -----
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() body: UpdateUserGroupDto,
+  ) {
+    return this.userGroupService.updateById(id, body);
+  }
 
-	//  ----- Method: DELETE -----
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.userGroupService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  //  ----- Method: DELETE -----
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.userGroupService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userGroupService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userGroupService.deleteById(id);
+  }
 }

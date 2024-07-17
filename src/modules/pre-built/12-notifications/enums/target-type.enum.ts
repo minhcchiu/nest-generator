@@ -1,4 +1,4 @@
 export enum TargetType {
-	Personal = "PERSONAL",
-	All = "ALL",
+  Personal = "PERSONAL",
+  All = "ALL",
 }

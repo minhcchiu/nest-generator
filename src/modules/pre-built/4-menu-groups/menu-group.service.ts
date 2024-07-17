@@ -6,7 +6,7 @@ import { MenuGroup } from "./schemas/menu-group.schema";
 
 @Injectable()
 export class MenuGroupService extends BaseService<MenuGroup> {
-	constructor(@InjectModel(MenuGroup.name) model: Model<MenuGroup>) {
-		super(model);
-	}
+  constructor(@InjectModel(MenuGroup.name) model: Model<MenuGroup>) {
+    super(model);
+  }
 }

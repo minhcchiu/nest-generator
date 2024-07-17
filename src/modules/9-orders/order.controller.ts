@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -21,65 +21,62 @@ import { OrderService } from "./order.service";
 
 @Controller("categories")
 export class OrderController {
-	constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {}
 
-	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.orderService.findMany(filter, options);
-	}
+  @Public()
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.orderService.findMany(filter, options);
+  }
 
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateOrderDto) {
-		return this.orderService.create(body);
-	}
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateOrderDto) {
+    return this.orderService.create(body);
+  }
 
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateOrderDto,
-	) {
-		return this.orderService.updateById(id, body);
-	}
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateOrderDto) {
+    return this.orderService.updateById(id, body);
+  }
 
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.orderService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.orderService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.orderService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.orderService.deleteById(id);
+  }
 
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.orderService.paginate(filter, options);
-	}
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.orderService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.orderService.count(filter);
-	}
+  @Public()
+  @Get("/count")
+  @HttpCode(HttpStatus.OK)
+  async count(@GetAqp("filter") filter: PaginationDto) {
+    return this.orderService.count(filter);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.orderService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.orderService.findById(id, { projection, populate });
+  }
 }

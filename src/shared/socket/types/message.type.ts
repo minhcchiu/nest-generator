@@ -1,25 +1,25 @@
 export type Message = {
-	sender: {
-		_id: string;
-		fullName: string;
-		avatar: string;
-	};
-	readBy: string[];
-	chat: {
-		_id: string;
-		members: {
-			user: {
-				_id: string;
-				fullName: string;
-				avatar: string;
-			};
-			nickName: string;
-		}[];
-	};
-	text: string;
-	image: string[];
-	auto: string;
-	isDeleted: boolean;
+  sender: {
+    _id: string;
+    fullName: string;
+    avatar: string;
+  };
+  readBy: string[];
+  chat: {
+    _id: string;
+    members: {
+      user: {
+        _id: string;
+        fullName: string;
+        avatar: string;
+      };
+      nickName: string;
+    }[];
+  };
+  text: string;
+  image: string[];
+  auto: string;
+  isDeleted: boolean;
 };
 // const data = {
 // 	"sender": {

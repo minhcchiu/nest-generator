@@ -1,26 +1,20 @@
-import {
-	IsEnum,
-	IsNotEmpty,
-	IsNumber,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { FileDetailEnum } from "../enums/file-detail.enum";
 
 export class FileDetailDto {
-	@IsString()
-	@IsNotEmpty()
-	url: string;
+  @IsString()
+  @IsNotEmpty()
+  url: string;
 
-	@IsOptional()
-	@IsNumber()
-	position: number;
+  @IsOptional()
+  @IsNumber()
+  position: number;
 
-	@IsString()
-	@IsEnum(FileDetailEnum)
-	fileType: FileDetailEnum;
+  @IsString()
+  @IsEnum(FileDetailEnum)
+  fileType: FileDetailEnum;
 
-	@IsOptional()
-	@IsString()
-	thumbnail: string;
+  @IsOptional()
+  @IsString()
+  thumbnail: string;
 }

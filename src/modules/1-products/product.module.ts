@@ -12,30 +12,30 @@ import { Furniture, FurnitureSchema } from "./schemas/furniture.schema";
 import { Product, ProductSchema } from "./schemas/product.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Product.name,
-				schema: ProductSchema,
-			},
-			{
-				name: Furniture.name,
-				schema: FurnitureSchema,
-			},
-			{
-				name: Clothing.name,
-				schema: ClothingSchema,
-			},
-			{
-				name: Electronic.name,
-				schema: ElectronicSchema,
-			},
-		]),
-		InventoryModule,
-		forwardRef(() => DiscountModule),
-	],
-	controllers: [ProductController],
-	providers: [ProductService, RedisService],
-	exports: [ProductService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Product.name,
+        schema: ProductSchema,
+      },
+      {
+        name: Furniture.name,
+        schema: FurnitureSchema,
+      },
+      {
+        name: Clothing.name,
+        schema: ClothingSchema,
+      },
+      {
+        name: Electronic.name,
+        schema: ElectronicSchema,
+      },
+    ]),
+    InventoryModule,
+    forwardRef(() => DiscountModule),
+  ],
+  controllers: [ProductController],
+  providers: [ProductService, RedisService],
+  exports: [ProductService],
 })
 export class ProductModule {}

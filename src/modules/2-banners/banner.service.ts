@@ -6,7 +6,7 @@ import { Banner, BannerDocument } from "./schemas/banner.schema";
 
 @Injectable()
 export class BannerService extends BaseService<BannerDocument> {
-	constructor(@InjectModel(Banner.name) model: Model<BannerDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Banner.name) model: Model<BannerDocument>) {
+    super(model);
+  }
 }

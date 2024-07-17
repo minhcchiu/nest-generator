@@ -1,8 +1,8 @@
 import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, QueryOptions, Types } from "mongoose";
@@ -14,111 +14,94 @@ import { User, UserDocument } from "./schemas/user.schema";
 
 @Injectable()
 export class UserService extends BaseService<UserDocument> {
-	private userService: UserService;
+  private userService: UserService;
 
-	constructor(
-		@InjectModel(User.name) model: Model<UserDocument>,
-		private readonly hashingService: HashingService,
-	) {
-		super(model);
+  constructor(
+    @InjectModel(User.name) model: Model<UserDocument>,
+    private readonly hashingService: HashingService,
+  ) {
+    super(model);
 
-		this.userService = this;
-	}
+    this.userService = this;
+  }
 
-	async validateCreateUser(input: Record<string, any>) {
-		if (input.email) {
-			const userExist = await this.userService.findOne({ email: input.email });
+  async validateCreateUser(input: Record<string, any>) {
+    if (input.email) {
+      const userExist = await this.userService.findOne({ email: input.email });
 
-			if (userExist) throw new BadRequestException(`Email already exist.`);
-		}
+      if (userExist) throw new BadRequestException(`Email already exist.`);
+    }
 
-		if (input.phone) {
-			const userExist = await this.userService.findOne({ phone: input.phone });
+    if (input.phone) {
+      const userExist = await this.userService.findOne({ phone: input.phone });
 
-			if (userExist) throw new BadRequestException(`Phone already exist.`);
-		}
+      if (userExist) throw new BadRequestException(`Phone already exist.`);
+    }
 
-		if (input.username) {
-			const userExist = await this.userService.findOne({
-				username: input.username,
-			});
+    if (input.username) {
+      const userExist = await this.userService.findOne({
+        username: input.username,
+      });
 
-			if (userExist) throw new BadRequestException(`Username already exist.`);
-		}
-	}
+      if (userExist) throw new BadRequestException(`Username already exist.`);
+    }
+  }
 
-	async createUser(input: CreateUserDto) {
-		await this.validateCreateUser(input);
+  async createUser(input: CreateUserDto) {
+    await this.validateCreateUser(input);
 
-		const hashPassword = await this.hashingService.hash(input.password);
-		Object.assign(input, { password: hashPassword });
+    const hashPassword = await this.hashingService.hash(input.password);
+    Object.assign(input, { password: hashPassword });
 
-		return this.userService.create(input);
-	}
+    return this.userService.create(input);
+  }
 
-	async updatePasswordById(
-		id: Types.ObjectId,
-		{ newPassword, oldPassword }: UpdatePasswordDto,
-	) {
-		const user = await this.userService.findById(id, {
-			projection: "password",
-		});
+  async updatePasswordById(id: Types.ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
+    const user = await this.userService.findById(id, {
+      projection: "password",
+    });
 
-		if (!user) throw new NotFoundException("User not found.");
+    if (!user) throw new NotFoundException("User not found.");
 
-		const validPass = await this.hashingService.compare(
-			user.password,
-			oldPassword,
-		);
+    const validPass = await this.hashingService.compare(user.password, oldPassword);
 
-		if (!validPass) throw new UnauthorizedException("Invalid old password.");
+    if (!validPass) throw new UnauthorizedException("Invalid old password.");
 
-		const hashPassword = await this.hashingService.hash(newPassword);
+    const hashPassword = await this.hashingService.hash(newPassword);
 
-		return this.userService.updateById(user._id, { password: hashPassword });
-	}
+    return this.userService.updateById(user._id, { password: hashPassword });
+  }
 
-	async resetPassword(
-		id: Types.ObjectId,
-		newPassword: string,
-		options?: QueryOptions,
-	) {
-		const hashPassword = await this.hashingService.hash(newPassword);
+  async resetPassword(id: Types.ObjectId, newPassword: string, options?: QueryOptions) {
+    const hashPassword = await this.hashingService.hash(newPassword);
 
-		const updated = await this.userService.updateById(
-			id,
-			{ password: hashPassword },
-			options,
-		);
+    const updated = await this.userService.updateById(id, { password: hashPassword }, options);
 
-		if (!updated) throw new NotFoundException("User not found.");
+    if (!updated) throw new NotFoundException("User not found.");
 
-		return updated;
-	}
+    return updated;
+  }
 
-	async saveFcmToken(
-		id: Types.ObjectId,
-		fcmToken: string,
-	): Promise<UserDocument | null> {
-		const updated = await this.userService.updateById(
-			id,
-			{ $addToSet: { fcmTokens: fcmToken } },
-			{ projection: { _id: 1, fcmTokens: 1 } },
-		);
+  async saveFcmToken(id: Types.ObjectId, fcmToken: string): Promise<UserDocument | null> {
+    const updated = await this.userService.updateById(
+      id,
+      { $addToSet: { fcmTokens: fcmToken } },
+      { projection: { _id: 1, fcmTokens: 1 } },
+    );
 
-		return updated;
-	}
+    return updated;
+  }
 
-	async removeFcmTokens(fcmTokens: string[]) {
-		const updated = await this.userService.updateMany(
-			{
-				fcmTokens: { $in: fcmTokens },
-			},
-			{
-				$pull: { fcmTokens: { $in: fcmTokens } },
-			},
-		);
+  async removeFcmTokens(fcmTokens: string[]) {
+    const updated = await this.userService.updateMany(
+      {
+        fcmTokens: { $in: fcmTokens },
+      },
+      {
+        $pull: { fcmTokens: { $in: fcmTokens } },
+      },
+    );
 
-		return updated;
-	}
+    return updated;
+  }
 }

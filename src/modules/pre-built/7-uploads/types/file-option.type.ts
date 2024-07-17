@@ -1,4 +1,4 @@
 export type FileOption = {
-	maxSize: number;
-	allowedExtensions: string[];
+  maxSize: number;
+  allowedExtensions: string[];
 };

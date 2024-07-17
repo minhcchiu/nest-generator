@@ -5,16 +5,16 @@ import { PolicyService } from "./policy.service";
 import { Policy, PolicySchema } from "./schemas/policy.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Policy.name,
-				schema: PolicySchema,
-			},
-		]),
-	],
-	controllers: [PolicyController],
-	providers: [PolicyService],
-	exports: [PolicyService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Policy.name,
+        schema: PolicySchema,
+      },
+    ]),
+  ],
+  controllers: [PolicyController],
+  providers: [PolicyService],
+  exports: [PolicyService],
 })
 export class PolicyModule {}

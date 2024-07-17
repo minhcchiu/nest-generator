@@ -6,35 +6,32 @@ import { EnvStatic } from "src/configurations/static.env";
 import { mongoosePaginateV2 } from "./mongoose-paginate.config";
 
 @Module({
-	imports: [
-		MongooseModule.forRootAsync({
-			imports: [ConfigModule],
+  imports: [
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
 
-			useFactory: async () => ({
-				uri: EnvStatic.getDatabaseConfig().uri,
-				retryWrites: true,
-				autoIndex: true,
+      useFactory: async () => ({
+        uri: EnvStatic.getDatabaseConfig().uri,
+        retryWrites: true,
+        autoIndex: true,
 
-				connectionFactory: (connection: any) => {
-					// Plugin
-					connection.plugin(mongoosePaginateV2);
+        connectionFactory: (connection: any) => {
+          // Plugin
+          connection.plugin(mongoosePaginateV2);
 
-					// Check connect success
-					if (connection.readyState === 1) {
-						Logger.log(
-							`MongDB Connected: ${connection.host}`,
-							"MongoDBConnection",
-						);
-					}
+          // Check connect success
+          if (connection.readyState === 1) {
+            Logger.log(`MongDB Connected: ${connection.host}`, "MongoDBConnection");
+          }
 
-					return connection;
-				},
+          return connection;
+        },
 
-				w: "majority",
-			}),
+        w: "majority",
+      }),
 
-			inject: [ConfigService],
-		}),
-	],
+      inject: [ConfigService],
+    }),
+  ],
 })
 export class DatabaseModule {}

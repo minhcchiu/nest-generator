@@ -7,18 +7,18 @@ import { UserFileController } from "./user-file.controller";
 import { UserFileService } from "./user-file.service";
 
 @Module({
-	imports: [
-		ConfigModule,
-		MongooseModule.forFeature([
-			{
-				name: UserFile.name,
-				schema: UserFileSchema,
-			},
-		]),
-		MailModule,
-	],
-	controllers: [UserFileController],
-	providers: [UserFileService],
-	exports: [UserFileService],
+  imports: [
+    ConfigModule,
+    MongooseModule.forFeature([
+      {
+        name: UserFile.name,
+        schema: UserFileSchema,
+      },
+    ]),
+    MailModule,
+  ],
+  controllers: [UserFileController],
+  providers: [UserFileService],
+  exports: [UserFileService],
 })
 export class UserFileModule {}

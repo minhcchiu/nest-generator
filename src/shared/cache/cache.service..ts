@@ -4,20 +4,20 @@ import { UserPolicyType } from "src/guards/types/user-policy.type";
 
 @Injectable()
 export class CacheService {
-	// const myCache = new NodeCache();
-	private cache: NodeCache;
+  // const myCache = new NodeCache();
+  private cache: NodeCache;
 
-	constructor() {
-		this.cache = new NodeCache();
-	}
+  constructor() {
+    this.cache = new NodeCache();
+  }
 
-	setUserPolices(key: string, value: UserPolicyType) {
-		const ttl = 8 * 60 * 60; // 8 hours
+  setUserPolices(key: string, value: UserPolicyType) {
+    const ttl = 8 * 60 * 60; // 8 hours
 
-		return this.cache.set(key, value, ttl);
-	}
+    return this.cache.set(key, value, ttl);
+  }
 
-	getUserPolicy(key: string): UserPolicyType {
-		return this.cache.get(key);
-	}
+  getUserPolicy(key: string): UserPolicyType {
+    return this.cache.get(key);
+  }
 }

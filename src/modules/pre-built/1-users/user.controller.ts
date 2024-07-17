@@ -1,14 +1,14 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	ParseEnumPipe,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseEnumPipe,
+  Patch,
+  Post,
 } from "@nestjs/common";
 
 import { Types } from "mongoose";
@@ -26,116 +26,107 @@ import { UserService } from "./user.service";
 
 @Controller("users")
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-	//  ----- Method: GET -----
-	@Get("/me")
-	@HttpCode(HttpStatus.OK)
-	async getMe(
-		@GetCurrentUserId() id: string,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.userService.findById(stringIdToObjectId(id), {
-			projection,
-			populate,
-		});
-	}
+  //  ----- Method: GET -----
+  @Get("/me")
+  @HttpCode(HttpStatus.OK)
+  async getMe(@GetCurrentUserId() id: string, @GetAqp() { projection, populate }: PaginationDto) {
+    return this.userService.findById(stringIdToObjectId(id), {
+      projection,
+      populate,
+    });
+  }
 
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userService.paginate(filter, options);
-	}
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.userService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.userService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.userService.findById(id, { projection, populate });
+  }
 
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userService.findMany(filter, options);
-	}
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.userService.findMany(filter, options);
+  }
 
-	//  ----- Method: POST -----
-	@Post()
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateUserDto) {
-		await this.userService.validateCreateUser(body);
+  //  ----- Method: POST -----
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateUserDto) {
+    await this.userService.validateCreateUser(body);
 
-		return this.userService.createUser(body);
-	}
+    return this.userService.createUser(body);
+  }
 
-	//  ----- Method: PATCH -----
-	@Patch("password")
-	@HttpCode(HttpStatus.OK)
-	async updatePassword(
-		@GetCurrentUserId() id: Types.ObjectId,
-		@Body() body: UpdatePasswordDto,
-	) {
-		return this.userService.updatePasswordById(id, body);
-	}
+  //  ----- Method: PATCH -----
+  @Patch("password")
+  @HttpCode(HttpStatus.OK)
+  async updatePassword(@GetCurrentUserId() id: Types.ObjectId, @Body() body: UpdatePasswordDto) {
+    return this.userService.updatePasswordById(id, body);
+  }
 
-	@Patch(":id/status")
-	@HttpCode(HttpStatus.OK)
-	async updateStatus(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body("status", new ParseEnumPipe(AccountStatus)) status: AccountStatus,
-	) {
-		return this.userService.updateById(id, { status });
-	}
+  @Patch(":id/status")
+  @HttpCode(HttpStatus.OK)
+  async updateStatus(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Body("status", new ParseEnumPipe(AccountStatus)) status: AccountStatus,
+  ) {
+    return this.userService.updateById(id, { status });
+  }
 
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateUserDto,
-	) {
-		await this.userService.validateCreateUser(body);
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateUserDto) {
+    await this.userService.validateCreateUser(body);
 
-		return this.userService.updateById(id, body);
-	}
+    return this.userService.updateById(id, body);
+  }
 
-	//  ----- Method: DELETE -----
-	@Delete("me")
-	@HttpCode(HttpStatus.OK)
-	async deleteMe(@GetCurrentUserId() id: Types.ObjectId) {
-		return this.userService.updateById(id, { status: AccountStatus.Deleted });
-	}
+  //  ----- Method: DELETE -----
+  @Delete("me")
+  @HttpCode(HttpStatus.OK)
+  async deleteMe(@GetCurrentUserId() id: Types.ObjectId) {
+    return this.userService.updateById(id, { status: AccountStatus.Deleted });
+  }
 
-	@Delete(":ids/ids/hard")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.userService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  @Delete(":ids/ids/hard")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.userService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete(":id/hard")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userService.deleteById(id);
-	}
+  @Delete(":id/hard")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userService.deleteById(id);
+  }
 
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManySoftByIds(@Param("ids") ids: string) {
-		return this.userService.updateMany(
-			{ _id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) } },
-			{ status: AccountStatus.Deleted },
-		);
-	}
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManySoftByIds(@Param("ids") ids: string) {
+    return this.userService.updateMany(
+      { _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) } },
+      { status: AccountStatus.Deleted },
+    );
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.userService.updateById(id, { status: AccountStatus.Deleted });
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.userService.updateById(id, { status: AccountStatus.Deleted });
+  }
 }

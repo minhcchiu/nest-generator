@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -21,62 +21,59 @@ import { WardService } from "./ward.service";
 
 @Controller("wards")
 export class WardController {
-	constructor(private readonly wardService: WardService) {}
+  constructor(private readonly wardService: WardService) {}
 
-	//  ----- Method: GET -----
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.wardService.paginate(filter, options);
-	}
+  //  ----- Method: GET -----
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.wardService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.wardService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.wardService.findById(id, { projection, populate });
+  }
 
-	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.wardService.findMany(filter, options);
-	}
+  @Public()
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.wardService.findMany(filter, options);
+  }
 
-	//  ----- Method: POST -----
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateWardDto) {
-		return this.wardService.create(body);
-	}
+  //  ----- Method: POST -----
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateWardDto) {
+    return this.wardService.create(body);
+  }
 
-	//  ----- Method: PATCH -----
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateWardDto,
-	) {
-		return this.wardService.updateById(id, body);
-	}
+  //  ----- Method: PATCH -----
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateWardDto) {
+    return this.wardService.updateById(id, body);
+  }
 
-	//  ----- Method: DELETE -----
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.wardService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  //  ----- Method: DELETE -----
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.wardService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.wardService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.wardService.deleteById(id);
+  }
 }

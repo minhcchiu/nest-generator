@@ -6,7 +6,7 @@ import { Test, TestDocument } from "./schemas/test.schema";
 
 @Injectable()
 export class TestService extends BaseService<TestDocument> {
-	constructor(@InjectModel(Test.name) model: Model<TestDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Test.name) model: Model<TestDocument>) {
+    super(model);
+  }
 }

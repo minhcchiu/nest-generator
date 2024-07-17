@@ -5,16 +5,16 @@ import { UserGroupController } from "./user-group.controller";
 import { UserGroupService } from "./user-group.service";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: UserGroup.name,
-				schema: UserGroupSchema,
-			},
-		]),
-	],
-	controllers: [UserGroupController],
-	providers: [UserGroupService],
-	exports: [UserGroupService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: UserGroup.name,
+        schema: UserGroupSchema,
+      },
+    ]),
+  ],
+  controllers: [UserGroupController],
+  providers: [UserGroupService],
+  exports: [UserGroupService],
 })
 export class UserGroupModule {}

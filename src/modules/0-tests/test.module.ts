@@ -5,16 +5,16 @@ import { TestController } from "./test.controller";
 import { TestService } from "./test.service";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Test.name,
-				schema: TestSchema,
-			},
-		]),
-	],
-	controllers: [TestController],
-	providers: [TestService],
-	exports: [TestService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Test.name,
+        schema: TestSchema,
+      },
+    ]),
+  ],
+  controllers: [TestController],
+  providers: [TestService],
+  exports: [TestService],
 })
 export class TestModule {}

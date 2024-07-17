@@ -1,5 +1,5 @@
 export type FileFailed = {
-	error: string;
-	originalname: string;
-	fileSize: number;
+  error: string;
+  originalname: string;
+  fileSize: number;
 };

@@ -1,6 +1,6 @@
 export type ErrorDetail = {
-	property: string;
-	message: string;
-	errors?: ErrorDetail[];
-	details?: string[];
+  property: string;
+  message: string;
+  errors?: ErrorDetail[];
+  details?: string[];
 };

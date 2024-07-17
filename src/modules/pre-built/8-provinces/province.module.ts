@@ -5,16 +5,16 @@ import { ProvinceService } from "./province.service";
 import { Province, ProvinceSchema } from "./schemas/province.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Province.name,
-				schema: ProvinceSchema,
-			},
-		]),
-	],
-	controllers: [ProvinceController],
-	providers: [ProvinceService],
-	exports: [ProvinceService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Province.name,
+        schema: ProvinceSchema,
+      },
+    ]),
+  ],
+  controllers: [ProvinceController],
+  providers: [ProvinceService],
+  exports: [ProvinceService],
 })
 export class ProvinceModule {}

@@ -5,13 +5,13 @@ import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { CartProductDto } from "./cart-product.dto";
 
 export class CreateCartDto {
-	@IsNotEmpty()
-	@IsObjectId()
-	@ToObjectId()
-	readonly userId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsObjectId()
+  @ToObjectId()
+  readonly userId: Types.ObjectId;
 
-	@IsOptional()
-	@ValidateNested()
-	@Type(() => CartProductDto)
-	readonly products: CartProductDto[];
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CartProductDto)
+  readonly products: CartProductDto[];
 }

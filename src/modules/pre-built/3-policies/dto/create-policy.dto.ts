@@ -1,35 +1,29 @@
-import {
-	IsBoolean,
-	IsEnum,
-	IsNotEmpty,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { HttpMethod } from "../enum/http-method";
 
 export class CreatePolicyDto {
-	policyKey: string;
+  policyKey: string;
 
-	@IsNotEmpty()
-	@IsString()
-	readonly name: string;
+  @IsNotEmpty()
+  @IsString()
+  readonly name: string;
 
-	@IsNotEmpty()
-	@IsString()
-	readonly collectionName: string;
+  @IsNotEmpty()
+  @IsString()
+  readonly collectionName: string;
 
-	@IsNotEmpty()
-	@IsString()
-	readonly endpoint: string;
+  @IsNotEmpty()
+  @IsString()
+  readonly endpoint: string;
 
-	@IsEnum(HttpMethod)
-	readonly method: HttpMethod;
+  @IsEnum(HttpMethod)
+  readonly method: HttpMethod;
 
-	@IsOptional()
-	@IsString()
-	readonly description?: string;
+  @IsOptional()
+  @IsString()
+  readonly description?: string;
 
-	@IsOptional()
-	@IsBoolean()
-	readonly isPublic?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  readonly isPublic?: boolean;
 }
