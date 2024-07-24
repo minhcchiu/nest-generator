@@ -6,7 +6,7 @@ import { District, DistrictDocument } from "./schemas/district.schema";
 
 @Injectable()
 export class DistrictService extends BaseService<DistrictDocument> {
-	constructor(@InjectModel(District.name) model: Model<DistrictDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(District.name) model: Model<DistrictDocument>) {
+    super(model);
+  }
 }

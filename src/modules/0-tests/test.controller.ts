@@ -1,12 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -20,69 +21,67 @@ import { TestService } from "./test.service";
 
 @Controller("tests")
 export class TestController {
-	constructor(private readonly testService: TestService) {}
+  constructor(private readonly testService: TestService) {}
 
-	// ----- Method: GET -----
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.testService.findMany(filter, options);
-	}
+  // ----- Method: GET -----
+  @Public()
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.testService.findMany(filter, options);
+  }
 
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.testService.paginate(filter, options);
-	}
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.testService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.testService.count(filter);
-	}
+  @Public()
+  @Get("/count")
+  @HttpCode(HttpStatus.OK)
+  async count(@GetAqp("filter") filter: PaginationDto) {
+    return this.testService.count(filter);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.testService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.testService.findById(id, { projection, populate });
+  }
 
-	// ----- Method: @Get("/count")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateTestDto) {
-		const created = await this.testService.create(body);
+  // ----- Method: POST -----
+  // @Public()
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateTestDto) {
+    return this.testService.create(body);
+  }
 
-		return created;
-	}
+  // ----- Method: PATCH -----
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateTestDto) {
+    return this.testService.updateById(id, body);
+  }
 
-	// ----- Method: PATCH -----
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateTestDto,
-	) {
-		return this.testService.updateById(id, body);
-	}
+  // ----- Method: DELETE -----
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.testService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	// ----- Method: DELETE -----
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.testService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
-
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.testService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.testService.deleteById(id);
+  }
 }

@@ -1,60 +1,54 @@
-import {
-	IsEnum,
-	IsMongoId,
-	IsNotEmpty,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
 export class CreateUserFileDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	userId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsMongoId()
+  userId: Types.ObjectId;
 
-	@IsNotEmpty()
-	@IsString({ each: true })
-	resourceKeys: string;
+  @IsNotEmpty()
+  @IsString({ each: true })
+  resourceKeys: string;
 
-	@IsNotEmpty()
-	@IsString()
-	fileName: string;
+  @IsNotEmpty()
+  @IsString()
+  fileName: string;
 
-	@IsNotEmpty()
-	@IsString()
-	fileType: string;
+  @IsNotEmpty()
+  @IsString()
+  fileType: string;
 
-	@IsNotEmpty()
-	@IsEnum(ResourceTypeEnum)
-	resourceType: ResourceTypeEnum;
+  @IsNotEmpty()
+  @IsEnum(ResourceTypeEnum)
+  resourceType: ResourceTypeEnum;
 
-	@IsOptional()
-	@IsString()
-	urlXSmall?: string;
+  @IsOptional()
+  @IsString()
+  urlXSmall?: string;
 
-	@IsOptional()
-	@IsString()
-	urlSmall?: string;
+  @IsOptional()
+  @IsString()
+  urlSmall?: string;
 
-	@IsOptional()
-	@IsString()
-	urlMedium?: string;
+  @IsOptional()
+  @IsString()
+  urlMedium?: string;
 
-	@IsOptional()
-	@IsString()
-	urlLarge?: string;
+  @IsOptional()
+  @IsString()
+  urlLarge?: string;
 
-	@IsOptional()
-	@IsString()
-	urlXLarge?: string;
+  @IsOptional()
+  @IsString()
+  urlXLarge?: string;
 
-	@IsNotEmpty()
-	@IsString()
-	url: string;
+  @IsNotEmpty()
+  @IsString()
+  url: string;
 
-	@IsNotEmpty()
-	@IsEnum(StorageLocationEnum)
-	storageLocation: StorageLocationEnum;
+  @IsNotEmpty()
+  @IsEnum(StorageLocationEnum)
+  storageLocation: StorageLocationEnum;
 }

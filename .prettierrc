@@ -1,13 +1,11 @@
 {
-	"printWidth": 80,
-	"tabWidth": 2,
-	"useTabs": true,
-	"semi": true,
-	"singleQuote": false,
-	"trailingComma": "all",
-	"bracketSpacing": true,
-	"arrowParens": "always",
-	"requirePragma": false,
-	"proseWrap": "always",
-	"plugins": ["prettier-plugin-organize-imports"]
+  "printWidth": 100,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "proseWrap": "always",
+  "plugins": ["prettier-plugin-organize-imports"]
 }

@@ -1,5 +1,5 @@
 export enum ProductType {
-	electronics = "ELECTRONICS",
-	clothing = "CLOTHING",
-	furniture = "FURNITURE",
+  electronics = "ELECTRONICS",
+  clothing = "CLOTHING",
+  furniture = "FURNITURE",
 }

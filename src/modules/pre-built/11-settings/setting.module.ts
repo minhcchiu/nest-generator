@@ -1,15 +1,14 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Setting, SettingSchema } from "./schemas/setting.schema";
 import { SettingController } from "./setting.controller";
 import { SettingService } from "./setting.service";
 
+@Global()
 @Module({
-	imports: [
-		MongooseModule.forFeature([{ name: Setting.name, schema: SettingSchema }]),
-	],
-	controllers: [SettingController],
-	providers: [SettingService],
-	exports: [SettingService],
+  imports: [MongooseModule.forFeature([{ name: Setting.name, schema: SettingSchema }])],
+  controllers: [SettingController],
+  providers: [SettingService],
+  exports: [SettingService],
 })
 export class SettingModule {}

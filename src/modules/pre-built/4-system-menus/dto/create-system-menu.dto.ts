@@ -1,47 +1,42 @@
-import {
-	IsBoolean,
-	IsMongoId,
-	IsNotEmpty,
-	IsNumber,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateSystemMenuDto {
-	@IsOptional()
-	@IsMongoId()
-	readonly parentId?: Types.ObjectId;
+  @IsOptional()
+  @IsObjectId()
+  @ToObjectId()
+  readonly parentId?: Types.ObjectId;
 
-	@IsNotEmpty()
-	@IsString()
-	readonly name: string;
+  @IsNotEmpty()
+  @IsString()
+  readonly name: string;
 
-	@IsOptional()
-	@IsString()
-	readonly collectionName?: string;
+  @IsOptional()
+  @IsString()
+  readonly collectionName?: string;
 
-	@IsOptional()
-	@IsBoolean()
-	readonly isGroup: boolean;
+  @IsOptional()
+  @IsBoolean()
+  readonly isGroup: boolean;
 
-	@IsOptional()
-	@IsString()
-	readonly icon?: string;
+  @IsOptional()
+  @IsString()
+  readonly icon?: string;
 
-	@IsOptional()
-	@IsString()
-	readonly href?: string;
+  @IsOptional()
+  @IsString()
+  readonly href?: string;
 
-	@IsOptional()
-	@IsNumber()
-	readonly position?: number;
+  @IsOptional()
+  @IsNumber()
+  readonly position?: number;
 
-	@IsOptional()
-	@IsBoolean()
-	readonly isHorizontal?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  readonly isHorizontal?: boolean;
 
-	@IsOptional()
-	@IsBoolean()
-	readonly isShow?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  readonly isShow?: boolean;
 }

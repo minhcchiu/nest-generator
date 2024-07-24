@@ -1,4 +1,4 @@
 export type RenameChat = {
-	chatId: string;
-	newChatName: string;
+  chatId: string;
+  newChatName: string;
 };

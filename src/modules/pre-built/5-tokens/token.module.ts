@@ -6,17 +6,17 @@ import { Token, TokenSchema } from "./schemas/token.schema";
 import { TokenService } from "./token.service";
 
 @Module({
-	imports: [
-		ConfigModule,
-		MongooseModule.forFeature([
-			{
-				name: Token.name,
-				schema: TokenSchema,
-			},
-		]),
-		JwtModule,
-	],
-	providers: [TokenService],
-	exports: [TokenService],
+  imports: [
+    ConfigModule,
+    MongooseModule.forFeature([
+      {
+        name: Token.name,
+        schema: TokenSchema,
+      },
+    ]),
+    JwtModule,
+  ],
+  providers: [TokenService],
+  exports: [TokenService],
 })
 export class TokenModule {}

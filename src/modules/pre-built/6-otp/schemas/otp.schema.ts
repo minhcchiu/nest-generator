@@ -5,30 +5,30 @@ import { OtpTypeEnum } from "../enums/otp-type.enum";
 import { SendOtpToEnum } from "../enums/send-otp-to";
 
 @Schema({
-	timestamps: true,
-	versionKey: false,
-	collection: "otps",
+  timestamps: true,
+  versionKey: false,
+  collection: "otps",
 })
 export class Otp {
-	@Prop({ type: String })
-	readonly phone: string;
+  @Prop({ type: String })
+  readonly phone: string;
 
-	@Prop({ type: String })
-	readonly email: string;
+  @Prop({ type: String })
+  readonly email: string;
 
-	@Prop({ type: String, enum: SendOtpToEnum, default: SendOtpToEnum.Phone })
-	readonly sendOtpTo: SendOtpToEnum;
+  @Prop({ type: String, enum: SendOtpToEnum, default: SendOtpToEnum.Phone })
+  readonly sendOtpTo: SendOtpToEnum;
 
-	@Prop({ type: String, enum: OtpTypeEnum, default: OtpTypeEnum.Phone })
-	otpType: OtpTypeEnum;
+  @Prop({ type: String, enum: OtpTypeEnum, default: OtpTypeEnum.Phone })
+  otpType: OtpTypeEnum;
 
-	@Prop({ type: String, required: true })
-	otpCode: string;
+  @Prop({ type: String, required: true })
+  otpCode: string;
 
-	@Prop({ type: Number, required: true })
-	expiredAt: number;
+  @Prop({ type: Number, required: true })
+  expiredAt: number;
 
-	compareOtpCode: (candidateOtpCode: string) => Promise<boolean>;
+  compareOtpCode: (candidateOtpCode: string) => Promise<boolean>;
 }
 
 export type OtpDocument = Otp & HydratedDocument<Otp>;
@@ -39,17 +39,17 @@ OtpSchema.index({ updatedAt: 1 }, { expires: 60 * 60 * 24 }); // Automatically d
 
 // Pre save
 OtpSchema.pre("save", async function (next: any) {
-	const otp = this as OtpDocument;
+  const otp = this as OtpDocument;
 
-	// Hash otp code
-	otp.otpCode = await argon2.hash(otp.otpCode);
+  // Hash otp code
+  otp.otpCode = await argon2.hash(otp.otpCode);
 
-	return next();
+  return next();
 });
 
 // Schema methods
 OtpSchema.methods.compareOtpCode = async function (candidateOtpCode: string) {
-	const otpDoc = this as OtpDocument;
+  const otpDoc = this as OtpDocument;
 
-	return argon2.verify(otpDoc.otpCode, candidateOtpCode);
+  return argon2.verify(otpDoc.otpCode, candidateOtpCode);
 };

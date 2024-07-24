@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -21,65 +21,65 @@ import { UpdateConversationDto } from "./dto/update-conversation.dto";
 
 @Controller("categories")
 export class ConversationController {
-	constructor(private readonly conversationService: ConversationService) {}
+  constructor(private readonly conversationService: ConversationService) {}
 
-	@Public()
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.conversationService.findMany(filter, options);
-	}
+  @Public()
+  @Get("/")
+  @HttpCode(HttpStatus.OK)
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.conversationService.findMany(filter, options);
+  }
 
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreateConversationDto) {
-		return this.conversationService.create(body);
-	}
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateConversationDto) {
+    return this.conversationService.create(body);
+  }
 
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdateConversationDto,
-	) {
-		return this.conversationService.updateById(id, body);
-	}
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() body: UpdateConversationDto,
+  ) {
+    return this.conversationService.updateById(id, body);
+  }
 
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.conversationService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.conversationService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		return this.conversationService.deleteById(id);
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.conversationService.deleteById(id);
+  }
 
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.conversationService.paginate(filter, options);
-	}
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.conversationService.paginate(filter, options);
+  }
 
-	@Public()
-	@Get("/count")
-	@HttpCode(HttpStatus.OK)
-	async count(@GetAqp("filter") filter: PaginationDto) {
-		return this.conversationService.count(filter);
-	}
+  @Public()
+  @Get("/count")
+  @HttpCode(HttpStatus.OK)
+  async count(@GetAqp("filter") filter: PaginationDto) {
+    return this.conversationService.count(filter);
+  }
 
-	@Public()
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.conversationService.findById(id, { projection, populate });
-	}
+  @Public()
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.conversationService.findById(id, { projection, populate });
+  }
 }

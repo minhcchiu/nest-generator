@@ -5,19 +5,19 @@ import { User } from "~pre-built/1-users/schemas/user.schema";
 type TokenDocument = HydratedDocument<Token>;
 
 @Schema({
-	timestamps: true,
-	versionKey: false,
-	collection: "tokens",
+  timestamps: true,
+  versionKey: false,
+  collection: "tokens",
 })
 export class Token {
-	@Prop({ type: SchemaTypes.ObjectId, ref: User.name, index: 1 })
-	userId: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, ref: User.name, index: 1 })
+  userId: Types.ObjectId;
 
-	@Prop({ type: String, required: true, index: 1 })
-	token: string;
+  @Prop({ type: String, required: true, index: 1 })
+  token: string;
 
-	@Prop({ type: Number })
-	expiresAt: number;
+  @Prop({ type: Number })
+  expiresAt: number;
 }
 
 const TokenSchema = SchemaFactory.createForClass(Token);

@@ -1,4 +1,4 @@
 export enum DiscountType {
-	Customer = "CUSTOMER",
-	Store = "STORE",
+  Customer = "CUSTOMER",
+  Store = "STORE",
 }

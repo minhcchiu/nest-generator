@@ -6,7 +6,7 @@ import { UserGroup } from "./schemas/user-group.schema";
 
 @Injectable()
 export class UserGroupService extends BaseService<UserGroup> {
-	constructor(@InjectModel(UserGroup.name) model: Model<UserGroup>) {
-		super(model);
-	}
+  constructor(@InjectModel(UserGroup.name) model: Model<UserGroup>) {
+    super(model);
+  }
 }

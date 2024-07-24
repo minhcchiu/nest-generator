@@ -1,130 +1,125 @@
 import { UseFilters } from "@nestjs/common";
 import {
-	MessageBody,
-	OnGatewayConnection,
-	OnGatewayDisconnect,
-	OnGatewayInit,
-	SubscribeMessage,
-	WebSocketGateway,
-	WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-import { SocketEvent } from "./enums/socket-event.enum";
+import { SOCKET_EVENTS } from "./constants/socket-event.constant";
+import { socketHelper } from "./helpers/socker.helper";
 import { SocketService } from "./socket.service";
 import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
 
 @UseFilters(WsExceptionsFilter)
 @WebSocketGateway(9898, {
-	cors: true,
-	pingTimeout: 60000,
-	transports: ["websocket"],
+  cors: true,
+  pingTimeout: 60000,
+  transports: ["websocket"],
 })
-export class SocketGateway
-	implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
-{
-	@WebSocketServer()
-	server: Server;
+export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+  @WebSocketServer()
+  server: Server;
 
-	constructor(
-		private readonly socketService: SocketService,
-		private logger: CustomLoggerService,
-	) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private logger: CustomLoggerService,
+  ) {}
 
-	afterInit() {
-		this.logger.log("Socket initialized", SocketGateway.name);
-	}
+  afterInit() {
+    this.logger.log("Socket initialized", SocketGateway.name);
+  }
 
-	async handleConnection(client: Socket) {
-		try {
-			const user = await this.socketService.getUserFromSocket(client);
+  async handleConnection(socket: Socket) {
+    const user = await this.socketService.getUserFromSocket(socket).catch(() => {
+      socket.disconnect(true);
+    });
 
-			if (!user) client.disconnect(true);
+    if (!user) return socket.disconnect(true);
 
-			// join room
-			client.join(user._id.toString());
+    const userId = user._id.toString();
 
-			this.logger.log(
-				`User ${client.id} has connected room #${user._id}.`,
-				SocketGateway.name,
-			);
-		} catch (e) {
-			client.disconnect(true);
-		}
-	}
+    // Step 01: Join room
+    socket.join(userId);
 
-	async handleDisconnect(client: Socket) {
-		try {
-			const user = await this.socketService.getUserFromSocket(client);
+    // Step 02: Add socket id
+    socketHelper.addSocketId(userId, socket.id);
 
-			if (!user) client.disconnect(true);
+    // Step 03: Emit to user after login
+    socket.emit(SOCKET_EVENTS.UsersOnline, socketHelper.getUsersOnline());
 
-			// leave room
-			client.leave(user._id.toString());
+    // Step 04: Emit to all another users
+    socket.broadcast.emit(SOCKET_EVENTS.NewUserOnline, userId);
+  }
 
-			this.logger.log(
-				`User ${client.id} left room #${user._id}.`,
-				SocketGateway.name,
-			);
-		} catch (e) {
-			client.disconnect(true);
-		}
-	}
+  async handleDisconnect(socket: Socket) {
+    const user = await this.socketService.getUserFromSocket(socket).catch(() => {
+      socket.disconnect(true);
+    });
 
-	// Join chat
-	@SubscribeMessage(SocketEvent.JoinChat)
-	handleJoinChat(client: Socket, chatId: string) {
-		client.join(chatId);
-	}
+    if (!user) return socket.disconnect(true);
 
-	// Rename chat
-	@SubscribeMessage(SocketEvent.RenameChat)
-	handleRenameChat(client: Socket, data: RenameChat) {
-		client.to(data.chatId).emit(SocketEvent.RenameChat, data);
-	}
+    const userId = user._id.toString();
 
-	// Typing
-	@SubscribeMessage(SocketEvent.Typing)
-	handleTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(SocketEvent.Typing);
-	}
+    // Step 01: Remove socket id
+    socketHelper.removeSocketId(userId, socket.id);
 
-	// Stop typing
-	@SubscribeMessage(SocketEvent.StopTyping)
-	handleStopTyping(client: Socket, chatId: string) {
-		client.to(chatId).emit(SocketEvent.StopTyping);
-	}
+    // Step 02: Emit to all another users
+    const userSocketId = socketHelper.getSocketIdsByClientId(userId);
+    if (!userSocketId) {
+      socket.leave(userId);
+      socket.broadcast.emit(SOCKET_EVENTS.NewUserOffline, userId);
+    }
+  }
 
-	// Notification
-	@SubscribeMessage(SocketEvent.NewNotification)
-	handleStopNotificationReceived(client: Socket, userId: string) {
-		client.to(userId).emit(SocketEvent.NewNotification, userId);
-	}
+  // Join chat
+  @SubscribeMessage(SOCKET_EVENTS.JoinChat)
+  handleJoinChat(socket: Socket, data: { chatId: string }) {
+    socket.join(data.chatId);
+  }
 
-	// New message
-	@SubscribeMessage(SocketEvent.NewMessage)
-	handleNewMessage(client: Socket, data: Message) {
-		// check members exist
-		if (!data.chat?.members) {
-			client.emit(SocketEvent.Error, "Chat not found.");
-			return;
-		}
+  // Leave chat
+  @SubscribeMessage(SOCKET_EVENTS.LeaveChat)
+  handleLeaveChat(socket: Socket, data: { chatId: string }) {
+    socket.leave(data.chatId);
+  }
 
-		// send message to all members
-		data.chat.members.forEach(({ user }) => {
-			if (user._id === data.sender._id) return;
-			client.to(user._id).emit(SocketEvent.NewMessage, data);
-		});
-	}
+  // Rename chat
+  @SubscribeMessage(SOCKET_EVENTS.RenameChat)
+  handleRenameChat(client: Socket, data: RenameChat) {
+    client.to(data.chatId).emit(SOCKET_EVENTS.RenameChat, data);
+  }
 
-	@SubscribeMessage("events")
-	onEvent(@MessageBody() data: string): string {
-		return data;
-	}
+  // Typing
+  @SubscribeMessage(SOCKET_EVENTS.Typing)
+  handleTyping(client: Socket, data: { chatId: string }) {
+    client.to(data.chatId).emit(SOCKET_EVENTS.Typing);
+  }
 
-	onSocketInAPI(data: any) {
-		this.server.sockets.emit("send_message", data);
-	}
+  // Stop typing
+  @SubscribeMessage(SOCKET_EVENTS.StopTyping)
+  handleStopTyping(client: Socket, data: { chatId: string }) {
+    client.to(data.chatId).emit(SOCKET_EVENTS.StopTyping);
+  }
+
+  // New message
+  @SubscribeMessage(SOCKET_EVENTS.NewMessage)
+  handleNewMessage(client: Socket, data: Message) {
+    // check members exist
+    if (!data.chat?.members) {
+      client.emit(SOCKET_EVENTS.SocketError, "Chat not found.");
+      return;
+    }
+
+    // send message to all members
+    data.chat.members.forEach(({ user }) => {
+      if (user._id === data.sender._id) return;
+      client.to(user._id).emit(SOCKET_EVENTS.NewMessage, data);
+    });
+  }
 }

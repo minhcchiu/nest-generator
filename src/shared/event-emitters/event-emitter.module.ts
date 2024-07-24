@@ -3,8 +3,8 @@ import { EventEmitterModule as NestEventEmitterModule } from "@nestjs/event-emit
 import { EventEmitterService } from "./event-emitter.service";
 @Global()
 @Module({
-	imports: [NestEventEmitterModule.forRoot()],
-	providers: [EventEmitterService],
-	exports: [EventEmitterService],
+  imports: [NestEventEmitterModule.forRoot()],
+  providers: [EventEmitterService],
+  exports: [EventEmitterService],
 })
 export class EventEmitterModule {}

@@ -1,4 +1,4 @@
 export enum SendOtpToEnum {
-	Phone = "PHONE",
-	Email = "EMAIL",
+  Phone = "PHONE",
+  Email = "EMAIL",
 }

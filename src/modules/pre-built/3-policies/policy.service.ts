@@ -6,7 +6,7 @@ import { Policy } from "./schemas/policy.schema";
 
 @Injectable()
 export class PolicyService extends BaseService<Policy> {
-	constructor(@InjectModel(Policy.name) model: Model<Policy>) {
-		super(model);
-	}
+  constructor(@InjectModel(Policy.name) model: Model<Policy>) {
+    super(model);
+  }
 }

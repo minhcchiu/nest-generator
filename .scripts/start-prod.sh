@@ -1,8 +1,8 @@
 #!/bin/bash
 
-APP_DIR=/home/ubuntu/as-production/source
+APP_DIR=/home/ubuntu/asnest-prod/source
 
-PM2_CONFIG_FILE=$APP_DIR/.ecosystem/ecosystem.dev.config.js
+PM2_CONFIG_FILE=$APP_DIR/.ecosystem/ecosystem.prod.config.js
 
 cd $APP_DIR
 

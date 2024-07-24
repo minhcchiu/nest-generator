@@ -6,7 +6,7 @@ import { Setting, SettingDocument } from "./schemas/setting.schema";
 
 @Injectable()
 export class SettingService extends BaseService<SettingDocument> {
-	constructor(@InjectModel(Setting.name) model: Model<SettingDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Setting.name) model: Model<SettingDocument>) {
+    super(model);
+  }
 }

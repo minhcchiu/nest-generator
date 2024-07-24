@@ -6,7 +6,7 @@ import { Message, MessageDocument } from "./schemas/message.schema";
 
 @Injectable()
 export class MessageService extends BaseService<MessageDocument> {
-	constructor(@InjectModel(Message.name) model: Model<MessageDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Message.name) model: Model<MessageDocument>) {
+    super(model);
+  }
 }

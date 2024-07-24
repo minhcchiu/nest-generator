@@ -2,6 +2,46 @@
   "files.eol": "\n",
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "editor.lineHeight": 28,
-  "editor.cursorWidth": 3,
+  "editor.lineHeight": 36,
+  "editor.cursorWidth": 4,
+  "editor.minimap.enabled": false,
+  "workbench.startupEditor": "none",
+  "prettier.singleQuote": true,
+  "editor.cursorBlinking": "expand",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "300",
+  "git.openRepositoryInParentFolders": "never",
+  "prettier.useTabs": true,
+  "prettier.proseWrap": "always",
+  "prettier.quoteProps": "consistent",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[handlebars]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.saveConflictResolution": "overwriteFileOnDisk",
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "typescript.updateImportsOnFileMove.enabled": "always"
 }

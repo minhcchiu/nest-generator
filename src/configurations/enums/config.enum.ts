@@ -1,10 +1,10 @@
 export enum NodeEnv {
-	Production = "production",
-	Development = "development",
+  Production = "production",
+  Development = "development",
 }
 
 export enum StorageServerEnum {
-	Local = "LOCAL",
-	S3 = "S3",
-	Cloudinary = "CLOUDINARY",
+  Local = "LOCAL",
+  S3 = "S3",
+  Cloudinary = "CLOUDINARY",
 }

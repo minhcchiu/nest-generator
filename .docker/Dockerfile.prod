@@ -1,6 +1,7 @@
+# Stage 1: Build
 FROM node:20 AS builder
 
-WORKDIR /home/app
+WORKDIR /home/asnest-prod
 
 COPY . .
 
@@ -10,28 +11,35 @@ RUN npm install
 
 RUN npm run build
 
+# Stage 2: Production
 FROM node:20 AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /home/app
+WORKDIR /home/asnest-prod
 
 COPY package*.json .env.dev ./
 
 COPY ./public ./public
 
 RUN npm install --only=production \
-    && rm -rf /etc/nginx/sites-enabled/awesome-nest-be \
+    && rm -rf /etc/nginx/sites-available/asnest-prod.conf \
     && mv .env.dev .env \
     && rm -rf ./public/audios/* \
     && rm -rf ./public/images/* \
     && rm -rf ./public/logs/* \
     && rm -rf ./public/raws/* \
-    && rm -rf ./public/videos/* \
+    && rm -rf ./public/videos/*
 
 COPY --from=builder /home/app/dist ./dist
 
-COPY .nginx/nginx.conf /etc/nginx/conf.d/awesome-nest-be.conf
+COPY .nginx-configs/setup.conf /etc/nginx/sites-available/asnest-prod.conf
 
 RUN chmod -R 777 ./public/*
+
+# Expose the port the app runs on
+EXPOSE 8888
+
+# Start the app
+CMD [ "npm", "run", "start:prod" ]

@@ -14,278 +14,260 @@ import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 @Injectable()
 export class SeedService {
-	constructor(
-		private provinceService: ProvinceService,
-		private districtService: DistrictService,
-		private wardService: WardService,
-		private policyService: PolicyService,
-		private systemMenuService: SystemMenuService,
-		private logger: CustomLoggerService,
-	) {}
+  constructor(
+    private provinceService: ProvinceService,
+    private districtService: DistrictService,
+    private wardService: WardService,
+    private policyService: PolicyService,
+    private systemMenuService: SystemMenuService,
+    private logger: CustomLoggerService,
+  ) {}
 
-	async seedProvincesDistrictsWards() {
-		const jsonPath = join(
-			process.cwd(),
-			"src",
-			"utils",
-			"json",
-			"data_vn_units.json",
-		);
-		const isFileExist = existsSync(jsonPath);
+  async seedProvincesDistrictsWards() {
+    const jsonPath = join(process.cwd(), "src", "utils", "json", "data_vn_units.json");
+    const isFileExist = existsSync(jsonPath);
 
-		//  check file exist
-		if (!isFileExist) {
-			this.logger.error(
-				`${jsonPath} was not found, cannot seed provinces`,
-				SeedService.name,
-			);
+    //  check file exist
+    if (!isFileExist) {
+      this.logger.error(`${jsonPath} was not found, cannot seed provinces`, SeedService.name);
 
-			return;
-		}
+      return;
+    }
 
-		//  Read data file
-		const dataString = readFileSync(jsonPath).toString().trim();
+    //  Read data file
+    const dataString = readFileSync(jsonPath).toString().trim();
 
-		// Convert data string to JSON
-		const data: Record<string, any>[] = JSON.parse(dataString);
+    // Convert data string to JSON
+    const data: Record<string, any>[] = JSON.parse(dataString);
 
-		let provincePosition = 0;
-		let totalDistricts = 0;
-		let totalWards = 0;
-		for (const pItem of data) {
-			provincePosition++;
+    let provincePosition = 0;
+    let totalDistricts = 0;
+    let totalWards = 0;
+    for (const pItem of data) {
+      provincePosition++;
 
-			const provinceItem = {
-				position: provincePosition,
-				name: pItem.Name,
-				nameEn: pItem.NameEn,
-				fullName: pItem.FullName,
-				fullNameEn: pItem.FullNameEn,
-				codeName: pItem.CodeName,
-				administrativeUnit: pItem.AdministrativeUnit?.ShortName,
-				administrativeUnitEn: pItem.AdministrativeUnit?.ShortNameEn,
-				administrativeRegion: pItem.AdministrativeRegion?.Name,
-				administrativeRegionEn: pItem.AdministrativeRegion?.NameEn,
-			};
+      const provinceItem = {
+        position: provincePosition,
+        name: pItem.Name,
+        nameEn: pItem.NameEn,
+        fullName: pItem.FullName,
+        fullNameEn: pItem.FullNameEn,
+        codeName: pItem.CodeName,
+        administrativeUnit: pItem.AdministrativeUnit?.ShortName,
+        administrativeUnitEn: pItem.AdministrativeUnit?.ShortNameEn,
+        administrativeRegion: pItem.AdministrativeRegion?.Name,
+        administrativeRegionEn: pItem.AdministrativeRegion?.NameEn,
+      };
 
-			const provinceCreated = await this.provinceService.updateOne(
-				{
-					codeName: provinceItem.codeName,
-				},
-				provinceItem,
-				{ upsert: true, new: true },
-			);
+      const provinceCreated = await this.provinceService.updateOne(
+        {
+          codeName: provinceItem.codeName,
+        },
+        provinceItem,
+        { upsert: true, new: true },
+      );
 
-			// Create Districts and Wards
-			await Promise.all(
-				pItem.District.map(
-					async (dItem: Record<string, any>, districtPosition: number) => {
-						// Create District
-						const districtItem = {
-							provinceId: provinceCreated._id,
-							position: districtPosition + 1,
-							name: dItem.Name,
-							nameEn: dItem.nameEn,
-							fullName: dItem.FullName,
-							fullNameEn: dItem.FullNameEn,
-							codeName: dItem.CodeName,
-							administrativeUnit: dItem.AdministrativeUnit?.ShortName,
-							administrativeUnitEn: dItem.AdministrativeUnit?.ShortNameEn,
-						};
+      // Create Districts and Wards
+      await Promise.all(
+        pItem.District.map(async (dItem: Record<string, any>, districtPosition: number) => {
+          // Create District
+          const districtItem = {
+            provinceId: provinceCreated._id,
+            position: districtPosition + 1,
+            name: dItem.Name,
+            nameEn: dItem.nameEn,
+            fullName: dItem.FullName,
+            fullNameEn: dItem.FullNameEn,
+            codeName: dItem.CodeName,
+            administrativeUnit: dItem.AdministrativeUnit?.ShortName,
+            administrativeUnitEn: dItem.AdministrativeUnit?.ShortNameEn,
+          };
 
-						const districtCreated = await this.districtService.updateOne(
-							{
-								codeName: districtItem.codeName,
-							},
-							districtItem,
-							{ upsert: true, new: true },
-						);
+          const districtCreated = await this.districtService.updateOne(
+            {
+              codeName: districtItem.codeName,
+            },
+            districtItem,
+            { upsert: true, new: true },
+          );
 
-						// Create Wards
-						await Promise.all(
-							dItem.Ward.map(
-								(wItem: Record<string, any>, wardPosition: number) => {
-									totalWards++;
+          // Create Wards
+          await Promise.all(
+            dItem.Ward.map((wItem: Record<string, any>, wardPosition: number) => {
+              totalWards++;
 
-									const wardItem = {
-										provinceId: provinceCreated._id,
-										districtId: districtCreated._id,
-										name: wItem.Name,
-										nameEn: wItem.NameEn,
-										fullName: wItem.FullName,
-										fullNameEn: wItem.FullNameEn,
-										codeName: wItem.CodeName,
-										position: wardPosition + 1,
-										administrativeUnit: wItem.AdministrativeUnit?.ShortName,
-										administrativeUnitEn: wItem.AdministrativeUnit?.ShortNameEn,
-									};
+              const wardItem = {
+                provinceId: provinceCreated._id,
+                districtId: districtCreated._id,
+                name: wItem.Name,
+                nameEn: wItem.NameEn,
+                fullName: wItem.FullName,
+                fullNameEn: wItem.FullNameEn,
+                codeName: wItem.CodeName,
+                position: wardPosition + 1,
+                administrativeUnit: wItem.AdministrativeUnit?.ShortName,
+                administrativeUnitEn: wItem.AdministrativeUnit?.ShortNameEn,
+              };
 
-									return this.wardService.updateOne(
-										{
-											codeName: wardItem.codeName,
-										},
-										wardItem,
-										{ upsert: true, new: true },
-									);
-								},
-							),
-						);
+              return this.wardService.updateOne(
+                {
+                  codeName: wardItem.codeName,
+                },
+                wardItem,
+                { upsert: true, new: true },
+              );
+            }),
+          );
 
-						totalDistricts++;
+          totalDistricts++;
 
-						return districtCreated;
-					},
-				),
-			);
-		}
+          return districtCreated;
+        }),
+      );
+    }
 
-		// Delete all provinces,district, wards
-		// await Promise.all([
-		// 	this.provinceService.deleteMany({}),
-		// 	this.districtService.deleteMany({}),
-		// 	this.wardService.deleteMany({}),
-		// ]);
+    // Delete all provinces,district, wards
+    // await Promise.all([
+    // 	this.provinceService.deleteMany({}),
+    // 	this.districtService.deleteMany({}),
+    // 	this.wardService.deleteMany({}),
+    // ]);
 
-		// await Promise.all(
-		// 	data.map(async (province: any) => {
-		// 		const provinceItem = {
-		// 			name: province.name,
-		// 			type: province.type,
-		// 		};
+    // await Promise.all(
+    // 	data.map(async (province: any) => {
+    // 		const provinceItem = {
+    // 			name: province.name,
+    // 			type: province.type,
+    // 		};
 
-		// 		// Save province
-		// 		const provinceSaved = await this.provinceService.create(provinceItem);
+    // 		// Save province
+    // 		const provinceSaved = await this.provinceService.create(provinceItem);
 
-		// 		// Get provinceId
-		// 		const provinceId = provinceSaved._id;
+    // 		// Get provinceId
+    // 		const provinceId = provinceSaved._id;
 
-		// 		const createDistrictsAndWardsPromises = province.districts.map(
-		// 			async (district: any) => {
-		// 				const districtItem = {
-		// 					provinceId,
-		// 					name: district.name,
-		// 					type: district.type,
-		// 				};
+    // 		const createDistrictsAndWardsPromises = province.districts.map(
+    // 			async (district: any) => {
+    // 				const districtItem = {
+    // 					provinceId,
+    // 					name: district.name,
+    // 					type: district.type,
+    // 				};
 
-		// 				// Save district
-		// 				const districtSaved =
-		// 					await this.districtService.create(districtItem);
+    // 				// Save district
+    // 				const districtSaved =
+    // 					await this.districtService.create(districtItem);
 
-		// 				// Get districtId
-		// 				const districtId = districtSaved._id;
+    // 				// Get districtId
+    // 				const districtId = districtSaved._id;
 
-		// 				// Store wards of districts
-		// 				const wardSavedPromises = district.wards.map((ward: any) => {
-		// 					const wardItem = {
-		// 						provinceId,
-		// 						districtId,
-		// 						name: ward.name,
-		// 						type: ward.type,
-		// 					};
+    // 				// Store wards of districts
+    // 				const wardSavedPromises = district.wards.map((ward: any) => {
+    // 					const wardItem = {
+    // 						provinceId,
+    // 						districtId,
+    // 						name: ward.name,
+    // 						type: ward.type,
+    // 					};
 
-		// 					return this.wardService.create(wardItem);
-		// 				});
+    // 					return this.wardService.create(wardItem);
+    // 				});
 
-		// 				// Save wards
-		// 				await Promise.all(wardSavedPromises);
-		// 			},
-		// 		);
+    // 				// Save wards
+    // 				await Promise.all(wardSavedPromises);
+    // 			},
+    // 		);
 
-		// 		await Promise.all(createDistrictsAndWardsPromises);
-		// 	}),
-		// );
+    // 		await Promise.all(createDistrictsAndWardsPromises);
+    // 	}),
+    // );
 
-		this.logger.log(
-			{
-				totalProvinces: provincePosition,
-				totalDistricts,
-				totalWards,
-			},
-			"Seeded(provinces,districts,wards)",
-		);
-	}
+    this.logger.log(
+      {
+        totalProvinces: provincePosition,
+        totalDistricts,
+        totalWards,
+      },
+      "Seeded(provinces,districts,wards)",
+    );
+  }
 
-	async seedPolicies(routerStacks: any[]) {
-		const policyMap = new Map<string, CreatePolicyDto>();
+  async seedPolicies(routerStacks: any[]) {
+    const policyMap = new Map<string, CreatePolicyDto>();
 
-		routerStacks
-			.filter(({ route }) => route && route.path)
-			.forEach(({ route }) => {
-				const endpoint = removeTrailingSlash(route.path);
-				const collectionName = endpoint.split("/")[2]?.replace("_", "") || "#";
-				const method = route.stack[0]?.method?.toUpperCase();
+    routerStacks
+      .filter(({ route }) => route && route.path)
+      .forEach(({ route }) => {
+        const endpoint = removeTrailingSlash(route.path);
+        const collectionName = endpoint.split("/")[2]?.replace("_", "") || "#";
+        const method = route.stack[0]?.method?.toUpperCase();
 
-				const policyKey = `${method}:${endpoint}`;
+        const policyKey = `${method}:${endpoint}`;
 
-				const policyItem: CreatePolicyDto = {
-					name: `${method}:${endpoint}`,
-					collectionName: collectionName,
-					endpoint,
-					method,
-					policyKey,
-				};
+        const policyItem: CreatePolicyDto = {
+          name: `${method}:${endpoint}`,
+          collectionName: collectionName,
+          endpoint,
+          method,
+          policyKey,
+        };
 
-				if (!policyMap.has(policyKey)) policyMap.set(policyKey, policyItem);
-			});
+        if (!policyMap.has(policyKey)) policyMap.set(policyKey, policyItem);
+      });
 
-		await this._createPoliciesAndMenus(policyMap);
-		await this._addSupperAdminToPolicies();
+    await this._createPoliciesAndMenus(policyMap);
+    await this._addSupperAdminToPolicies();
 
-		policyMap.clear();
-	}
+    policyMap.clear();
+  }
 
-	private async _createPoliciesAndMenus(
-		policyMap: Map<string, CreatePolicyDto>,
-	) {
-		const collectionNameSet = new Set<string>();
+  private async _createPoliciesAndMenus(policyMap: Map<string, CreatePolicyDto>) {
+    const collectionNameSet = new Set<string>();
 
-		const polices: Record<string, any>[] = [];
-		for (const [_, policy] of policyMap) {
-			collectionNameSet.add(policy.collectionName);
+    const polices: Record<string, any>[] = [];
+    for (const [_, policy] of policyMap) {
+      collectionNameSet.add(policy.collectionName);
 
-			const res = await this.policyService.findOne({
-				endpoint: policy.endpoint,
-				method: policy.method,
-			});
+      const res = await this.policyService.findOne({
+        endpoint: policy.endpoint,
+        method: policy.method,
+      });
 
-			if (!res) polices.push(policy);
-		}
+      if (!res) polices.push(policy);
+    }
 
-		await this.policyService.createMany(polices);
-		await this._createMenus(Array.from(collectionNameSet));
-	}
+    await this.policyService.createMany(polices);
+    await this._createMenus(Array.from(collectionNameSet));
+  }
 
-	private async _createMenus(collectionNames: string[]) {
-		collectionNames.forEach(async (collectionName, position) => {
-			const menuItem = {
-				name: collectionName,
-				collectionName,
-				href: collectionName,
-				position,
-				isHorizontal: false,
-				isShow: true,
-				isSystem: true,
-			};
+  private async _createMenus(collectionNames: string[]) {
+    collectionNames.forEach(async (collectionName, position) => {
+      const menuItem = {
+        name: collectionName,
+        collectionName,
+        href: collectionName,
+        position,
+        isHorizontal: false,
+        isShow: true,
+        isSystem: true,
+      };
 
-			await this.systemMenuService.updateOne({ collectionName }, menuItem, {
-				upsert: true,
-			});
-		});
-	}
+      await this.systemMenuService.updateOne({ collectionName }, menuItem, {
+        upsert: true,
+      });
+    });
+  }
 
-	private async _addSupperAdminToPolicies() {
-		const policies = await this.policyService.updateMany(
-			{},
-			{
-				$addToSet: {
-					userIds: EnvStatic.getAppConfig().supperAdminIds,
-				},
-			},
-		);
+  private async _addSupperAdminToPolicies() {
+    const policies = await this.policyService.updateMany(
+      {},
+      {
+        $addToSet: {
+          userIds: EnvStatic.getAppConfig().supperAdminIds,
+        },
+      },
+    );
 
-		this.logger.log(
-			`Total policies: '${policies.matchedCount}'`,
-			SeedService.name,
-		);
-	}
+    this.logger.log(`Total policies: '${policies.matchedCount}'`, SeedService.name);
+  }
 }

@@ -4,8 +4,8 @@ import { SocketGateway } from "./socket.gateway";
 import { SocketService } from "./socket.service";
 @Global()
 @Module({
-	imports: [TokenModule],
-	providers: [SocketService, SocketGateway],
-	exports: [SocketService, SocketGateway],
+  imports: [TokenModule],
+  providers: [SocketService, SocketGateway],
+  exports: [SocketService, SocketGateway],
 })
 export class SocketModule {}

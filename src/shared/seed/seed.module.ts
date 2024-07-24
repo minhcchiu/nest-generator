@@ -8,14 +8,14 @@ import { DistrictModule } from "~pre-built/9-districts/district.module";
 import { SeedService } from "./seed.service";
 
 @Module({
-	imports: [
-		PolicyModule,
-		SystemMenuModule,
-		UserGroupModule,
-		ProvinceModule,
-		DistrictModule,
-		WardModule,
-	],
-	providers: [SeedService],
+  imports: [
+    PolicyModule,
+    SystemMenuModule,
+    UserGroupModule,
+    ProvinceModule,
+    DistrictModule,
+    WardModule,
+  ],
+  providers: [SeedService],
 })
 export class SeedModule {}

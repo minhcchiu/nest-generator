@@ -10,25 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      isConfig: true
+      isConfigured: true
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Copy nginx configuration
-        if: env.isConfig == 'false'
+        if: env.isConfigured == 'false'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo cp /home/ubuntu/as-develop/source/.nginx-configs/as-awesome.conf /etc/nginx/sites-available/as-awesome.conf
-            sudo ln -s /etc/nginx/sites-available/as-awesome.conf /etc/nginx/sites-enabled/as-awesome.conf
+            sudo cp /home/ubuntu/asnest-dev/source/.nginx-configs/setup.conf /etc/nginx/sites-available/asnest-dev.conf
+            sudo ln -s /etc/nginx/sites-available/asnest-dev.conf /etc/nginx/sites-enabled/asnest-dev.conf
 
       - name: Restart Nginx
-        if: env.isConfig == 'false'
+        if: env.isConfigured == 'false'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}

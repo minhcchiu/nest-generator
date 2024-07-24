@@ -8,9 +8,9 @@ import { CheckoutController } from "./checkout.controller";
 import { CheckoutService } from "./checkout.service";
 
 @Module({
-	imports: [CartModule, DiscountModule, InventoryModule, OrderModule],
-	controllers: [CheckoutController],
-	providers: [CheckoutService, LockService],
-	exports: [CheckoutService],
+  imports: [CartModule, DiscountModule, InventoryModule, OrderModule],
+  controllers: [CheckoutController],
+  providers: [CheckoutService, LockService],
+  exports: [CheckoutService],
 })
 export class CheckoutModule {}

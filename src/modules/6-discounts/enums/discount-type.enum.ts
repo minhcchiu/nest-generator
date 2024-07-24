@@ -1,4 +1,4 @@
 export enum DiscountTypeEnum {
-	fixedAmount = "FIXED_AMOUNT",
-	percentage = "PERCENTAGE",
+  fixedAmount = "FIXED_AMOUNT",
+  percentage = "PERCENTAGE",
 }

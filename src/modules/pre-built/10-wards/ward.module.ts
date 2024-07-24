@@ -5,16 +5,16 @@ import { WardController } from "./ward.controller";
 import { WardService } from "./ward.service";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: Ward.name,
-				schema: WardSchema,
-			},
-		]),
-	],
-	controllers: [WardController],
-	providers: [WardService],
-	exports: [WardService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Ward.name,
+        schema: WardSchema,
+      },
+    ]),
+  ],
+  controllers: [WardController],
+  providers: [WardService],
+  exports: [WardService],
 })
 export class WardModule {}

@@ -6,7 +6,7 @@ import { Discount, DiscountDocument } from "./schemas/discount.schema";
 
 @Injectable()
 export class DiscountService extends BaseService<DiscountDocument> {
-	constructor(@InjectModel(Discount.name) model: Model<DiscountDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Discount.name) model: Model<DiscountDocument>) {
+    super(model);
+  }
 }

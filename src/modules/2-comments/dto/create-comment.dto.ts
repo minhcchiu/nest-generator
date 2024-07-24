@@ -1,16 +1,18 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateCommentDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	readonly postId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsObjectId()
+  @ToObjectId()
+  readonly postId: Types.ObjectId;
 
-	@IsOptional()
-	@IsString()
-	readonly text: string;
+  @IsOptional()
+  @IsString()
+  readonly text: string;
 
-	@IsNotEmpty()
-	@IsOptional()
-	readonly image: string;
+  @IsNotEmpty()
+  @IsOptional()
+  readonly image: string;
 }

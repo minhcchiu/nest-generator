@@ -1,37 +1,34 @@
 import { PartialType } from "@nestjs/mapped-types";
-import {
-	IsMongoId,
-	IsNotEmpty,
-	IsNumber,
-	IsOptional,
-	IsString,
-} from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CartProductDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	productId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsObjectId()
+  @ToObjectId()
+  productId: Types.ObjectId;
 
-	@IsNotEmpty()
-	@IsMongoId()
-	shopId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsObjectId()
+  @ToObjectId()
+  shopId: Types.ObjectId;
 
-	@IsOptional()
-	@IsNumber()
-	quantity: number;
+  @IsOptional()
+  @IsNumber()
+  quantity: number;
 
-	@IsOptional()
-	@IsString()
-	name: string;
+  @IsOptional()
+  @IsString()
+  name: string;
 
-	@IsOptional()
-	@IsNumber()
-	price: number;
+  @IsOptional()
+  @IsNumber()
+  price: number;
 }
 
 export class UpdateCartProductDto extends PartialType(CartProductDto) {
-	@IsOptional()
-	@IsNumber()
-	oldQuantity: number;
+  @IsOptional()
+  @IsNumber()
+  oldQuantity: number;
 }

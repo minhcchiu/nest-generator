@@ -6,7 +6,7 @@ import { Shop, ShopDocument } from "./schemas/shop.schema";
 
 @Injectable()
 export class ShopService extends BaseService<ShopDocument> {
-	constructor(@InjectModel(Shop.name) model: Model<ShopDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Shop.name) model: Model<ShopDocument>) {
+    super(model);
+  }
 }

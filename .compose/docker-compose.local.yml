@@ -5,35 +5,42 @@ services:
     build:
       context: ..
       dockerfile: .docker/Dockerfile.local
-    container_name: awesome-nest-local
+    container_name: asnest-prod
     restart: always
     ports:
       - "8888:8888"
-    depends_on:
-      - redis
-      - mongodb
-    environment:
-      NODE_ENV: development
-      DATABASE_URI: mongodb://mongodb:27017/awesome-nest
-      REDIS_URL: redis://redis:6379
-    volumes:
-      - ../:/home/app
-      - /home/app/node_modules
 
-  mongodb:
-    container_name: mongodb
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: mongodb://mongodb_asnest_local:27017/asnest-prod
+      REDIS_URL: redis://redis_asnest_prod:6379
+
+    depends_on:
+      - mongodb_asnest_local
+      - redis_asnest_prod
+
+    volumes:
+      - ../:/home/asnest-prod
+      - /home/asnest-prod/node_modules
+
+  mongodb_asnest_local:
+    container_name: mongodb_asnest_local
     image: mongo:latest
     restart: always
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_asnest_local_data:/data/db
 
-  redis:
+  redis_asnest_prod:
+    container_name: redis_asnest_prod
     image: redis:6
     restart: always
     ports:
       - 6379:6379
+    volumes:
+      - redis_asnest_prod_data:/data
 
 volumes:
-  mongodb_data:
+  mongodb_asnest_local:
+  redis_asnest_prod_data:

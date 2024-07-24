@@ -6,17 +6,17 @@ import { PolicyGroupService } from "./policy-group.service";
 import { PolicyGroup, PolicyGroupSchema } from "./schemas/policy-group.schema";
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: PolicyGroup.name,
-				schema: PolicyGroupSchema,
-			},
-		]),
-		UserGroupModule,
-	],
-	controllers: [PolicyGroupController],
-	providers: [PolicyGroupService],
-	exports: [PolicyGroupService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: PolicyGroup.name,
+        schema: PolicyGroupSchema,
+      },
+    ]),
+    UserGroupModule,
+  ],
+  controllers: [PolicyGroupController],
+  providers: [PolicyGroupService],
+  exports: [PolicyGroupService],
 })
 export class PolicyGroupModule {}

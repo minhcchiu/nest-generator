@@ -1,20 +1,17 @@
 import { Type } from "class-transformer";
-import {
-	IsMongoId,
-	IsNotEmpty,
-	IsOptional,
-	ValidateNested,
-} from "class-validator";
+import { IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
 import { Types } from "mongoose";
+import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { CartProductDto } from "./cart-product.dto";
 
 export class CreateCartDto {
-	@IsNotEmpty()
-	@IsMongoId()
-	readonly userId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsObjectId()
+  @ToObjectId()
+  readonly userId: Types.ObjectId;
 
-	@IsOptional()
-	@ValidateNested()
-	@Type(() => CartProductDto)
-	readonly products: CartProductDto[];
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CartProductDto)
+  readonly products: CartProductDto[];
 }

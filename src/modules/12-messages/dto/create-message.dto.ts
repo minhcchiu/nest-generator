@@ -1,25 +1,25 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateMessageDto {
-	@IsNotEmpty()
-	@IsString()
-	thumbnail: string;
+  @IsNotEmpty()
+  @IsString()
+  thumbnail: string;
 
-	@IsNotEmpty()
-	@IsString()
-	name: string;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-	@IsNotEmpty()
-	@IsNumber()
-	position: number;
+  @IsNotEmpty()
+  @IsNumber()
+  position: number;
 
-	@IsNotEmpty()
-	@IsString()
-	countStores: string;
+  @IsNotEmpty()
+  @IsString()
+  countStores: string;
 
-	@IsBoolean()
-	isOther: boolean;
+  @IsBoolean()
+  isOther: boolean;
 
-	@IsBoolean()
-	isActive: boolean;
+  @IsBoolean()
+  isActive: boolean;
 }

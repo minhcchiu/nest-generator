@@ -1,11 +1,11 @@
 import {
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	NotFoundException,
-	Param,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Param,
 } from "@nestjs/common";
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
@@ -18,68 +18,68 @@ import { UserFileService } from "./user-file.service";
 
 @Controller("user_files")
 export class UserFileController {
-	constructor(
-		private readonly userFileService: UserFileService,
-		private readonly eventEmitterService: EventEmitterService,
-	) {}
+  constructor(
+    private readonly userFileService: UserFileService,
+    private readonly eventEmitterService: EventEmitterService,
+  ) {}
 
-	//  ----- Method: GET -----
-	@Public()
-	@Get("/paginate")
-	@HttpCode(HttpStatus.OK)
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.userFileService.paginate(filter, options);
-	}
+  //  ----- Method: GET -----
+  @Public()
+  @Get("/paginate")
+  @HttpCode(HttpStatus.OK)
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.userFileService.paginate(filter, options);
+  }
 
-	@Get("/:id")
-	@HttpCode(HttpStatus.OK)
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.userFileService.findById(id, { projection, populate });
-	}
+  @Get("/:id")
+  @HttpCode(HttpStatus.OK)
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.userFileService.findById(id, { projection, populate });
+  }
 
-	//  ----- Method: DELETE -----
-	@Delete("filename/:filename")
-	@HttpCode(HttpStatus.OK)
-	async deleteByFileName(@Param("filename") fileName: string) {
-		const file = await this.userFileService.findOne({
-			fileName,
-		});
+  //  ----- Method: DELETE -----
+  @Delete("filename/:filename")
+  @HttpCode(HttpStatus.OK)
+  async deleteByFileName(@Param("filename") fileName: string) {
+    const file = await this.userFileService.findOne({
+      fileName,
+    });
 
-		if (!file) throw new NotFoundException("File not found.");
+    if (!file) throw new NotFoundException("File not found.");
 
-		this.eventEmitterService.emitDeleteFiles([file]);
+    this.eventEmitterService.emitDeleteFiles([file]);
 
-		return file;
-	}
+    return file;
+  }
 
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		const files = await this.userFileService.findMany({
-			_id: {
-				$in: ids.split(",").map((id) => stringIdToObjectId(id)),
-			},
-		});
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    const files = await this.userFileService.findMany({
+      _id: {
+        $in: ids.split(",").map(id => stringIdToObjectId(id)),
+      },
+    });
 
-		if (!files?.length) throw new NotFoundException("Files not found.");
+    if (!files?.length) throw new NotFoundException("Files not found.");
 
-		this.eventEmitterService.emitDeleteFiles(files);
+    this.eventEmitterService.emitDeleteFiles(files);
 
-		return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
-	}
+    return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		const file = await this.userFileService.deleteById(id);
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    const file = await this.userFileService.deleteById(id);
 
-		if (!file) throw new NotFoundException("File not found.");
+    if (!file) throw new NotFoundException("File not found.");
 
-		this.eventEmitterService.emitDeleteFiles([file]);
+    this.eventEmitterService.emitDeleteFiles([file]);
 
-		return file;
-	}
+    return file;
+  }
 }

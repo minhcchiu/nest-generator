@@ -6,7 +6,7 @@ import { Cart, CartDocument } from "./schemas/cart.schema";
 
 @Injectable()
 export class CartService extends BaseService<CartDocument> {
-	constructor(@InjectModel(Cart.name) model: Model<CartDocument>) {
-		super(model);
-	}
+  constructor(@InjectModel(Cart.name) model: Model<CartDocument>) {
+    super(model);
+  }
 }

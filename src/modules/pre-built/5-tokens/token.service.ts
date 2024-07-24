@@ -13,133 +13,123 @@ import { Token, TokenDocument } from "./schemas/token.schema";
 
 @Injectable()
 export class TokenService extends BaseService<TokenDocument> {
-	private tokenService: TokenService;
+  private tokenService: TokenService;
 
-	constructor(
-		private readonly jwtService: JwtService,
-		@InjectModel(Token.name) model: Model<TokenDocument>,
-	) {
-		super(model);
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectModel(Token.name) model: Model<TokenDocument>,
+  ) {
+    super(model);
 
-		this.tokenService = this;
-	}
+    this.tokenService = this;
+  }
 
-	async generateUserToken(payload: RegisterDto) {
-		const { registerToken } = EnvStatic.getJWTConfig();
+  async generateUserToken(payload: RegisterDto) {
+    const { registerToken } = EnvStatic.getJWTConfig();
 
-		return this._generateToken(
-			payload,
-			registerToken.secretKey,
-			registerToken.expiresIn,
-		);
-	}
+    return this._generateToken(payload, registerToken.secretKey, registerToken.expiresIn);
+  }
 
-	async generateForgotPasswordToken(user: User & { _id: Types.ObjectId }) {
-		const payload: TokenPayload = {
-			_id: user._id,
-			roles: user.roles,
-			userGroupIds: user.userGroupIds,
-			fullName: user.fullName,
-			username: user.username,
-			email: user.email,
-			phone: user.phone,
-			socialID: user.socialID,
-			accountType: user.accountType,
-		};
+  async generateForgotPasswordToken(user: User & { _id: Types.ObjectId }) {
+    const payload: TokenPayload = {
+      _id: user._id,
+      roles: user.roles,
+      userGroupIds: user.userGroupIds,
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+      socialID: user.socialID,
+      accountType: user.accountType,
+    };
 
-		const { forgotPasswordToken } = EnvStatic.getJWTConfig();
+    const { forgotPasswordToken } = EnvStatic.getJWTConfig();
 
-		return this._generateToken(
-			payload,
-			forgotPasswordToken.secretKey,
-			forgotPasswordToken.expiresIn,
-		);
-	}
+    return this._generateToken(
+      payload,
+      forgotPasswordToken.secretKey,
+      forgotPasswordToken.expiresIn,
+    );
+  }
 
-	async generateAuthTokens(payload: TokenPayload) {
-		const [accessToken, refreshToken] = await Promise.all([
-			this._generateAccessToken(payload),
-			this._generateRefreshToken(payload),
-		]);
+  async generateAuthTokens(payload: TokenPayload) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this._generateAccessToken(payload),
+      this._generateRefreshToken(payload),
+    ]);
 
-		return { accessToken, refreshToken };
-	}
+    return { accessToken, refreshToken };
+  }
 
-	async verifyAccessToken(token: string): Promise<DecodedToken> {
-		const { accessToken } = EnvStatic.getJWTConfig();
+  async verifyAccessToken(token: string): Promise<DecodedToken> {
+    const { accessToken } = EnvStatic.getJWTConfig();
 
-		return this._verifyToken(token, accessToken.secretKey);
-	}
+    return this._verifyToken(token, accessToken.secretKey);
+  }
 
-	async verifyRefreshToken(token: string): Promise<DecodedToken> {
-		const { refreshToken } = EnvStatic.getJWTConfig();
+  async verifyRefreshToken(token: string): Promise<DecodedToken> {
+    const { refreshToken } = EnvStatic.getJWTConfig();
 
-		return this._verifyToken(token, refreshToken.secretKey);
-	}
+    return this._verifyToken(token, refreshToken.secretKey);
+  }
 
-	async verifyRegisterToken(token: string) {
-		const { registerToken } = EnvStatic.getJWTConfig();
+  async verifyUserToken(token: string) {
+    const { registerToken } = EnvStatic.getJWTConfig();
 
-		return this._verifyToken(token, registerToken.secretKey);
-	}
+    return this._verifyToken(token, registerToken.secretKey);
+  }
 
-	async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
-		const { forgotPasswordToken } = EnvStatic.getJWTConfig();
+  async verifyForgotPasswordToken(token: string): Promise<DecodedToken> {
+    const { forgotPasswordToken } = EnvStatic.getJWTConfig();
 
-		return this._verifyToken(token, forgotPasswordToken.secretKey);
-	}
+    return this._verifyToken(token, forgotPasswordToken.secretKey);
+  }
 
-	async generateUserAuth(user: DocumentType<User>) {
-		const payload = getTokenPayloadFromUser(user);
+  async generateUserAuth(user: DocumentType<User>) {
+    const payload = getTokenPayloadFromUser(user);
 
-		const { accessToken, refreshToken } =
-			await this.generateAuthTokens(payload);
+    const { accessToken, refreshToken } = await this.generateAuthTokens(payload);
 
-		await this.tokenService.updateOne(
-			{ userId: user._id },
-			{ userId: user._id, ...refreshToken },
-			{ upsert: true },
-		);
+    await this.tokenService.updateOne(
+      { userId: user._id },
+      { userId: user._id, ...refreshToken },
+      { upsert: true },
+    );
 
-		return { accessToken, refreshToken, user: getTokenPayloadFromUser(user) };
-	}
+    return { accessToken, refreshToken, user: getTokenPayloadFromUser(user) };
+  }
 
-	async _generateToken(payload: any, secret: string, expiresIn: number) {
-		const token = await this.jwtService.signAsync(payload, {
-			secret,
-			expiresIn: `${expiresIn}m`,
-		});
+  async _generateToken(payload: Record<string, any>, secret: string, expiresIn: number) {
+    const token = await this.jwtService.signAsync(
+      { ...payload },
+      {
+        secret,
+        expiresIn: `${expiresIn}m`,
+      },
+    );
 
-		const expiresAt = new Date().getTime() + expiresIn * 60 * 1000;
+    const expiresAt = new Date().getTime() + expiresIn * 60 * 1000;
 
-		return { token, expiresAt };
-	}
+    return { token, expiresAt };
+  }
 
-	async _generateAccessToken(payload: TokenPayload) {
-		const { accessToken } = EnvStatic.getJWTConfig();
+  async _generateAccessToken(payload: TokenPayload) {
+    const { accessToken } = EnvStatic.getJWTConfig();
 
-		return this._generateToken(
-			payload,
-			accessToken.secretKey,
-			accessToken.expiresIn,
-		);
-	}
+    return this._generateToken(payload, accessToken.secretKey, accessToken.expiresIn);
+  }
 
-	async _generateRefreshToken(payload: TokenPayload) {
-		const { refreshToken } = EnvStatic.getJWTConfig();
+  async _generateRefreshToken(payload: TokenPayload) {
+    const { refreshToken } = EnvStatic.getJWTConfig();
 
-		return this._generateToken(
-			payload,
-			refreshToken.secretKey,
-			refreshToken.expiresIn,
-		);
-	}
+    return this._generateToken(payload, refreshToken.secretKey, refreshToken.expiresIn);
+  }
 
-	async _verifyToken(token: string, secretKey?: string) {
-		const config = EnvStatic.getJWTConfig();
+  async _verifyToken(token: string, secretKey?: string) {
+    const config = EnvStatic.getJWTConfig();
 
-		return this.jwtService.verifyAsync(token, {
-			secret: secretKey || config.secretKey,
-		});
-	}
+    return this.jwtService.verifyAsync(token, {
+      secret: secretKey || config.secretKey,
+    });
+  }
 }

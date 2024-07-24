@@ -1,9 +1,9 @@
 import {
-	MiddlewareConsumer,
-	Module,
-	NestModule,
-	RequestMethod,
-	ValidationPipe,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+  ValidationPipe,
 } from "@nestjs/common";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { ServeStaticModule } from "@nestjs/serve-static";
@@ -32,58 +32,56 @@ import { SeedModule } from "./shared/seed/seed.module";
 import { LocalModule } from "./shared/storage/local-storage/local.module";
 
 @Module({
-	imports: [
-		// configs
-		ServeStaticModule.forRoot({
-			rootPath: join(process.cwd(), "public"),
-			serveRoot: "/static",
-		}),
-		ThrottlerModule.forRoot([EnvStatic.getThrottlerConfig()]),
-		DatabaseModule,
-		SeedModule,
-		CustomLoggerModule,
-		MailModule,
-		SocketModule,
-		FirebaseModule,
-		LocalModule,
-		S3Module,
-		CloudinaryModule,
-		EventEmitterModule,
+  imports: [
+    // configs
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), "public"),
+      serveRoot: "/static",
+    }),
+    ThrottlerModule.forRoot([EnvStatic.getThrottlerConfig()]),
+    DatabaseModule,
+    SeedModule,
+    CustomLoggerModule,
+    MailModule,
+    SocketModule,
+    FirebaseModule,
+    LocalModule,
+    S3Module,
+    CloudinaryModule,
+    EventEmitterModule,
 
-		// routes
-		...RouteModules,
-	],
-	controllers: [AppController],
-	providers: [
-		AppService,
-		CacheService,
-		RedisService,
-		{
-			provide: APP_PIPE,
-			useValue: new ValidationPipe(VALIDATION_PIPE_OPTIONS),
-		},
-		{
-			provide: APP_FILTER,
-			useValue: new AllExceptionsFilter(),
-		},
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: LoggingInterceptor,
-		},
-		{
-			provide: APP_GUARD,
-			useClass: AppGuard,
-		},
-		{
-			provide: APP_GUARD,
-			useClass: ThrottlerGuard,
-		},
-	],
+    // routes
+    ...RouteModules,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    CacheService,
+    RedisService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe(VALIDATION_PIPE_OPTIONS),
+    },
+    {
+      provide: APP_FILTER,
+      useValue: new AllExceptionsFilter(),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AppGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer
-			.apply(AqpMiddleware)
-			.forRoutes({ path: "*", method: RequestMethod.GET });
-	}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AqpMiddleware).forRoutes({ path: "*", method: RequestMethod.GET });
+  }
 }

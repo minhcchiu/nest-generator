@@ -1,13 +1,13 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
 
 import { Types } from "mongoose";
@@ -15,6 +15,7 @@ import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
+import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { UserGroupService } from "../2-user-groups/user-group.service";
 import { CreatePolicyGroupDto } from "./dto/create-policy-group.dto";
@@ -23,67 +24,66 @@ import { PolicyGroupService } from "./policy-group.service";
 
 @Controller("policy_groups")
 export class PolicyGroupController {
-	constructor(
-		private readonly policyGroupService: PolicyGroupService,
-		private readonly userGroupService: UserGroupService,
-	) {}
+  constructor(
+    private readonly policyGroupService: PolicyGroupService,
+    private readonly userGroupService: UserGroupService,
+  ) {}
 
-	//  ----- Method: GET -----
-	@Get("/")
-	async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.policyGroupService.findMany(filter, options);
-	}
+  //  ----- Method: GET -----
+  @Get("/")
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.policyGroupService.findMany(filter, options);
+  }
 
-	@Get("/paginate")
-	async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-		return this.policyGroupService.paginate(filter, options);
-	}
+  @Get("/paginate")
+  async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
+    return this.policyGroupService.paginate(filter, options);
+  }
 
-	@Get("/:id")
-	async findOneById(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@GetAqp() { projection, populate }: PaginationDto,
-	) {
-		return this.policyGroupService.findById(id, { projection, populate });
-	}
+  @Get("/:id")
+  async findOneById(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @GetAqp() { projection, populate }: PaginationDto,
+  ) {
+    return this.policyGroupService.findById(id, { projection, populate });
+  }
 
-	//  ----- Method: POST -----
-	@Post("/")
-	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() body: CreatePolicyGroupDto) {
-		return this.policyGroupService.create(body);
-	}
+  //  ----- Method: POST -----
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() body: CreatePolicyGroupDto) {
+    Object.assign(body, { createdBy: userId });
 
-	//  ----- Method: PATCH -----
-	@Patch("/:id")
-	@HttpCode(HttpStatus.OK)
-	async update(
-		@Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-		@Body() body: UpdatePolicyGroupDto,
-	) {
-		return this.policyGroupService.updateById(id, body);
-	}
+    return this.policyGroupService.create(body);
+  }
 
-	//  ----- Method: DELETE -----
-	@Delete("/:ids/ids")
-	@HttpCode(HttpStatus.OK)
-	async deleteManyByIds(@Param("ids") ids: string) {
-		return this.policyGroupService.deleteMany({
-			_id: { $in: ids.split(",").map((id) => stringIdToObjectId(id)) },
-		});
-	}
+  //  ----- Method: PATCH -----
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() body: UpdatePolicyGroupDto,
+  ) {
+    return this.policyGroupService.updateById(id, body);
+  }
 
-	@Delete("/:id")
-	@HttpCode(HttpStatus.OK)
-	async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
-		const [deleted] = await Promise.all([
-			this.policyGroupService.deleteById(id),
-			this.userGroupService.updateOne(
-				{ policies: id },
-				{ $pull: { policies: id } },
-			),
-		]);
+  //  ----- Method: DELETE -----
+  @Delete("/:ids/ids")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.policyGroupService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
+  }
 
-		return deleted;
-	}
+  @Delete("/:id")
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    const [deleted] = await Promise.all([
+      this.policyGroupService.deleteById(id),
+      this.userGroupService.updateOne({ policies: id }, { $pull: { policies: id } }),
+    ]);
+
+    return deleted;
+  }
 }
