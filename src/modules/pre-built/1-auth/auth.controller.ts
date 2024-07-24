@@ -6,7 +6,8 @@ import { Public } from "~decorators/public.decorator";
 import { AuthService } from "./auth.service";
 import { EmailDto } from "./dto/email.dto";
 import { LoginDto } from "./dto/login.dto";
-import { ResetPasswordDto } from "./dto/password.dto";
+import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
+import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
@@ -81,9 +82,16 @@ export class AuthController {
   }
 
   @Public()
-  @Post("reset_password")
+  @Post("reset_password/token")
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body() { token, password }: ResetPasswordDto) {
-    return this.authService.resetPassword(token, password);
+  async resetPasswordByToken(@Body() body: ResetPasswordWithTokenDto) {
+    return this.authService.resetPasswordWithToken(body);
+  }
+
+  @Public()
+  @Post("reset_password/otp")
+  @HttpCode(HttpStatus.OK)
+  async resetPasswordByOtp(@Body() body: ResetPasswordWithOtpDto) {
+    return this.authService.resetPasswordWithOtp(body);
   }
 }

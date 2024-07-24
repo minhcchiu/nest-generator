@@ -11,8 +11,10 @@ import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { generateOTP } from "~helpers/generate-otp";
 import { MailService } from "~shared/mail/mail.service";
+import { UserService } from "../1-users/user.service";
 import { CreateOtpDto } from "./dto/create-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
+import { OtpTypeEnum } from "./enums/otp-type.enum";
 import { SendOtpToEnum } from "./enums/send-otp-to";
 import { Otp } from "./schemas/otp.schema";
 
@@ -21,9 +23,12 @@ export class OtpService {
   constructor(
     @InjectModel(Otp.name) private otpModel: Model<Otp>,
     private readonly mailService: MailService,
+    private readonly userService: UserService,
   ) {}
 
   async sendOtp(input: CreateOtpDto) {
+    await this._validateSendOtp(input);
+
     const { otpCode, expiredAt } = await this._createOtp(input);
 
     switch (input.sendOtpTo) {
@@ -44,7 +49,13 @@ export class OtpService {
     }
   }
 
-  async verifyOtp({ otpCode, otpType, sendOtpTo, email, phone }: VerifyOtpDto) {
+  async verifyOtp(input: VerifyOtpDto) {
+    const res = await this.checkOtpValid(input);
+
+    return this.otpModel.findByIdAndDelete(res._id);
+  }
+
+  async checkOtpValid({ otpCode, otpType, sendOtpTo, email, phone }: VerifyOtpDto) {
     const filter = { otpType };
 
     if (sendOtpTo === SendOtpToEnum.Email) Object.assign(filter, { email });
@@ -58,7 +69,7 @@ export class OtpService {
 
     const isValidOtpCode = await otpDoc.compareOtpCode(otpCode);
 
-    if (isValidOtpCode) return this.otpModel.findByIdAndDelete(otpDoc._id);
+    if (isValidOtpCode) return otpDoc.toObject();
 
     throw new BadRequestException("Invalid otp code.");
   }
@@ -111,7 +122,7 @@ export class OtpService {
     return {
       phone,
       otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? data.otpCode : undefined,
-      expiresAt: data.expiredAt,
+      expiredAt: data.expiredAt,
     };
   }
 
@@ -127,7 +138,7 @@ export class OtpService {
     return {
       email,
       otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? data.otpCode : undefined,
-      expiresAt: data.expiredAt,
+      expiredAt: data.expiredAt,
     };
   }
 
@@ -146,5 +157,30 @@ export class OtpService {
     }
 
     return isValidTime;
+  }
+
+  private async _validateSendOtp(input: CreateOtpDto) {
+    const userFilter =
+      input.sendOtpTo === SendOtpToEnum.Email ? { email: input.email } : { phone: input.phone };
+
+    switch (input.otpType) {
+      case OtpTypeEnum.Register: {
+        const user = await this.userService.findOne(userFilter);
+
+        if (user)
+          throw new BadRequestException(`The ${input.sendOtpTo.toLowerCase()} already exists.`);
+
+        return true;
+      }
+
+      case OtpTypeEnum.ResetPassword: {
+        const user = await this.userService.findOne(userFilter);
+
+        if (!user)
+          throw new BadRequestException(`The ${input.sendOtpTo.toLowerCase()} does not exist.`);
+
+        return true;
+      }
+    }
   }
 }

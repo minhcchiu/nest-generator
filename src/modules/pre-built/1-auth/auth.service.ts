@@ -12,19 +12,21 @@ import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
-import { AccountTypeEnum } from "../1-users/enums/account-type.enum";
 import { RoleEnum } from "../1-users/enums/role.enum";
 import { HashingService } from "../1-users/hashing/hashing.service";
 import { authSelect } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
 import { TokenService } from "../5-tokens/token.service";
+import { VerifyOtpDto } from "../6-otp/dto/verify-otp.dto";
 import { OtpTypeEnum } from "../6-otp/enums/otp-type.enum";
+import { SendOtpToEnum } from "../6-otp/enums/send-otp-to";
 import { OtpService } from "../6-otp/otp.service";
 import { LoginDto } from "./dto/login.dto";
+import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
+import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
-import { SocialInterface } from "./interfaces/social.interface";
 
 @Injectable()
 export class AuthService {
@@ -167,14 +169,14 @@ export class AuthService {
       otpType: OtpTypeEnum.Register,
     };
 
-    const { expiresAt, otpCode, ...rest } = await this.otpService.sendOtp(otpItem);
+    const { expiredAt, otpCode, ...rest } = await this.otpService.sendOtp(otpItem);
 
     return {
       ...input,
       ...otpItem,
       ...rest,
       otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? otpCode : undefined,
-      expiresAt,
+      expiredAt,
     };
   }
 
@@ -185,13 +187,6 @@ export class AuthService {
     ]);
 
     return { message: "Logout success!" };
-  }
-
-  async validateSocialLogin(accountType: AccountTypeEnum, socialData: SocialInterface) {
-    return {
-      accountType,
-      ...socialData,
-    };
   }
 
   async refreshToken(token: string) {
@@ -237,17 +232,50 @@ export class AuthService {
     };
   }
 
-  async resetPassword(token: string, password: string) {
+  async resetPasswordWithToken(input: ResetPasswordWithTokenDto) {
     const [decoded, tokenDoc] = await Promise.all([
-      this.tokenService.verifyForgotPasswordToken(token),
-      this.tokenService.deleteOne({ token }),
+      this.tokenService.verifyForgotPasswordToken(input.token),
+      this.tokenService.deleteOne({ token: input.token }),
     ]);
 
     if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
 
-    const user = await this.userService.resetPassword(stringIdToObjectId(decoded._id), password, {
+    const user = await this.userService.resetPasswordById(
+      stringIdToObjectId(decoded._id),
+      input.password,
+      {
+        projection: authSelect,
+      },
+    );
+
+    // TODO: handle logout others
+    // if (input.isLogoutOthers) {
+    //   await this.tokenService.deleteMany({ userId: user._id });
+    // }
+
+    const { accessToken, refreshToken } = await this.tokenService.generateUserAuth(user);
+
+    return { accessToken, refreshToken, user };
+  }
+
+  async resetPasswordWithOtp(input: ResetPasswordWithOtpDto) {
+    await this.otpService.verifyOtp({
+      ...input,
+      otpType: OtpTypeEnum.ResetPassword,
+      otpCode: input.otpCode,
+    });
+
+    let filter: Pick<VerifyOtpDto, "email" | "phone"> = { email: input.email };
+    if (input.sendOtpTo === SendOtpToEnum.Phone) filter = { phone: input.phone };
+
+    const user = await this.userService.resetPasswordBy(filter, input.password, {
       projection: authSelect,
     });
+
+    // TODO: handle logout others
+    // if (input.isLogoutOthers) {
+    //   await this.tokenService.deleteMany({ userId: user._id });
+    // }
 
     const { accessToken, refreshToken } = await this.tokenService.generateUserAuth(user);
 

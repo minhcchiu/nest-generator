@@ -72,7 +72,17 @@ export class UserService extends BaseService<UserDocument> {
     return this.userService.updateById(user._id, { password: hashPassword });
   }
 
-  async resetPassword(id: Types.ObjectId, newPassword: string, options?: QueryOptions) {
+  async resetPasswordBy(filter: Record<string, any>, newPassword: string, options?: QueryOptions) {
+    const hashPassword = await this.hashingService.hash(newPassword);
+
+    const updated = await this.userService.updateOne(filter, { password: hashPassword }, options);
+
+    if (!updated) throw new NotFoundException("User not found.");
+
+    return updated;
+  }
+
+  async resetPasswordById(id: Types.ObjectId, newPassword: string, options?: QueryOptions) {
     const hashPassword = await this.hashingService.hash(newPassword);
 
     const updated = await this.userService.updateById(id, { password: hashPassword }, options);
