@@ -9,7 +9,6 @@ import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
 import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
 
@@ -52,13 +51,6 @@ export class AuthController {
   @Post("activate_token")
   async activateToken(@Body() { token }: TokenDto) {
     return this.authService.activateToken(token);
-  }
-
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post("send_otp")
-  async sendOtp(@Body() body: SendOtpDto) {
-    return this.authService.sendOtp(body);
   }
 
   @Post("logout")

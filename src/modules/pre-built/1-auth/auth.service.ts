@@ -25,7 +25,6 @@ import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
 import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 
 @Injectable()
@@ -157,27 +156,6 @@ export class AuthService {
     decoded.status = AccountStatus.Verified;
 
     return this.register(decoded);
-  }
-
-  async sendOtp(input: SendOtpDto) {
-    await this.userService.validateCreateUser(input);
-
-    const otpItem = {
-      phone: input.phone,
-      email: input.email,
-      sendOtpTo: input.sendOtpTo,
-      otpType: OtpTypeEnum.Register,
-    };
-
-    const { expiredAt, otpCode, ...rest } = await this.otpService.sendOtp(otpItem);
-
-    return {
-      ...input,
-      ...otpItem,
-      ...rest,
-      otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? otpCode : undefined,
-      expiredAt,
-    };
   }
 
   async logout(userId: Types.ObjectId, fcmToken?: string) {
