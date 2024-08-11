@@ -10,6 +10,7 @@ import {
   UpdateWithAggregationPipeline,
   UpdateWriteOpResult,
 } from "mongoose";
+import { PageInfo } from "~common/database/mongoose-paginate.config";
 import { PaginateOptions } from "./base.interface";
 
 export class BaseService<T> {
@@ -88,7 +89,10 @@ export class BaseService<T> {
     return this.model.deleteMany(filter, options);
   }
 
-  async paginate(filter: FilterQuery<T>, pageOptions: PaginateOptions = {}) {
+  async paginate(
+    filter: FilterQuery<T>,
+    pageOptions: PaginateOptions = {},
+  ): Promise<{ data: T[]; pageInfo: PageInfo }> {
     const { projection, limit = 10, populate = [], page = 1, sort = "-updatedAt" } = pageOptions;
 
     const options = {

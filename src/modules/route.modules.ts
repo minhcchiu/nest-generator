@@ -1,3 +1,4 @@
+import { TaskModule } from "./0-tasks/task.module";
 import { TestModule } from "./0-tests/test.module";
 import { ProductModule } from "./1-products/product.module";
 import { ShopModule } from "./1-shops/shop.module";
@@ -45,4 +46,5 @@ export const RouteModules = [
   BannerModule,
   ProductModule,
   TestModule,
+  TaskModule,
 ];
