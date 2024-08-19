@@ -12,6 +12,7 @@ import {
 import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Public } from "~common/decorators/public.decorator";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { formatMenus } from "~helpers/format-menu";
@@ -32,6 +33,7 @@ export class MenuController {
     return this.menuService.findById(id, { projection, populate });
   }
 
+  @Public()
   @Get("/")
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
     const systemMenus = await this.menuService.findMany(filter, options);

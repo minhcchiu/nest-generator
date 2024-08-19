@@ -14,14 +14,11 @@ export class Policy {
   @Prop({ type: SchemaTypes.ObjectId, ref: PolicyGroup.name })
   readonly policyGroupId: Types.ObjectId;
 
-  @Prop({ type: String, unique: true, required: true })
-  readonly policyKey: string;
-
-  @Prop({ type: String, unique: true, required: true })
+  @Prop({ type: String, required: true, unique: true })
   readonly name: string;
 
-  @Prop({ type: String, default: "#" })
-  readonly collectionName: string;
+  @Prop({ type: String, unique: true, required: true })
+  readonly policyKey: string;
 
   @Prop({ type: String, required: true })
   readonly endpoint: string;

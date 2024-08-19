@@ -1,3 +1,4 @@
+import { AccountModule } from "./0-accounts/account.module";
 import { TaskModule } from "./0-tasks/task.module";
 import { TestModule } from "./0-tests/test.module";
 import { ProductModule } from "./1-products/product.module";
@@ -10,7 +11,6 @@ import { SettingModule } from "./pre-built/11-settings/setting.module";
 import { NotificationModule } from "./pre-built/12-notifications/notification.module";
 import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
 import { PolicyModule } from "./pre-built/3-policies/policy.module";
-import { PolicyGroupModule } from "./pre-built/3-policy-groups/policy-group.module";
 import { MenuGroupModule } from "./pre-built/4-menu-groups/menu-group.module";
 import { MenuModule } from "./pre-built/4-menus/menu.module";
 import { SystemMenuModule } from "./pre-built/4-system-menus/system-menu.module";
@@ -27,7 +27,6 @@ export const RouteModules = [
   UserModule,
   UserGroupModule,
   PolicyModule,
-  PolicyGroupModule,
   MenuGroupModule,
   MenuModule,
   SystemMenuModule,
@@ -47,4 +46,5 @@ export const RouteModules = [
   ProductModule,
   TestModule,
   TaskModule,
+  AccountModule,
 ];

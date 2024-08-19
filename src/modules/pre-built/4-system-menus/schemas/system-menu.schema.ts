@@ -13,9 +13,6 @@ export class SystemMenu {
   @Prop({ type: String, required: true, unique: true })
   readonly name: string;
 
-  @Prop({ type: String })
-  readonly collectionName?: string;
-
   @Prop({ type: Boolean, default: false })
   readonly isGroup: boolean;
 

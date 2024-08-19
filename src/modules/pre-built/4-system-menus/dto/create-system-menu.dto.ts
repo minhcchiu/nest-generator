@@ -13,10 +13,6 @@ export class CreateSystemMenuDto {
   readonly name: string;
 
   @IsOptional()
-  @IsString()
-  readonly collectionName?: string;
-
-  @IsOptional()
   @IsBoolean()
   readonly isGroup: boolean;
 
@@ -39,4 +35,8 @@ export class CreateSystemMenuDto {
   @IsOptional()
   @IsBoolean()
   readonly isShow?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isSystem?: boolean;
 }
