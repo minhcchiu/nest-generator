@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
-import { User } from "~modules/pre-built/1-users/schemas/user.schema";
 import { UserGroup } from "~modules/pre-built/2-user-groups/schemas/user-group.schema";
 import { PolicyGroup } from "~modules/pre-built/3-policy-groups/schemas/policy-group.schema";
 import { HttpMethod } from "../enum/http-method";
@@ -44,15 +43,13 @@ export class Policy {
   @Prop({ type: Boolean, default: false })
   readonly isPublic: boolean;
 
+  @Prop({ type: Boolean, default: false })
+  readonly isAuthenticated: boolean;
+
   @Prop({
     type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
   })
   blockedUserGroupIds?: Types.ObjectId[];
-
-  @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: User.name }],
-  })
-  blockedUserIds?: Types.ObjectId[];
 }
 
 type PolicyDocument = HydratedDocument<Policy>;

@@ -30,4 +30,8 @@ export class CreatePolicyDto {
   @IsOptional()
   @IsBoolean()
   readonly isPublic?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isAuthenticated?: boolean;
 }

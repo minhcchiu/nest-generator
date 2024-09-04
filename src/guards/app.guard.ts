@@ -75,27 +75,24 @@ export class AppGuard implements CanActivate {
   }
 
   private isAccessAllowed(policy: UserPolicyType, user: TokenPayload) {
-    const { userGroupIds, userIds, blockedUserGroupIds, blockedUserIds } = policy;
-
-    const isHasBlockedUser = blockedUserIds?.some(id => id.toString() === user._id.toString());
-
-    if (isHasBlockedUser) return false;
-
-    const isHasUser = userIds.some(id => id.toString() === user._id.toString());
-
-    if (isHasUser) return true;
+    const { userGroupIds, userIds, blockedUserGroupIds, isAuthenticated } = policy;
 
     const isHasBlockedGroup = blockedUserGroupIds?.some(id =>
       user.userGroupIds.some(gid => gid.toString() === id.toString()),
     );
 
-    if (isHasBlockedGroup) return false;
+    if (isHasBlockedGroup) return false; // block all users in blockedUserGroupIds
+
+    if (isAuthenticated) return true; // allow all authenticated users
 
     const isHasGroup = userGroupIds.some(id =>
       user.userGroupIds.some(gid => gid.toString() === id.toString()),
     );
+    if (isHasGroup) return true; // allow all users in userGroupIds
 
-    return isHasGroup;
+    const isHasUser = userIds.some(id => id.toString() === user._id.toString());
+
+    return isHasUser; // allow all users in userIds
   }
 
   private async getPolicy(endpoint: string, method: HttpMethod): Promise<UserPolicyType> {
@@ -111,7 +108,7 @@ export class AppGuard implements CanActivate {
 
     if (!policy) throw new UnauthorizedException("Policy not found!");
 
-    const { isPublic, userIds, userGroupIds, blockedUserGroupIds, blockedUserIds } = policy;
+    const { isPublic, userIds, userGroupIds, blockedUserGroupIds, isAuthenticated } = policy;
 
     // save to cache
     this.cacheService.setUserPolices(cacheKey, {
@@ -119,7 +116,7 @@ export class AppGuard implements CanActivate {
       userGroupIds,
       userIds,
       blockedUserGroupIds,
-      blockedUserIds,
+      isAuthenticated,
     });
 
     return policy;
