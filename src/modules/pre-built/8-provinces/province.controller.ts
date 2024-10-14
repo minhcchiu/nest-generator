@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -24,8 +24,8 @@ export class ProvinceController {
   @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.provinceService.findById(id, { projection, populate });
@@ -47,16 +47,13 @@ export class ProvinceController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateProvinceDto,
-  ) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateProvinceDto) {
     return this.provinceService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.provinceService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -64,8 +61,8 @@ export class ProvinceController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.provinceService.deleteById(id);
   }
 }

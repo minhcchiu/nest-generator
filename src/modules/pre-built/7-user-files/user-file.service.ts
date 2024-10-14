@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { LocalService } from "~shared/storage/local-storage/local.service";
@@ -27,7 +28,7 @@ export class UserFileService extends BaseService<UserFileDocument> {
   }
 
   @OnEvent("file.uploaded")
-  createUserFile(files: FileUploaded[], userId: Types.ObjectId) {
+  createUserFile(files: FileUploaded[], userId: ObjectId) {
     return this.userFileService.createMany(files.map(item => ({ ...item, userId })));
   }
 

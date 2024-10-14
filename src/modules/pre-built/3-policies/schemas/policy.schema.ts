@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { UserGroup } from "~modules/pre-built/2-user-groups/schemas/user-group.schema";
 import { PolicyGroup } from "~modules/pre-built/3-policy-groups/schemas/policy-group.schema";
 import { HttpMethod } from "../enum/http-method";
@@ -11,7 +12,7 @@ import { HttpMethod } from "../enum/http-method";
 })
 export class Policy {
   @Prop({ type: SchemaTypes.ObjectId, ref: PolicyGroup.name })
-  readonly policyGroupId: Types.ObjectId;
+  readonly policyGroupId: ObjectId;
 
   @Prop({ type: String, required: true, unique: true })
   readonly name: string;
@@ -32,13 +33,13 @@ export class Policy {
     type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
     default: [],
   })
-  userIds: Types.ObjectId[] = [];
+  userIds: ObjectId[] = [];
 
   @Prop({
     type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
     default: [],
   })
-  userGroupIds: Types.ObjectId[] = [];
+  userGroupIds: ObjectId[] = [];
 
   @Prop({ type: Boolean, default: false })
   readonly isPublic: boolean;
@@ -49,7 +50,7 @@ export class Policy {
   @Prop({
     type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
   })
-  blockedUserGroupIds?: Types.ObjectId[];
+  blockedUserGroupIds?: ObjectId[];
 }
 
 type PolicyDocument = HydratedDocument<Policy>;

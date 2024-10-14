@@ -9,8 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -34,17 +33,17 @@ export class CommentController {
 
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() body: CreateCommentDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreateCommentDto) {
     return this.commentService.create({ ...body, authorId: userId });
   }
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateCommentDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateCommentDto) {
     return this.commentService.updateById(id, body);
   }
 
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.commentService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -52,8 +51,8 @@ export class CommentController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.commentService.deleteById(id);
   }
 
@@ -74,8 +73,8 @@ export class CommentController {
   @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.commentService.findById(id, { projection, populate });

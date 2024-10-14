@@ -1,5 +1,5 @@
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 export const stringIdToObjectId = (id: string) => {
-  return new Types.ObjectId(id);
+  return new ObjectId(id);
 };

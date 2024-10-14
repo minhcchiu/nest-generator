@@ -9,7 +9,7 @@ import {
   IsString,
   ValidateIf,
 } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
@@ -18,7 +18,7 @@ export class CreateDiscountDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @IsNotEmpty()
   @IsString()
@@ -60,7 +60,7 @@ export class CreateDiscountDto {
   @IsOptional()
   @IsObjectId({ each: true })
   @ToObjectId({ each: true })
-  usersUsed?: Types.ObjectId[] = [];
+  usersUsed?: ObjectId[] = [];
 
   @IsOptional()
   @IsNumber()
@@ -83,5 +83,5 @@ export class CreateDiscountDto {
   @IsArray()
   @IsObjectId({ each: true })
   @ToObjectId({ each: true })
-  productIds: Types.ObjectId[];
+  productIds: ObjectId[];
 }

@@ -1,6 +1,7 @@
 import { Post } from "@nestjs/common";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "~modules/pre-built/1-users/schemas/user.schema";
 
 @Schema({
@@ -10,10 +11,10 @@ import { User } from "~modules/pre-built/1-users/schemas/user.schema";
 })
 export class Comment {
   @Prop({ type: SchemaTypes.ObjectId, ref: Post.name, required: true })
-  readonly postId: Types.ObjectId;
+  readonly postId: ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-  readonly authorId: Types.ObjectId;
+  readonly authorId: ObjectId;
 
   @Prop({ type: String, default: null })
   readonly text: string;

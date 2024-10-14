@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 
 @Schema({
   timestamps: true,
@@ -8,7 +9,7 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 })
 export class Discount {
   @Prop({ type: SchemaTypes.ObjectId, required: true })
-  storeId: Types.ObjectId;
+  storeId: ObjectId;
 
   @Prop({ type: String, required: true })
   code: string;

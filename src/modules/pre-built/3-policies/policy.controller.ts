@@ -10,8 +10,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
@@ -61,8 +60,8 @@ export class PolicyController {
   }
 
   @Get("/:id")
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.policyService.findById(id, { projection, populate });
@@ -85,7 +84,7 @@ export class PolicyController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdatePolicyDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdatePolicyDto) {
     const found = await this.policyService.findById(id);
 
     if (!found) throw new NotFoundException("Policy not found!");
@@ -101,8 +100,8 @@ export class PolicyController {
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.policyService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -110,8 +109,8 @@ export class PolicyController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.policyService.deleteById(id);
   }
 }

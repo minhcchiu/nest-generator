@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CreateAccountDto {
@@ -14,5 +14,5 @@ export class CreateAccountDto {
   @IsOptional()
   @IsObjectId()
   @ToObjectId()
-  userId: Types.ObjectId;
+  userId: ObjectId;
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { generateRandomKey } from "~helpers/generate-random-key";
@@ -158,7 +158,7 @@ export class AuthService {
     return this.register(decoded);
   }
 
-  async logout(userId: Types.ObjectId, fcmToken?: string) {
+  async logout(userId: ObjectId, fcmToken?: string) {
     Promise.all([
       this.userService.removeFcmTokens([fcmToken]),
       this.tokenService.deleteOne({ user: userId }),

@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 import { HttpMethod } from "../enum/http-method";
 
@@ -10,7 +10,7 @@ export class CreatePolicyDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  readonly policyGroupId?: Types.ObjectId;
+  readonly policyGroupId?: ObjectId;
 
   @IsNotEmpty()
   @IsString()

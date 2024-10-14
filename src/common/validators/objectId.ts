@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { registerDecorator, ValidationOptions } from "class-validator";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
@@ -19,14 +19,13 @@ export function IsObjectId(validationOptions?: ValidationOptions) {
 
 export function ToObjectId(options: { each?: boolean } = { each: false }) {
   return Transform(({ value }) => {
-    if (typeof value === "string" && Types.ObjectId.isValid(value))
-      return stringIdToObjectId(value);
+    if (typeof value === "string" && ObjectId.isValid(value)) return stringIdToObjectId(value);
 
     if (
       options?.each &&
       Array.isArray(value) &&
       value.length > 0 &&
-      value.every(val => typeof val === "string" && Types.ObjectId.isValid(val))
+      value.every(val => typeof val === "string" && ObjectId.isValid(val))
     )
       return value.map((val: string) => stringIdToObjectId(val));
 

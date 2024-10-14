@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { CartState } from "~modules/3-carts/enums/cart-state.enum";
 import { User } from "~pre-built/1-users/schemas/user.schema";
 import { CartProductDto } from "../dto/cart-product.dto";
@@ -11,7 +12,7 @@ import { CartProductDto } from "../dto/cart-product.dto";
 })
 export class Cart {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name })
-  userId: Types.ObjectId;
+  userId: ObjectId;
 
   @Prop({ type: String, enum: CartState, default: CartState.Active })
   state: string;

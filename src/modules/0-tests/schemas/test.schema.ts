@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "~modules/pre-built/1-users/schemas/user.schema";
 import { ProjectDto } from "../dto/project.dto";
 import { AppTypeEnum } from "../enums/app-type.enum";
@@ -11,7 +12,7 @@ import { AppTypeEnum } from "../enums/app-type.enum";
 })
 export class Test {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-  userId: Types.ObjectId;
+  userId: ObjectId;
 
   @Prop({ type: String, required: true })
   imageUrl: string;

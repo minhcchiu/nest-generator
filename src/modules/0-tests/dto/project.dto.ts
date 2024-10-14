@@ -1,13 +1,13 @@
 import { Type } from "class-transformer";
 import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class ProjectDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  userId: Types.ObjectId;
+  userId: ObjectId;
 
   @IsNotEmpty()
   @IsString()

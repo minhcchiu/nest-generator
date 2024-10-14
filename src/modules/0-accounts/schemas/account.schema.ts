@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 
 @Schema({
   timestamps: true,
@@ -14,7 +15,7 @@ export class Account {
   plainId?: string;
 
   @Prop({ type: SchemaTypes.ObjectId, required: true })
-  userId: Types.ObjectId;
+  userId: ObjectId;
 }
 
 export type AccountDocument = Account & HydratedDocument<Account>;

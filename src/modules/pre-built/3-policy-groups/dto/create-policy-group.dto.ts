@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 export class CreatePolicyGroupDto {
   @IsNotEmpty()
@@ -10,5 +10,5 @@ export class CreatePolicyGroupDto {
   @IsString()
   readonly description?: string;
 
-  createdBy: Types.ObjectId;
+  createdBy: ObjectId;
 }

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { Product } from "~modules/1-products/schemas/product.schema";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { Cart } from "~modules/3-carts/schemas/cart.schema";
@@ -11,10 +12,10 @@ import { Cart } from "~modules/3-carts/schemas/cart.schema";
 })
 export class Inventory {
   @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name })
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: Product.name })
-  productId: Types.ObjectId;
+  productId: ObjectId;
 
   @Prop({ type: String, default: "unknown" })
   location: string;
@@ -34,7 +35,7 @@ export class Inventory {
   })
   reservations: {
     quantity: number;
-    cartId: Types.ObjectId;
+    cartId: ObjectId;
     createdAt: Date;
   }[];
 }

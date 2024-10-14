@@ -9,8 +9,8 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
+import { ObjectId } from "mongodb";
 
-import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -49,8 +49,8 @@ export class NotificationController {
 
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
     @GetLanguage() language: LanguageCodeEnum,
   ) {
@@ -76,16 +76,13 @@ export class NotificationController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateNotificationDto,
-  ) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateNotificationDto) {
     return this.notificationService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.notificationService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -93,8 +90,8 @@ export class NotificationController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.notificationService.deleteById(id);
   }
 }

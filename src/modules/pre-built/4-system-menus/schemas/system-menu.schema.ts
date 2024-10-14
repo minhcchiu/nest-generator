@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 
 @Schema({
   timestamps: true,
@@ -8,7 +9,7 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 })
 export class SystemMenu {
   @Prop({ type: SchemaTypes.ObjectId, ref: SystemMenu.name })
-  readonly parentId?: Types.ObjectId;
+  readonly parentId?: ObjectId;
 
   @Prop({ type: String, required: true, unique: true })
   readonly name: string;

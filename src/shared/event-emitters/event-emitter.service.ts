@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileUploaded } from "~modules/pre-built/7-uploads/types/upload.result.type";
 import { UploadType } from "~types/upload-type";
@@ -9,7 +9,7 @@ import { UploadType } from "~types/upload-type";
 export class EventEmitterService {
   constructor(private eventEmitter: EventEmitter2) {}
 
-  emitFileUploaded(files: FileUploaded[], userId: Types.ObjectId) {
+  emitFileUploaded(files: FileUploaded[], userId: ObjectId) {
     return this.eventEmitter.emit("file.uploaded", files, userId);
   }
 

@@ -7,7 +7,7 @@ import {
   NotFoundException,
   Param,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -33,8 +33,8 @@ export class UserFileController {
 
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.userFileService.findById(id, { projection, populate });
@@ -55,8 +55,8 @@ export class UserFileController {
     return file;
   }
 
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     const files = await this.userFileService.findMany({
       _id: {
@@ -72,8 +72,8 @@ export class UserFileController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     const file = await this.userFileService.deleteById(id);
 
     if (!file) throw new NotFoundException("File not found.");

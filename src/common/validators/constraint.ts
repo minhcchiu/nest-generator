@@ -1,13 +1,13 @@
 import { ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 @ValidatorConstraint({ async: false })
 export class IsObjectIdConstraint implements ValidatorConstraintInterface {
   validate(value: any) {
-    if (value instanceof Types.ObjectId) {
+    if (value instanceof ObjectId) {
       return true;
     }
-    return Types.ObjectId.isValid(value);
+    return ObjectId.isValid(value);
   }
 
   defaultMessage() {

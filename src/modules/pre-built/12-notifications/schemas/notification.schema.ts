@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import mongoose, { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "~pre-built/1-users/schemas/user.schema";
 import { NotificationType } from "../enums/noti-type.enum";
 import { TargetType } from "../enums/target-type.enum";
@@ -14,10 +15,10 @@ export class Notification {
   targetType: TargetType;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-  senderId: Types.ObjectId;
+  senderId: ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name })
-  recipientId: Types.ObjectId;
+  recipientId: ObjectId;
 
   @Prop({ type: String, enum: NotificationType, required: true })
   notificationType: NotificationType;
@@ -26,7 +27,7 @@ export class Notification {
   entityType: string;
 
   @Prop({ type: SchemaTypes.ObjectId })
-  entityId: Types.ObjectId;
+  entityId: ObjectId;
 
   @Prop({ type: String, required: true })
   title: string;

@@ -9,8 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
@@ -41,8 +40,8 @@ export class PolicyGroupController {
   }
 
   @Get("/:id")
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.policyGroupService.findById(id, { projection, populate });
@@ -51,7 +50,7 @@ export class PolicyGroupController {
   //  ----- Method: POST -----
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() body: CreatePolicyGroupDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreatePolicyGroupDto) {
     Object.assign(body, { createdBy: userId });
 
     return this.policyGroupService.create(body);
@@ -60,16 +59,13 @@ export class PolicyGroupController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdatePolicyGroupDto,
-  ) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdatePolicyGroupDto) {
     return this.policyGroupService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.policyGroupService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -77,8 +73,8 @@ export class PolicyGroupController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     const [deleted] = await Promise.all([
       this.policyGroupService.deleteById(id),
       this.userGroupService.updateOne({ policies: id }, { $pull: { policies: id } }),

@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -25,8 +25,8 @@ export class MenuGroupController {
 
   //  ----- Method: GET -----
   @Get("/:id")
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.menuGroupService.findById(id, { projection, populate });
@@ -40,7 +40,7 @@ export class MenuGroupController {
   //  ----- Method: POST -----
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() body: CreateMenuGroupDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreateMenuGroupDto) {
     Object.assign(body, { createdBy: userId });
 
     return this.menuGroupService.create(body);
@@ -49,16 +49,13 @@ export class MenuGroupController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateMenuGroupDto,
-  ) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateMenuGroupDto) {
     return this.menuGroupService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
-  @HttpCode(HttpStatus.OK)
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.menuGroupService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -66,8 +63,8 @@ export class MenuGroupController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.menuGroupService.deleteById(id);
   }
 }

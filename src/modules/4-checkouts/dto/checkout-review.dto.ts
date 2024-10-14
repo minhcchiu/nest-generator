@@ -1,18 +1,18 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, ValidateNested } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { IsObjectId, ToObjectId } from "~common/validators/objectId";
 
 export class CheckoutReviewDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  readonly userId: Types.ObjectId;
+  readonly userId: ObjectId;
 
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  readonly carId: Types.ObjectId;
+  readonly carId: ObjectId;
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
@@ -24,12 +24,12 @@ export class ShopOrderDiscountDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  discountId: Types.ObjectId;
+  discountId: ObjectId;
 
   @IsNotEmpty()
   @IsObjectId()
@@ -41,7 +41,7 @@ export class ShopOrderItemDto {
   @IsNotEmpty()
   @IsObjectId()
   @ToObjectId()
-  productId: Types.ObjectId;
+  productId: ObjectId;
 
   @IsNotEmpty()
   @IsNumber()
@@ -53,7 +53,7 @@ export class ShopOrderItemDto {
 }
 
 export class ShopOrderDto {
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
   shopDiscounts: ShopOrderDiscountDto[];
   items: ShopOrderItemDto[];
 }

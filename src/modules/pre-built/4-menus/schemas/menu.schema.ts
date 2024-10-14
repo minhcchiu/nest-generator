@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { SystemMenu } from "~modules/pre-built/4-system-menus/schemas/system-menu.schema";
 
 @Schema({
@@ -9,13 +10,13 @@ import { SystemMenu } from "~modules/pre-built/4-system-menus/schemas/system-men
 })
 export class Menu {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Menu.name }], default: [] })
-  readonly menuGroupIds?: Types.ObjectId[];
+  readonly menuGroupIds?: ObjectId[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: Menu.name })
-  readonly parentId?: Types.ObjectId;
+  readonly parentId?: ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: SystemMenu.name })
-  readonly systemMenuId?: Types.ObjectId;
+  readonly systemMenuId?: ObjectId;
 
   @Prop({ type: String })
   readonly name?: string;
