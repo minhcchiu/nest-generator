@@ -1,3 +1,4 @@
+import { CategoryModule } from "~modules/0-categories/category.module";
 import { AccountModule } from "./0-accounts/account.module";
 import { TaskModule } from "./0-tasks/task.module";
 import { TestModule } from "./0-tests/test.module";
@@ -47,4 +48,5 @@ export const RouteModules = [
   TestModule,
   TaskModule,
   AccountModule,
+  CategoryModule,
 ];
