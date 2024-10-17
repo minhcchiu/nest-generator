@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateCategoryDto {
   @IsNotEmpty()
@@ -13,6 +13,5 @@ export class CreateCategoryDto {
 
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
   userId: ObjectId;
 }

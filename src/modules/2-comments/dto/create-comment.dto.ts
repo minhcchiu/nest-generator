@@ -1,11 +1,10 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateCommentDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   readonly postId: ObjectId;
 
   @IsOptional()

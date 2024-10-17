@@ -1,11 +1,10 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateSystemMenuDto {
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
   readonly parentId?: ObjectId;
 
   @IsNotEmpty()

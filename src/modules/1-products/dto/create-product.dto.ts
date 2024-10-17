@@ -1,12 +1,11 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 import { ProductType } from "../enums/product-type.enum";
 
 export class CreateProductDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   readonly shopId: ObjectId;
 
   @IsNotEmpty()

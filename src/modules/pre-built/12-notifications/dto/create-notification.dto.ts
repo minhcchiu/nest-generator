@@ -1,18 +1,16 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 import { NotificationType } from "../enums/noti-type.enum";
 import { TargetType } from "../enums/target-type.enum";
 
 export class CreateNotificationDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   senderId: ObjectId;
 
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   recipientId: ObjectId;
 
   @IsObject()
@@ -37,7 +35,6 @@ export class CreateNotificationDto {
 
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
   entityId: ObjectId;
 
   @IsNotEmpty()

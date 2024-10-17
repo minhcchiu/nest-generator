@@ -10,14 +10,13 @@ import {
   ValidateIf,
 } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
 
 export class CreateDiscountDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   shopId: ObjectId;
 
   @IsNotEmpty()
@@ -59,7 +58,6 @@ export class CreateDiscountDto {
 
   @IsOptional()
   @IsObjectId({ each: true })
-  @ToObjectId({ each: true })
   usersUsed?: ObjectId[] = [];
 
   @IsOptional()
@@ -82,6 +80,5 @@ export class CreateDiscountDto {
   @IsNotEmpty()
   @IsArray()
   @IsObjectId({ each: true })
-  @ToObjectId({ each: true })
   productIds: ObjectId[];
 }

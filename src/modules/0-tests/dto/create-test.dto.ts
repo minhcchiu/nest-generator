@@ -10,13 +10,12 @@ import {
   ValidateNested,
 } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 import { AppTypeEnum } from "../enums/app-type.enum";
 import { ProjectDto } from "./project.dto";
 
 export class CreateTestDto {
   @IsObjectId()
-  @ToObjectId()
   userId: ObjectId;
 
   @IsNotEmpty()

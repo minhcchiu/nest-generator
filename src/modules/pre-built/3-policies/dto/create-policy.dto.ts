@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { IsObjectId } from "~common/validators/objectId";
 import { HttpMethod } from "../enum/http-method";
 
 export class CreatePolicyDto {
@@ -9,7 +9,6 @@ export class CreatePolicyDto {
 
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
   readonly policyGroupId?: ObjectId;
 
   @IsNotEmpty()
