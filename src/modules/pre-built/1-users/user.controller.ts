@@ -116,7 +116,7 @@ export class UserController {
   }
 
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManySoftByIds(@Param("ids") ids: string) {
     return this.userService.updateMany(
       { _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) } },
@@ -125,7 +125,7 @@ export class UserController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.userService.updateById(id, { status: AccountStatus.Deleted });
   }

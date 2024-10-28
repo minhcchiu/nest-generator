@@ -72,7 +72,7 @@ export class TaskController {
 
   // ----- Method: DELETE -----
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.taskService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -80,7 +80,7 @@ export class TaskController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.taskService.deleteById(id);
   }

@@ -10,22 +10,22 @@ import { Category } from "~modules/0-categories/schemas/category.schema";
   collection: "transactions",
 })
 export class Transaction {
-  @Prop({ type: String, required: true })
+  @Prop({ type: Number, required: true })
   amount: number;
 
   @Prop({ type: String, required: true })
   payee: string;
 
   @Prop({ type: String })
-  note?: string;
+  notes?: string;
 
   @Prop({ type: Date, required: true })
-  date: Date;
+  date: string;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: Account.name, required: true })
   accountId: ObjectId;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Category.name, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Category.name })
   categoryId: ObjectId;
 }
 

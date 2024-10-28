@@ -65,7 +65,7 @@ export class PolicyGroupController {
 
   //  ----- Method: DELETE -----
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.policyGroupService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -73,7 +73,7 @@ export class PolicyGroupController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     const [deleted] = await Promise.all([
       this.policyGroupService.deleteById(id),

@@ -13,17 +13,17 @@ export class CreateTransactionDto {
 
   @IsOptional()
   @IsString()
-  note?: string;
+  notes?: string;
 
   @IsNotEmpty()
   @IsISO8601()
-  date: Date;
+  date: string;
 
   @IsNotEmpty()
-  @IsObjectId({ each: true })
-  accountId: ObjectId[];
+  @IsObjectId()
+  accountId: ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsObjectId()
   categoryId: ObjectId;
 }

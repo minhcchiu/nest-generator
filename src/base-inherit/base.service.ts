@@ -88,7 +88,7 @@ export class BaseService<T> {
     filter: FilterQuery<T>,
     pageOptions: PaginateOptions = {},
   ): Promise<{ data: T[]; pageInfo: PageInfo }> {
-    const { projection, limit = 10, populate = [], page = 1, sort = "-updatedAt" } = pageOptions;
+    const { projection, limit = 10, populate = [], page = 1, sort = "-createdAt" } = pageOptions;
 
     const options = {
       page,

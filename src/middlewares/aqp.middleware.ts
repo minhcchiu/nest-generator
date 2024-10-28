@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 
 import { BadRequestException, Injectable, NestMiddleware } from "@nestjs/common";
 
+import { PopulateOptions } from "mongoose";
+import { convertOneOfToOr } from "~utils/convert-oneOf-to-or";
 import { PaginationDto } from "../common/dto/pagination.dto";
 import { aqpValidatorDto } from "./validator/aqp.validator";
 
@@ -32,15 +34,17 @@ export class AqpMiddleware implements NestMiddleware {
       next(new BadRequestException(e.message));
     }
 
-    const queryParams: typeof query & {
-      populate?: any;
-      page?: any;
-    } = query;
+    const queryParams: typeof query & { populate?: PopulateOptions[]; page?: number } = query;
 
     if (populate) queryParams.populate = populate;
     if (page) queryParams.page = page;
 
+    // Convert $oneOf to $or
+    convertOneOfToOr(queryParams.filter || {});
+
+    // Assign to request
     req["aqp"] = queryParams;
+
     next();
   }
 }

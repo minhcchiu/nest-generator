@@ -41,7 +41,7 @@ export class DiscountController {
   }
 
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.discountService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -49,7 +49,7 @@ export class DiscountController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.discountService.deleteById(id);
   }

@@ -56,6 +56,12 @@ export class TransactionController {
   }
 
   // ----- Method: POST -----
+  @Post("/bulk")
+  @HttpCode(HttpStatus.CREATED)
+  async createMany(@Body() body: CreateTransactionDto[]) {
+    return this.transactionService.createMany(body);
+  }
+
   // @Public()
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
@@ -72,7 +78,7 @@ export class TransactionController {
 
   // ----- Method: DELETE -----
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.transactionService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -80,7 +86,7 @@ export class TransactionController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.transactionService.deleteById(id);
   }

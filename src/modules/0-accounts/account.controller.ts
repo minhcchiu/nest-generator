@@ -75,7 +75,7 @@ export class AccountController {
 
   // ----- Method: DELETE -----
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.accountService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
@@ -83,7 +83,7 @@ export class AccountController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.accountService.deleteById(id);
   }

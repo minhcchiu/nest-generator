@@ -56,7 +56,7 @@ export class UserFileController {
   }
 
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     const files = await this.userFileService.findMany({
       _id: {
@@ -72,7 +72,7 @@ export class UserFileController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     const file = await this.userFileService.deleteById(id);
 

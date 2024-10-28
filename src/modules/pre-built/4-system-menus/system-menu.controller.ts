@@ -69,7 +69,7 @@ export class SystemMenuController {
   }
 
   @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteManySoftByIds(@Param("ids") ids: string) {
     return this.systemSystemMenuService.updateMany(
       {
@@ -82,7 +82,7 @@ export class SystemMenuController {
   }
 
   @Delete("/:id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.systemSystemMenuService.updateById(id, {
       deleted: true,
