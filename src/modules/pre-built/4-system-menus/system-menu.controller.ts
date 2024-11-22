@@ -80,12 +80,4 @@ export class SystemMenuController {
       },
     );
   }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.systemSystemMenuService.updateById(id, {
-      deleted: true,
-    });
-  }
 }

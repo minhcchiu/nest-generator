@@ -50,12 +50,6 @@ export class OrderController {
     });
   }
 
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.orderService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)

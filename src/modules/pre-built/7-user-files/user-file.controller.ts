@@ -70,16 +70,4 @@ export class UserFileController {
 
     return this.userFileService.deleteMany({ _id: { $in: ids.split(",") } });
   }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    const file = await this.userFileService.deleteById(id);
-
-    if (!file) throw new NotFoundException("File not found.");
-
-    this.eventEmitterService.emitDeleteFiles([file]);
-
-    return file;
-  }
 }

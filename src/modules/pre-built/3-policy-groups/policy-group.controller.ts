@@ -71,15 +71,4 @@ export class PolicyGroupController {
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
     });
   }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    const [deleted] = await Promise.all([
-      this.policyGroupService.deleteById(id),
-      this.userGroupService.updateOne({ policies: id }, { $pull: { policies: id } }),
-    ]);
-
-    return deleted;
-  }
 }

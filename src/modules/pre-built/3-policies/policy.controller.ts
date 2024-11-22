@@ -107,10 +107,4 @@ export class PolicyController {
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
     });
   }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.policyService.deleteById(id);
-  }
 }
