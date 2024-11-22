@@ -3,7 +3,7 @@ import { forwardRef } from "@nestjs/common/utils";
 import { MongooseModule } from "@nestjs/mongoose";
 import { InventoryModule } from "~modules/5-inventories/inventory.module";
 import { DiscountModule } from "~modules/6-discounts/discount.module";
-import { RedisService } from "~shared/redis-feature/redis.service";
+import { RedisService } from "~shared/redis/redis.service";
 import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
 import { Clothing, ClothingSchema } from "./schemas/clothing.schema";

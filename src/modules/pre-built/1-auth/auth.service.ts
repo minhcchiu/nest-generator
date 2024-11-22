@@ -167,13 +167,15 @@ export class AuthService {
     return { message: "Logout success!" };
   }
 
-  async refreshToken(token: string) {
+  async refreshToken(token: string, fcmToken?: string) {
     const [tokenDoc] = await Promise.all([
       this.tokenService.findOne({ token }, { populate: { path: "userId", select: authSelect } }),
       this.tokenService.verifyRefreshToken(token),
     ]);
 
     if (!tokenDoc?.userId) throw new UnauthorizedException("Invalid refresh token!");
+
+    if (fcmToken) this.userService.saveFcmToken(tokenDoc.userId._id, fcmToken);
 
     return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
   }

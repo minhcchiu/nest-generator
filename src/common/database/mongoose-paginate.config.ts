@@ -1,6 +1,6 @@
 import * as mongoosePaginateV2 from "mongoose-paginate-v2";
 
-export interface PageInfo {
+export interface PaginationInfo {
   _totalData: number;
   _limit: number;
   _totalPages: number;
@@ -18,7 +18,7 @@ const customLabels = {
   page: "_page",
   totalPages: "_totalPages",
   totalDocs: "_totalData",
-  meta: "pageInfo",
+  meta: "paginationInfo",
   pagingCounter: "_pagingCounter",
   hasPrevPage: "_hasPrevPage",
   hasNextPage: "_hasNextPage",

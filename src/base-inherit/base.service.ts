@@ -9,7 +9,7 @@ import {
   UpdateWithAggregationPipeline,
   UpdateWriteOpResult,
 } from "mongoose";
-import { PageInfo } from "~common/database/mongoose-paginate.config";
+import { PaginationInfo } from "~common/database/mongoose-paginate.config";
 import { PaginateOptions } from "./base.interface";
 
 export class BaseService<T> {
@@ -87,7 +87,7 @@ export class BaseService<T> {
   async paginate(
     filter: FilterQuery<T>,
     pageOptions: PaginateOptions = {},
-  ): Promise<{ data: T[]; pageInfo: PageInfo }> {
+  ): Promise<{ data: T[]; paginationInfo: PaginationInfo }> {
     const { projection, limit = 10, populate = [], page = 1, sort = "-createdAt" } = pageOptions;
 
     const options = {

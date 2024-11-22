@@ -1,4 +1,5 @@
 import { CategoryModule } from "~modules/0-categories/category.module";
+import { PlaidModule } from "~modules/0-plaid/plaid.module";
 import { SummaryModule } from "~modules/0-summaries/summary.module";
 import { TransactionModule } from "~modules/0-transactions/transaction.module";
 import { AccountModule } from "./0-accounts/account.module";
@@ -24,7 +25,7 @@ import { UserFileModule } from "./pre-built/7-user-files/user-file.module";
 import { ProvinceModule } from "./pre-built/8-provinces/province.module";
 import { DistrictModule } from "./pre-built/9-districts/district.module";
 
-export const RouteModules = [
+export const FeatureModules = [
   // pre-built
   AuthModule,
   UserModule,
@@ -53,4 +54,5 @@ export const RouteModules = [
   CategoryModule,
   TransactionModule,
   SummaryModule,
+  PlaidModule,
 ];
