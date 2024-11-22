@@ -2,7 +2,7 @@
   "files.eol": "\n",
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "editor.lineHeight": 36,
+  "editor.lineHeight": 40,
   "editor.cursorWidth": 4,
   "editor.minimap.enabled": false,
   "workbench.startupEditor": "none",

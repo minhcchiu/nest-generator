@@ -123,10 +123,4 @@ export class UserController {
       { status: AccountStatus.Deleted },
     );
   }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.userService.updateById(id, { status: AccountStatus.Deleted });
-  }
 }

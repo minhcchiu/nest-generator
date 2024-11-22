@@ -49,12 +49,6 @@ export class ShopController {
     });
   }
 
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.shopService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)

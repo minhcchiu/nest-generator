@@ -6,9 +6,12 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from "class-validator";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
@@ -62,9 +65,26 @@ export class CreateUserDto {
   avatar?: string;
 
   @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
   @IsBoolean()
   fmcEnabled?: boolean;
 
   status?: AccountStatus;
   fcmTokens?: string[];
+
+  // Features
+  @IsOptional()
+  @IsNumber()
+  reputation?: number;
+
+  @IsOptional()
+  @IsNumber()
+  questionsCount?: number;
+
+  @IsOptional()
+  @IsObjectId({ each: true })
+  questionsSaved?: ObjectId[];
 }

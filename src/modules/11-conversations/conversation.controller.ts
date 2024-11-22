@@ -50,12 +50,6 @@ export class ConversationController {
     });
   }
 
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.conversationService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)
