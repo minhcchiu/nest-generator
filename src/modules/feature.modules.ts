@@ -1,10 +1,11 @@
 import { CategoryModule } from "~modules/0-categories/category.module";
 import { SummaryModule } from "~modules/0-summaries/summary.module";
 import { TransactionModule } from "~modules/0-transactions/transaction.module";
+import { AnswerModule } from "~modules/questions-modules/1-answers/answer.module";
 import { QuestionModule } from "~modules/questions-modules/1-questions/question.module";
-import { VoteModule } from "~modules/questions-modules/2-votes/vote.module";
+import { UserQuestionActivityModule } from "~modules/questions-modules/2-user-question-activities/user_question_activity.module";
 import { TagModule } from "~modules/questions-modules/3-tags/tag.module";
-import { TagQuestionModule } from "~modules/questions-modules/4-tag_questions/tag_question.module";
+import { InteractionModule } from "~modules/questions-modules/4-interactions/interaction.module";
 import { TagFollowerModule } from "~modules/questions-modules/5-tag_followers/tag_follower.module";
 import { AccountModule } from "./0-accounts/account.module";
 import { TaskModule } from "./0-tasks/task.module";
@@ -60,9 +61,10 @@ export const FeatureModules = [
   SummaryModule,
 
   // Questions Modules
+  AnswerModule,
   QuestionModule,
-  VoteModule,
+  UserQuestionActivityModule,
   TagModule,
-  TagQuestionModule,
   TagFollowerModule,
+  InteractionModule,
 ];

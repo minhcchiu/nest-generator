@@ -8,6 +8,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model, QueryOptions } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { UserQuestionActivityService } from "~modules/questions-modules/2-user-question-activities/user_question_activity.service";
+import { TagService } from "~modules/questions-modules/3-tags/tag.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { HashingService } from "./hashing/hashing.service";
@@ -20,6 +22,8 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
+    private readonly tagService: TagService,
+    private readonly userQuestionActivityService: UserQuestionActivityService,
   ) {
     super(model);
 
@@ -54,7 +58,12 @@ export class UserService extends BaseService<UserDocument> {
     const hashPassword = await this.hashingService.hash(input.password);
     Object.assign(input, { password: hashPassword });
 
-    return this.userService.create(input);
+    const userCreated = await this.userService.create(input);
+
+    // Seed data for user
+    await this.userQuestionActivityService.seedUserQuestionActivity(userCreated._id);
+
+    return userCreated;
   }
 
   async updatePasswordById(id: ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
@@ -114,5 +123,27 @@ export class UserService extends BaseService<UserDocument> {
     );
 
     return updated;
+  }
+
+  // features
+  async assignTopInteractedTags(users: UserDocument[]) {
+    const topInteractedTags = await this.tagService.getTopInteractedTagsByUserIds(
+      users.map(user => user._id),
+    );
+
+    const topInteractedTagsMap = new Map(
+      topInteractedTags.map(topInteractedTag => [
+        topInteractedTag.authorId.toString(),
+        topInteractedTag,
+      ]),
+    );
+
+    users.forEach(user => {
+      Object.assign(user, {
+        topInteractedTags: topInteractedTagsMap.get(user._id.toString())?.tags || [],
+      });
+    });
+
+    return users;
   }
 }
