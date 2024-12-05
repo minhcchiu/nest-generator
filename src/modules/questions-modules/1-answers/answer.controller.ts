@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
 } from "@nestjs/common";
@@ -16,27 +17,28 @@ import { GetCurrentUserId } from "~common/decorators/get-current-user-id.decorat
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { CreateQuestionDto } from "./dto/create-question.dto";
-import { UpdateQuestionDto } from "./dto/update-question.dto";
-import { QuestionService } from "./question.service";
+import { VoteActionEnum } from "~modules/questions-modules/1-answers/enums/vote-action-type.enum";
+import { AnswerService } from "./answer.service";
+import { CreateAnswerDto } from "./dto/create-answer.dto";
+import { UpdateAnswerDto } from "./dto/update-answer.dto";
 
-@Controller("questions")
-export class QuestionController {
-  constructor(private readonly questionService: QuestionService) {}
+@Controller("answers")
+export class AnswerController {
+  constructor(private readonly answerService: AnswerService) {}
 
   // ----- Method: GET -----
   @Public()
   @Get("/")
   @HttpCode(HttpStatus.OK)
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.questionService.findMany(filter, options);
+    return this.answerService.findMany(filter, options);
   }
 
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.questionService.paginate(filter, options);
+    return this.answerService.paginate(filter, options);
   }
 
   @Public()
@@ -46,27 +48,37 @@ export class QuestionController {
     @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
-    return this.questionService.findById(id, { projection, populate });
+    return this.answerService.findById(id, { projection, populate });
   }
 
   // ----- Method: POST -----
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() authorId: ObjectId, @Body() body: CreateQuestionDto) {
-    return this.questionService.createQuestion({ authorId, ...body });
+  async create(@GetCurrentUserId() authorId: ObjectId, @Body() body: CreateAnswerDto) {
+    return this.answerService.createAnswer({ authorId, ...body });
   }
 
   // ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateQuestionDto) {
-    return this.questionService.updateById(id, body);
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateAnswerDto) {
+    return this.answerService.updateById(id, body);
+  }
+
+  @Patch("/:id/:action")
+  @HttpCode(HttpStatus.OK)
+  async updateVote(
+    @GetCurrentUserId() userId: ObjectId,
+    @Param("id", ParseObjectIdPipe) answerId: ObjectId,
+    @Param("action", new ParseEnumPipe(VoteActionEnum)) action: VoteActionEnum,
+  ) {
+    return this.answerService.updateVote(action, answerId, userId);
   }
 
   // ----- Method: DELETE -----
   @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
-    return this.questionService.bulkDeleteByIds(stringIdsToObjectId(ids.split(",")));
+    return this.answerService.bulkDeleteByIds(stringIdsToObjectId(ids.split(",")));
   }
 }

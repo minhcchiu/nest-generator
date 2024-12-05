@@ -32,17 +32,28 @@ export class UserController {
   @Get("/me")
   @HttpCode(HttpStatus.OK)
   async getMe(@GetCurrentUserId() id: string, @GetAqp() { projection, populate }: PaginationDto) {
-    return this.userService.findById(stringIdToObjectId(id), {
+    const res = await this.userService.findById(stringIdToObjectId(id), {
       projection,
       populate,
     });
+
+    // Assign top interacted tags
+    if (projection?.topInteractedTags) await this.userService.assignTopInteractedTags([res]);
+
+    return res;
   }
 
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.userService.paginate(filter, options);
+    const pagination = await this.userService.paginate(filter, options);
+
+    // Assign top interacted tags
+    if (options.projection?.topInteractedTags)
+      await this.userService.assignTopInteractedTags(pagination.data);
+
+    return pagination;
   }
 
   @Public()
@@ -52,13 +63,24 @@ export class UserController {
     @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
-    return this.userService.findById(id, { projection, populate });
+    const res = await this.userService.findById(id, { projection, populate });
+
+    // Assign top interacted tags
+    if (projection?.topInteractedTags) await this.userService.assignTopInteractedTags([res]);
+
+    return res;
   }
 
   @Get("/")
   @HttpCode(HttpStatus.OK)
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.userService.findMany(filter, options);
+    const users = await this.userService.findMany(filter, options);
+
+    // Assign top interacted tags
+    if (options.projection?.topInteractedTags)
+      await this.userService.assignTopInteractedTags(users);
+
+    return users;
   }
 
   //  ----- Method: POST -----

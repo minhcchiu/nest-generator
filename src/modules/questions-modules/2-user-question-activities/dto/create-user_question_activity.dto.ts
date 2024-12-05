@@ -1,13 +1,13 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 import { ObjectId } from "mongodb";
 import { IsObjectId } from "~common/validators/objectId";
 
-export class CreateTagQuestionDto {
+export class CreateUserQuestionActivityDto {
   @IsNotEmpty()
   @IsObjectId()
   questionId: ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsObjectId()
-  tagId: ObjectId;
+  userId?: ObjectId;
 }

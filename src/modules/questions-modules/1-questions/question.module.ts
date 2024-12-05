@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { TagModule } from "~modules/questions-modules/3-tags/tag.module";
 import { QuestionController } from "./question.controller";
@@ -13,7 +13,7 @@ import { Question, QuestionSchema } from "./schemas/question.schema";
         schema: QuestionSchema,
       },
     ]),
-    TagModule,
+    forwardRef(() => TagModule),
   ],
   controllers: [QuestionController],
   providers: [QuestionService],

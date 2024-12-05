@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "~modules/pre-built/1-users/schemas/user.schema";
+import { Tag } from "~modules/questions-modules/3-tags/schemas/tag.schema";
 
 @Schema({
   timestamps: true,
@@ -26,6 +27,12 @@ export class Question {
 
   @Prop({ type: Number, default: 0 })
   downvoteCount: number;
+
+  @Prop({ type: Number, default: 0 })
+  answerCount: number;
+
+  @Prop([{ type: SchemaTypes.ObjectId, ref: Tag.name }])
+  tagIds: ObjectId[];
 }
 
 export type QuestionDocument = Question & HydratedDocument<Question>;

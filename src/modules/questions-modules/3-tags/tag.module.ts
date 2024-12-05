@@ -1,6 +1,6 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { TagQuestionModule } from "~modules/questions-modules/4-tag_questions/tag_question.module";
+import { QuestionModule } from "~modules/questions-modules/1-questions/question.module";
 import { Tag, TagSchema } from "./schemas/tag.schema";
 import { TagController } from "./tag.controller";
 import { TagService } from "./tag.service";
@@ -13,7 +13,7 @@ import { TagService } from "./tag.service";
         schema: TagSchema,
       },
     ]),
-    TagQuestionModule,
+    forwardRef(() => QuestionModule),
   ],
   controllers: [TagController],
   providers: [TagService],
