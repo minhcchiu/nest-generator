@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -22,6 +24,7 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
+    @Inject(forwardRef(() => TagService))
     private readonly tagService: TagService,
     private readonly userQuestionActivityService: UserQuestionActivityService,
   ) {
@@ -145,5 +148,13 @@ export class UserService extends BaseService<UserDocument> {
     });
 
     return users;
+  }
+
+  async increaseQuestionsCount(userId: ObjectId, count: number = 1) {
+    return this.userService.updateById(userId, { $inc: { questionCount: count } });
+  }
+
+  async increaseAnswersCount(userId: ObjectId, count: number = 1) {
+    return this.userService.updateById(userId, { $inc: { answerCount: count } });
   }
 }

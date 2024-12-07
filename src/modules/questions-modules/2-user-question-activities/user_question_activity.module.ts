@@ -1,4 +1,4 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { QuestionModule } from "~modules/questions-modules/1-questions/question.module";
 import {
@@ -16,7 +16,7 @@ import { UserQuestionActivityService } from "./user_question_activity.service";
         schema: UserQuestionActivitySchema,
       },
     ]),
-    forwardRef(() => QuestionModule),
+    QuestionModule,
   ],
   controllers: [UserQuestionActivityController],
   providers: [UserQuestionActivityService],

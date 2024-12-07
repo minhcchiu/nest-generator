@@ -3,6 +3,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { PaginationDto } from "~common/dto/pagination.dto";
+import { UserService } from "~modules/pre-built/1-users/user.service";
+import { AnswerService } from "~modules/questions-modules/1-answers/answer.service";
 import { CreateQuestionDto } from "~modules/questions-modules/1-questions/dto/create-question.dto";
 import { TagService } from "~modules/questions-modules/3-tags/tag.service";
 import { Question, QuestionDocument } from "./schemas/question.schema";
@@ -14,10 +17,27 @@ export class QuestionService extends BaseService<QuestionDocument> {
     @InjectModel(Question.name) model: Model<QuestionDocument>,
     @Inject(forwardRef(() => TagService))
     private readonly tagService: TagService,
+    private readonly userService: UserService,
+    @Inject(forwardRef(() => AnswerService))
+    private readonly answerService: AnswerService,
   ) {
     super(model);
 
     this.questionService = this;
+  }
+
+  async paginateQuestionsAnsweredBy(userId: ObjectId, { filter, ...options }: PaginationDto) {
+    const answeredQuestionIds = await this.answerService.distinct("questionId", {
+      authorId: userId,
+    });
+
+    return this.questionService.paginate(
+      {
+        ...filter,
+        _id: { $in: answeredQuestionIds },
+      },
+      options,
+    );
   }
 
   async createQuestion(input: CreateQuestionDto) {
@@ -27,7 +47,12 @@ export class QuestionService extends BaseService<QuestionDocument> {
       input.tagIds = tagIds.map(tag => tag._id);
     }
 
-    return this.questionService.create(input);
+    const questionCreated = await this.questionService.create(input);
+
+    // Increase question count
+    this.userService.increaseQuestionsCount(questionCreated.authorId);
+
+    return questionCreated;
   }
 
   async bulkDeleteByIds(questionIds: ObjectId[]) {
