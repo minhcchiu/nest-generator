@@ -40,6 +40,16 @@ export class QuestionController {
   }
 
   @Public()
+  @Get("/answered-by/:userId/paginate")
+  @HttpCode(HttpStatus.OK)
+  async getQuestionsAnsweredBy(
+    @Param("userId", ParseObjectIdPipe) userId: ObjectId,
+    @GetAqp() query: PaginationDto,
+  ) {
+    return this.questionService.paginateQuestionsAnsweredBy(userId, query);
+  }
+
+  @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
   async findById(

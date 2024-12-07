@@ -17,7 +17,7 @@ import { UserService } from "./user.service";
       },
     ]),
     forwardRef(() => TagModule),
-    forwardRef(() => UserQuestionActivityModule),
+    UserQuestionActivityModule,
   ],
   controllers: [UserController],
   providers: [UserService, HashingService],

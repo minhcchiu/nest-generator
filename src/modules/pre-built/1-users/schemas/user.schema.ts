@@ -82,11 +82,11 @@ export class User implements IUser {
   @Prop({ type: Number, default: 0 })
   reputation: number = 0;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: "Question" }] })
-  questionsSaved: ObjectId[] = [];
-
   @Prop({ type: Number, default: 0 })
   questionsCount: number = 0;
+
+  @Prop({ type: Number, default: 0 })
+  answersCount: number = 0;
 }
 
 type UserDocument = HydratedDocument<User>;

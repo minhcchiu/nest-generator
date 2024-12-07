@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model } from "mongoose";
@@ -16,6 +16,7 @@ export class UserQuestionActivityService extends BaseService<UserQuestionActivit
   private userQuestionActivityService: UserQuestionActivityService;
   constructor(
     @InjectModel(UserQuestionActivity.name) model: Model<UserQuestionActivityDocument>,
+    @Inject(forwardRef(() => QuestionService))
     private questionService: QuestionService,
   ) {
     super(model);
