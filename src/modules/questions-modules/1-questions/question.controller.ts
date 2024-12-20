@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
 } from "@nestjs/common";
@@ -16,6 +17,8 @@ import { GetCurrentUserId } from "~common/decorators/get-current-user-id.decorat
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
+import { UpdateActionEnum } from "~modules/questions-modules/1-questions/enums/update-action.enum";
+import { VoteActionEnum } from "~modules/questions-modules/1-questions/enums/vote-action.enum";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import { UpdateQuestionDto } from "./dto/update-question.dto";
 import { QuestionService } from "./question.service";
@@ -71,6 +74,28 @@ export class QuestionController {
   @HttpCode(HttpStatus.OK)
   async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateQuestionDto) {
     return this.questionService.updateById(id, body);
+  }
+
+  @Patch("/:questionId/:action/save")
+  @HttpCode(HttpStatus.OK)
+  async handleSave(
+    @GetCurrentUserId() userId: ObjectId,
+    @Param("questionId", ParseObjectIdPipe) questionId: ObjectId,
+    @Param("action", new ParseEnumPipe(UpdateActionEnum))
+    action: UpdateActionEnum,
+  ) {
+    return this.questionService.handleSave(userId, questionId, action);
+  }
+
+  @Patch("/:questionId/:action")
+  @HttpCode(HttpStatus.OK)
+  async handleVote(
+    @GetCurrentUserId() userId: ObjectId,
+    @Param("questionId", ParseObjectIdPipe) questionId: ObjectId,
+    @Param("action", new ParseEnumPipe(VoteActionEnum))
+    action: VoteActionEnum,
+  ) {
+    return this.questionService.handleVote(userId, questionId, action);
   }
 
   // ----- Method: DELETE -----

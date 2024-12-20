@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseEnumPipe,
   Patch,
@@ -17,7 +18,7 @@ import { GetCurrentUserId } from "~common/decorators/get-current-user-id.decorat
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { VoteActionEnum } from "~modules/questions-modules/1-answers/enums/vote-action-type.enum";
+import { VoteActionEnum } from "~modules/questions-modules/1-questions/enums/vote-action.enum";
 import { AnswerService } from "./answer.service";
 import { CreateAnswerDto } from "./dto/create-answer.dto";
 import { UpdateAnswerDto } from "./dto/update-answer.dto";
@@ -67,12 +68,16 @@ export class AnswerController {
 
   @Patch("/:id/:action")
   @HttpCode(HttpStatus.OK)
-  async updateVote(
+  async handleVote(
     @GetCurrentUserId() userId: ObjectId,
     @Param("id", ParseObjectIdPipe) answerId: ObjectId,
     @Param("action", new ParseEnumPipe(VoteActionEnum)) action: VoteActionEnum,
   ) {
-    return this.answerService.updateVote(action, answerId, userId);
+    const res = await this.answerService.handleVote(action, answerId, userId);
+
+    if (!res) throw new NotFoundException("Answer not found!");
+
+    return res;
   }
 
   // ----- Method: DELETE -----

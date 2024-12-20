@@ -34,15 +34,15 @@ export class BaseService<T> {
 
     Object.assign(option, { skip: option.skip || skip });
 
-    return this.model.find(filter, options?.projection, options).lean();
+    return this.model.find(filter, options?.projection, options);
   }
 
   async findById(id: ObjectId, options?: QueryOptions<T>) {
-    return this.model.findById(id, options?.projection, options).lean();
+    return this.model.findById(id, options?.projection, options);
   }
 
   async findOne(filter?: FilterQuery<T>, options?: QueryOptions<T>) {
-    return this.model.findOne(filter, options?.projection, options).lean();
+    return this.model.findOne(filter, options?.projection, options);
   }
 
   async count(filter: FilterQuery<T> = {}, options?: CountOptions | any) {

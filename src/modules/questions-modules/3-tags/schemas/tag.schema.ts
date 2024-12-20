@@ -10,6 +10,9 @@ export class Tag {
   @Prop({ type: String, required: true, convert: v => v.toLowerCase() })
   name: string;
 
+  @Prop({ type: String })
+  description: string;
+
   @Prop({ type: Number, default: 0 })
   questionCount: number = 0;
 

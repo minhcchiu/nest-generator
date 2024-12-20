@@ -67,6 +67,14 @@ export class CreateUserDto {
   bio?: string;
 
   @IsOptional()
+  @IsString()
+  portfolioWebsite?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
   @IsBoolean()
   fmcEnabled?: boolean;
 

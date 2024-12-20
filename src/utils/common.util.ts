@@ -43,3 +43,17 @@ export const fillMissingDays = (
 
   return transactionsByDay;
 };
+
+export function aggregateCounts<T>(items: T[]): { item: T; count: number }[] {
+  const countMap = items.reduce((map, item) => {
+    const key = JSON.stringify(item);
+
+    const currentCount = map.get(key) || 0;
+
+    map.set(key, currentCount + 1);
+
+    return map;
+  }, new Map<string, number>());
+
+  return Array.from(countMap.entries()).map(([id, count]) => ({ item: JSON.parse(id), count }));
+}
