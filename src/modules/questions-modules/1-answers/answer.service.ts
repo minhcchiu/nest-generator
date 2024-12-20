@@ -90,21 +90,23 @@ export class AnswerService extends BaseService<AnswerDocument> {
     const answer = await this.answerService.findById(answerId);
     if (!answer) throw new NotFoundException("Answer not found!");
 
-    const hasUpvoted = isObjectIdInList(answerId, answer.upvotes);
-    const hasDownvoted = isObjectIdInList(answerId, answer.downvotes);
+    const hasUpvoted = isObjectIdInList(userId, answer.upvotes);
+    const hasDownvoted = isObjectIdInList(userId, answer.downvotes);
 
     const updatedItem: Record<string, any> = {};
-    let reputationForUser = 2;
+    let reputationForUser = 0;
     let reputationForAuthor = 0;
 
     switch (action) {
       case VoteActionEnum.Upvote:
         updatedItem.$addToSet = { upvotes: userId };
         reputationForAuthor = ReputationValue.upvoteAnswer;
+        reputationForUser = 2;
 
         if (hasDownvoted) {
           updatedItem.$pull = { downvotes: userId };
           reputationForAuthor += ReputationValue.upvoteAnswer;
+          reputationForUser -= 2;
         }
         break;
 
@@ -122,14 +124,15 @@ export class AnswerService extends BaseService<AnswerDocument> {
         if (hasUpvoted) {
           updatedItem.$pull = { upvotes: userId };
           reputationForAuthor -= ReputationValue.upvoteAnswer;
+          reputationForUser = -2;
         }
 
         if (hasDownvoted) {
           updatedItem.$pull = { downvotes: userId };
           reputationForAuthor -= ReputationValue.upvoteAnswer;
+          reputationForUser = -2;
         }
 
-        reputationForUser = -2;
         break;
     }
 
@@ -140,6 +143,6 @@ export class AnswerService extends BaseService<AnswerDocument> {
       // do nothing
     });
 
-    return answer.updateOne(updatedItem);
+    return this.answerService.updateById(answerId, updatedItem);
   }
 }

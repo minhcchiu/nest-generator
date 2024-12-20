@@ -1,4 +1,10 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model } from "mongoose";
@@ -7,11 +13,13 @@ import { PaginationDto } from "~common/dto/pagination.dto";
 import { UserService } from "~modules/pre-built/1-users/user.service";
 import { AnswerService } from "~modules/questions-modules/1-answers/answer.service";
 import { CreateQuestionDto } from "~modules/questions-modules/1-questions/dto/create-question.dto";
+import { UpdateQuestionDto } from "~modules/questions-modules/1-questions/dto/update-question.dto";
 import { UpdateActionEnum } from "~modules/questions-modules/1-questions/enums/update-action.enum";
 import { VoteActionEnum } from "~modules/questions-modules/1-questions/enums/vote-action.enum";
+import { TagDocument } from "~modules/questions-modules/3-tags/schemas/tag.schema";
 import { TagService } from "~modules/questions-modules/3-tags/tag.service";
 import { InteractionService } from "~modules/questions-modules/4-interactions/interaction.service";
-import { aggregateCounts } from "~utils/common.util";
+import { aggregateCounts, processCollectionChanges } from "~utils/common.util";
 import { ReputationValue } from "~utils/constant";
 import { isObjectIdInList, stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { Question, QuestionDocument } from "./schemas/question.schema";
@@ -50,10 +58,8 @@ export class QuestionService extends BaseService<QuestionDocument> {
 
   async createQuestion(input: CreateQuestionDto) {
     // Create tags
-    if (input.tags?.length) {
-      const tagIds = await this.tagService.createTags(input.tags);
-      input.tagIds = tagIds.map(tag => tag._id);
-    }
+    const tagIds = await this.tagService.createTags(input.tags);
+    input.tagIds = tagIds.map(tag => tag._id);
 
     const questionCreated = await this.questionService.create(input);
 
@@ -65,6 +71,33 @@ export class QuestionService extends BaseService<QuestionDocument> {
     });
 
     return questionCreated;
+  }
+  async updateQuestionById(questionId: ObjectId, input: UpdateQuestionDto) {
+    const questionFound = await this.questionService.findById(questionId, {
+      populate: "tagIds",
+      lean: true,
+    });
+
+    if (!questionFound) throw new NotFoundException("Question not found");
+
+    // Update tags
+    const oldTags = questionFound.tagIds as unknown as TagDocument[];
+    if (input.tags) {
+      const { newItems, removedItemIds, updatedItemIds } = processCollectionChanges(
+        oldTags,
+        input.tags,
+        "name",
+        "_id",
+      );
+
+      this.tagService.updateRemovedTags(removedItemIds).catch(() => {});
+      const createdTags = await this.tagService.createTags(newItems);
+
+      input.tagIds = updatedItemIds.concat(createdTags.map(tag => tag._id));
+    }
+
+    // Update question with new tag IDs
+    return this.questionService.updateById(questionId, input);
   }
 
   async handleSave(userId: ObjectId, questionId: ObjectId, action: UpdateActionEnum) {
