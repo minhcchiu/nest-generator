@@ -57,3 +57,24 @@ export function aggregateCounts<T>(items: T[]): { item: T; count: number }[] {
 
   return Array.from(countMap.entries()).map(([id, count]) => ({ item: JSON.parse(id), count }));
 }
+
+export function processCollectionChanges<T>(
+  oldItems: T[],
+  inputItems: string[],
+  nameKey: keyof T,
+  idKey: keyof T,
+) {
+  const oldItemNames = oldItems.map(item => String(item[nameKey]).toLowerCase());
+  const inputItemNames = inputItems.map(name => name.toLowerCase());
+
+  const newItems = inputItems.filter(name => !oldItemNames.includes(name.toLowerCase()));
+  const removedItemIds = oldItems
+    .filter(item => !inputItemNames.includes(String(item[nameKey]).toLowerCase()))
+    .map(item => item[idKey]);
+
+  const updatedItemIds = oldItems
+    .filter(item => !removedItemIds.includes(item[idKey]))
+    .map(item => item[idKey]);
+
+  return { newItems, removedItemIds, updatedItemIds };
+}

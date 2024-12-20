@@ -73,7 +73,7 @@ export class QuestionController {
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
   async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateQuestionDto) {
-    return this.questionService.updateById(id, body);
+    return this.questionService.updateQuestionById(id, body);
   }
 
   @Patch("/:questionId/:action/save")

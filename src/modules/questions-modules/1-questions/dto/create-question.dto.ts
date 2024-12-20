@@ -34,11 +34,11 @@ export class CreateQuestionDto {
 
   @IsOptional()
   @IsObjectId({ each: true })
-  tagIds: ObjectId[] = [];
+  tagIds: ObjectId[];
 
   @IsOptional()
   @IsString({ each: true })
   @IsArray()
   @Transform(({ value }) => value.map((tag: string) => tag.toLowerCase()))
-  tags: string[] = [];
+  tags: string[];
 }

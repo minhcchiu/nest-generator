@@ -96,4 +96,11 @@ export class TagService extends BaseService<TagDocument> {
       authorId: ObjectId;
     }>;
   }
+
+  async updateRemovedTags(removedTagIds: ObjectId[]) {
+    await this.tagService.updateMany(
+      { _id: { $in: removedTagIds } },
+      { $inc: { questionCount: -1 } },
+    );
+  }
 }
