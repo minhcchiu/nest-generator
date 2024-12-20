@@ -13,7 +13,7 @@ import { Tag } from "~modules/questions-modules/3-tags/schemas/tag.schema";
 })
 export class Interaction {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-  userId: ObjectId[];
+  userId: ObjectId;
 
   @Prop({ type: String, required: true })
   action: string;
@@ -26,6 +26,9 @@ export class Interaction {
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: Tag.name }])
   tagIds?: ObjectId[];
+
+  @Prop({ type: Number, default: 1 })
+  actionCount: number;
 }
 
 export type InteractionDocument = Interaction & HydratedDocument<Interaction>;

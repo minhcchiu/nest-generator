@@ -7,6 +7,10 @@ export class CreateTagDto {
   @Transform(({ value }) => value.toLowerCase())
   name: string;
 
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
   @IsOptional()
   @IsNumber()
   questionCount?: number;

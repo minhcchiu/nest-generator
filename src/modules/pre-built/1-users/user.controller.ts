@@ -111,7 +111,7 @@ export class UserController {
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
   async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateUserDto) {
-    await this.userService.validateCreateUser(body);
+    await this.userService.validateCreateUser(body, { _id: { $ne: id } });
 
     return this.userService.updateById(id, body);
   }

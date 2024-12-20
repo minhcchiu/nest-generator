@@ -38,8 +38,8 @@ export class TagService extends BaseService<TagDocument> {
     return this.tagService.findMany({ name: { $in: normalizedTags } });
   }
 
-  async increaseQuestionCount(tagIds: ObjectId[], amount: number = 1) {
-    await this.tagService.updateMany({ _id: { $in: tagIds } }, { $inc: { questionCount: amount } });
+  async increaseQuestionCount(tagId: ObjectId, amount: number = 1) {
+    return this.tagService.updateById(tagId, { $inc: { questionCount: amount } });
   }
 
   async getTopInteractedTagsByUserIds(

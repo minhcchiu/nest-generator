@@ -65,6 +65,12 @@ export class User implements IUser {
   @Prop({ type: String })
   bio?: string;
 
+  @Prop({ type: String })
+  portfolioWebsite?: string;
+
+  @Prop({ type: String })
+  location?: string;
+
   @Prop({ type: [String] })
   fcmTokens?: string[];
 
@@ -87,6 +93,15 @@ export class User implements IUser {
 
   @Prop({ type: Number, default: 0 })
   answersCount: number = 0;
+
+  @Prop([{ type: SchemaTypes.ObjectId, ref: "Question" }])
+  upvoteQuestionIds: ObjectId[] = [];
+
+  @Prop([{ type: SchemaTypes.ObjectId, ref: "Question" }])
+  downvoteQuestionIds: ObjectId[] = [];
+
+  @Prop([{ type: SchemaTypes.ObjectId, ref: "Question" }])
+  savedQuestionIds: ObjectId[] = [];
 }
 
 type UserDocument = HydratedDocument<User>;
