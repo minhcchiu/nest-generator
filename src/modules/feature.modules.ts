@@ -1,6 +1,7 @@
 import { CategoryModule } from "~modules/0-categories/category.module";
 import { SummaryModule } from "~modules/0-summaries/summary.module";
 import { TransactionModule } from "~modules/0-transactions/transaction.module";
+import { ChatgptModule } from "~modules/questions-modules/0-chatgpt/chatgpt.module";
 import { GeneralModule } from "~modules/questions-modules/0-generals/general.module";
 import { AnswerModule } from "~modules/questions-modules/1-answers/answer.module";
 import { QuestionModule } from "~modules/questions-modules/1-questions/question.module";
@@ -67,4 +68,5 @@ export const FeatureModules = [
   TagFollowerModule,
   InteractionModule,
   GeneralModule,
+  ChatgptModule,
 ];

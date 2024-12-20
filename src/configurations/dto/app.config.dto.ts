@@ -37,4 +37,12 @@ export class AppConfigDto {
   @IsOptional()
   @IsString()
   SUPPER_ADMIN_LIST?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  OPENAI_API_KEY: string;
+
+  @IsNotEmpty()
+  @IsString()
+  OPENAI_BASE_URL: string;
 }

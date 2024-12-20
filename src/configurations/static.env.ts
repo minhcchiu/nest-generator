@@ -172,4 +172,11 @@ export class EnvStatic {
       limit: +process.env.THROTTLER_LIMIT,
     };
   }
+
+  static getOpenAIConfig() {
+    return {
+      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: process.env.OPENAI_BASE_URL,
+    };
+  }
 }
