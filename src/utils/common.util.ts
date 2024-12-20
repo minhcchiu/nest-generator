@@ -78,3 +78,26 @@ export function processCollectionChanges<T>(
 
   return { newItems, removedItemIds, updatedItemIds };
 }
+
+export const calculateBadges = (
+  stats: Record<string, number>[],
+  criteria: Record<string, Record<string, number>>,
+) => {
+  const badgesCount = {
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+  };
+
+  for (const stat of stats) {
+    Object.entries(stat).forEach(([key, value]) => {
+      if (!criteria[key]) return;
+
+      Object.entries(criteria[key]).forEach(([badgeLevel, threshold]) => {
+        if (value >= threshold) badgesCount[badgeLevel] += 1;
+      });
+    });
+  }
+
+  return badgesCount;
+};

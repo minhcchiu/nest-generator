@@ -1,10 +1,17 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import { ObjectId } from "mongodb";
 import { UserService } from "~modules/pre-built/1-users/user.service";
 import { SearchableTypesEnum } from "~modules/questions-modules/0-generals/enums/searchable-types.enum";
 import { AnswerService } from "~modules/questions-modules/1-answers/answer.service";
 import { QuestionService } from "~modules/questions-modules/1-questions/question.service";
 import { TagService } from "~modules/questions-modules/3-tags/tag.service";
-
+import { InteractionService } from "~modules/questions-modules/4-interactions/interaction.service";
+import { calculateBadges } from "~utils/common.util";
+import {
+  BADGE_CRITERIA_ANSWERS,
+  BADGE_CRITERIA_QUESTIONS,
+  BADGE_CRITERIA_READ_QUESTIONS,
+} from "~utils/constant";
 @Injectable()
 export class GeneralService {
   constructor(
@@ -13,6 +20,7 @@ export class GeneralService {
     private readonly userService: UserService,
     private readonly tagService: TagService,
     private readonly answerService: AnswerService,
+    private readonly interactionService: InteractionService,
   ) {}
 
   async globalSearch(keyword: string, searchType?: SearchableTypesEnum) {
@@ -87,5 +95,128 @@ export class GeneralService {
     }
 
     return results;
+  }
+
+  async getUserBadges(userId: ObjectId) {
+    const [questionsStats, answersStats, readQuestionStats] = await Promise.all([
+      // Questions stats
+      this.questionService.aggregate([
+        { $match: { authorId: userId } },
+        {
+          $project: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            views: 1,
+            upvoteCount: 1,
+            downvoteCount: 1,
+            answerCount: 1,
+          },
+        },
+        {
+          $group: {
+            _id: { year: "$year", month: "$month" },
+            totalViews: { $sum: "$views" },
+            totalUpvoteCount: { $sum: "$upvoteCount" },
+            totalDownvoteCount: { $sum: "$downvoteCount" },
+            totalAnswerCount: { $sum: "$answerCount" },
+            totalQuestions: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            month: "$_id.month",
+            year: "$_id.year",
+            totalViews: 1,
+            totalUpvoteCount: 1,
+            totalDownvoteCount: 1,
+            totalAnswerCount: 1,
+            totalQuestions: 1,
+          },
+        },
+      ]),
+
+      // Answers stats
+      this.answerService.aggregate([
+        { $match: { authorId: userId } },
+        {
+          $project: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            upvoteCount: { $size: "$upvotes" },
+            downvoteCount: { $size: "$downvotes" },
+            repliesCount: 1,
+          },
+        },
+        {
+          $group: {
+            _id: { year: "$year", month: "$month" },
+            totalUpvoteCount: { $sum: "$upvoteCount" },
+            totalDownvoteCount: { $sum: "$downvoteCount" },
+            totalRepliesCount: { $sum: "$repliesCount" },
+            totalAnswers: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            month: "$_id.month",
+            year: "$_id.year",
+            totalAnswers: 1,
+            totalUpvoteCount: 1,
+            totalDownvoteCount: 1,
+            totalRepliesCount: 1,
+          },
+        },
+      ]),
+
+      // Read question stats
+      this.interactionService.aggregate([
+        {
+          $match: { userId, action: "view" },
+        },
+        {
+          $project: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            actionCount: 1,
+          },
+        },
+        {
+          $group: {
+            _id: { year: "$year", month: "$month" },
+            totalViews: { $sum: "$actionCount" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            month: "$_id.month",
+            year: "$_id.year",
+            totalViews: 1,
+          },
+        },
+      ]),
+    ]);
+
+    const badgeStats = {
+      questionBadgesCount: calculateBadges(questionsStats, BADGE_CRITERIA_QUESTIONS),
+      answerBadgesCount: calculateBadges(answersStats, BADGE_CRITERIA_ANSWERS),
+      readQuestionBadgesCount: calculateBadges(readQuestionStats, BADGE_CRITERIA_READ_QUESTIONS),
+    };
+
+    return {
+      badgeCounts: Object.values(badgeStats).reduce(
+        (acc, value) => {
+          return {
+            bronze: acc.bronze + value.bronze,
+            silver: acc.silver + value.silver,
+            gold: acc.gold + value.gold,
+          };
+        },
+        { bronze: 0, silver: 0, gold: 0 },
+      ),
+      badgeStats,
+    };
   }
 }
