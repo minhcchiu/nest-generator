@@ -40,9 +40,9 @@ export class AppConfigDto {
 
   @IsNotEmpty()
   @IsString()
-  OPENAI_API_KEY: string;
+  GEMINI_KEY: string;
 
   @IsNotEmpty()
   @IsString()
-  OPENAI_BASE_URL: string;
+  GEMINI_BASE_URL: string;
 }
