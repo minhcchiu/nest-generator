@@ -173,10 +173,10 @@ export class EnvStatic {
     };
   }
 
-  static getOpenAIConfig() {
+  static getAIConfig() {
     return {
-      apiKey: process.env.OPENAI_API_KEY,
-      baseURL: process.env.OPENAI_BASE_URL,
+      geminiKey: process.env.GEMINI_KEY,
+      geminiUrl: process.env.GEMINI_BASE_URL,
     };
   }
 }

@@ -11,6 +11,6 @@ export class ChatgptController {
   @Post("/generate-ai-answer")
   @HttpCode(HttpStatus.OK)
   async generateAIAnswer(@Body("question") question: string) {
-    return this.chatgptService.generateAIAnswer(question);
+    return this.chatgptService.generateAIAnswerByGemini(question);
   }
 }
