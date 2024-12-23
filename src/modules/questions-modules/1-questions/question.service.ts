@@ -112,26 +112,23 @@ export class QuestionService extends BaseService<QuestionDocument> {
 
   async handleVote(userId: ObjectId, questionId: ObjectId, action: VoteActionEnum) {
     const user = await this.userService.findById(userId);
+
     const hasVoted = isObjectIdInList(questionId, user.upvoteQuestionIds);
     const hasDownvoted = isObjectIdInList(questionId, user.downvoteQuestionIds);
 
-    const questionItem = {
-      upvoteCount: 0,
-      downvoteCount: 0,
-    };
+    const questionItem = { upvoteCount: 0, downvoteCount: 0 };
+    const userItem: Record<string, any> = {};
 
     switch (action) {
       case VoteActionEnum.Upvote:
         if (hasVoted) throw new BadRequestException("You have already upvoted this question.");
 
-        user.upvoteQuestionIds.push(questionId);
         questionItem.upvoteCount = 1;
+        userItem.$addToSet = { upvoteQuestionIds: questionId };
 
         if (hasDownvoted) {
-          user.downvoteQuestionIds = user.downvoteQuestionIds.filter(
-            id => id.toString() !== questionId.toString(),
-          );
           questionItem.downvoteCount = -1;
+          userItem.$pull = { downvoteQuestionIds: questionId };
         }
 
         break;
@@ -139,28 +136,22 @@ export class QuestionService extends BaseService<QuestionDocument> {
       case VoteActionEnum.Downvote:
         if (hasDownvoted) throw new BadRequestException("You have already upvoted this question.");
 
-        user.downvoteQuestionIds.push(questionId);
+        userItem.$addToSet = { downvoteQuestionIds: questionId };
         questionItem.downvoteCount = 1;
 
         if (hasVoted) {
-          user.upvoteQuestionIds = user.upvoteQuestionIds.filter(
-            id => id.toString() !== questionId.toString(),
-          );
           questionItem.upvoteCount = -1;
+          userItem.$pull = { upvoteQuestionIds: questionId };
         }
 
         break;
 
       case VoteActionEnum.Unvoted:
         if (hasVoted) {
-          user.upvoteQuestionIds = user.upvoteQuestionIds.filter(
-            id => id.toString() !== questionId.toString(),
-          );
+          userItem.$pull = { upvoteQuestionIds: questionId };
           questionItem.upvoteCount = -1;
         } else if (hasDownvoted) {
-          user.downvoteQuestionIds = user.downvoteQuestionIds.filter(
-            id => id.toString() !== questionId.toString(),
-          );
+          userItem.$pull = { downvoteQuestionIds: questionId };
           questionItem.downvoteCount = -1;
         } else {
           throw new BadRequestException("You have not voted this question.");
@@ -170,7 +161,7 @@ export class QuestionService extends BaseService<QuestionDocument> {
 
     const [question] = await Promise.all([
       this.questionService.updateById(questionId, { $inc: questionItem }),
-      user.save(),
+      this.userService.updateById(userId, userItem),
     ]);
 
     this.userService
