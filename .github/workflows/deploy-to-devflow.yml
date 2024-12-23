@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/devflow-dev/source
-            chmod +x ./.scripts/start-dev.sh
+            chmod +x ./.scripts/start-devflow.sh
             ./.scripts/start-devflow.sh
 
       - name: Notify deployment success
