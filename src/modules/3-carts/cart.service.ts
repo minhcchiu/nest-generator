@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
 import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
@@ -45,10 +46,10 @@ export class CartService extends BaseService<CartDocument> {
   }
 
   async updateProductQuantity(
-    cartId: Types.ObjectId,
+    cartId: ObjectId,
     input: {
-      userId: Types.ObjectId;
-      productId: Types.ObjectId;
+      userId: ObjectId;
+      productId: ObjectId;
       quantity: number;
     },
   ) {
@@ -72,7 +73,7 @@ export class CartService extends BaseService<CartDocument> {
     return this.updateOne(query, updateSet, options);
   }
 
-  async updateCartProduct(input: { userId: Types.ObjectId; product: UpdateCartProductDto }) {
+  async updateCartProduct(input: { userId: ObjectId; product: UpdateCartProductDto }) {
     const { userId, product } = input;
 
     if (product.quantity === 0) return this.deleteCartProduct(userId, product.productId);
@@ -90,7 +91,7 @@ export class CartService extends BaseService<CartDocument> {
     );
   }
 
-  async deleteCartProduct(userId: Types.ObjectId, productId: Types.ObjectId) {
+  async deleteCartProduct(userId: ObjectId, productId: ObjectId) {
     const filter = { userId: userId, state: CartState.Active },
       $pull = {
         products: productId,

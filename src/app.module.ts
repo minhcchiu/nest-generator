@@ -12,11 +12,11 @@ import { join } from "path";
 import { VALIDATION_PIPE_OPTIONS } from "src/common/constant";
 import { AllExceptionsFilter } from "~exceptions/all-exception.filter";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
-import { RouteModules } from "~modules/route.modules";
+import { FeatureModules } from "~modules/feature.modules";
 import { EventEmitterModule } from "~shared/event-emitters/event-emitter.module";
 import { FirebaseModule } from "~shared/firebase/firebase.module";
 import { LoggingInterceptor } from "~shared/interceptors";
-import { RedisService } from "~shared/redis-feature/redis.service";
+import { RedisService } from "~shared/redis/redis.service";
 import { SocketModule } from "~shared/socket/socket.module";
 import { CloudinaryModule } from "~shared/storage/cloudinary/cloudinary.module";
 import { S3Module } from "~shared/storage/s3/s3.module";
@@ -50,8 +50,8 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
     CloudinaryModule,
     EventEmitterModule,
 
-    // routes
-    ...RouteModules,
+    // Features
+    ...FeatureModules,
   ],
   controllers: [AppController],
   providers: [

@@ -1,10 +1,10 @@
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
 import { RoleEnum } from "../enums/role.enum";
 
 export interface IUser {
-  userGroupIds?: Types.ObjectId[];
+  userGroupIds?: ObjectId[];
   roles: RoleEnum[];
   accountType: AccountTypeEnum;
   fullName: string;

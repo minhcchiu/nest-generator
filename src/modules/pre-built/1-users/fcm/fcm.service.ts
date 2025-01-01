@@ -6,7 +6,7 @@ import {
   MessagingTopicResponse,
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { UserService } from "../user.service";
 
@@ -41,7 +41,7 @@ export class FcmService {
     }
   }
 
-  async sendEachForMulticastByUserIds(userIds: Types.ObjectId[], baseMessage: BaseMessage) {
+  async sendEachForMulticastByUserIds(userIds: ObjectId[], baseMessage: BaseMessage) {
     // get tokens from users
     const tokens: string[] = await this.userService.distinct("fcmTokens", {
       _id: { $in: userIds },

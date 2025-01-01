@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { generateRandomKey } from "~helpers/generate-random-key";
@@ -25,7 +25,6 @@ import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
 import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 
 @Injectable()
@@ -159,28 +158,7 @@ export class AuthService {
     return this.register(decoded);
   }
 
-  async sendOtp(input: SendOtpDto) {
-    await this.userService.validateCreateUser(input);
-
-    const otpItem = {
-      phone: input.phone,
-      email: input.email,
-      sendOtpTo: input.sendOtpTo,
-      otpType: OtpTypeEnum.Register,
-    };
-
-    const { expiredAt, otpCode, ...rest } = await this.otpService.sendOtp(otpItem);
-
-    return {
-      ...input,
-      ...otpItem,
-      ...rest,
-      otpCode: EnvStatic.getAppConfig().nodeEnv === NodeEnv.Development ? otpCode : undefined,
-      expiredAt,
-    };
-  }
-
-  async logout(userId: Types.ObjectId, fcmToken?: string) {
+  async logout(userId: ObjectId, fcmToken?: string) {
     Promise.all([
       this.userService.removeFcmTokens([fcmToken]),
       this.tokenService.deleteOne({ user: userId }),
@@ -189,13 +167,15 @@ export class AuthService {
     return { message: "Logout success!" };
   }
 
-  async refreshToken(token: string) {
+  async refreshToken(token: string, fcmToken?: string) {
     const [tokenDoc] = await Promise.all([
       this.tokenService.findOne({ token }, { populate: { path: "userId", select: authSelect } }),
       this.tokenService.verifyRefreshToken(token),
     ]);
 
     if (!tokenDoc?.userId) throw new UnauthorizedException("Invalid refresh token!");
+
+    if (fcmToken) this.userService.saveFcmToken(tokenDoc.userId._id, fcmToken);
 
     return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
   }

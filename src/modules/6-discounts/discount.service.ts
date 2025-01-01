@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { ProductService } from "~modules/1-products/product.service";
 import { ShopOrderItemDto } from "~modules/4-checkouts/dto/checkout-review.dto";
@@ -65,8 +66,8 @@ export class DiscountService extends BaseService<DiscountDocument> {
 
   async getDiscountAmount(data: {
     code: string;
-    userId: Types.ObjectId;
-    shopId: Types.ObjectId;
+    userId: ObjectId;
+    shopId: ObjectId;
     products: ShopOrderItemDto[];
   }) {
     const foundDiscount = await this.discountModel

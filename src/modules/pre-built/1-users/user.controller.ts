@@ -10,8 +10,8 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
+import { ObjectId } from "mongodb";
 
-import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -48,8 +48,8 @@ export class UserController {
   @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.userService.findById(id, { projection, populate });
@@ -73,14 +73,14 @@ export class UserController {
   //  ----- Method: PATCH -----
   @Patch("password")
   @HttpCode(HttpStatus.OK)
-  async updatePassword(@GetCurrentUserId() id: Types.ObjectId, @Body() body: UpdatePasswordDto) {
+  async updatePassword(@GetCurrentUserId() id: ObjectId, @Body() body: UpdatePasswordDto) {
     return this.userService.updatePasswordById(id, body);
   }
 
   @Patch(":id/status")
   @HttpCode(HttpStatus.OK)
   async updateStatus(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @Body("status", new ParseEnumPipe(AccountStatus)) status: AccountStatus,
   ) {
     return this.userService.updateById(id, { status });
@@ -88,7 +88,7 @@ export class UserController {
 
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateUserDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateUserDto) {
     await this.userService.validateCreateUser(body);
 
     return this.userService.updateById(id, body);
@@ -97,11 +97,11 @@ export class UserController {
   //  ----- Method: DELETE -----
   @Delete("me")
   @HttpCode(HttpStatus.OK)
-  async deleteMe(@GetCurrentUserId() id: Types.ObjectId) {
+  async deleteMe(@GetCurrentUserId() id: ObjectId) {
     return this.userService.updateById(id, { status: AccountStatus.Deleted });
   }
 
-  @Delete(":ids/ids/hard")
+  @Delete(":ids/bulk/hard")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.userService.deleteMany({
@@ -111,11 +111,11 @@ export class UserController {
 
   @Delete(":id/hard")
   @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.userService.deleteById(id);
   }
 
-  @Delete("/:ids/ids")
+  @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManySoftByIds(@Param("ids") ids: string) {
     return this.userService.updateMany(
@@ -126,7 +126,7 @@ export class UserController {
 
   @Delete("/:id")
   @HttpCode(HttpStatus.OK)
-  async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.userService.updateById(id, { status: AccountStatus.Deleted });
   }
 }

@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -25,8 +25,8 @@ export class SystemMenuController {
 
   //  ----- Method: GET -----
   @Get("/:id")
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.systemSystemMenuService.findById(id, { projection, populate });
@@ -49,15 +49,12 @@ export class SystemMenuController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateSystemMenuDto,
-  ) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateSystemMenuDto) {
     return this.systemSystemMenuService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
-  @Delete(":ids/ids/hard")
+  @Delete(":ids/bulk/hard")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.systemSystemMenuService.deleteMany({
@@ -67,11 +64,11 @@ export class SystemMenuController {
 
   @Delete(":id/hard")
   @HttpCode(HttpStatus.OK)
-  async deleteHardById(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteHardById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.systemSystemMenuService.deleteById(id);
   }
 
-  @Delete("/:ids/ids")
+  @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManySoftByIds(@Param("ids") ids: string) {
     return this.systemSystemMenuService.updateMany(
@@ -86,7 +83,7 @@ export class SystemMenuController {
 
   @Delete("/:id")
   @HttpCode(HttpStatus.OK)
-  async deleteSoft(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteSoft(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.systemSystemMenuService.updateById(id, {
       deleted: true,
     });

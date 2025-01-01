@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "~pre-built/1-users/schemas/user.schema";
 import { OrderStatusEnum } from "../enums/order-status.enum";
 
@@ -10,7 +11,7 @@ import { OrderStatusEnum } from "../enums/order-status.enum";
 })
 export class Order {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name })
-  readonly userId: Types.ObjectId;
+  readonly userId: ObjectId;
 
   @Prop({
     type: {

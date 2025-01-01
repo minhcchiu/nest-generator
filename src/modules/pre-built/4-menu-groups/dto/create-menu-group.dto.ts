@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 export class CreateMenuGroupDto {
-  createdBy: Types.ObjectId;
+  createdBy: ObjectId;
 
   @IsNotEmpty()
   @IsString()

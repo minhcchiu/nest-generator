@@ -1,23 +1,20 @@
 import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateMenuDto {
   @IsOptional()
   @IsArray()
   @IsObjectId({ each: true })
-  @ToObjectId({ each: true })
-  readonly menuGroupIds: Types.ObjectId[];
+  readonly menuGroupIds: ObjectId[];
 
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
-  readonly parentId?: Types.ObjectId;
+  readonly parentId?: ObjectId;
 
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
-  readonly systemMenuId?: Types.ObjectId;
+  readonly systemMenuId?: ObjectId;
 
   @IsOptional()
   @IsString()

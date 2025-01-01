@@ -1,18 +1,16 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CartProductDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
-  productId: Types.ObjectId;
+  productId: ObjectId;
 
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @IsOptional()
   @IsNumber()

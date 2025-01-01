@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -33,16 +33,16 @@ export class OrderController {
 
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() body: CreateOrderDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreateOrderDto) {
     return this.orderService.create({ ...body, orderedBy: userId });
   }
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateOrderDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateOrderDto) {
     return this.orderService.updateById(id, body);
   }
 
-  @Delete("/:ids/ids")
+  @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.orderService.deleteMany({
@@ -52,7 +52,7 @@ export class OrderController {
 
   @Delete("/:id")
   @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.orderService.deleteById(id);
   }
 
@@ -73,8 +73,8 @@ export class OrderController {
   @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.orderService.findById(id, { projection, populate });

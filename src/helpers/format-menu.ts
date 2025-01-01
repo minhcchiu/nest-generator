@@ -1,8 +1,7 @@
-import { Types } from "mongoose";
-
+import { ObjectId } from "mongodb";
 type MenuType = {
-  _id: Types.ObjectId;
-  parentId?: Types.ObjectId;
+  _id: ObjectId;
+  parentId?: ObjectId;
   systemMenuId?: Record<string, any>; // use for user menu
   [key: string]: any;
 };
@@ -33,7 +32,7 @@ function addChildrenToRoot(rootMenus: MenuType[], submenus: MenuType[]) {
   }
 }
 
-function getChildrenByParentId(submenus: MenuType[], parentId: Types.ObjectId) {
+function getChildrenByParentId(submenus: MenuType[], parentId: ObjectId) {
   const menus = submenus.filter(item => item.parentId?.toString() === parentId.toString());
 
   return sortMenus(menus);

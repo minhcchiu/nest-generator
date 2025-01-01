@@ -1,3 +1,9 @@
+import { CategoryModule } from "~modules/0-categories/category.module";
+import { PlaidModule } from "~modules/0-plaid/plaid.module";
+import { SummaryModule } from "~modules/0-summaries/summary.module";
+import { TransactionModule } from "~modules/0-transactions/transaction.module";
+import { AccountModule } from "./0-accounts/account.module";
+import { TaskModule } from "./0-tasks/task.module";
 import { TestModule } from "./0-tests/test.module";
 import { ProductModule } from "./1-products/product.module";
 import { ShopModule } from "./1-shops/shop.module";
@@ -9,7 +15,6 @@ import { SettingModule } from "./pre-built/11-settings/setting.module";
 import { NotificationModule } from "./pre-built/12-notifications/notification.module";
 import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
 import { PolicyModule } from "./pre-built/3-policies/policy.module";
-import { PolicyGroupModule } from "./pre-built/3-policy-groups/policy-group.module";
 import { MenuGroupModule } from "./pre-built/4-menu-groups/menu-group.module";
 import { MenuModule } from "./pre-built/4-menus/menu.module";
 import { SystemMenuModule } from "./pre-built/4-system-menus/system-menu.module";
@@ -20,13 +25,12 @@ import { UserFileModule } from "./pre-built/7-user-files/user-file.module";
 import { ProvinceModule } from "./pre-built/8-provinces/province.module";
 import { DistrictModule } from "./pre-built/9-districts/district.module";
 
-export const RouteModules = [
+export const FeatureModules = [
   // pre-built
   AuthModule,
   UserModule,
   UserGroupModule,
   PolicyModule,
-  PolicyGroupModule,
   MenuGroupModule,
   MenuModule,
   SystemMenuModule,
@@ -45,4 +49,10 @@ export const RouteModules = [
   BannerModule,
   ProductModule,
   TestModule,
+  TaskModule,
+  AccountModule,
+  CategoryModule,
+  TransactionModule,
+  SummaryModule,
+  PlaidModule,
 ];

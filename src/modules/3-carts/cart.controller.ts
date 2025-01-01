@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
@@ -24,16 +24,16 @@ export class CartController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post("add_product")
-  async create(@GetCurrentUserId() userId: Types.ObjectId, @Body() product: CartProductDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() product: CartProductDto) {
     return this.cartService.addProductToCart({ userId, product });
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Patch("carts/:cartId/products/:productId")
   async updateProductQuantity(
-    @GetCurrentUserId() userId: Types.ObjectId,
-    @Param("cartId", ParseObjectIdPipe) cartId: Types.ObjectId,
-    @Param("productId", ParseObjectIdPipe) productId: Types.ObjectId,
+    @GetCurrentUserId() userId: ObjectId,
+    @Param("cartId", ParseObjectIdPipe) cartId: ObjectId,
+    @Param("productId", ParseObjectIdPipe) productId: ObjectId,
     @Body("quantity", ParseIntPipe) quantity: number,
   ) {
     return this.cartService.updateProductQuantity(cartId, {
@@ -45,7 +45,7 @@ export class CartController {
 
   @Get(":userId/user")
   async findOne(
-    @GetCurrentUserId() userId: Types.ObjectId,
+    @GetCurrentUserId() userId: ObjectId,
     @GetAqp() { filter, populate, projection }: PaginationDto,
   ) {
     return this.cartService.findOne(

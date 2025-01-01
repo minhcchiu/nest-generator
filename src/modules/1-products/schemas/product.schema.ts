@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import mongoose, { HydratedDocument, SchemaTypes } from "mongoose";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { ProductType } from "../enums/product-type.enum";
 
@@ -10,7 +11,7 @@ import { ProductType } from "../enums/product-type.enum";
 })
 export class Product {
   @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name })
-  readonly shopId: Types.ObjectId;
+  readonly shopId: ObjectId;
 
   @Prop({ type: String, required: true })
   readonly name: string;

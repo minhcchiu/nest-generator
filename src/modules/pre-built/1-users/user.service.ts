@@ -5,7 +5,8 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, QueryOptions, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model, QueryOptions } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
@@ -56,7 +57,7 @@ export class UserService extends BaseService<UserDocument> {
     return this.userService.create(input);
   }
 
-  async updatePasswordById(id: Types.ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
+  async updatePasswordById(id: ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
     const user = await this.userService.findById(id, {
       projection: "password",
     });
@@ -82,7 +83,7 @@ export class UserService extends BaseService<UserDocument> {
     return updated;
   }
 
-  async resetPasswordById(id: Types.ObjectId, newPassword: string, options?: QueryOptions) {
+  async resetPasswordById(id: ObjectId, newPassword: string, options?: QueryOptions) {
     const hashPassword = await this.hashingService.hash(newPassword);
 
     const updated = await this.userService.updateById(id, { password: hashPassword }, options);
@@ -92,7 +93,7 @@ export class UserService extends BaseService<UserDocument> {
     return updated;
   }
 
-  async saveFcmToken(id: Types.ObjectId, fcmToken: string): Promise<UserDocument | null> {
+  async saveFcmToken(id: ObjectId, fcmToken: string): Promise<UserDocument | null> {
     const updated = await this.userService.updateById(
       id,
       { $addToSet: { fcmTokens: fcmToken } },

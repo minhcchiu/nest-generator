@@ -1,9 +1,9 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { ImageSize } from "~utils/image.util";
 
 export class UploadDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString({ each: true })
   @IsEnum(ImageSize, { each: true })
-  imageSizes: ImageSize[];
+  imageSizes?: ImageSize[];
 }

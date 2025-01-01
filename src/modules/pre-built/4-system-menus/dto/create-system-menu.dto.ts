@@ -1,20 +1,15 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateSystemMenuDto {
   @IsOptional()
   @IsObjectId()
-  @ToObjectId()
-  readonly parentId?: Types.ObjectId;
+  readonly parentId?: ObjectId;
 
   @IsNotEmpty()
   @IsString()
   readonly name: string;
-
-  @IsOptional()
-  @IsString()
-  readonly collectionName?: string;
 
   @IsOptional()
   @IsBoolean()
@@ -39,4 +34,8 @@ export class CreateSystemMenuDto {
   @IsOptional()
   @IsBoolean()
   readonly isShow?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isSystem?: boolean;
 }

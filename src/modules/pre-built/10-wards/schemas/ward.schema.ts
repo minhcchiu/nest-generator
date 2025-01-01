@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { Province } from "~pre-built/8-provinces/schemas/province.schema";
 import { District } from "~pre-built/9-districts/schemas/district.schema";
 
@@ -14,13 +15,13 @@ export class Ward {
     ref: Province.name,
     required: true,
   })
-  readonly provinceId: Types.ObjectId;
+  readonly provinceId: ObjectId;
 
   @Prop({
     type: SchemaTypes.ObjectId,
     ref: District.name,
   })
-  readonly districtId: Types.ObjectId;
+  readonly districtId: ObjectId;
 
   @Prop({ type: String, required: true })
   readonly name: string;

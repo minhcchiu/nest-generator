@@ -1,9 +1,8 @@
-import { Types } from "mongoose";
-
+import { ObjectId } from "mongodb";
 export type UserPolicyType = {
-  userIds: Types.ObjectId[];
-  userGroupIds: Types.ObjectId[];
-  blockedUserGroupIds?: Types.ObjectId[];
-  blockedUserIds?: Types.ObjectId[];
-  isPublic: boolean;
+  userIds: ObjectId[];
+  userGroupIds: ObjectId[];
+  blockedUserGroupIds?: ObjectId[];
+  isPublic?: boolean;
+  isAuthenticated?: boolean;
 };

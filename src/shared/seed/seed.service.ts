@@ -6,11 +6,14 @@ import { WardService } from "~pre-built/10-wards/ward.service";
 
 import { EnvStatic } from "src/configurations/static.env";
 import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
+import { PolicyGroupService } from "~modules/pre-built/3-policy-groups/policy-group.service";
+import { CreateSystemMenuDto } from "~modules/pre-built/4-system-menus/dto/create-system-menu.dto";
 import { SystemMenuService } from "~modules/pre-built/4-system-menus/system-menu.service";
 import { PolicyService } from "~pre-built/3-policies/policy.service";
 import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
+import { convertToTitleCase } from "~utils/common.util";
 
 @Injectable()
 export class SeedService {
@@ -18,6 +21,7 @@ export class SeedService {
     private provinceService: ProvinceService,
     private districtService: DistrictService,
     private wardService: WardService,
+    private policyGroupService: PolicyGroupService,
     private policyService: PolicyService,
     private systemMenuService: SystemMenuService,
     private logger: CustomLoggerService,
@@ -126,62 +130,6 @@ export class SeedService {
       );
     }
 
-    // Delete all provinces,district, wards
-    // await Promise.all([
-    // 	this.provinceService.deleteMany({}),
-    // 	this.districtService.deleteMany({}),
-    // 	this.wardService.deleteMany({}),
-    // ]);
-
-    // await Promise.all(
-    // 	data.map(async (province: any) => {
-    // 		const provinceItem = {
-    // 			name: province.name,
-    // 			type: province.type,
-    // 		};
-
-    // 		// Save province
-    // 		const provinceSaved = await this.provinceService.create(provinceItem);
-
-    // 		// Get provinceId
-    // 		const provinceId = provinceSaved._id;
-
-    // 		const createDistrictsAndWardsPromises = province.districts.map(
-    // 			async (district: any) => {
-    // 				const districtItem = {
-    // 					provinceId,
-    // 					name: district.name,
-    // 					type: district.type,
-    // 				};
-
-    // 				// Save district
-    // 				const districtSaved =
-    // 					await this.districtService.create(districtItem);
-
-    // 				// Get districtId
-    // 				const districtId = districtSaved._id;
-
-    // 				// Store wards of districts
-    // 				const wardSavedPromises = district.wards.map((ward: any) => {
-    // 					const wardItem = {
-    // 						provinceId,
-    // 						districtId,
-    // 						name: ward.name,
-    // 						type: ward.type,
-    // 					};
-
-    // 					return this.wardService.create(wardItem);
-    // 				});
-
-    // 				// Save wards
-    // 				await Promise.all(wardSavedPromises);
-    // 			},
-    // 		);
-
-    // 		await Promise.all(createDistrictsAndWardsPromises);
-    // 	}),
-    // );
-
     this.logger.log(
       {
         totalProvinces: provincePosition,
@@ -199,14 +147,14 @@ export class SeedService {
       .filter(({ route }) => route && route.path)
       .forEach(({ route }) => {
         const endpoint = removeTrailingSlash(route.path);
-        const collectionName = endpoint.split("/")[2]?.replace("_", "") || "#";
         const method = route.stack[0]?.method?.toUpperCase();
+        const collectionName = endpoint.split("/")[2]?.replace("_", "-") || "#";
 
         const policyKey = `${method}:${endpoint}`;
 
         const policyItem: CreatePolicyDto = {
-          name: `${method}:${endpoint}`,
-          collectionName: collectionName,
+          name: `${method} ${endpoint}`,
+          collectionName,
           endpoint,
           method,
           policyKey,
@@ -224,16 +172,36 @@ export class SeedService {
   private async _createPoliciesAndMenus(policyMap: Map<string, CreatePolicyDto>) {
     const collectionNameSet = new Set<string>();
 
+    // Create policies
     const polices: Record<string, any>[] = [];
     for (const [_, policy] of policyMap) {
-      collectionNameSet.add(policy.collectionName);
-
       const res = await this.policyService.findOne({
         endpoint: policy.endpoint,
         method: policy.method,
       });
 
       if (!res) polices.push(policy);
+
+      collectionNameSet.add(policy.collectionName);
+    }
+
+    // Create policy group
+    for (const policy of polices) {
+      const res = await this.policyGroupService.findOne({
+        collectionName: policy.collectionName,
+      });
+
+      if (res) {
+        policy.policyGroupId = res._id;
+      } else {
+        const policyGroupCreated = await this.policyGroupService.create({
+          name: convertToTitleCase(policy.collectionName),
+          collectionName: policy.collectionName,
+          description: `${policy.name} policy group`,
+        });
+
+        policy.policyGroupId = policyGroupCreated._id;
+      }
     }
 
     await this.policyService.createMany(polices);
@@ -241,21 +209,24 @@ export class SeedService {
   }
 
   private async _createMenus(collectionNames: string[]) {
-    collectionNames.forEach(async (collectionName, position) => {
-      const menuItem = {
-        name: collectionName,
-        collectionName,
+    let position = 1;
+    for (const collectionName of collectionNames) {
+      const menuItem: CreateSystemMenuDto = {
+        name: convertToTitleCase(collectionName),
         href: collectionName,
         position,
         isHorizontal: false,
         isShow: true,
         isSystem: true,
+        isGroup: false,
       };
 
-      await this.systemMenuService.updateOne({ collectionName }, menuItem, {
+      await this.systemMenuService.updateOne({ name: menuItem.name }, menuItem, {
         upsert: true,
       });
-    });
+
+      position++;
+    }
   }
 
   private async _addSupperAdminToPolicies() {

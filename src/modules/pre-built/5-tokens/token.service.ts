@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { BaseService } from "~base-inherit/base.service";
 import { DocumentType } from "~types/document.type";
@@ -30,7 +31,7 @@ export class TokenService extends BaseService<TokenDocument> {
     return this._generateToken(payload, registerToken.secretKey, registerToken.expiresIn);
   }
 
-  async generateForgotPasswordToken(user: User & { _id: Types.ObjectId }) {
+  async generateForgotPasswordToken(user: User & { _id: ObjectId }) {
     const payload: TokenPayload = {
       _id: user._id,
       roles: user.roles,

@@ -9,8 +9,8 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
+import { ObjectId } from "mongodb";
 
-import { Types } from "mongoose";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -39,11 +39,11 @@ export class ProductController {
   }
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateProductDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateProductDto) {
     return this.productService.updateById(id, body);
   }
 
-  @Delete("/:ids/ids")
+  @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.productService.deleteMany({
@@ -53,7 +53,7 @@ export class ProductController {
 
   @Delete("/:id")
   @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.productService.deleteById(id);
   }
 
@@ -74,8 +74,8 @@ export class ProductController {
   @Public()
   @Get("/:id")
   @HttpCode(HttpStatus.OK)
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     const product = await this.productService.findById(id, {

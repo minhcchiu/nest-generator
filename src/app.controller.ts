@@ -2,8 +2,8 @@ import { BadRequestException, Controller, Get } from "@nestjs/common";
 import * as AsyncLock from "async-lock";
 import { Public } from "~decorators/public.decorator";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
-import { ChannelName } from "~shared/redis-feature/channel";
-import { RedisService } from "~shared/redis-feature/redis.service";
+import { RedisChannelName } from "~shared/redis/redis-channel-name";
+import { RedisService } from "~shared/redis/redis.service";
 
 const product = {
   quantity: 2,
@@ -57,28 +57,28 @@ export class AppController {
 
   @Get("publish")
   async publish() {
-    await this.redisFeatureService.publishMessage(ChannelName.Order, "Hello from Order!");
+    await this.redisFeatureService.publishMessage(RedisChannelName.Order, "Hello from Order!");
     return "Message published";
   }
 
   @Public()
   @Get("publish2")
   async publish2() {
-    await this.redisFeatureService.publishMessage(ChannelName.Test, "Hello from Test!");
+    await this.redisFeatureService.publishMessage(RedisChannelName.Test, "Hello from Test!");
     return "Message published";
   }
 
   @Public()
   @Get("publish3")
   async publish3() {
-    await this.redisFeatureService.publishMessage(ChannelName.Test2, "Hello from Test!");
+    await this.redisFeatureService.publishMessage(RedisChannelName.Test2, "Hello from Test!");
     return "Message published";
   }
 
   @Public()
   @Get("subscribe")
   async subscribe() {
-    this.redisFeatureService.subscribeToChannel(ChannelName.Order, message => {
+    this.redisFeatureService.subscribeToChannel(RedisChannelName.Order, message => {
       this.loggerService.log("Received message:", message);
     });
     return "Subscribed to channel";
@@ -87,7 +87,7 @@ export class AppController {
   @Public()
   @Get("subscribe1")
   async subscribe1() {
-    this.redisFeatureService.subscribeToChannel(ChannelName.Test, message => {
+    this.redisFeatureService.subscribeToChannel(RedisChannelName.Test, message => {
       this.loggerService.log("Received message:", message);
     });
     return "Subscribed to channel";
@@ -96,7 +96,7 @@ export class AppController {
   @Public()
   @Get("subscribe2")
   async subscribe2() {
-    this.redisFeatureService.subscribeToChannel(ChannelName.Test2, message => {
+    this.redisFeatureService.subscribeToChannel(RedisChannelName.Test2, message => {
       this.loggerService.log("Received message:", message);
     });
     return "Subscribed to channel";

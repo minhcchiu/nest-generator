@@ -1,17 +1,15 @@
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
-import { IsObjectId, ToObjectId } from "~common/validators/objectId";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateInventoryDto {
   @IsNotEmpty()
   @IsObjectId()
-  @ToObjectId()
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @IsObjectId()
-  @ToObjectId()
   @IsNotEmpty()
-  productId: Types.ObjectId;
+  productId: ObjectId;
 
   @IsOptional()
   @IsString()

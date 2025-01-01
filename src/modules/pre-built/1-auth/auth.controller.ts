@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { Public } from "~decorators/public.decorator";
 import { AuthService } from "./auth.service";
@@ -9,7 +9,6 @@ import { LoginDto } from "./dto/login.dto";
 import { ResetPasswordWithOtpDto } from "./dto/password-with-otp.dto";
 import { ResetPasswordWithTokenDto } from "./dto/password-with-token.dto";
 import { RegisterDto } from "./dto/register.dto";
-import { SendOtpDto } from "./dto/send-otp.dto";
 import { SocialLoginDto } from "./dto/social-login.dto";
 import { TokenDto } from "./dto/token.dto";
 
@@ -54,24 +53,17 @@ export class AuthController {
     return this.authService.activateToken(token);
   }
 
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post("send_otp")
-  async sendOtp(@Body() body: SendOtpDto) {
-    return this.authService.sendOtp(body);
-  }
-
   @Post("logout")
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: Types.ObjectId, @Body("fcmToken") fcmToken?: string) {
+  async logout(@GetCurrentUserId() userId: ObjectId, @Body("fcmToken") fcmToken?: string) {
     return this.authService.logout(userId, fcmToken);
   }
 
   @Public()
   @Post("refresh_token")
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@Body() { token }: TokenDto) {
-    return this.authService.refreshToken(token);
+  async refreshToken(@Body() { token, fcmToken }: TokenDto) {
+    return this.authService.refreshToken(token, fcmToken);
   }
 
   @Public()

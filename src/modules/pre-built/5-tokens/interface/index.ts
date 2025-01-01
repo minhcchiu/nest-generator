@@ -1,11 +1,11 @@
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { AccountTypeEnum } from "~modules/pre-built/1-users/enums/account-type.enum";
 import { RoleEnum } from "~pre-built/1-users/enums/role.enum";
 
 export interface TokenPayload {
-  readonly _id: Types.ObjectId;
+  readonly _id: ObjectId;
   readonly roles: RoleEnum[];
-  readonly userGroupIds: Types.ObjectId[];
+  readonly userGroupIds: ObjectId[];
   readonly accountType: AccountTypeEnum;
   readonly fullName: string;
   readonly username?: string;

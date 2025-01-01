@@ -1,16 +1,19 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 import { HttpMethod } from "../enum/http-method";
 
 export class CreatePolicyDto {
   policyKey: string;
+  collectionName?: string;
+
+  @IsNotEmpty()
+  @IsObjectId()
+  readonly policyGroupId?: ObjectId;
 
   @IsNotEmpty()
   @IsString()
   readonly name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly collectionName: string;
 
   @IsNotEmpty()
   @IsString()
@@ -26,4 +29,8 @@ export class CreatePolicyDto {
   @IsOptional()
   @IsBoolean()
   readonly isPublic?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isAuthenticated?: boolean;
 }

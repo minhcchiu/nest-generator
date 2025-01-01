@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 
 @Injectable()
@@ -7,9 +7,9 @@ export class LockService {
   constructor(private readonly logger: CustomLoggerService) {}
 
   async acquireLock(
-    productId: Types.ObjectId,
+    productId: ObjectId,
     quantity: number,
-    cartId: Types.ObjectId,
+    cartId: ObjectId,
     // expireTime: number = 3000,
     // maxRetries: number = 5,
   ): Promise<boolean> {
@@ -50,7 +50,7 @@ export class LockService {
     return false;
   }
 
-  async releaseLock(productId: Types.ObjectId): Promise<void> {
+  async releaseLock(productId: ObjectId): Promise<void> {
     this.logger.log(productId);
     // const lockKey = `product:${productId}:lock`;
     // try {

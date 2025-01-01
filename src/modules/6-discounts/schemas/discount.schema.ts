@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { Shop } from "~modules/1-shops/schemas/shop.schema";
 import { DiscountAppliesToEnum } from "../enums/discount-applies-to.enum";
 import { DiscountTypeEnum } from "../enums/discount-type.enum";
@@ -11,7 +12,7 @@ import { DiscountTypeEnum } from "../enums/discount-type.enum";
 })
 export class Discount {
   @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name })
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
 
   @Prop({ type: String, required: true })
   code: string;

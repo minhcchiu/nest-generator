@@ -10,11 +10,11 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Public } from "~common/decorators/public.decorator";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { CreatePolicyDto } from "./dto/create-policy.dto";
@@ -26,14 +26,42 @@ export class PolicyController {
   constructor(private readonly policyService: PolicyService) {}
 
   //  ----- Method: GET -----
+  @Public()
+  @Get("/groups")
+  async getPolicyWithGroup(@GetAqp() { filter }: PaginationDto) {
+    const groups = await this.policyService.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: "$policyGroupId",
+          policies: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $lookup: {
+          from: "policy-groups",
+          localField: "_id",
+          foreignField: "_id",
+          as: "policyGroup",
+        },
+      },
+      { $unwind: "$policyGroup" },
+      { $sort: { "policyGroup.name": 1 } },
+      { $project: { "policyGroup.collectionName": 0 } },
+    ]);
+
+    return groups;
+  }
+
+  @Public()
   @Get("/paginate")
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
     return this.policyService.paginate(filter, options);
   }
 
   @Get("/:id")
-  async findOneById(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+  async findById(
+    @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.policyService.findById(id, { projection, populate });
@@ -56,7 +84,7 @@ export class PolicyController {
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdatePolicyDto) {
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdatePolicyDto) {
     const found = await this.policyService.findById(id);
 
     if (!found) throw new NotFoundException("Policy not found!");
@@ -72,7 +100,7 @@ export class PolicyController {
   }
 
   //  ----- Method: DELETE -----
-  @Delete("/:ids/ids")
+  @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
     return this.policyService.deleteMany({
@@ -82,7 +110,7 @@ export class PolicyController {
 
   @Delete("/:id")
   @HttpCode(HttpStatus.OK)
-  async delete(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
     return this.policyService.deleteById(id);
   }
 }

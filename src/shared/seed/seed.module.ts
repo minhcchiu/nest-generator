@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { UserGroupModule } from "~modules/pre-built/2-user-groups/user-group.module";
+import { PolicyGroupModule } from "~modules/pre-built/3-policy-groups/policy-group.module";
 import { SystemMenuModule } from "~modules/pre-built/4-system-menus/system-menu.module";
 import { WardModule } from "~pre-built/10-wards/ward.module";
 import { PolicyModule } from "~pre-built/3-policies/policy.module";
@@ -9,6 +10,7 @@ import { SeedService } from "./seed.service";
 
 @Module({
   imports: [
+    PolicyGroupModule,
     PolicyModule,
     SystemMenuModule,
     UserGroupModule,

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { CartService } from "~modules/3-carts/cart.service";
 import { CartState } from "~modules/3-carts/enums/cart-state.enum";
 import { LockService } from "~modules/4-checkouts/lock.service";
@@ -6,18 +7,17 @@ import { OrderService } from "~modules/7-orders/order.service";
 
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 
-import { Types } from "mongoose";
 import { CheckoutReviewDto, ShopOrderDiscountDto } from "./dto/checkout-review.dto";
 
 type IShopOrderNew = {
-  shopId: Types.ObjectId;
+  shopId: ObjectId;
   shopDiscounts: ShopOrderDiscountDto[];
   priceRaw: number;
   priceApplyDiscount: number;
   items: {
     price: number;
     quantity: number;
-    productId: Types.ObjectId;
+    productId: ObjectId;
   }[];
 };
 

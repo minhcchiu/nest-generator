@@ -1,12 +1,12 @@
 import { IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~pre-built/7-uploads/enum/store-location.enum";
 
 export class CreateUserFileDto {
   @IsNotEmpty()
   @IsMongoId()
-  userId: Types.ObjectId;
+  userId: ObjectId;
 
   @IsNotEmpty()
   @IsString({ each: true })

@@ -1,4 +1,5 @@
-import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
 
 import { Injectable } from "@nestjs/common";
@@ -13,11 +14,7 @@ export class InventoryService extends BaseService<InventoryDocument> {
     super(_model);
   }
 
-  async reservationInventory(data: {
-    productId: Types.ObjectId;
-    cartId: Types.ObjectId;
-    quantity: number;
-  }) {
+  async reservationInventory(data: { productId: ObjectId; cartId: ObjectId; quantity: number }) {
     const filter = {
         productId: data.productId,
         stock: { $gte: data.quantity },
