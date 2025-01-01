@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -8,6 +10,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model, QueryOptions } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { TagService } from "~modules/questions-modules/3-tags/tag.service";
+import { ReputationValue } from "~utils/constant";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { HashingService } from "./hashing/hashing.service";
@@ -20,31 +24,32 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
+    @Inject(forwardRef(() => TagService))
+    private readonly tagService: TagService,
   ) {
     super(model);
-
     this.userService = this;
   }
 
-  async validateCreateUser(input: Record<string, any>) {
-    if (input.email) {
-      const userExist = await this.userService.findOne({ email: input.email });
+  async validateCreateUser(input: Record<string, any>, otherFilter: Record<string, any> = {}) {
+    const conditions = [];
 
-      if (userExist) throw new BadRequestException(`Email already exist.`);
-    }
+    if (input.email) conditions.push({ field: "email", value: input.email });
+    if (input.phone) conditions.push({ field: "phone", value: input.phone });
+    if (input.username) conditions.push({ field: "username", value: input.username });
 
-    if (input.phone) {
-      const userExist = await this.userService.findOne({ phone: input.phone });
+    if (conditions.length > 0) {
+      const userExist = await this.userService.findOne({ $or: conditions, ...otherFilter });
 
-      if (userExist) throw new BadRequestException(`Phone already exist.`);
-    }
-
-    if (input.username) {
-      const userExist = await this.userService.findOne({
-        username: input.username,
-      });
-
-      if (userExist) throw new BadRequestException(`Username already exist.`);
+      if (userExist) {
+        const conflictField = conditions.find(condition =>
+          Object.keys(condition).some(key => userExist[key] === condition[key]),
+        );
+        const fieldName = conflictField && Object.keys(conflictField)[0];
+        throw new BadRequestException(
+          `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} already exists.`,
+        );
+      }
     }
   }
 
@@ -54,7 +59,9 @@ export class UserService extends BaseService<UserDocument> {
     const hashPassword = await this.hashingService.hash(input.password);
     Object.assign(input, { password: hashPassword });
 
-    return this.userService.create(input);
+    const userCreated = await this.userService.create(input);
+
+    return userCreated;
   }
 
   async updatePasswordById(id: ObjectId, { newPassword, oldPassword }: UpdatePasswordDto) {
@@ -114,5 +121,42 @@ export class UserService extends BaseService<UserDocument> {
     );
 
     return updated;
+  }
+
+  // features
+  async assignTopInteractedTags(users: UserDocument[]) {
+    const topInteractedTags = await this.tagService.getTopInteractedTagsByUserIds(
+      users.map(user => user._id),
+    );
+
+    const topInteractedTagsMap = new Map(
+      topInteractedTags.map(topInteractedTag => [
+        topInteractedTag.authorId.toString(),
+        topInteractedTag,
+      ]),
+    );
+
+    users.forEach(user => {
+      Object.assign(user, {
+        topInteractedTags: topInteractedTagsMap.get(user._id.toString())?.tags || [],
+      });
+    });
+
+    return users;
+  }
+
+  async increaseQuestionsCount(userId: ObjectId, count: number = 1) {
+    return this.userService.updateById(userId, {
+      $inc: { questionsCount: count, reputation: count * ReputationValue.createQuestion },
+    });
+  }
+
+  async increaseAnswersCount(userId: ObjectId, count: number = 1) {
+    return this.userService.updateById(userId, {
+      $inc: { answersCount: count, reputation: count * ReputationValue.answerQuestion },
+    });
+  }
+  async increaseReputation(userId: ObjectId, count: number = 1) {
+    return this.userService.updateById(userId, { $inc: { reputation: count } });
   }
 }

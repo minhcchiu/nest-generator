@@ -117,7 +117,7 @@ export class AuthService {
         roles: [RoleEnum.User],
       });
 
-      foundUser = newUser.toObject();
+      foundUser = newUser;
     }
 
     if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);

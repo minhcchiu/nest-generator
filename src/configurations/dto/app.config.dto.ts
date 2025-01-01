@@ -37,4 +37,12 @@ export class AppConfigDto {
   @IsOptional()
   @IsString()
   SUPPER_ADMIN_LIST?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GEMINI_KEY: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GEMINI_BASE_URL: string;
 }

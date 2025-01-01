@@ -10,8 +10,6 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { ObjectId } from "mongodb";
-import { IsObjectId } from "~common/validators/objectId";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
@@ -69,6 +67,14 @@ export class CreateUserDto {
   bio?: string;
 
   @IsOptional()
+  @IsString()
+  portfolioWebsite?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
   @IsBoolean()
   fmcEnabled?: boolean;
 
@@ -85,6 +91,6 @@ export class CreateUserDto {
   questionsCount?: number;
 
   @IsOptional()
-  @IsObjectId({ each: true })
-  questionsSaved?: ObjectId[];
+  @IsNumber()
+  answersCount?: number;
 }

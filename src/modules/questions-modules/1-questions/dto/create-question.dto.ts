@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 import { IsObjectId } from "~common/validators/objectId";
 
 export class CreateQuestionDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsObjectId()
   authorId: ObjectId;
 
@@ -18,15 +18,23 @@ export class CreateQuestionDto {
 
   @IsOptional()
   @IsNumber()
-  views?: number;
+  views: number = 0;
 
   @IsOptional()
   @IsNumber()
-  upvoteCount?: number;
+  upvoteCount: number = 0;
 
   @IsOptional()
   @IsNumber()
-  downvoteCount?: number;
+  downvoteCount: number = 0;
+
+  @IsOptional()
+  @IsNumber()
+  answerCount: number = 0;
+
+  @IsOptional()
+  @IsObjectId({ each: true })
+  tagIds: ObjectId[];
 
   @IsOptional()
   @IsString({ each: true })
