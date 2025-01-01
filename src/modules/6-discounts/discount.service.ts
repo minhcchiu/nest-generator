@@ -85,7 +85,7 @@ export class DiscountService extends BaseService<DiscountDocument> {
       minOrderValue,
       usersUsed,
       startDate,
-      maxUsersPerUser,
+      maxUsesPerUser,
       endDate,
       discountType,
       discountValue,
@@ -107,7 +107,7 @@ export class DiscountService extends BaseService<DiscountDocument> {
     if (totalOrder < minOrderValue)
       throw new BadRequestException(`Discount requires a minium order value of ${minOrderValue}!`);
 
-    if (maxUsersPerUser > 0) {
+    if (maxUsesPerUser > 0) {
       const userUsedDiscount = usersUsed.some(
         userId => userId.toString() === data.userId.toString(),
       );
