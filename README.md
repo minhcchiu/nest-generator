@@ -1,76 +1,34 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS Generator
 
-[circleci-image]:
-	https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a NestJS generator designed to accelerate the development of modern and scalable applications. With a set of pre-configured modules and tools, this generator enables rapid application setup, saving time for developers and improving code quality.
 
-<p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-<p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Modular Architecture**: Leverages NestJS's modular structure for easy maintenance and scalability.
+- **MongoDB Integration**: Pre-configured MongoDB setup with Mongoose for schema-based data modeling and pagination.
+- **Real-Time Communication**: Out-of-the-box support for real-time communication using Socket.IO and @nestjs/websockets.
+- **Authentication & Authorization**: JWT-based authentication and role-based access control (RBAC) for secure user management.
+- **File Uploads & Image Handling**: Integrated with Cloudinary for easy image and file handling with transformations and optimizations.
+- **Email & Notifications**: Built-in email system using @nestjs-modules/mailer with support for SMTP and third-party providers.
+- **Cache & Performance Optimization**: Redis integration for caching and improving application performance.
+- **Testing Setup**: Jest pre-configured for unit tests, integration tests, and e2e testing. Coverage reports included.
+- **Code Quality & Linting**: ESLint and Prettier integrated for consistent code style and quality.
+- **Flexible Configuration Management**: Centralized configuration management using @nestjs/config for different environments.
+- **Security**: Password hashing using argon2 for secure password storage.
+- **Custom Middleware & Interceptors**: Easily extendable with custom middleware and interceptors for logging, validation, and exception handling.
+- **API Query & Filtering**: Supports flexible filtering, sorting, and pagination with api-query-params.
 
 ## Installation
 
-```bash
-$ npm install
-```
+To get started with this NestJS generator, follow the steps below:
 
-## Running the app
+### Prerequisites
 
-```bash
-# development
-$ npm run start
+- Node.js (version 16 or higher)
+- Yarn or npm (for package management)
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
+### Clone the Repository
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors
-and support by the amazing backers. If you'd like to join them, please
-[read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+git clone https://github.com/yourusername/awesome-nest-generator-2023.git
+cd awesome-nest-generator-2023
