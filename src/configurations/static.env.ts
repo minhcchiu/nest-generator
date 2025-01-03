@@ -172,4 +172,11 @@ export class EnvStatic {
       limit: +process.env.THROTTLER_LIMIT,
     };
   }
+
+  static getAIConfig() {
+    return {
+      geminiKey: process.env.GEMINI_KEY,
+      geminiUrl: process.env.GEMINI_BASE_URL,
+    };
+  }
 }

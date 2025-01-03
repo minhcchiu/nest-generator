@@ -1,6 +1,7 @@
 import { CountOptions, DeleteOptions, DeleteResult, ObjectId, UpdateOptions } from "mongodb";
 import {
   AggregateOptions,
+  AnyBulkWriteOperation,
   FilterQuery,
   Model,
   PipelineStage,
@@ -82,6 +83,10 @@ export class BaseService<T> {
 
   async deleteMany(filter: FilterQuery<T>, options?: DeleteOptions | any): Promise<DeleteResult> {
     return this.model.deleteMany(filter, options);
+  }
+
+  async bulkWrite(writes: AnyBulkWriteOperation<any>[]) {
+    return this.model.bulkWrite(writes);
   }
 
   async paginate(

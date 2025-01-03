@@ -48,12 +48,6 @@ export class DiscountController {
     });
   }
 
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.discountService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)

@@ -6,6 +6,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from "class-validator";
@@ -62,9 +63,34 @@ export class CreateUserDto {
   avatar?: string;
 
   @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  portfolioWebsite?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
   @IsBoolean()
   fmcEnabled?: boolean;
 
   status?: AccountStatus;
   fcmTokens?: string[];
+
+  // Features
+  @IsOptional()
+  @IsNumber()
+  reputation?: number;
+
+  @IsOptional()
+  @IsNumber()
+  questionsCount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  answersCount?: number;
 }

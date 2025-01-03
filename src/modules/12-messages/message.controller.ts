@@ -50,12 +50,6 @@ export class MessageController {
     });
   }
 
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.messageService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)

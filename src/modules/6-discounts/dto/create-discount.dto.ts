@@ -62,7 +62,7 @@ export class CreateDiscountDto {
 
   @IsOptional()
   @IsNumber()
-  maxUsersPerUser: number;
+  maxUsesPerUser: number;
 
   @IsNotEmpty()
   @IsNumber()

@@ -49,7 +49,7 @@ export class Discount {
   usersUsed: string[];
 
   @Prop({ type: Number, required: true }) // Số lượng tối đa cho mỗi user
-  maxUsersPerUser: number;
+  maxUsesPerUser: number;
 
   @Prop({ type: Number, required: true })
   minOrderValue: number;

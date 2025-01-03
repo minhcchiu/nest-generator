@@ -1,7 +1,13 @@
 import { CategoryModule } from "~modules/0-categories/category.module";
-import { PlaidModule } from "~modules/0-plaid/plaid.module";
 import { SummaryModule } from "~modules/0-summaries/summary.module";
 import { TransactionModule } from "~modules/0-transactions/transaction.module";
+import { ChatgptModule } from "~modules/questions-modules/0-chatgpt/chatgpt.module";
+import { GeneralModule } from "~modules/questions-modules/0-generals/general.module";
+import { AnswerModule } from "~modules/questions-modules/1-answers/answer.module";
+import { QuestionModule } from "~modules/questions-modules/1-questions/question.module";
+import { TagModule } from "~modules/questions-modules/3-tags/tag.module";
+import { InteractionModule } from "~modules/questions-modules/4-interactions/interaction.module";
+import { TagFollowerModule } from "~modules/questions-modules/5-tag_followers/tag_follower.module";
 import { AccountModule } from "./0-accounts/account.module";
 import { TaskModule } from "./0-tasks/task.module";
 import { TestModule } from "./0-tests/test.module";
@@ -54,5 +60,13 @@ export const FeatureModules = [
   CategoryModule,
   TransactionModule,
   SummaryModule,
-  PlaidModule,
+
+  // Questions Modules
+  AnswerModule,
+  QuestionModule,
+  TagModule,
+  TagFollowerModule,
+  InteractionModule,
+  GeneralModule,
+  ChatgptModule,
 ];

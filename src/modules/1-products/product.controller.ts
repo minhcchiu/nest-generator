@@ -24,39 +24,6 @@ import { ProductService } from "./product.service";
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Public()
-  @Get("/")
-  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-    await this.productService.placeOrder();
-    return this.productService.findMany(filter, options);
-  }
-
-  @Post("/")
-  @HttpCode(HttpStatus.CREATED)
-  async create(@Body() body: CreateProductDto) {
-    return this.productService.createProduct(body);
-  }
-  @Patch("/:id")
-  @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateProductDto) {
-    return this.productService.updateById(id, body);
-  }
-
-  @Delete("/:ids/bulk")
-  @HttpCode(HttpStatus.OK)
-  async deleteManyByIds(@Param("ids") ids: string) {
-    return this.productService.deleteMany({
-      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
-    });
-  }
-
-  @Delete("/:id")
-  @HttpCode(HttpStatus.OK)
-  async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.productService.deleteById(id);
-  }
-
   @Public()
   @Get("/paginate")
   @HttpCode(HttpStatus.OK)
@@ -84,5 +51,32 @@ export class ProductController {
     });
 
     return product;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  @Get("/")
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    await this.productService.placeOrder();
+    return this.productService.findMany(filter, options);
+  }
+
+  @Post("/")
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() body: CreateProductDto) {
+    return this.productService.createProduct(body);
+  }
+  @Patch("/:id")
+  @HttpCode(HttpStatus.OK)
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateProductDto) {
+    return this.productService.updateById(id, body);
+  }
+
+  @Delete("/:ids/bulk")
+  @HttpCode(HttpStatus.OK)
+  async deleteManyByIds(@Param("ids") ids: string) {
+    return this.productService.deleteMany({
+      _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
+    });
   }
 }
