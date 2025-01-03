@@ -19,7 +19,7 @@ This is a NestJS generator designed to accelerate the development of modern and 
 - **API Query & Filtering**: Supports flexible filtering, sorting, and pagination with api-query-params.
 
 
-### Directory and File Descriptions
+## Directory and File Descriptions
 
 - **.docker**: Contains files related to Docker configuration and custom setup for Docker containers.
 - **.ecosystem**: Contains configuration files for PM2, which is used to manage the application in production.
