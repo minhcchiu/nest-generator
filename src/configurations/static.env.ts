@@ -1,3 +1,4 @@
+import * as dotenv from "dotenv";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { validateConfig } from "~utils/validate-config";
 import { AppConfigDto } from "./dto/app.config.dto";
@@ -11,8 +12,7 @@ import { ThrottlerConfigDto } from "./dto/throttler.config.dto";
 import { UploadConfigDto } from "./dto/upload.config.dto";
 import { StorageServerEnum } from "./enums/config.enum";
 
-// eslint-disable-next-line
-require("dotenv").config();
+dotenv.config();
 
 validateConfig(process.env, AppConfigDto);
 validateConfig(process.env, DatabaseConfigDto);

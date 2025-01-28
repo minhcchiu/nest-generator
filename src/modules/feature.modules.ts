@@ -19,7 +19,6 @@ import { UserModule } from "./pre-built/1-users/user.module";
 import { WardModule } from "./pre-built/10-wards/ward.module";
 import { SettingModule } from "./pre-built/11-settings/setting.module";
 import { NotificationModule } from "./pre-built/12-notifications/notification.module";
-import { UserGroupModule } from "./pre-built/2-user-groups/user-group.module";
 import { PolicyModule } from "./pre-built/3-policies/policy.module";
 import { MenuGroupModule } from "./pre-built/4-menu-groups/menu-group.module";
 import { MenuModule } from "./pre-built/4-menus/menu.module";
@@ -35,7 +34,6 @@ export const FeatureModules = [
   // pre-built
   AuthModule,
   UserModule,
-  UserGroupModule,
   PolicyModule,
   MenuGroupModule,
   MenuModule,

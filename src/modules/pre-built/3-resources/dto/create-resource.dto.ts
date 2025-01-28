@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ObjectId } from "mongodb";
 
-export class CreatePolicyGroupDto {
+export class CreateResourceDto {
   @IsNotEmpty()
   @IsString()
   readonly name: string;

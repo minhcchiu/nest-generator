@@ -24,5 +24,7 @@ export async function bootstrap() {
   const server = app.getHttpServer();
   const router = server._events.request._router;
   await app.get<SeedService>(SeedService).seedPolicies(router.stack);
+  await app.get<SeedService>(SeedService).seedRolesDefault();
+  await app.get<SeedService>(SeedService).seedSupperAdmin();
   // await app.get<SeedService>(SeedService).seedProvincesDistrictsWards();
 }

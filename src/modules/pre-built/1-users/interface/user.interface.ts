@@ -1,11 +1,10 @@
 import { ObjectId } from "mongodb";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { RoleEnum } from "../enums/role.enum";
 
 export interface IUser {
   userGroupIds?: ObjectId[];
-  roles: RoleEnum[];
+  roleIds: ObjectId[];
   accountType: AccountTypeEnum;
   fullName: string;
   username?: string;

@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { TokenPayload } from "~modules/pre-built/5-tokens/interface";
+import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
 
-export const GetCurrentUser = createParamDecorator(
-  (data: keyof TokenPayload, context: ExecutionContext) => {
+export const GetDecodedToken = createParamDecorator(
+  (data: keyof DecodedToken, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
 
     if (data) return request.user[data];

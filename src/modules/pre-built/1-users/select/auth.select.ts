@@ -1,11 +1,9 @@
 import { TokenPayload } from "~modules/pre-built/5-tokens/interface";
-import { DocumentType } from "~types/document.type";
-import { User } from "../schemas/user.schema";
+import { UserDocument } from "../schemas/user.schema";
 
 export const authSelect = {
   _id: 1,
-  roles: 1,
-  userGroupIds: 1,
+  roleIds: 1,
   accountType: 1,
   fullName: 1,
   username: 1,
@@ -14,11 +12,10 @@ export const authSelect = {
   socialID: 1,
 };
 
-export const getTokenPayloadFromUser = (user: DocumentType<User>): TokenPayload => {
+export const formatTokenPayload = (user: UserDocument): TokenPayload => {
   return {
-    _id: user._id,
-    roles: user.roles,
-    userGroupIds: user.userGroupIds,
+    userId: user._id,
+    roleIds: user.roleIds,
     fullName: user.fullName,
     username: user.username,
     email: user.email,

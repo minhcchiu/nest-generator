@@ -16,27 +16,35 @@ import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { UserGroupService } from "../2-user-groups/user-group.service";
-import { CreatePolicyGroupDto } from "./dto/create-policy-group.dto";
-import { UpdatePolicyGroupDto } from "./dto/update-policy-group.dto";
-import { PolicyGroupService } from "./policy-group.service";
+import { PolicyService } from "~modules/pre-built/3-policies/policy.service";
+import { CreateResourceDto } from "./dto/create-resource.dto";
+import { UpdateResourceDto } from "./dto/update-resource.dto";
+import { ResourceService } from "./resource.service";
 
-@Controller("policy_groups")
-export class PolicyGroupController {
+@Controller("resources")
+export class ResourceController {
   constructor(
-    private readonly policyGroupService: PolicyGroupService,
-    private readonly userGroupService: UserGroupService,
+    private readonly resourceService: ResourceService,
+    private readonly policyService: PolicyService,
   ) {}
 
   //  ----- Method: GET -----
   @Get("/")
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.policyGroupService.findMany(filter, options);
+    const res = await this.resourceService.findMany(filter, options);
+
+    await this.policyService.assignPoliciesToResources(res);
+
+    return res;
   }
 
   @Get("/paginate")
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
-    return this.policyGroupService.paginate(filter, options);
+    const res = await this.resourceService.paginate(filter, options);
+
+    await this.policyService.assignPoliciesToResources(res.data);
+
+    return res;
   }
 
   @Get("/:id")
@@ -44,30 +52,30 @@ export class PolicyGroupController {
     @Param("id", ParseObjectIdPipe) id: ObjectId,
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
-    return this.policyGroupService.findById(id, { projection, populate });
+    return this.resourceService.findById(id, { projection, populate });
   }
 
   //  ----- Method: POST -----
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
-  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreatePolicyGroupDto) {
+  async create(@GetCurrentUserId() userId: ObjectId, @Body() body: CreateResourceDto) {
     Object.assign(body, { createdBy: userId });
 
-    return this.policyGroupService.create(body);
+    return this.resourceService.create(body);
   }
 
   //  ----- Method: PATCH -----
   @Patch("/:id")
   @HttpCode(HttpStatus.OK)
-  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdatePolicyGroupDto) {
-    return this.policyGroupService.updateById(id, body);
+  async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateResourceDto) {
+    return this.resourceService.updateById(id, body);
   }
 
   //  ----- Method: DELETE -----
   @Delete("/:ids/bulk")
   @HttpCode(HttpStatus.OK)
   async deleteManyByIds(@Param("ids") ids: string) {
-    return this.policyGroupService.deleteMany({
+    return this.resourceService.deleteMany({
       _id: { $in: ids.split(",").map(id => stringIdToObjectId(id)) },
     });
   }

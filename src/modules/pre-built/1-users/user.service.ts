@@ -101,11 +101,7 @@ export class UserService extends BaseService<UserDocument> {
   }
 
   async saveFcmToken(id: ObjectId, fcmToken: string): Promise<UserDocument | null> {
-    const updated = await this.userService.updateById(
-      id,
-      { $addToSet: { fcmTokens: fcmToken } },
-      { projection: { _id: 1, fcmTokens: 1 } },
-    );
+    const updated = await this.userService.updateById(id, { $addToSet: { fcmTokens: fcmToken } });
 
     return updated;
   }

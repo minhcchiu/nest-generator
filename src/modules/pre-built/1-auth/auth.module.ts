@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { RoleModule } from "~modules/pre-built/2-roles/role.module";
 import { UserModule } from "~pre-built/1-users/user.module";
 import { MailModule } from "~shared/mail/mail.module";
 import { HashingService } from "../1-users/hashing/hashing.service";
@@ -10,7 +11,7 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 
 @Module({
-  imports: [ConfigModule, UserModule, JwtModule, MailModule, OtpModule, TokenModule],
+  imports: [ConfigModule, UserModule, JwtModule, MailModule, OtpModule, TokenModule, RoleModule],
   providers: [AuthService, HashingService],
   controllers: [AuthController],
 })

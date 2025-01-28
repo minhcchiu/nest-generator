@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
-import { PolicyGroup } from "./schemas/policy-group.schema";
+import { Resource } from "./schemas/resource.schema";
 
 @Injectable()
-export class PolicyGroupService extends BaseService<PolicyGroup> {
-  constructor(@InjectModel(PolicyGroup.name) model: Model<PolicyGroup>) {
+export class ResourceService extends BaseService<Resource> {
+  constructor(@InjectModel(Resource.name) model: Model<Resource>) {
     super(model);
   }
 }

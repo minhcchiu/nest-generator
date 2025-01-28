@@ -4,17 +4,16 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { ObjectId } from "mongodb";
 import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/static.env";
 import { generateRandomKey } from "~helpers/generate-random-key";
+import { RoleService } from "~modules/pre-built/2-roles/role.service";
+import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
 import { AccountStatus } from "~pre-built/1-users/enums/account-status.enum";
 import { FirebaseService } from "~shared/firebase/firebase.service";
 import { MailService } from "~shared/mail/mail.service";
-import { stringIdToObjectId } from "~utils/stringId_to_objectId";
-import { RoleEnum } from "../1-users/enums/role.enum";
 import { HashingService } from "../1-users/hashing/hashing.service";
-import { authSelect } from "../1-users/select/auth.select";
+import { authSelect, formatTokenPayload } from "../1-users/select/auth.select";
 import { UserService } from "../1-users/user.service";
 import { TokenService } from "../5-tokens/token.service";
 import { VerifyOtpDto } from "../6-otp/dto/verify-otp.dto";
@@ -36,6 +35,7 @@ export class AuthService {
     private readonly firebaseService: FirebaseService,
     private readonly otpService: OtpService,
     private readonly hashingService: HashingService,
+    private readonly roleService: RoleService,
   ) {}
 
   async register({ fcmToken, otpCode, sendOtpTo, ...input }: RegisterDto) {
@@ -56,11 +56,15 @@ export class AuthService {
 
     const newUser = await this.userService.createUser({
       ...input,
-      roles: [RoleEnum.User],
+      roleIds: [(await this.roleService.getRoleUser())._id],
       fcmTokens: fcmToken ? [fcmToken] : [],
     });
 
-    return this.tokenService.generateUserAuth(newUser);
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(newUser));
+    return {
+      ...tokens,
+      user: newUser,
+    };
   }
 
   async login({ fcmToken, authKey, password }: LoginDto) {
@@ -84,14 +88,17 @@ export class AuthService {
 
     if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
 
-    delete user.password;
-    return this.tokenService.generateUserAuth(user);
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(user));
+    return {
+      ...tokens,
+      user,
+    };
   }
 
   async socialLogin({ fcmToken, idToken, accountType }: SocialLoginDto) {
     const decodedIdToken = await this.firebaseService.verifyIdToken(idToken);
 
-    let foundUser = await this.userService.findOne(
+    let userFound = await this.userService.findOne(
       {
         $or: [
           {
@@ -105,7 +112,7 @@ export class AuthService {
       { projection: authSelect },
     );
 
-    if (!foundUser) {
+    if (!userFound) {
       const newUser = await this.userService.createUser({
         fullName: decodedIdToken.name,
         socialID: decodedIdToken.sub,
@@ -114,21 +121,25 @@ export class AuthService {
         accountType,
         password: generateRandomKey(32),
         status: AccountStatus.Verified,
-        roles: [RoleEnum.User],
+        roleIds: [(await this.roleService.getRoleUser())._id],
       });
 
-      foundUser = newUser;
+      userFound = newUser;
     }
 
-    if (fcmToken) this.userService.saveFcmToken(foundUser._id, fcmToken);
+    if (fcmToken) this.userService.saveFcmToken(userFound._id, fcmToken);
 
-    return this.tokenService.generateUserAuth(foundUser);
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(userFound));
+    return {
+      ...tokens,
+      user: userFound,
+    };
   }
 
   async sendToken(input: RegisterDto) {
     await this.userService.validateCreateUser(input);
 
-    const { token, expiresAt } = await this.tokenService.generateUserToken(input);
+    const { token, expiresAt } = await this.tokenService.generateRegisterUserToken(input);
 
     await this.mailService.sendUserToken(
       {
@@ -158,38 +169,50 @@ export class AuthService {
     return this.register(decoded);
   }
 
-  async logout(userId: ObjectId, fcmToken?: string) {
-    Promise.all([
-      this.userService.removeFcmTokens([fcmToken]),
-      this.tokenService.deleteOne({ user: userId }),
-    ]);
+  async logout(decodedToken: DecodedToken, fcmToken?: string) {
+    if (fcmToken) this.userService.removeFcmTokens([fcmToken]);
+
+    const tokens = await this.tokenService.findOne({ userId: decodedToken.userId });
+
+    if (!tokens) return { message: "Logout success!" };
+
+    const validTokens = tokens.tokens.filter(
+      t => new Date(t.expiresAt) > new Date() && t.tokenId !== decodedToken.tokenId,
+    );
+    const newExpiredAt =
+      Math.max(...validTokens.map(t => new Date(t.expiresAt).getTime())) || Date.now();
+
+    this.tokenService.updateOne(
+      { userId: decodedToken.userId },
+      { $set: { tokens: validTokens, expiresAt: new Date(newExpiredAt) } },
+    );
 
     return { message: "Logout success!" };
   }
 
   async refreshToken(token: string, fcmToken?: string) {
     const [tokenDoc] = await Promise.all([
-      this.tokenService.findOne({ token }, { populate: { path: "userId", select: authSelect } }),
+      this.tokenService.updateOne({ "tokens.token": token }, { $pull: { tokens: { token } } }),
       this.tokenService.verifyRefreshToken(token),
     ]);
 
     if (!tokenDoc?.userId) throw new UnauthorizedException("Invalid refresh token!");
 
-    if (fcmToken) this.userService.saveFcmToken(tokenDoc.userId._id, fcmToken);
+    const userFound = await this.userService.findById(tokenDoc.userId, { projection: authSelect });
+    if (fcmToken) this.userService.saveFcmToken(userFound._id, fcmToken);
 
-    return this.tokenService.generateUserAuth(<any>tokenDoc.userId);
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(userFound));
+    return {
+      ...tokens,
+      user: userFound,
+    };
   }
 
   async forgotPassword(email: string) {
     const user = await this.userService.findOne({ email });
-
-    if (!user) {
-      throw new NotFoundException("User not found.");
-    }
-
-    if (user.status === AccountStatus.Deleted) {
+    if (!user) throw new NotFoundException("User not found.");
+    if (user.status === AccountStatus.Deleted)
       throw new BadRequestException("The account has been removed.");
-    }
 
     const { expiresAt, token } = await this.tokenService.generateForgotPasswordToken(user);
 
@@ -199,11 +222,12 @@ export class AuthService {
       email,
     );
 
-    await this.tokenService.updateOne(
-      { userId: user._id },
-      { userId: user._id, token, expiresAt },
-      { upsert: true },
-    );
+    await this.tokenService.saveToken({
+      userId: user._id,
+      token,
+      tokenId: "FORGOT_PASSWORD",
+      expiresAt,
+    });
 
     return {
       email,
@@ -213,29 +237,32 @@ export class AuthService {
   }
 
   async resetPasswordWithToken(input: ResetPasswordWithTokenDto) {
-    const [decoded, tokenDoc] = await Promise.all([
-      this.tokenService.verifyForgotPasswordToken(input.token),
-      this.tokenService.deleteOne({ token: input.token }),
-    ]);
+    const decoded = await this.tokenService.verifyForgotPasswordToken(input.token);
 
-    if (!tokenDoc) throw new UnauthorizedException("Invalid token!");
+    if (!decoded?.userId) throw new UnauthorizedException("Invalid refresh token!");
 
-    const user = await this.userService.resetPasswordById(
-      stringIdToObjectId(decoded._id),
-      input.password,
-      {
-        projection: authSelect,
-      },
+    const tokenRemoved = await this.tokenService.updateOne(
+      { "tokens.tokenId": "FORGOT_PASSWORD", userId: decoded.userId, "tokens.token": input.token },
+      { $pullAll: { tokens: { tokenId: "FORGOT_PASSWORD" } } },
     );
 
-    // TODO: handle logout others
-    // if (input.isLogoutOthers) {
-    //   await this.tokenService.deleteMany({ userId: user._id });
-    // }
+    if (!tokenRemoved) throw new BadRequestException("Token has expired!");
 
-    const { accessToken, refreshToken } = await this.tokenService.generateUserAuth(user);
+    const user = await this.userService.resetPasswordById(tokenRemoved.userId, input.password, {
+      projection: authSelect,
+    });
+    if (input.fcmToken) this.userService.saveFcmToken(user._id, input.fcmToken);
 
-    return { accessToken, refreshToken, user };
+    // Handle logout others
+    if (input.isLogoutOthers) {
+      await this.tokenService.deleteMany({ userId: user._id });
+    }
+
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(user));
+    return {
+      ...tokens,
+      user,
+    };
   }
 
   async resetPasswordWithOtp(input: ResetPasswordWithOtpDto) {
@@ -252,13 +279,19 @@ export class AuthService {
       projection: authSelect,
     });
 
-    // TODO: handle logout others
-    // if (input.isLogoutOthers) {
-    //   await this.tokenService.deleteMany({ userId: user._id });
-    // }
+    // Handle logout others
+    if (input.isLogoutOthers) {
+      await this.tokenService.deleteMany({ userId: user._id });
+    }
 
-    const { accessToken, refreshToken } = await this.tokenService.generateUserAuth(user);
+    const tokens = await this.tokenService.generateAuthTokens(formatTokenPayload(user));
+    return {
+      ...tokens,
+      user,
+    };
+  }
 
-    return { accessToken, refreshToken, user };
+  async getTokens() {
+    return this.tokenService.findMany({});
   }
 }

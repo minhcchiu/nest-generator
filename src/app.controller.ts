@@ -23,6 +23,8 @@ export class AppController {
   @Public()
   @Get("testLock")
   async testLock() {
+    this.redisFeatureService.setValue("test", "123");
+    return this.redisFeatureService.getValue("test");
     // const res1 = await this.processRequest(1);
     // this.loggerService.log({ res1 });
     // const res2 = await this.processRequest(2);

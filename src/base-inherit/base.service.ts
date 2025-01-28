@@ -3,9 +3,11 @@ import {
   AggregateOptions,
   AnyBulkWriteOperation,
   FilterQuery,
+  FlattenMaps,
   Model,
   PipelineStage,
   QueryOptions,
+  Types,
   UpdateQuery,
   UpdateWithAggregationPipeline,
   UpdateWriteOpResult,
@@ -92,7 +94,12 @@ export class BaseService<T> {
   async paginate(
     filter: FilterQuery<T>,
     pageOptions: PaginateOptions = {},
-  ): Promise<{ data: T[]; paginationInfo: PaginationInfo }> {
+  ): Promise<{
+    data: (FlattenMaps<T> & {
+      _id: Types.ObjectId;
+    })[];
+    paginationInfo: PaginationInfo;
+  }> {
     const { projection, limit = 10, populate = [], page = 1, sort = "-createdAt" } = pageOptions;
 
     const options = {

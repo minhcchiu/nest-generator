@@ -1,3 +1,22 @@
+import { CreateUserDto } from "~modules/pre-built/1-users/dto/create-user.dto";
+import { AccountStatus } from "~modules/pre-built/1-users/enums/account-status.enum";
+import { AccountTypeEnum } from "~modules/pre-built/1-users/enums/account-type.enum";
+
+export const ROLES_DEFAULT = {
+  User: "USER",
+  SupperAdmin: "SUPER_ADMIN",
+};
+
+export const SUPPER_ADMIN_ACCOUNT: CreateUserDto = {
+  username: "supperadmin",
+  password: "supperadmin",
+  email: "supperadmin@localhost",
+  fullName: "Supper Admin",
+  accountType: AccountTypeEnum.Local,
+  bio: `Supper Admin`,
+  status: AccountStatus.Verified,
+};
+
 export const ReputationValue = {
   createQuestion: 10,
   answerQuestion: 10,

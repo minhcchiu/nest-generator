@@ -5,8 +5,11 @@ import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 
 import { EnvStatic } from "src/configurations/static.env";
+import { HashingService } from "~modules/pre-built/1-users/hashing/hashing.service";
+import { UserService } from "~modules/pre-built/1-users/user.service";
+import { RoleService } from "~modules/pre-built/2-roles/role.service";
 import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
-import { PolicyGroupService } from "~modules/pre-built/3-policy-groups/policy-group.service";
+import { ResourceService } from "~modules/pre-built/3-resources/resource.service";
 import { CreateSystemMenuDto } from "~modules/pre-built/4-system-menus/dto/create-system-menu.dto";
 import { SystemMenuService } from "~modules/pre-built/4-system-menus/system-menu.service";
 import { PolicyService } from "~pre-built/3-policies/policy.service";
@@ -14,6 +17,7 @@ import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { convertToTitleCase } from "~utils/common.util";
+import { ROLES_DEFAULT, SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
 
 @Injectable()
 export class SeedService {
@@ -21,8 +25,11 @@ export class SeedService {
     private provinceService: ProvinceService,
     private districtService: DistrictService,
     private wardService: WardService,
-    private policyGroupService: PolicyGroupService,
+    private resourceService: ResourceService,
     private policyService: PolicyService,
+    private roleService: RoleService,
+    private userService: UserService,
+    private hashingService: HashingService,
     private systemMenuService: SystemMenuService,
     private logger: CustomLoggerService,
   ) {}
@@ -140,6 +147,73 @@ export class SeedService {
     );
   }
 
+  async seedRolesDefault() {
+    const rolesCreated = await Promise.all(
+      Object.values(ROLES_DEFAULT).map((roleDefault, index) =>
+        this.roleService.updateOne(
+          {
+            name: roleDefault,
+          },
+          {
+            name: roleDefault,
+            index: index,
+          },
+          {
+            upsert: true,
+            new: true,
+          },
+        ),
+      ),
+    );
+
+    this.logger.log({
+      message: "Seeded roles",
+      roles: rolesCreated.map(item => item.name),
+    });
+  }
+  async seedSupperAdmin() {
+    const roleSupperAdminId = (await this.roleService.getRoleSupperAdmin())._id;
+    const hashPassword = await this.hashingService.hash(SUPPER_ADMIN_ACCOUNT.password);
+
+    let supperAdminCreated = await this.userService.updateOne(
+      {
+        username: SUPPER_ADMIN_ACCOUNT.username,
+      },
+      {
+        ...SUPPER_ADMIN_ACCOUNT,
+        password: hashPassword,
+        $addToSet: { roleIds: roleSupperAdminId },
+      },
+      { new: true },
+    );
+
+    if (!supperAdminCreated) {
+      supperAdminCreated = await this.userService.create({
+        ...SUPPER_ADMIN_ACCOUNT,
+        password: hashPassword,
+        roleIds: [roleSupperAdminId],
+      });
+    }
+
+    await this.policyService.updateMany(
+      {},
+      {
+        $addToSet: {
+          roleIds: roleSupperAdminId,
+        },
+      },
+    );
+
+    this.logger.log({
+      message: "Seeded supper admin",
+      supperAdmin: {
+        username: supperAdminCreated.username,
+        email: supperAdminCreated.email,
+        roleIds: supperAdminCreated.roleIds,
+      },
+    });
+  }
+
   async seedPolicies(routerStacks: any[]) {
     const policyMap = new Map<string, CreatePolicyDto>();
 
@@ -148,13 +222,13 @@ export class SeedService {
       .forEach(({ route }) => {
         const endpoint = removeTrailingSlash(route.path);
         const method = route.stack[0]?.method?.toUpperCase();
-        const collectionName = endpoint.split("/")[2]?.replace("_", "-") || "#";
+        const resourceKey = endpoint.split("/")[2]?.replace("_", "-") || "#";
 
         const policyKey = `${method}:${endpoint}`;
 
         const policyItem: CreatePolicyDto = {
           name: `${method} ${endpoint}`,
-          collectionName,
+          key: resourceKey,
           endpoint,
           method,
           policyKey,
@@ -170,7 +244,7 @@ export class SeedService {
   }
 
   private async _createPoliciesAndMenus(policyMap: Map<string, CreatePolicyDto>) {
-    const collectionNameSet = new Set<string>();
+    const policyKeySet = new Set<string>();
 
     // Create policies
     const polices: Record<string, any>[] = [];
@@ -182,38 +256,38 @@ export class SeedService {
 
       if (!res) polices.push(policy);
 
-      collectionNameSet.add(policy.collectionName);
+      policyKeySet.add(policy.key);
     }
 
     // Create policy group
     for (const policy of polices) {
-      const res = await this.policyGroupService.findOne({
-        collectionName: policy.collectionName,
+      const res = await this.resourceService.findOne({
+        key: policy.key,
       });
 
       if (res) {
-        policy.policyGroupId = res._id;
+        policy.resourceId = res._id;
       } else {
-        const policyGroupCreated = await this.policyGroupService.create({
-          name: convertToTitleCase(policy.collectionName),
-          collectionName: policy.collectionName,
+        const resourceCreated = await this.resourceService.create({
+          name: convertToTitleCase(policy.key),
+          key: policy.key,
           description: `${policy.name} policy group`,
         });
 
-        policy.policyGroupId = policyGroupCreated._id;
+        policy.resourceId = resourceCreated._id;
       }
     }
 
     await this.policyService.createMany(polices);
-    await this._createMenus(Array.from(collectionNameSet));
+    await this._createMenus(Array.from(policyKeySet));
   }
 
-  private async _createMenus(collectionNames: string[]) {
+  private async _createMenus(policyKeys: string[]) {
     let position = 1;
-    for (const collectionName of collectionNames) {
+    for (const key of policyKeys) {
       const menuItem: CreateSystemMenuDto = {
-        name: convertToTitleCase(collectionName),
-        href: collectionName,
+        name: convertToTitleCase(key),
+        href: key,
         position,
         isHorizontal: false,
         isShow: true,

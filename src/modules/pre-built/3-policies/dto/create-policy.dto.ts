@@ -5,11 +5,11 @@ import { HttpMethod } from "../enum/http-method";
 
 export class CreatePolicyDto {
   policyKey: string;
-  collectionName?: string;
+  key?: string;
 
   @IsNotEmpty()
   @IsObjectId()
-  readonly policyGroupId?: ObjectId;
+  readonly resourceId?: ObjectId;
 
   @IsNotEmpty()
   @IsString()

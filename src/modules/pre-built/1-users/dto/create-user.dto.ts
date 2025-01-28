@@ -1,24 +1,23 @@
 import { Type } from "class-transformer";
 import {
-  IsArray,
   IsBoolean,
   IsDate,
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
 } from "class-validator";
+import { ObjectId } from "mongodb";
+import { IsObjectId } from "~common/validators/objectId";
 import { AccountStatus } from "../enums/account-status.enum";
 import { AccountTypeEnum } from "../enums/account-type.enum";
 import { GenderEnum } from "../enums/gender.enum";
-import { RoleEnum } from "../enums/role.enum";
 
 export class CreateUserDto {
-  @IsArray()
-  @IsEnum(RoleEnum, { each: true })
-  roles: RoleEnum[];
+  @IsOptional()
+  @IsObjectId({ each: true })
+  roleIds?: ObjectId[];
 
   @IsOptional()
   @IsString()
@@ -49,7 +48,7 @@ export class CreateUserDto {
   @IsString()
   fullName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   dateBirth?: Date;
@@ -82,15 +81,4 @@ export class CreateUserDto {
   fcmTokens?: string[];
 
   // Features
-  @IsOptional()
-  @IsNumber()
-  reputation?: number;
-
-  @IsOptional()
-  @IsNumber()
-  questionsCount?: number;
-
-  @IsOptional()
-  @IsNumber()
-  answersCount?: number;
 }

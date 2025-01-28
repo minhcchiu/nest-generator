@@ -4,10 +4,10 @@ import { HydratedDocument } from "mongoose";
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: "usergroups",
+  collection: "roles",
 })
-export class UserGroup {
-  @Prop({ type: String, required: true, unique: true })
+export class Role {
+  @Prop({ type: String, required: true, unique: true, uppercase: true })
   readonly name: string;
 
   @Prop({ type: String })
@@ -17,7 +17,7 @@ export class UserGroup {
   readonly position?: number;
 }
 
-type UserGroupDocument = HydratedDocument<UserGroup>;
-const UserGroupSchema = SchemaFactory.createForClass(UserGroup);
+type RoleDocument = HydratedDocument<Role>;
+const RoleSchema = SchemaFactory.createForClass(Role);
 
-export { UserGroupDocument, UserGroupSchema };
+export { RoleDocument, RoleSchema };

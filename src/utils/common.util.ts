@@ -102,9 +102,13 @@ export const calculateBadges = (
   return badgesCount;
 };
 
-export function arrayToMap<T, K>(items: T[], keySelector: (item: T) => K): Map<K, T> {
+export function arrayToMap<T, K>(items: T[], keySelector: (item: T) => K): Map<K, T[]> {
   return items.reduce((map, item) => {
-    map.set(keySelector(item), item);
+    const key = keySelector(item);
+
+    if (map.has(key)) map.get(key)?.push(item);
+    else map.set(key, [item]);
+
     return map;
-  }, new Map<K, T>());
+  }, new Map<K, T[]>());
 }

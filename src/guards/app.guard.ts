@@ -6,7 +6,7 @@ import { CacheService } from "~shared/cache/cache.service.";
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { TokenPayload } from "~modules/pre-built/5-tokens/interface";
+import { DecodedToken, TokenPayload } from "~modules/pre-built/5-tokens/interface";
 import { TokenService } from "~modules/pre-built/5-tokens/token.service";
 import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { UserPolicyType } from "./types/user-policy.type";
@@ -47,13 +47,13 @@ export class AppGuard implements CanActivate {
     try {
       const decoded = await this.tokenService.verifyAccessToken(token);
 
-      const tokenPayload: TokenPayload = {
+      const decodedToken: DecodedToken = {
         ...decoded,
-        _id: stringIdToObjectId(decoded._id),
-        userGroupIds: decoded.userGroupIds?.map(grid => stringIdToObjectId(grid)),
+        userId: stringIdToObjectId(decoded.userId.toString()),
+        roleIds: decoded.roleIds?.map(roleId => stringIdToObjectId(roleId)),
       };
 
-      request.user = tokenPayload;
+      request.user = decodedToken;
 
       if (!this.isAccessAllowed(policy, request.user)) throw new UnauthorizedException();
 
@@ -75,22 +75,23 @@ export class AppGuard implements CanActivate {
   }
 
   private isAccessAllowed(policy: UserPolicyType, user: TokenPayload) {
-    const { userGroupIds, userIds, blockedUserGroupIds, isAuthenticated } = policy;
+    const { roleIds, userIds, blockedUserGroupIds, isAuthenticated } = policy;
 
     const isHasBlockedGroup = blockedUserGroupIds?.some(id =>
-      user.userGroupIds.some(gid => gid.toString() === id.toString()),
+      user.roleIds.some(gid => gid.toString() === id.toString()),
     );
 
     if (isHasBlockedGroup) return false; // block all users in blockedUserGroupIds
 
     if (isAuthenticated) return true; // allow all authenticated users
 
-    const isHasGroup = userGroupIds.some(id =>
-      user.userGroupIds.some(gid => gid.toString() === id.toString()),
+    const isHasRole = roleIds.some(id =>
+      user.roleIds.some(gid => gid.toString() === id.toString()),
     );
-    if (isHasGroup) return true; // allow all users in userGroupIds
 
-    const isHasUser = userIds.some(id => id.toString() === user._id.toString());
+    if (isHasRole) return true; // allow all users in roleIds
+
+    const isHasUser = userIds.some(id => id.toString() === user.userId.toString());
 
     return isHasUser; // allow all users in userIds
   }
@@ -108,12 +109,12 @@ export class AppGuard implements CanActivate {
 
     if (!policy) throw new UnauthorizedException("Policy not found!");
 
-    const { isPublic, userIds, userGroupIds, blockedUserGroupIds, isAuthenticated } = policy;
+    const { isPublic, userIds, roleIds, blockedUserGroupIds, isAuthenticated } = policy;
 
     // save to cache
     this.cacheService.setUserPolices(cacheKey, {
       isPublic,
-      userGroupIds,
+      roleIds,
       userIds,
       blockedUserGroupIds,
       isAuthenticated,

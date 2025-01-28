@@ -14,15 +14,19 @@ export class Token {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, index: 1 })
   userId: ObjectId;
 
-  @Prop({ type: String, required: true, index: 1 })
-  token: string;
+  @Prop([
+    {
+      token: { type: String, required: true },
+      tokenId: { type: String, required: true },
+      expiresAt: { type: Date, required: true },
+    },
+  ])
+  tokens: { token: string; expiresAt: Date; tokenId: string }[];
 
-  @Prop({ type: Number })
-  expiresAt: number;
+  @Prop({ type: Date, index: { expireAfterSeconds: 0 } })
+  expiresAt: Date;
 }
 
 const TokenSchema = SchemaFactory.createForClass(Token);
-
-TokenSchema.index({ expiresAt: 1 }, { expires: "50d" });
 
 export { TokenDocument, TokenSchema };

@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
+import { addMinutes } from "date-fns";
 import { ObjectId } from "mongodb";
 import { Model } from "mongoose";
 import { EnvStatic } from "src/configurations/static.env";
 import { BaseService } from "~base-inherit/base.service";
-import { DocumentType } from "~types/document.type";
+import { generateRandomKey } from "~helpers/generate-random-key";
 import { RegisterDto } from "../1-auth/dto/register.dto";
-import { User } from "../1-users/schemas/user.schema";
-import { getTokenPayloadFromUser } from "../1-users/select/auth.select";
+import { UserDocument } from "../1-users/schemas/user.schema";
 import { DecodedToken, TokenPayload } from "./interface";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
@@ -25,17 +25,29 @@ export class TokenService extends BaseService<TokenDocument> {
     this.tokenService = this;
   }
 
-  async generateUserToken(payload: RegisterDto) {
-    const { registerToken } = EnvStatic.getJWTConfig();
+  async generateToken(payload: Record<string, any>, secret: string, expiresIn: number) {
+    const expiredDate = addMinutes(new Date(), expiresIn);
+    const token = await this.jwtService.signAsync(
+      {
+        ...payload,
+        expiresAt: expiredDate,
+      },
+      { secret, expiresIn: `${expiresIn}m` },
+    );
 
-    return this._generateToken(payload, registerToken.secretKey, registerToken.expiresIn);
+    return { token, expiresAt: expiredDate };
   }
 
-  async generateForgotPasswordToken(user: User & { _id: ObjectId }) {
+  async generateRegisterUserToken(payload: RegisterDto) {
+    const { registerToken } = EnvStatic.getJWTConfig();
+
+    return this.generateToken(payload, registerToken.secretKey, registerToken.expiresIn);
+  }
+
+  async generateForgotPasswordToken(user: UserDocument) {
     const payload: TokenPayload = {
-      _id: user._id,
-      roles: user.roles,
-      userGroupIds: user.userGroupIds,
+      userId: user._id,
+      roleIds: user.roleIds,
       fullName: user.fullName,
       username: user.username,
       email: user.email,
@@ -46,20 +58,11 @@ export class TokenService extends BaseService<TokenDocument> {
 
     const { forgotPasswordToken } = EnvStatic.getJWTConfig();
 
-    return this._generateToken(
+    return this.generateToken(
       payload,
       forgotPasswordToken.secretKey,
       forgotPasswordToken.expiresIn,
     );
-  }
-
-  async generateAuthTokens(payload: TokenPayload) {
-    const [accessToken, refreshToken] = await Promise.all([
-      this._generateAccessToken(payload),
-      this._generateRefreshToken(payload),
-    ]);
-
-    return { accessToken, refreshToken };
   }
 
   async verifyAccessToken(token: string): Promise<DecodedToken> {
@@ -86,44 +89,16 @@ export class TokenService extends BaseService<TokenDocument> {
     return this._verifyToken(token, forgotPasswordToken.secretKey);
   }
 
-  async generateUserAuth(user: DocumentType<User>) {
-    const payload = getTokenPayloadFromUser(user);
-
-    const { accessToken, refreshToken } = await this.generateAuthTokens(payload);
-
-    await this.tokenService.updateOne(
-      { userId: user._id },
-      { userId: user._id, ...refreshToken },
-      { upsert: true },
-    );
-
-    return { accessToken, refreshToken, user: getTokenPayloadFromUser(user) };
-  }
-
-  async _generateToken(payload: Record<string, any>, secret: string, expiresIn: number) {
-    const token = await this.jwtService.signAsync(
-      { ...payload },
-      {
-        secret,
-        expiresIn: `${expiresIn}m`,
-      },
-    );
-
-    const expiresAt = new Date().getTime() + expiresIn * 60 * 1000;
-
-    return { token, expiresAt };
-  }
-
   async _generateAccessToken(payload: TokenPayload) {
     const { accessToken } = EnvStatic.getJWTConfig();
 
-    return this._generateToken(payload, accessToken.secretKey, accessToken.expiresIn);
+    return this.generateToken(payload, accessToken.secretKey, accessToken.expiresIn);
   }
 
   async _generateRefreshToken(payload: TokenPayload) {
     const { refreshToken } = EnvStatic.getJWTConfig();
 
-    return this._generateToken(payload, refreshToken.secretKey, refreshToken.expiresIn);
+    return this.generateToken(payload, refreshToken.secretKey, refreshToken.expiresIn);
   }
 
   async _verifyToken(token: string, secretKey?: string) {
@@ -132,5 +107,48 @@ export class TokenService extends BaseService<TokenDocument> {
     return this.jwtService.verifyAsync(token, {
       secret: secretKey || config.secretKey,
     });
+  }
+
+  async generateAuthTokens(payload: TokenPayload) {
+    const jwtConfig = EnvStatic.getJWTConfig();
+
+    payload.tokenId = generateRandomKey(15);
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateToken(payload, jwtConfig.accessToken.secretKey, jwtConfig.accessToken.expiresIn),
+      this.generateToken(
+        payload,
+        jwtConfig.refreshToken.secretKey,
+        jwtConfig.refreshToken.expiresIn,
+      ),
+    ]);
+
+    await this.saveToken({
+      userId: payload.userId,
+      token: refreshToken.token,
+      tokenId: payload.tokenId,
+      expiresAt: refreshToken.expiresAt,
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async saveToken(input: { userId: ObjectId; token: string; tokenId: string; expiresAt: Date }) {
+    const existingToken = await this.tokenService.findOne({ userId: input.userId });
+
+    const validTokens =
+      existingToken?.tokens?.filter(t => new Date(t.expiresAt) > new Date()) || [];
+    validTokens.push({ token: input.token, expiresAt: input.expiresAt, tokenId: input.tokenId });
+
+    return this.tokenService.updateOne(
+      { userId: input.userId },
+      {
+        tokens: validTokens,
+        expiresAt: new Date(
+          Math.max(existingToken?.expiresAt.getTime() || 0, input.expiresAt.getTime()),
+        ),
+      },
+      { upsert: true },
+    );
   }
 }

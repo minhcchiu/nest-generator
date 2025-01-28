@@ -33,21 +33,21 @@ export class PolicyController {
       { $match: filter },
       {
         $group: {
-          _id: "$policyGroupId",
+          _id: "$resourceId",
           policies: { $push: "$$ROOT" },
         },
       },
       {
         $lookup: {
-          from: "policy-groups",
+          from: "resources",
           localField: "_id",
           foreignField: "_id",
-          as: "policyGroup",
+          as: "resource",
         },
       },
-      { $unwind: "$policyGroup" },
-      { $sort: { "policyGroup.name": 1 } },
-      { $project: { "policyGroup.collectionName": 0 } },
+      { $unwind: "$resource" },
+      { $sort: { "resource.name": 1 } },
+      { $project: { "resource.collectionName": 0 } },
     ]);
 
     return groups;

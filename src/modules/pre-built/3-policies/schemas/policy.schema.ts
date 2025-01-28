@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { HydratedDocument, SchemaTypes } from "mongoose";
+import { Role } from "~modules/pre-built/2-roles/schemas/role.schema";
 import { UserGroup } from "~modules/pre-built/2-user-groups/schemas/user-group.schema";
-import { PolicyGroup } from "~modules/pre-built/3-policy-groups/schemas/policy-group.schema";
+import { Resource } from "~modules/pre-built/3-resources/schemas/resource.schema";
 import { HttpMethod } from "../enum/http-method";
 
 @Schema({
@@ -11,8 +12,8 @@ import { HttpMethod } from "../enum/http-method";
   collection: "policies",
 })
 export class Policy {
-  @Prop({ type: SchemaTypes.ObjectId, ref: PolicyGroup.name })
-  readonly policyGroupId: ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, ref: Resource.name })
+  readonly resourceId: ObjectId;
 
   @Prop({ type: String, required: true, unique: true })
   readonly name: string;
@@ -36,10 +37,10 @@ export class Policy {
   userIds: ObjectId[] = [];
 
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
+    type: [{ type: SchemaTypes.ObjectId, ref: Role.name }],
     default: [],
   })
-  userGroupIds: ObjectId[] = [];
+  roleIds: ObjectId[] = [];
 
   @Prop({ type: Boolean, default: false })
   readonly isPublic: boolean;

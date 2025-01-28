@@ -34,14 +34,14 @@ export class MailService {
   }
 
   async sendUserToken(
-    body: { token: string; expiresAt: number; fullName: string },
+    body: { token: string; expiresAt: Date; fullName: string },
     to: string,
     from?: string,
   ) {
     const { name, defaults } = EnvStatic.getMailerConfig();
     const { verifyAccountUrl } = EnvStatic.getAppConfig();
 
-    const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
+    const expiresIn = differenceInMinutes(body.expiresAt, new Date());
     const verificationLink = `${verifyAccountUrl}?token=${body.token}`;
 
     // options
@@ -58,14 +58,14 @@ export class MailService {
   }
 
   async sendForgotPasswordToken(
-    body: { token: string; expiresAt: number; fullName: string },
+    body: { token: string; expiresAt: Date; fullName: string },
     to: string,
     from?: string,
   ) {
     const { name, defaults } = EnvStatic.getMailerConfig();
     const { resetPasswordUrl } = EnvStatic.getAppConfig();
 
-    const expiresIn = differenceInMinutes(body.expiresAt, Date.now());
+    const expiresIn = differenceInMinutes(body.expiresAt, new Date());
     const resetPasswordLink = `${resetPasswordUrl}?token=${body.token}`;
 
     // options

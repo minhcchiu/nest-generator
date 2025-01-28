@@ -42,13 +42,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     if (!user) return socket.disconnect(true);
 
-    const userId = user._id.toString();
+    const userId = user.userId;
 
     // Step 01: Join room
-    socket.join(userId);
+    socket.join(userId.toString());
 
     // Step 02: Add socket id
-    socketHelper.addSocketId(userId, socket.id);
+    socketHelper.addSocketId(userId.toString(), socket.id);
 
     // Step 03: Emit to user after login
     socket.emit(SOCKET_EVENTS.UsersOnline, socketHelper.getUsersOnline());
@@ -64,7 +64,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     if (!user) return socket.disconnect(true);
 
-    const userId = user._id.toString();
+    const userId = user.userId.toString();
 
     // Step 01: Remove socket id
     socketHelper.removeSocketId(userId, socket.id);

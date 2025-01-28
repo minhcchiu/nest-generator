@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class CreateUserGroupDto {
+export class CreateRoleDto {
   @IsNotEmpty()
   @IsString()
   readonly name: string;

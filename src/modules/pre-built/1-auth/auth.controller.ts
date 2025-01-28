@@ -1,8 +1,8 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { ObjectId } from "mongodb";
-import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
+import { GetDecodedToken } from "~common/decorators/get-decoded-token.decorator";
 import { Public } from "~decorators/public.decorator";
+import { DecodedToken } from "~modules/pre-built/5-tokens/interface";
 import { AuthService } from "./auth.service";
 import { EmailDto } from "./dto/email.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -22,6 +22,13 @@ export class AuthController {
   @Post("register")
   async register(@Body() body: RegisterDto) {
     return this.authService.register(body);
+  }
+
+  @Public()
+  @Get("tokens")
+  @HttpCode(HttpStatus.OK)
+  async getTokens() {
+    return this.authService.getTokens();
   }
 
   @Public()
@@ -55,8 +62,8 @@ export class AuthController {
 
   @Post("logout")
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: ObjectId, @Body("fcmToken") fcmToken?: string) {
-    return this.authService.logout(userId, fcmToken);
+  async logout(@GetDecodedToken() decodedToken: DecodedToken, @Body("fcmToken") fcmToken?: string) {
+    return this.authService.logout(decodedToken, fcmToken);
   }
 
   @Public()

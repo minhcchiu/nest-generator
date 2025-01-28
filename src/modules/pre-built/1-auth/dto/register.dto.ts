@@ -1,5 +1,5 @@
 import { PickType } from "@nestjs/mapped-types";
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
 import { OtpTypeEnum } from "~modules/pre-built/6-otp/enums/otp-type.enum";
 import { SendOtpToEnum } from "~modules/pre-built/6-otp/enums/send-otp-to";
 import { CreateUserDto } from "~pre-built/1-users/dto/create-user.dto";
@@ -14,6 +14,8 @@ export class RegisterDto extends PickType(CreateUserDto, [
   "avatar",
   "accountType",
   "status",
+  "dateBirth",
+  "bio",
 ] as const) {
   @IsOptional()
   @IsString()
@@ -23,9 +25,9 @@ export class RegisterDto extends PickType(CreateUserDto, [
   @IsString()
   otpCode?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  acceptTerms: boolean;
+  acceptTerms?: boolean;
 
   @IsOptional()
   @IsString()
