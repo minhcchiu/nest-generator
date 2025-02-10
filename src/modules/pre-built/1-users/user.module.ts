@@ -1,5 +1,6 @@
 import { forwardRef, Global, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { RoleModule } from "~modules/pre-built/2-roles/role.module";
 import { TagModule } from "~modules/questions-modules/3-tags/tag.module";
 import { HashingService } from "./hashing/hashing.service";
 import { User, UserSchema } from "./schemas/user.schema";
@@ -16,6 +17,7 @@ import { UserService } from "./user.service";
       },
     ]),
     forwardRef(() => TagModule),
+    forwardRef(() => RoleModule),
   ],
   controllers: [UserController],
   providers: [UserService, HashingService],

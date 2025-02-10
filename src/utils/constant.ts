@@ -1,6 +1,7 @@
 import { CreateUserDto } from "~modules/pre-built/1-users/dto/create-user.dto";
 import { AccountStatus } from "~modules/pre-built/1-users/enums/account-status.enum";
 import { AccountTypeEnum } from "~modules/pre-built/1-users/enums/account-type.enum";
+import { HttpMethod } from "~modules/pre-built/3-policies/enum/http-method";
 
 export const ROLES_DEFAULT = {
   User: "USER",
@@ -15,6 +16,14 @@ export const SUPPER_ADMIN_ACCOUNT: CreateUserDto = {
   accountType: AccountTypeEnum.Local,
   bio: `Supper Admin`,
   status: AccountStatus.Verified,
+};
+
+export const HttpMethodActions = {
+  [HttpMethod.Get]: "Read",
+  [HttpMethod.Post]: "Create",
+  [HttpMethod.Put]: "Update",
+  [HttpMethod.Patch]: "Update",
+  [HttpMethod.Delete]: "Delete",
 };
 
 export const ReputationValue = {

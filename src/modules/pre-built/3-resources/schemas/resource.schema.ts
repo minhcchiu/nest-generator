@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { ObjectId } from "mongodb";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 
 @Schema({
   timestamps: true,
@@ -11,10 +12,16 @@ export class Resource {
   readonly name: string;
 
   @Prop({ type: String, unique: true, required: true })
-  readonly key: string;
+  readonly resourceKey: string;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: "User" })
+  readonly createdBy: ObjectId;
 
   @Prop({ type: String })
   readonly description?: string;
+
+  @Prop([{ type: SchemaTypes.ObjectId, ref: Resource.name }])
+  readonly relationResourceIds: ObjectId[] = [];
 }
 
 type ResourceDocument = HydratedDocument<Resource>;

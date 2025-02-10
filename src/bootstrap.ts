@@ -23,7 +23,7 @@ export async function bootstrap() {
   // Get a list of all the registered routes
   const server = app.getHttpServer();
   const router = server._events.request._router;
-  await app.get<SeedService>(SeedService).seedPolicies(router.stack);
+  await app.get<SeedService>(SeedService).seedResourcesAndPolicies(router.stack);
   await app.get<SeedService>(SeedService).seedRolesDefault();
   await app.get<SeedService>(SeedService).seedSupperAdmin();
   // await app.get<SeedService>(SeedService).seedProvincesDistrictsWards();

@@ -75,13 +75,13 @@ export class AppGuard implements CanActivate {
   }
 
   private isAccessAllowed(policy: UserPolicyType, user: TokenPayload) {
-    const { roleIds, userIds, blockedUserGroupIds, isAuthenticated } = policy;
+    const { roleIds, blockedRoleIds, isAuthenticated } = policy;
 
-    const isHasBlockedGroup = blockedUserGroupIds?.some(id =>
+    const isHasBlockedRole = blockedRoleIds?.some(id =>
       user.roleIds.some(gid => gid.toString() === id.toString()),
     );
 
-    if (isHasBlockedGroup) return false; // block all users in blockedUserGroupIds
+    if (isHasBlockedRole) return false; // block all users in blockedRoleIds
 
     if (isAuthenticated) return true; // allow all authenticated users
 
@@ -91,9 +91,7 @@ export class AppGuard implements CanActivate {
 
     if (isHasRole) return true; // allow all users in roleIds
 
-    const isHasUser = userIds.some(id => id.toString() === user.userId.toString());
-
-    return isHasUser; // allow all users in userIds
+    return false;
   }
 
   private async getPolicy(endpoint: string, method: HttpMethod): Promise<UserPolicyType> {
@@ -109,14 +107,13 @@ export class AppGuard implements CanActivate {
 
     if (!policy) throw new UnauthorizedException("Policy not found!");
 
-    const { isPublic, userIds, roleIds, blockedUserGroupIds, isAuthenticated } = policy;
+    const { isPublic, roleIds, blockedRoleIds, isAuthenticated } = policy;
 
     // save to cache
     this.cacheService.setUserPolices(cacheKey, {
       isPublic,
       roleIds,
-      userIds,
-      blockedUserGroupIds,
+      blockedRoleIds,
       isAuthenticated,
     });
 

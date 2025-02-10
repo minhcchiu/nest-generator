@@ -13,6 +13,7 @@ import { ObjectId } from "mongodb";
 
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Public } from "~common/decorators/public.decorator";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { GetCurrentUserId } from "~decorators/get-current-user-id.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
@@ -29,15 +30,7 @@ export class ResourceController {
   ) {}
 
   //  ----- Method: GET -----
-  @Get("/")
-  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
-    const res = await this.resourceService.findMany(filter, options);
-
-    await this.policyService.assignPoliciesToResources(res);
-
-    return res;
-  }
-
+  @Public()
   @Get("/paginate")
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
     const res = await this.resourceService.paginate(filter, options);
@@ -53,6 +46,16 @@ export class ResourceController {
     @GetAqp() { projection, populate }: PaginationDto,
   ) {
     return this.resourceService.findById(id, { projection, populate });
+  }
+
+  @Public()
+  @Get("/")
+  async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
+    const res = await this.resourceService.findMany(filter, options);
+
+    await this.policyService.assignPoliciesToResources(res);
+
+    return res;
   }
 
   //  ----- Method: POST -----

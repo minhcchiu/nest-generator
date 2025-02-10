@@ -7,14 +7,14 @@ import { HydratedDocument } from "mongoose";
   collection: "roles",
 })
 export class Role {
-  @Prop({ type: String, required: true, unique: true, uppercase: true })
+  @Prop({ type: String, required: true, unique: true })
   readonly name: string;
+
+  @Prop({ type: String, required: true, unique: true, uppercase: true, index: true })
+  readonly key: string;
 
   @Prop({ type: String })
   readonly description?: string;
-
-  @Prop({ type: Number })
-  readonly position?: number;
 }
 
 type RoleDocument = HydratedDocument<Role>;

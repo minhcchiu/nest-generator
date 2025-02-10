@@ -10,8 +10,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model, QueryOptions } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
+import { RoleService } from "~modules/pre-built/2-roles/role.service";
 import { TagService } from "~modules/questions-modules/3-tags/tag.service";
-import { ReputationValue } from "~utils/constant";
+import { ReputationValue, SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { HashingService } from "./hashing/hashing.service";
@@ -24,11 +25,22 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
+    private readonly roleService: RoleService,
     @Inject(forwardRef(() => TagService))
     private readonly tagService: TagService,
   ) {
     super(model);
     this.userService = this;
+  }
+
+  async getAdminAccount() {
+    const admin = await this.userService.findOne({
+      username: SUPPER_ADMIN_ACCOUNT.username,
+      email: SUPPER_ADMIN_ACCOUNT.email,
+      status: SUPPER_ADMIN_ACCOUNT.status,
+    });
+
+    return admin;
   }
 
   async validateCreateUser(input: Record<string, any>, otherFilter: Record<string, any> = {}) {

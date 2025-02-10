@@ -7,18 +7,17 @@ import { Role } from "./schemas/role.schema";
 
 @Injectable()
 export class RoleService extends BaseService<Role> {
-  private roleService: RoleService;
+  private roleService = this;
+
   constructor(@InjectModel(Role.name) model: Model<Role>) {
     super(model);
-
-    this.roleService = this;
   }
 
   async getRoleSupperAdmin() {
-    return this.roleService.findOne({ name: ROLES_DEFAULT.SupperAdmin });
+    return this.roleService.findOne({ key: ROLES_DEFAULT.SupperAdmin });
   }
 
   async getRoleUser() {
-    return this.roleService.findOne({ name: ROLES_DEFAULT.User });
+    return this.roleService.findOne({ key: ROLES_DEFAULT.User });
   }
 }

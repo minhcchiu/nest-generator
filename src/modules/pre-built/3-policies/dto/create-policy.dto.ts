@@ -4,12 +4,15 @@ import { IsObjectId } from "~common/validators/objectId";
 import { HttpMethod } from "../enum/http-method";
 
 export class CreatePolicyDto {
+  resourceKey?: string;
+
+  @IsNotEmpty()
+  @IsString()
   policyKey: string;
-  key?: string;
 
   @IsNotEmpty()
   @IsObjectId()
-  readonly resourceId?: ObjectId;
+  resourceId?: ObjectId;
 
   @IsNotEmpty()
   @IsString()

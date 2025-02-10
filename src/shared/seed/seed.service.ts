@@ -4,11 +4,13 @@ import { join } from "path";
 import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 
+import { ObjectId } from "mongodb";
 import { EnvStatic } from "src/configurations/static.env";
 import { HashingService } from "~modules/pre-built/1-users/hashing/hashing.service";
 import { UserService } from "~modules/pre-built/1-users/user.service";
 import { RoleService } from "~modules/pre-built/2-roles/role.service";
 import { CreatePolicyDto } from "~modules/pre-built/3-policies/dto/create-policy.dto";
+import { CreateResourceDto } from "~modules/pre-built/3-resources/dto/create-resource.dto";
 import { ResourceService } from "~modules/pre-built/3-resources/resource.service";
 import { CreateSystemMenuDto } from "~modules/pre-built/4-system-menus/dto/create-system-menu.dto";
 import { SystemMenuService } from "~modules/pre-built/4-system-menus/system-menu.service";
@@ -17,7 +19,7 @@ import { ProvinceService } from "~pre-built/8-provinces/province.service";
 import { DistrictService } from "~pre-built/9-districts/district.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { convertToTitleCase } from "~utils/common.util";
-import { ROLES_DEFAULT, SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
+import { HttpMethodActions, ROLES_DEFAULT, SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
 
 @Injectable()
 export class SeedService {
@@ -149,14 +151,12 @@ export class SeedService {
 
   async seedRolesDefault() {
     const rolesCreated = await Promise.all(
-      Object.values(ROLES_DEFAULT).map((roleDefault, index) =>
+      Object.values(ROLES_DEFAULT).map(roleDefault =>
         this.roleService.updateOne(
+          { key: roleDefault },
           {
             name: roleDefault,
-          },
-          {
-            name: roleDefault,
-            index: index,
+            key: roleDefault,
           },
           {
             upsert: true,
@@ -214,72 +214,72 @@ export class SeedService {
     });
   }
 
-  async seedPolicies(routerStacks: any[]) {
+  async seedResourcesAndPolicies(routerStacks: any[]) {
+    const adminAccount = await this.userService.getAdminAccount();
+    const resourceMap = new Map<string, CreateResourceDto>();
     const policyMap = new Map<string, CreatePolicyDto>();
 
     routerStacks
       .filter(({ route }) => route && route.path)
-      .forEach(({ route }) => {
+      .forEach(async ({ route }) => {
         const endpoint = removeTrailingSlash(route.path);
         const method = route.stack[0]?.method?.toUpperCase();
-        const resourceKey = endpoint.split("/")[2]?.replace("_", "-") || "#";
+        const resourceKey = endpoint.split("/")[2] || "#";
 
-        const policyKey = `${method}:${endpoint}`;
-
-        const policyItem: CreatePolicyDto = {
-          name: `${method} ${endpoint}`,
-          key: resourceKey,
-          endpoint,
-          method,
-          policyKey,
+        const resourceItem: CreateResourceDto = {
+          createdBy: adminAccount._id,
+          name: convertToTitleCase(resourceKey.replace("_", " ")),
+          relationResourceIds: [],
+          resourceKey,
+          description: `Manage ${convertToTitleCase(resourceKey)}`,
         };
 
-        if (!policyMap.has(policyKey)) policyMap.set(policyKey, policyItem);
+        const policyItem: CreatePolicyDto = {
+          name: `${HttpMethodActions[method]}`,
+          endpoint,
+          method,
+          policyKey: `${method}:${endpoint}`,
+          resourceKey,
+        };
+
+        if (!resourceMap.has(policyItem.resourceKey))
+          resourceMap.set(resourceItem.resourceKey, resourceItem);
+        if (!policyMap.has(policyItem.policyKey)) policyMap.set(policyItem.policyKey, policyItem);
       });
 
-    await this._createPoliciesAndMenus(policyMap);
+    await this._createResources(Array.from(resourceMap.values()));
+    await this._createPolicies(Array.from(policyMap.values()));
     await this._addSupperAdminToPolicies();
 
     policyMap.clear();
   }
 
-  private async _createPoliciesAndMenus(policyMap: Map<string, CreatePolicyDto>) {
-    const policyKeySet = new Set<string>();
+  async _createResources(resources: CreateResourceDto[]) {
+    await Promise.all(
+      resources.map(item =>
+        this.resourceService.updateOne({ resourceKey: item.resourceKey }, item, {
+          upsert: true,
+        }),
+      ),
+    );
+  }
 
-    // Create policies
-    const polices: Record<string, any>[] = [];
-    for (const [_, policy] of policyMap) {
-      const res = await this.policyService.findOne({
-        endpoint: policy.endpoint,
-        method: policy.method,
-      });
+  private async _createPolicies(policies: CreatePolicyDto[]) {
+    const resources = await this.resourceService.findMany({});
+    const resourcesMap = new Map<string, ObjectId>(
+      resources.map(item => [item.resourceKey, item._id]),
+    );
 
-      if (!res) polices.push(policy);
+    const policesExists = await this.policyService.distinct("policyKey");
 
-      policyKeySet.add(policy.key);
-    }
+    const policiesItemNew = policies.filter(item => !policesExists.includes(item.policyKey));
 
-    // Create policy group
-    for (const policy of polices) {
-      const res = await this.resourceService.findOne({
-        key: policy.key,
-      });
-
-      if (res) {
-        policy.resourceId = res._id;
-      } else {
-        const resourceCreated = await this.resourceService.create({
-          name: convertToTitleCase(policy.key),
-          key: policy.key,
-          description: `${policy.name} policy group`,
-        });
-
-        policy.resourceId = resourceCreated._id;
-      }
-    }
-
-    await this.policyService.createMany(polices);
-    await this._createMenus(Array.from(policyKeySet));
+    await this.policyService.createMany(
+      policiesItemNew.map(item => ({
+        ...item,
+        resourceId: resourcesMap.get(item.resourceKey),
+      })),
+    );
   }
 
   private async _createMenus(policyKeys: string[]) {

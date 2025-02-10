@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { HydratedDocument, SchemaTypes } from "mongoose";
 import { Role } from "~modules/pre-built/2-roles/schemas/role.schema";
-import { UserGroup } from "~modules/pre-built/2-user-groups/schemas/user-group.schema";
 import { Resource } from "~modules/pre-built/3-resources/schemas/resource.schema";
 import { HttpMethod } from "../enum/http-method";
 
@@ -15,7 +14,7 @@ export class Policy {
   @Prop({ type: SchemaTypes.ObjectId, ref: Resource.name })
   readonly resourceId: ObjectId;
 
-  @Prop({ type: String, required: true, unique: true })
+  @Prop({ type: String, required: true })
   readonly name: string;
 
   @Prop({ type: String, unique: true, required: true })
@@ -31,12 +30,6 @@ export class Policy {
   readonly description?: string;
 
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
-    default: [],
-  })
-  userIds: ObjectId[] = [];
-
-  @Prop({
     type: [{ type: SchemaTypes.ObjectId, ref: Role.name }],
     default: [],
   })
@@ -49,9 +42,9 @@ export class Policy {
   readonly isAuthenticated: boolean;
 
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: UserGroup.name }],
+    type: [{ type: SchemaTypes.ObjectId, ref: Role.name }],
   })
-  blockedUserGroupIds?: ObjectId[];
+  blockedRoleIds?: ObjectId[];
 }
 
 type PolicyDocument = HydratedDocument<Policy>;

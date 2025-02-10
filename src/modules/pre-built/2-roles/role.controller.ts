@@ -12,6 +12,7 @@ import {
 import { ObjectId } from "mongodb";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
+import { Public } from "~common/decorators/public.decorator";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
 import { CreateRoleDto } from "./dto/create-role.dto";
@@ -23,6 +24,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   //  ----- Method: GET -----
+  @Public()
   @Get("/paginate")
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
     return this.roleService.paginate(filter, options);
@@ -36,6 +38,7 @@ export class RoleController {
     return this.roleService.findById(id, { projection, populate });
   }
 
+  @Public()
   @Get("/")
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
     return this.roleService.findMany(filter, options);
