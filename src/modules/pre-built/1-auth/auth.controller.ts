@@ -18,6 +18,7 @@ export class AuthController {
 
   //  ----- Method: POST -----
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
   @Post("register")
   async register(@Body() body: RegisterDto) {
@@ -40,6 +41,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @Post("social_login")
   @HttpCode(HttpStatus.OK)
   async socialLogin(@Body() body: SocialLoginDto) {
@@ -47,6 +49,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @Post("send_token")
   async sendToken(@Body() body: RegisterDto) {
@@ -54,6 +57,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
   @Post("activate_token")
   async activateToken(@Body() { token }: TokenDto) {
@@ -67,6 +71,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @Post("refresh_token")
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body() { token, fcmToken }: TokenDto) {
@@ -74,6 +79,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @Post("forgot_password")
   @HttpCode(HttpStatus.OK)
   async sendForgotPassword(@Body() { email }: EmailDto) {
@@ -81,6 +87,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @Post("reset_password/token")
   @HttpCode(HttpStatus.OK)
   async resetPasswordByToken(@Body() body: ResetPasswordWithTokenDto) {
@@ -88,6 +95,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 8, ttl: 60000 } })
   @Post("reset_password/otp")
   @HttpCode(HttpStatus.OK)
   async resetPasswordByOtp(@Body() body: ResetPasswordWithOtpDto) {
