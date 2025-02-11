@@ -49,7 +49,7 @@ export class AppGuard implements CanActivate {
 
       const decodedToken: DecodedToken = {
         ...decoded,
-        userId: stringIdToObjectId(decoded.userId.toString()),
+        _id: stringIdToObjectId(decoded._id.toString()),
         roleIds: decoded.roleIds?.map(roleId => stringIdToObjectId(roleId)),
       };
 

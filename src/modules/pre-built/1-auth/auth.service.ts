@@ -172,7 +172,7 @@ export class AuthService {
   async logout(decodedToken: DecodedToken, fcmToken?: string) {
     if (fcmToken) this.userService.removeFcmTokens([fcmToken]);
 
-    const tokens = await this.tokenService.findOne({ userId: decodedToken.userId });
+    const tokens = await this.tokenService.findOne({ userId: decodedToken._id });
 
     if (!tokens) return { message: "Logout success!" };
 
@@ -183,7 +183,7 @@ export class AuthService {
       Math.max(...validTokens.map(t => new Date(t.expiresAt).getTime())) || Date.now();
 
     this.tokenService.updateOne(
-      { userId: decodedToken.userId },
+      { userId: decodedToken._id },
       { $set: { tokens: validTokens, expiresAt: new Date(newExpiredAt) } },
     );
 
@@ -239,10 +239,10 @@ export class AuthService {
   async resetPasswordWithToken(input: ResetPasswordWithTokenDto) {
     const decoded = await this.tokenService.verifyForgotPasswordToken(input.token);
 
-    if (!decoded?.userId) throw new UnauthorizedException("Invalid refresh token!");
+    if (!decoded?._id) throw new UnauthorizedException("Invalid refresh token!");
 
     const tokenRemoved = await this.tokenService.updateOne(
-      { "tokens.tokenId": "FORGOT_PASSWORD", userId: decoded.userId, "tokens.token": input.token },
+      { "tokens.tokenId": "FORGOT_PASSWORD", userId: decoded._id, "tokens.token": input.token },
       { $pullAll: { tokens: { tokenId: "FORGOT_PASSWORD" } } },
     );
 

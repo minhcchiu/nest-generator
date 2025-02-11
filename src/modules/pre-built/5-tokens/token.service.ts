@@ -46,7 +46,7 @@ export class TokenService extends BaseService<TokenDocument> {
 
   async generateForgotPasswordToken(user: UserDocument) {
     const payload: TokenPayload = {
-      userId: user._id,
+      _id: user._id,
       roleIds: user.roleIds,
       fullName: user.fullName,
       username: user.username,
@@ -124,7 +124,7 @@ export class TokenService extends BaseService<TokenDocument> {
     ]);
 
     await this.saveToken({
-      userId: payload.userId,
+      userId: payload._id,
       token: refreshToken.token,
       tokenId: payload.tokenId,
       expiresAt: refreshToken.expiresAt,

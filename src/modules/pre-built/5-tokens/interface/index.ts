@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { AccountTypeEnum } from "~modules/pre-built/1-users/enums/account-type.enum";
 
 export interface TokenPayload {
-  readonly userId: ObjectId;
+  readonly _id: ObjectId;
   readonly roleIds: ObjectId[];
   readonly accountType: AccountTypeEnum;
   readonly fullName: string;
@@ -16,7 +16,7 @@ export interface TokenPayload {
 export interface DecodedToken {
   readonly iat: number;
   readonly exp: number;
-  readonly userId: ObjectId;
+  readonly _id: ObjectId;
   readonly roleIds: ObjectId[];
   readonly accountType: AccountTypeEnum;
   readonly fullName: string;

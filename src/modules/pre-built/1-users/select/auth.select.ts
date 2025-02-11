@@ -14,7 +14,7 @@ export const authSelect = {
 
 export const formatTokenPayload = (user: UserDocument): TokenPayload => {
   return {
-    userId: user._id,
+    _id: user._id,
     roleIds: user.roleIds,
     fullName: user.fullName,
     username: user.username,

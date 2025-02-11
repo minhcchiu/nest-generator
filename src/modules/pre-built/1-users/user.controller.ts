@@ -31,8 +31,8 @@ export class UserController {
   //  ----- Method: GET -----
   @Get("/me")
   @HttpCode(HttpStatus.OK)
-  async getMe(@GetCurrentUserId() id: string, @GetAqp() { projection, populate }: PaginationDto) {
-    const res = await this.userService.findById(stringIdToObjectId(id), {
+  async getMe(@GetCurrentUserId() id: ObjectId, @GetAqp() { projection, populate }: PaginationDto) {
+    const res = await this.userService.findById(id, {
       projection,
       populate,
     });
