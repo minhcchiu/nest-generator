@@ -11,7 +11,7 @@ export const ROLES_DEFAULT = {
 export const SUPPER_ADMIN_ACCOUNT: CreateUserDto = {
   username: "supperadmin",
   password: "supperadmin",
-  email: "supperadmin@localhost",
+  email: "supperadmin@local.com",
   fullName: "Supper Admin",
   accountType: AccountTypeEnum.Local,
   bio: `Supper Admin`,
