@@ -8,7 +8,7 @@ export class FileDetailDto {
 
   @IsOptional()
   @IsNumber()
-  position: number;
+  sortOrder: number;
 
   @IsString()
   @IsEnum(FileDetailEnum)

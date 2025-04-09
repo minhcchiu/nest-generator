@@ -22,7 +22,7 @@ export class Menu {
   readonly name?: string;
 
   @Prop({ type: Number })
-  readonly position?: number;
+  readonly sortOrder?: number;
 
   @Prop({ type: Boolean, default: false })
   readonly isHorizontal: boolean;

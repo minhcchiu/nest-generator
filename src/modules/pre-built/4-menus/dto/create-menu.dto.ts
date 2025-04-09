@@ -22,7 +22,7 @@ export class CreateMenuDto {
 
   @IsOptional()
   @IsNumber()
-  readonly position?: number;
+  readonly sortOrder?: number;
 
   @IsOptional()
   @IsBoolean()

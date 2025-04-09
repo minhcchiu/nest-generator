@@ -24,7 +24,7 @@ export class SystemMenu {
   readonly href?: string;
 
   @Prop({ type: Number, default: 0 })
-  readonly position: number;
+  readonly sortOrder: number;
 
   @Prop({ type: Boolean, default: false })
   readonly isHorizontal: boolean;

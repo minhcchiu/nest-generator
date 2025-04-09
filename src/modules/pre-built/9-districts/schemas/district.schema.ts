@@ -32,7 +32,7 @@ export class District {
   readonly codeName: string;
 
   @Prop({ type: Number, required: true })
-  readonly position: number;
+  readonly sortOrder: number;
 
   @Prop({ type: String })
   readonly administrativeUnit?: string;

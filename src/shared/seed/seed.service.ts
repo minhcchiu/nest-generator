@@ -60,7 +60,7 @@ export class SeedService {
       provincePosition++;
 
       const provinceItem = {
-        position: provincePosition,
+        sortOrder: provincePosition,
         name: pItem.Name,
         nameEn: pItem.NameEn,
         fullName: pItem.FullName,
@@ -86,7 +86,7 @@ export class SeedService {
           // Create District
           const districtItem = {
             provinceId: provinceCreated._id,
-            position: districtPosition + 1,
+            sortOrder: districtPosition + 1,
             name: dItem.Name,
             nameEn: dItem.nameEn,
             fullName: dItem.FullName,
@@ -117,7 +117,7 @@ export class SeedService {
                 fullName: wItem.FullName,
                 fullNameEn: wItem.FullNameEn,
                 codeName: wItem.CodeName,
-                position: wardPosition + 1,
+                sortOrder: wardPosition + 1,
                 administrativeUnit: wItem.AdministrativeUnit?.ShortName,
                 administrativeUnitEn: wItem.AdministrativeUnit?.ShortNameEn,
               };
@@ -283,12 +283,12 @@ export class SeedService {
   }
 
   private async _createMenus(policyKeys: string[]) {
-    let position = 1;
+    let sortOrder = 1;
     for (const key of policyKeys) {
       const menuItem: CreateSystemMenuDto = {
         name: convertToTitleCase(key),
         href: key,
-        position,
+        sortOrder,
         isHorizontal: false,
         isShow: true,
         isSystem: true,
@@ -299,7 +299,7 @@ export class SeedService {
         upsert: true,
       });
 
-      position++;
+      sortOrder++;
     }
   }
 

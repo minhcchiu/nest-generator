@@ -25,7 +25,7 @@ export class CreateSystemMenuDto {
 
   @IsOptional()
   @IsNumber()
-  readonly position?: number;
+  readonly sortOrder?: number;
 
   @IsOptional()
   @IsBoolean()

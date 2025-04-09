@@ -18,7 +18,7 @@ export class AqpMiddleware implements NestMiddleware {
       population: populate,
       skip: page,
       ...query
-    } = aqp(req.query, {
+    } = aqp(req.query as Record<string, string>, {
       skipKey: "_page",
       limitKey: "_limit",
       populationKey: "_populate",
