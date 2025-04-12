@@ -6,38 +6,22 @@ import { Model } from "mongoose";
 import { join } from "path";
 import * as pluralize from "pluralize";
 import { BaseService } from "~base-inherit/base.service";
-import { generateControllerCode } from "~modules/pre-built/14-generators/helpers/generate-controller-code.helper";
-import { generateDtoCode } from "~modules/pre-built/14-generators/helpers/generate-dto-code.heloper";
-import { getDtoRequiredImports } from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
-import { generateModuleCode } from "~modules/pre-built/14-generators/helpers/generate-module-code.helper";
-import { generateSchemaCode } from "~modules/pre-built/14-generators/helpers/generate-schema-code.heloper";
-import { generateDtoProperty } from "~modules/pre-built/14-generators/helpers/generate-schema-property.helper";
-import { generateServiceCode } from "~modules/pre-built/14-generators/helpers/generate-service-code.helper";
-import { CreateGeneratorDto } from "./dto/create-generator.dto";
-import { Generator, GeneratorDocument } from "./schemas/generator.schema";
+import { CreateGeneratorDto } from "~modules/pre-built/14-generators/dto/create-generator.dto";
+import { generateControllerCode } from "~modules/pre-built/14-generators/helpers/generate-controller-code";
+import { generateDtoCode } from "~modules/pre-built/14-generators/helpers/generate-dto-code";
+import { generateImportToModule } from "~modules/pre-built/14-generators/helpers/generate-import-to-module";
+import { generateModuleCode } from "~modules/pre-built/14-generators/helpers/generate-module-code";
+import { generateSchemaCode } from "~modules/pre-built/14-generators/helpers/generate-schema-code";
+import { generateServiceCode } from "~modules/pre-built/14-generators/helpers/generate-service-code";
+import {
+  Generator,
+  GeneratorDocument,
+} from "~modules/pre-built/14-generators/schemas/generator.schema";
 
 @Injectable()
 export class GeneratorService extends BaseService<GeneratorDocument> {
   constructor(@InjectModel(Generator.name) model: Model<GeneratorDocument>) {
     super(model);
-  }
-
-  private capitalize(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  async generateDto({ schemaName, schemaFields }: CreateGeneratorDto) {
-    const properties = schemaFields.map(field => generateDtoProperty(field)).join("\n\n");
-
-    const createDtoCode = `
-${getDtoRequiredImports(schemaFields)}
-
-export class ${schemaName}Dto {
-${properties}
-}
-`;
-
-    return createDtoCode.trim();
   }
 
   async generateSchema({ schemaName, schemaFields }: CreateGeneratorDto) {
@@ -51,6 +35,7 @@ ${properties}
     this.generateServiceFile(resourceDir, { schemaName, schemaFields });
     this.generateControllerFile(resourceDir, { schemaName, schemaFields });
     this.generateModuleFile(resourceDir, { schemaName, schemaFields });
+    generateImportToModule(schemaName);
   }
 
   generateModuleFile(resourceDir: string, { schemaName, schemaFields }: CreateGeneratorDto) {
