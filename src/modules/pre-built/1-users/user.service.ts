@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,9 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model, QueryOptions } from "mongoose";
 import { BaseService } from "~base-inherit/base.service";
-import { RoleService } from "~modules/pre-built/2-roles/role.service";
-import { TagService } from "~modules/questions-modules/3-tags/tag.service";
-import { ReputationValue, SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
+import { SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdatePasswordDto } from "./dto/update-password";
 import { HashingService } from "./hashing/hashing.service";
@@ -25,9 +21,6 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
-    private readonly roleService: RoleService,
-    @Inject(forwardRef(() => TagService))
-    private readonly tagService: TagService,
   ) {
     super(model);
     this.userService = this;
@@ -132,39 +125,4 @@ export class UserService extends BaseService<UserDocument> {
   }
 
   // features
-  async assignTopInteractedTags(users: UserDocument[]) {
-    const topInteractedTags = await this.tagService.getTopInteractedTagsByUserIds(
-      users.map(user => user._id),
-    );
-
-    const topInteractedTagsMap = new Map(
-      topInteractedTags.map(topInteractedTag => [
-        topInteractedTag.authorId.toString(),
-        topInteractedTag,
-      ]),
-    );
-
-    users.forEach(user => {
-      Object.assign(user, {
-        topInteractedTags: topInteractedTagsMap.get(user._id.toString())?.tags || [],
-      });
-    });
-
-    return users;
-  }
-
-  async increaseQuestionsCount(userId: ObjectId, count: number = 1) {
-    return this.userService.updateById(userId, {
-      $inc: { questionsCount: count, reputation: count * ReputationValue.createQuestion },
-    });
-  }
-
-  async increaseAnswersCount(userId: ObjectId, count: number = 1) {
-    return this.userService.updateById(userId, {
-      $inc: { answersCount: count, reputation: count * ReputationValue.answerQuestion },
-    });
-  }
-  async increaseReputation(userId: ObjectId, count: number = 1) {
-    return this.userService.updateById(userId, { $inc: { reputation: count } });
-  }
 }

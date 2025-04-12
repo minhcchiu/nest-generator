@@ -3,12 +3,12 @@ import { join } from "path";
 import { HttpExceptionResponse } from "~exceptions/http-exception-response.interface";
 
 const errorFileName = "error.log";
-const errorLogPath = join(__dirname, "../../", "public", "logs", errorFileName);
+const errorLogDir = join(process.cwd(), "public", "logs");
 
 export const writeExceptionLogToFile = (exceptionResponse: HttpExceptionResponse): void => {
   // check error log path
-  const isPathExist = existsSync(errorLogPath);
-  if (!isPathExist) mkdirSync(errorLogPath, { recursive: true });
+  const isPathExist = existsSync(errorLogDir);
+  if (!isPathExist) mkdirSync(errorLogDir, { recursive: true });
 
   const { statusCode, errors, method, url, title, timeStamp, user } = exceptionResponse;
 
@@ -23,7 +23,7 @@ export const writeExceptionLogToFile = (exceptionResponse: HttpExceptionResponse
     User: "${user}"
   }\n`;
 
-  appendFile(errorLogPath, errorLog, "utf8", err => {
-    if (err) throw err;
+  appendFile(join(errorLogDir, errorFileName), errorLog, "utf8", err => {
+    throw err;
   });
 };

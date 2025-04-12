@@ -37,9 +37,6 @@ export class UserController {
       populate,
     });
 
-    // Assign top interacted tags
-    if (projection?.topInteractedTags) await this.userService.assignTopInteractedTags([res]);
-
     return res;
   }
 
@@ -48,10 +45,6 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async paginate(@GetAqp() { filter, ...options }: PaginationDto) {
     const pagination = await this.userService.paginate(filter, options);
-
-    // Assign top interacted tags
-    if (options.projection?.topInteractedTags)
-      await this.userService.assignTopInteractedTags(pagination.data);
 
     return pagination;
   }
@@ -65,9 +58,6 @@ export class UserController {
   ) {
     const res = await this.userService.findById(id, { projection, populate });
 
-    // Assign top interacted tags
-    if (projection?.topInteractedTags) await this.userService.assignTopInteractedTags([res]);
-
     return res;
   }
 
@@ -75,10 +65,6 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async findMany(@GetAqp() { filter, ...options }: PaginationDto) {
     const users = await this.userService.findMany(filter, options);
-
-    // Assign top interacted tags
-    if (options.projection?.topInteractedTags)
-      await this.userService.assignTopInteractedTags(users);
 
     return users;
   }

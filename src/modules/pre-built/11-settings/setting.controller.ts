@@ -10,14 +10,14 @@ import {
   Post,
 } from "@nestjs/common";
 import { ObjectId } from "mongodb";
-import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
-import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { CreateSettingDto } from "./dto/create-setting.dto";
-import { UpdateSettingDto } from "./dto/update-setting.dto";
-import { SettingService } from "./setting.service";
+import { CreateSettingDto } from "~modules/pre-built/11-settings/dto/create-setting.dto";
+import { UpdateSettingDto } from "~modules/pre-built/11-settings/dto/update-setting.dto";
+import { SettingService } from "~modules/pre-built/11-settings/setting.service";
+import { ParseObjectIdPipe } from "~utils/parse-object-id.pipe";
+import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 
 @Controller("settings")
 export class SettingController {
