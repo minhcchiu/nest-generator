@@ -14,7 +14,6 @@ import { UploadModule } from "~modules/pre-built/7-uploads/upload.module";
 import { UserFileModule } from "~modules/pre-built/7-user-files/user-file.module";
 import { ProvinceModule } from "~modules/pre-built/8-provinces/province.module";
 import { DistrictModule } from "~modules/pre-built/9-districts/district.module";
-import { UserItemModule } from "~modules/user_items/user_item.module";
 
 export const FeatureModules = [
   // pre-built
@@ -34,5 +33,4 @@ export const FeatureModules = [
   SettingModule,
   NotificationModule,
   GeneratorModule,
-  UserItemModule,
 ];

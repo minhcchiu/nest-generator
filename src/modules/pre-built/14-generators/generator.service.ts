@@ -7,12 +7,12 @@ import { join } from "path";
 import * as pluralize from "pluralize";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateGeneratorDto } from "~modules/pre-built/14-generators/dto/create-generator.dto";
-import { generateControllerCode } from "~modules/pre-built/14-generators/helpers/generate-controller-code";
-import { generateDtoCode } from "~modules/pre-built/14-generators/helpers/generate-dto-code";
+import { generateControllerCode } from "~modules/pre-built/14-generators/helpers/generate-codes/controller-code";
+import { generateDtoCode } from "~modules/pre-built/14-generators/helpers/generate-codes/dto-code";
+import { generateModuleCode } from "~modules/pre-built/14-generators/helpers/generate-codes/module-code";
+import { generateSchemaCode } from "~modules/pre-built/14-generators/helpers/generate-codes/schema-code";
+import { generateServiceCode } from "~modules/pre-built/14-generators/helpers/generate-codes/service-code";
 import { generateImportToModule } from "~modules/pre-built/14-generators/helpers/generate-import-to-module";
-import { generateModuleCode } from "~modules/pre-built/14-generators/helpers/generate-module-code";
-import { generateSchemaCode } from "~modules/pre-built/14-generators/helpers/generate-schema-code";
-import { generateServiceCode } from "~modules/pre-built/14-generators/helpers/generate-service-code";
 import {
   Generator,
   GeneratorDocument,

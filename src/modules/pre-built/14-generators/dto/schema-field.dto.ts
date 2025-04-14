@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from "class-validator";
 import { FieldOptionDto } from "~modules/pre-built/14-generators/dto/field-option.dto";
 
 export class SchemaFieldDto {
@@ -10,6 +10,15 @@ export class SchemaFieldDto {
   @IsNotEmpty()
   @IsString()
   fieldType: string;
+
+  @ValidateIf(o => o.fieldType === "Array")
+  @IsString()
+  arrayType?: string;
+
+  @ValidateIf(o => o.fieldType === "Array")
+  @ValidateNested()
+  @Type(() => SchemaFieldDto)
+  arrayValues?: SchemaFieldDto;
 
   @IsOptional()
   @ValidateNested()
