@@ -16,9 +16,9 @@ export class SchemaFieldDto {
   arrayType?: string;
 
   @ValidateIf(o => o.fieldType === "Array")
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => SchemaFieldDto)
-  arrayValues?: SchemaFieldDto;
+  arrayValues: SchemaFieldDto[] = [];
 
   @IsOptional()
   @ValidateNested()

@@ -53,34 +53,88 @@ export const getDtoRequiredImports = (fields: SchemaFieldDto[]) => {
 };
 
 export const generateSchemaProperty = (field: SchemaFieldDto): string => {
-  const { fieldName, fieldType, options = {}, arrayType } = field;
+  const { fieldName, fieldType, options = {}, arrayType, arrayValues } = field;
   const propOptions: string[] = [];
 
   switch (fieldType) {
     case "Array": {
-      const propValues: Record<string, any> = {
-        type: schemaTypesMap[arrayType] || "SchemaTypes.Mixed",
-      };
-      if (options.ref) propValues.ref = `${pascalCase(options.ref)}.name`;
-      if (options.min !== undefined) propValues.min = options.min;
-      if (options.max !== undefined) propValues.max = options.max;
+      if (arrayType === "Object") {
+        const propValues: Record<string, object> = {};
+        for (const arrayValue of arrayValues) {
+          propValues[arrayValue.fieldName] = {
+            type: schemaTypesMap[arrayValue.fieldType] || "SchemaTypes.Mixed",
+          };
 
-      propOptions.push(
-        `type: [{ ${Object.keys(propValues)
-          .map(key => ` ${key}: ${propValues[key]}`)
-          .join(", ")} }]`,
-      );
+          if (arrayValue.options.ref) {
+            Object.assign(propValues[arrayValue.fieldName], {
+              ref: `${pascalCase(arrayValue.options.ref)}.name`,
+            });
+          }
+          if (arrayValue.options.min !== undefined)
+            Object.assign(propValues[arrayValue.fieldName], {
+              min: arrayValue.options.min,
+            });
+          if (arrayValue.options.max !== undefined)
+            Object.assign(propValues[arrayValue.fieldName], {
+              max: arrayValue.options.max,
+            });
+          if (arrayValue.options.default !== undefined)
+            Object.assign(propValues[arrayValue.fieldName], {
+              default: arrayValue.options.default,
+            });
+        }
 
-      let defaultValues: any[] = [];
-      if (options.default !== undefined && Array.isArray(options.default)) {
-        defaultValues = options.default.map(item => {
-          return typeof item === "string" ? `"${item}"` : item;
-        });
+        propOptions.push(
+          `type: [{ ${Object.keys(propValues)
+            .map(
+              key =>
+                ` ${key}: { ${Object.keys(propValues[key])
+                  .map(propKey => ` ${propKey}: ${propValues[key][propKey]}`)
+                  .join(", ")} }`,
+            )
+            .join(", ")} }]`,
+        );
+
+        let defaultValues: any[] = [];
+        if (options.default !== undefined && Array.isArray(options.default)) {
+          defaultValues = options.default.map((item: Record<string, any>) => {
+            return Object.keys(item)
+              .map(key => {
+                return `${key}: ${typeof item[key] === "string" ? `"${item[key]}"` : item[key]}`;
+              })
+              .join(", ");
+          });
+        }
+
+        propOptions.push(`default: [{${defaultValues.join(", ")}}]`);
+
+        const propDecorator = `@Prop({ ${propOptions.join(", ")} })`;
+        return `  ${propDecorator}\n  ${fieldName}: Array<any> = [{${defaultValues.join(", ")}}];`;
+      } else {
+        const propValues: Record<string, any> = {
+          type: schemaTypesMap[arrayType] || "SchemaTypes.Mixed",
+        };
+        if (options.ref) propValues.ref = `${pascalCase(options.ref)}.name`;
+        if (options.min !== undefined) propValues.min = options.min;
+        if (options.max !== undefined) propValues.max = options.max;
+
+        propOptions.push(
+          `type: [{ ${Object.keys(propValues)
+            .map(key => ` ${key}: ${propValues[key]}`)
+            .join(", ")} }]`,
+        );
+
+        let defaultValues: any[] = [];
+        if (options.default !== undefined && Array.isArray(options.default)) {
+          defaultValues = options.default.map(item => {
+            return typeof item === "string" ? `"${item}"` : item;
+          });
+        }
+        propOptions.push(`default: [${defaultValues.join(", ")}]`);
+
+        const propDecorator = `@Prop({ ${propOptions.join(", ")} })`;
+        return `  ${propDecorator}\n  ${fieldName}: Array<${dataTypesMap[arrayType]}> = [${defaultValues.join(", ")}];`;
       }
-      propOptions.push(`default: [${defaultValues.join(", ")}]`);
-
-      const propDecorator = `@Prop({ ${propOptions.join(", ")} })`;
-      return `  ${propDecorator}\n  ${fieldName}: Array<${dataTypesMap[arrayType]}> = [${defaultValues.join(", ")}];`;
     }
 
     default: {

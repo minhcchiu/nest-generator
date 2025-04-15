@@ -11,7 +11,12 @@ export const getReferencesImports = (fields: SchemaFieldDto[]) => {
   const refNames = fields.filter(f => f.options?.ref).map(f => f.options?.ref);
   const importFolder = (refName: string) => `~modules/${pluralize(snakeCase(refName))}`;
 
+  const arrayValueRefNames = fields
+    .filter(f => f.arrayValues?.length)
+    .flatMap(f => f.arrayValues.map(f => f.options?.ref).filter(Boolean));
+
   const refNameImports = refNames
+    .concat(arrayValueRefNames)
     .map(refName => {
       const fromPath =
         preBuiltMap[refName]?.schema ||

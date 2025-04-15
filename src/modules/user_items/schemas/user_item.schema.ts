@@ -2,6 +2,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Document, SchemaTypes } from "mongoose";
 import { User } from "~modules/pre-built/1-users/schemas/user.schema";
+import { Setting } from "~modules/pre-built/11-settings/schemas/setting.schema";
+import { Notification } from "~modules/pre-built/12-notifications/schemas/notification.schema";
 @Schema({ timestamps: true, versionKey: false, collection: "user_items" })
 export class UserItem {
   @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
@@ -22,8 +24,23 @@ export class UserItem {
   @Prop({ type: [{ type: String }], default: [] })
   strings: Array<string> = [];
 
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Notification.name }], default: [] })
+  notifications: Array<ObjectId> = [];
+
   @Prop({ type: [{ type: Number, min: 0, max: 100 }], default: [0] })
   numbers: Array<number> = [0];
+
+  @Prop({
+    type: [
+      {
+        settingId: { type: SchemaTypes.ObjectId, ref: Setting.name },
+        code: { type: String },
+        discountValue: { type: Number, min: 0, max: 100 },
+      },
+    ],
+    default: [{ userId: "", code: "123", discountValue: 1 }],
+  })
+  orderItems: Array<any> = [{ userId: "", code: "123", discountValue: 1 }];
 }
 
 export type UserItemDocument = UserItem & Document;

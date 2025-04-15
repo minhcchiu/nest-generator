@@ -44,7 +44,15 @@ export class CreateUserItemDto {
 
   @IsOptional()
   @IsArray()
+  notifications?: Array<any>;
+
+  @IsOptional()
+  @IsArray()
   @Min(0)
   @Max(100)
   numbers?: Array<any>;
+
+  @IsOptional()
+  @IsArray()
+  orderItems?: Array<any>;
 }
