@@ -47,6 +47,10 @@ export class CreateUserItemDto {
   notifications?: Array<any>;
 
   @IsOptional()
+  @IsString()
+  object?: undefined;
+
+  @IsOptional()
   @IsArray()
   @Min(0)
   @Max(100)

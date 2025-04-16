@@ -57,6 +57,59 @@ export const generateSchemaProperty = (field: SchemaFieldDto): string => {
   const propOptions: string[] = [];
 
   switch (fieldType) {
+    case "Object": {
+      const propValues: Record<string, object> = {};
+      for (const arrayValue of arrayValues) {
+        propValues[arrayValue.fieldName] = {
+          type: schemaTypesMap[arrayValue.fieldType] || "SchemaTypes.Mixed",
+        };
+
+        if (arrayValue.options.ref) {
+          Object.assign(propValues[arrayValue.fieldName], {
+            ref: `${pascalCase(arrayValue.options.ref)}.name`,
+          });
+        }
+        if (arrayValue.options.min !== undefined)
+          Object.assign(propValues[arrayValue.fieldName], {
+            min: arrayValue.options.min,
+          });
+        if (arrayValue.options.max !== undefined)
+          Object.assign(propValues[arrayValue.fieldName], {
+            max: arrayValue.options.max,
+          });
+        if (arrayValue.options.default !== undefined)
+          Object.assign(propValues[arrayValue.fieldName], {
+            default: arrayValue.options.default,
+          });
+      }
+
+      propOptions.push(
+        `type: { ${Object.keys(propValues)
+          .map(
+            key =>
+              ` ${key}: { ${Object.keys(propValues[key])
+                .map(propKey => ` ${propKey}: ${propValues[key][propKey]}`)
+                .join(", ")} }`,
+          )
+          .join(", ")} }`,
+      );
+
+      let defaultValues: Record<string, any> = {};
+      if (
+        options.default !== undefined &&
+        typeof options.default === "object" &&
+        !Array.isArray(options.default)
+      ) {
+        defaultValues = Object.keys(options.default).map(key => {
+          return `${key}: ${typeof options.default[key] === "string" ? `"${options.default[key]}"` : options.default[key]}`;
+        });
+      }
+      propOptions.push(`default: { ${defaultValues.join(", ")} }`);
+
+      const propDecorator = `@Prop({ ${propOptions.join(", ")} })`;
+      return `  ${propDecorator}\n  ${fieldName}: Record<string,any> = { ${defaultValues.join(", ")} };`;
+    }
+
     case "Array": {
       if (arrayType === "Object") {
         const propValues: Record<string, object> = {};

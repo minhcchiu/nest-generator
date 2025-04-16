@@ -23,7 +23,7 @@ export const writeExceptionLogToFile = (exceptionResponse: HttpExceptionResponse
     User: "${user}"
   }\n`;
 
-  appendFile(join(errorLogDir, errorFileName), errorLog, "utf8", err => {
-    throw err;
+  appendFile(join(errorLogDir, errorFileName), errorLog, "utf8", () => {
+    // ignore
   });
 };

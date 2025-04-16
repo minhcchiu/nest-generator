@@ -27,6 +27,16 @@ export class UserItem {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Notification.name }], default: [] })
   notifications: Array<ObjectId> = [];
 
+  @Prop({
+    type: {
+      settingId: { type: SchemaTypes.ObjectId, ref: Setting.name },
+      code: { type: String },
+      discountValue: { type: Number, min: 0, max: 100 },
+    },
+    default: { settingId: "123", code: "12310", discountValue: 10 },
+  })
+  object: Record<string, any> = { settingId: "123", code: "12310", discountValue: 10 };
+
   @Prop({ type: [{ type: Number, min: 0, max: 100 }], default: [0] })
   numbers: Array<number> = [0];
 

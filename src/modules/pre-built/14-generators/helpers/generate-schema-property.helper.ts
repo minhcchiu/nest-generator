@@ -15,36 +15,28 @@ export const getReferencesImports = (fields: SchemaFieldDto[]) => {
     .filter(f => f.arrayValues?.length)
     .flatMap(f => f.arrayValues.map(f => f.options?.ref).filter(Boolean));
 
-  const refNameImports = refNames
-    .concat(arrayValueRefNames)
-    .map(refName => {
-      const fromPath =
-        preBuiltMap[refName]?.schema ||
-        `${importFolder(refName)}/schemas/${snakeCase(refName)}.schema`;
+  const refNameImports = refNames.concat(arrayValueRefNames).map(refName => {
+    const fromPath =
+      preBuiltMap[refName]?.schema ||
+      `${importFolder(refName)}/schemas/${snakeCase(refName)}.schema`;
 
-      return `import { ${refName} } from "${fromPath}";`;
-    })
-    .join("\n");
+    return `import { ${refName} } from "${fromPath}";`;
+  });
+  const refModuleImports = refNames.map(refName => {
+    const fromPath =
+      preBuiltMap[refName]?.module || `${importFolder(refName)}/${snakeCase(refName)}.module`;
 
-  const refModuleImports = refNames
-    .map(refName => {
-      const fromPath =
-        preBuiltMap[refName]?.module || `${importFolder(refName)}/${snakeCase(refName)}.module`;
+    return `import { ${refName}Module } from "${fromPath}";`;
+  });
 
-      return `import { ${refName}Module } from "${fromPath}";`;
-    })
-    .join("\n");
-
-  const modulesImports = refNames
-    .map(refName => {
-      return `${pascalCase(refName)}Module`;
-    })
-    .join(", ");
+  const modulesImports = refNames.map(refName => {
+    return `${pascalCase(refName)}Module`;
+  });
 
   return {
-    refNameImports,
-    refModuleImports,
-    modulesImports,
+    refNameImports: [...new Set(refNameImports)].join("\n"),
+    refModuleImports: [...new Set(refModuleImports)].join("\n"),
+    modulesImports: [...new Set(modulesImports)].join(", "),
   };
 };
 
