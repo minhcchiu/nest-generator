@@ -15,17 +15,17 @@ export const dataTypesMap = {
   Date: "Date",
   ObjectId: "ObjectId",
   Mixed: "any",
-  Array: "Array<any>",
 };
 
 export const validatorMap = {
-  String: "IsString",
-  Number: "IsNumber",
-  Boolean: "IsBoolean",
-  Date: "IsDate",
-  ObjectId: "IsObjectId",
-  Mixed: "IsOptional",
-  Array: "IsArray",
+  String: "@IsString()",
+  Number: "@IsNumber()",
+  Boolean: "@IsBoolean()",
+  Date: "@IsDate()",
+  ObjectId: "@IsObjectId()",
+  Mixed: "@IsOptional()",
+  Array: "@IsArray()",
+  Object: "@IsObject()",
 };
 
 export const preBuiltMap = {

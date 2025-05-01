@@ -19,3 +19,7 @@ export const objectIdsToString = (ids: ObjectId[]) => {
 export const isObjectIdInList = (id: string | ObjectId, ids: (string | ObjectId)[]) => {
   return ids.some(item => item.toString() === id.toString());
 };
+
+export const isObjectId = (id: string | ObjectId) => {
+  return typeof id === "string" && ObjectId.isValid(id);
+};

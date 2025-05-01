@@ -1,31 +1,51 @@
-import { pascalCase, snakeCase } from "change-case";
-import * as pluralize from "pluralize";
+import { snakeCase } from "change-case";
 import { CreateGeneratorDto } from "~modules/pre-built/14-generators/dto/create-generator.dto";
-import { getDtoRequiredImports } from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
-import { generateDtoProperty } from "~modules/pre-built/14-generators/helpers/generate-schema-property.helper";
+import { SchemaFieldDto } from "~modules/pre-built/14-generators/dto/schema-field.dto";
+import {
+  generateDtoProperty,
+  getDtoName,
+  getDtoRequiredImports,
+  getModuleImportPath,
+} from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
 
-export const generateDtoCode = ({ schemaName, schemaFields }: CreateGeneratorDto) => {
-  const nameSnakeCase = snakeCase(schemaName);
-  const namePascalCase = pascalCase(schemaName);
-
+export const generateCreateDtoCode = ({ schemaName, schemaFields }: CreateGeneratorDto) => {
   // Generate create dto
   const properties = schemaFields.map(field => generateDtoProperty(field)).join("\n\n");
-  const createDtoCode = `${getDtoRequiredImports(schemaFields)}
+  const createDtoCode = `${getDtoRequiredImports(schemaName, schemaFields)}
 
-export class Create${namePascalCase}Dto {
+export class Create${getDtoName(schemaName)} {
 ${properties}
 }
 `;
 
+  return createDtoCode;
+};
+
+export const generateUpdateDtoCode = ({ schemaName }: CreateGeneratorDto) => {
+  const nameSnakeCase = snakeCase(schemaName);
+
   // Generate update dto
   const updateDtoCode = `import { PartialType } from "@nestjs/mapped-types";
-import { Create${namePascalCase}Dto } from "~modules/${pluralize(nameSnakeCase)}/dto/create-${nameSnakeCase}.dto";
+import { Create${getDtoName(schemaName)} } from "${getModuleImportPath(schemaName)}/dto/create-${nameSnakeCase}.dto";
 
-export class Update${namePascalCase}Dto extends PartialType(Create${namePascalCase}Dto) {}
+export class Update${getDtoName(schemaName)} extends PartialType(Create${getDtoName(schemaName)}) {}
 `;
 
-  return {
-    createDtoCode,
-    updateDtoCode,
-  };
+  return updateDtoCode;
+};
+
+export const generateObjectDtoCode = (
+  schemaName: string,
+  { arrayValues, fieldName }: SchemaFieldDto,
+) => {
+  const properties = arrayValues.map(field => generateDtoProperty(field)).join("\n\n");
+
+  const objectDtoCode = `${getDtoRequiredImports(schemaName, arrayValues)}
+
+export class ${getDtoName(fieldName)} {
+  ${properties}
+}
+`;
+
+  return objectDtoCode;
 };

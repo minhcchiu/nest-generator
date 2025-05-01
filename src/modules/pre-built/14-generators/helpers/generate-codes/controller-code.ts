@@ -1,6 +1,9 @@
 import { camelCase, pascalCase, snakeCase } from "change-case";
-import * as pluralize from "pluralize";
 import { CreateGeneratorDto } from "~modules/pre-built/14-generators/dto/create-generator.dto";
+import {
+  getDtoName,
+  getModuleImportPath,
+} from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
 
 export const generateControllerCode = ({ schemaName }: CreateGeneratorDto) => {
   const nameSnakeCase = snakeCase(schemaName);
@@ -15,9 +18,9 @@ import { stringIdToObjectId } from "~utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
 import { Public } from "~decorators/public.decorator";
 import { PaginationDto } from "~dto/pagination.dto";
-import { Create${namePascalCase}Dto } from "~modules/${pluralize(nameSnakeCase)}/dto/create-${nameSnakeCase}.dto";
-import { Update${namePascalCase}Dto } from "~modules/${pluralize(nameSnakeCase)}/dto/update-${nameSnakeCase}.dto";
-import { ${namePascalCase}Service } from "~modules/${pluralize(nameSnakeCase)}/${nameSnakeCase}.service";
+import { Create${getDtoName(schemaName)} } from "${getModuleImportPath(schemaName)}/dto/create-${nameSnakeCase}.dto";
+import { Update${getDtoName(schemaName)} } from "${getModuleImportPath(schemaName)}/dto/update-${nameSnakeCase}.dto";
+import { ${namePascalCase}Service } from "${getModuleImportPath(schemaName)}/${nameSnakeCase}.service";
 
 @Controller("${nameSnakeCase}s")
 export class ${namePascalCase}Controller {

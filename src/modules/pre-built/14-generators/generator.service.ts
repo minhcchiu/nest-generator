@@ -8,10 +8,15 @@ import * as pluralize from "pluralize";
 import { BaseService } from "~base-inherit/base.service";
 import { CreateGeneratorDto } from "~modules/pre-built/14-generators/dto/create-generator.dto";
 import { generateControllerCode } from "~modules/pre-built/14-generators/helpers/generate-codes/controller-code";
-import { generateDtoCode } from "~modules/pre-built/14-generators/helpers/generate-codes/dto-code";
+import {
+  generateCreateDtoCode,
+  generateObjectDtoCode,
+  generateUpdateDtoCode,
+} from "~modules/pre-built/14-generators/helpers/generate-codes/dto-code";
 import { generateModuleCode } from "~modules/pre-built/14-generators/helpers/generate-codes/module-code";
 import { generateSchemaCode } from "~modules/pre-built/14-generators/helpers/generate-codes/schema-code";
 import { generateServiceCode } from "~modules/pre-built/14-generators/helpers/generate-codes/service-code";
+import { singularSnakeCase } from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
 import { generateImportToModule } from "~modules/pre-built/14-generators/helpers/generate-import-to-module";
 import {
   Generator,
@@ -30,8 +35,8 @@ export class GeneratorService extends BaseService<GeneratorDocument> {
 
     mkdirSync(resourceDir, { recursive: true });
 
-    this.generateSchemaFile(resourceDir, { schemaName, schemaFields });
     this.generateDtoFile(resourceDir, { schemaName, schemaFields });
+    this.generateSchemaFile(resourceDir, { schemaName, schemaFields });
     this.generateServiceFile(resourceDir, { schemaName, schemaFields });
     this.generateControllerFile(resourceDir, { schemaName, schemaFields });
     this.generateModuleFile(resourceDir, { schemaName, schemaFields });
@@ -65,7 +70,19 @@ export class GeneratorService extends BaseService<GeneratorDocument> {
   generateDtoFile(resourceDir: string, { schemaName, schemaFields }: CreateGeneratorDto) {
     mkdirSync(join(resourceDir, "dto"), { recursive: true });
 
-    const { createDtoCode, updateDtoCode } = generateDtoCode({ schemaName, schemaFields });
+    const createDtoCode = generateCreateDtoCode({ schemaName, schemaFields });
+    const updateDtoCode = generateUpdateDtoCode({ schemaName, schemaFields });
+
+    const objectFields = schemaFields.filter(
+      f => f.fieldType === "Object" || (f.fieldType === "Array" && f.arrayType === "Object"),
+    );
+    if (objectFields.length) {
+      objectFields.forEach(field => {
+        const filePath = join(resourceDir, "dto", `${singularSnakeCase(field.fieldName)}.dto.ts`);
+
+        writeFileSync(filePath, generateObjectDtoCode(schemaName, field));
+      });
+    }
 
     const filePathCreateDto = join(resourceDir, "dto", `create-${snakeCase(schemaName)}.dto.ts`);
     const filePathUpdateDto = join(resourceDir, "dto", `update-${snakeCase(schemaName)}.dto.ts`);
