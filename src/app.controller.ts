@@ -1,5 +1,6 @@
 import { BadRequestException, Controller, Get } from "@nestjs/common";
 import * as AsyncLock from "async-lock";
+import { I18n, I18nContext } from "nestjs-i18n";
 import { Public } from "~decorators/public.decorator";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { RedisChannelName } from "~shared/redis/redis-channel-name";
@@ -18,6 +19,14 @@ export class AppController {
     private readonly loggerService: CustomLoggerService,
   ) {
     this.lock = new AsyncLock();
+  }
+
+  @Public()
+  @Get("")
+  async hello(@I18n() i18n: I18nContext) {
+    const res = i18n.t("test.HELLO");
+
+    return res;
   }
 
   @Public()

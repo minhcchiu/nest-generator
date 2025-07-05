@@ -49,6 +49,7 @@
     "mongodb": "^6.6.2",
     "mongoose": "^8.4.0",
     "mongoose-paginate-v2": "^1.8.1",
+    "nestjs-i18n": "^10.5.1",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.13",
     "reflect-metadata": "^0.2.0",

@@ -10,6 +10,8 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { join } from "path";
 import { VALIDATION_PIPE_OPTIONS } from "src/common/constant";
+import { AppGuard } from "src/guards/app.guard";
+import { I18nConfigModule } from "src/i18n/i18n-config.module";
 import { AllExceptionsFilter } from "~exceptions/all-exception.filter";
 import { AqpMiddleware } from "~middlewares/aqp.middleware";
 import { FeatureModules } from "~modules/feature.modules";
@@ -23,8 +25,7 @@ import { S3Module } from "~shared/storage/s3/s3.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./common/database/database.module";
-import { EnvStatic } from "./configurations/static.env";
-import { AppGuard } from "./guards/app.guard";
+import { EnvStatic } from "./configurations/env.static";
 import { CacheService } from "./shared/cache/cache.service.";
 import { CustomLoggerModule } from "./shared/logger/custom-logger.module";
 import { MailModule } from "./shared/mail/mail.module";
@@ -49,6 +50,7 @@ import { LocalModule } from "./shared/storage/local-storage/local.module";
     S3Module,
     CloudinaryModule,
     EventEmitterModule,
+    I18nConfigModule,
 
     // Features
     ...FeatureModules,

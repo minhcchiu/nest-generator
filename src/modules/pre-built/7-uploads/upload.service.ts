@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ObjectId } from "mongodb";
 import { StorageServerEnum } from "src/configurations/enums/config.enum";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { EventEmitterService } from "~shared/event-emitters/event-emitter.service";
 import { CloudinaryService } from "~shared/storage/cloudinary/cloudinary.service";
 import { LocalService } from "~shared/storage/local-storage/local.service";

@@ -5,7 +5,7 @@ import { removeTrailingSlash } from "~helpers/remove-trailing-slash";
 import { WardService } from "~pre-built/10-wards/ward.service";
 
 import { ObjectId } from "mongodb";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { HashingService } from "~modules/pre-built/1-users/hashing/hashing.service";
 import { UserService } from "~modules/pre-built/1-users/user.service";
 import { RoleService } from "~modules/pre-built/2-roles/role.service";

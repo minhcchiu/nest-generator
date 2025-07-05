@@ -1,6 +1,6 @@
 import { BadRequestException, ValidationError } from "@nestjs/common";
 import { NodeEnv } from "src/configurations/enums/config.enum";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { ErrorDetail } from "~types/error-detail.type";
 
 function transform(errors: ValidationError[]): ErrorDetail[] {

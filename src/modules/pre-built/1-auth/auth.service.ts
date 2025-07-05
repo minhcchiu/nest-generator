@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { NodeEnv } from "src/configurations/enums/config.enum";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { generateRandomKey } from "~helpers/generate-random-key";
 import { RoleService } from "~modules/pre-built/2-roles/role.service";
 import { DecodedToken } from "~modules/pre-built/5-tokens/interface";

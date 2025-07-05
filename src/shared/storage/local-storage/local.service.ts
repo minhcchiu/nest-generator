@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { rmSync, writeFileSync } from "fs";
 import { ResizeOptions } from "sharp";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";

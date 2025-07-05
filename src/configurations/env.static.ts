@@ -36,6 +36,7 @@ export class EnvStatic {
       verifyAccountUrl: process.env.VERIFY_ACCOUNT_URL,
       otpExpiration: eval(process.env.OTP_EXPIRATION),
       supperAdminIds: process.env.SUPPER_ADMIN_IDS?.split(",")?.map(id => stringIdToObjectId(id)),
+      fallbackLanguage: process.env.FALLBACK_LANGUAGE,
     };
   }
 
@@ -168,6 +169,7 @@ export class EnvStatic {
 
   static getThrottlerConfig() {
     return {
+      name: "default",
       ttl: +process.env.THROTTLER_TTL,
       limit: +process.env.THROTTLER_LIMIT,
     };

@@ -45,4 +45,8 @@ export class AppConfigDto {
   @IsNotEmpty()
   @IsString()
   GEMINI_BASE_URL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  FALLBACK_LANGUAGE: string;
 }

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { v2 } from "cloudinary";
 import { ResizeOptions } from "sharp";
 import { StorageServerEnum } from "src/configurations/enums/config.enum";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { ResourceTypeEnum } from "~modules/pre-built/7-uploads/enum/resource-type.enum";
 import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 import { FileFormatted } from "~modules/pre-built/7-uploads/types/file-formatted.type";

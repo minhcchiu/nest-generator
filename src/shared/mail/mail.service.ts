@@ -1,7 +1,7 @@
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { differenceInMinutes } from "date-fns";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 
 @Injectable()
 export class MailService {

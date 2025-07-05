@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { EnvStatic } from "./configurations/static.env";
+import { EnvStatic } from "./configurations/env.static";
 import { SeedService } from "./shared/seed/seed.service";
 
 export async function bootstrap() {

@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { addMinutes } from "date-fns";
 import { ObjectId } from "mongodb";
 import { Model } from "mongoose";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { BaseService } from "~base-inherit/base.service";
 import { generateRandomKey } from "~helpers/generate-random-key";
 import { RegisterDto } from "../1-auth/dto/register.dto";

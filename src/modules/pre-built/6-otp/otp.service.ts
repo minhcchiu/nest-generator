@@ -8,7 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { differenceInSeconds } from "date-fns";
 import { FilterQuery, Model, QueryOptions } from "mongoose";
 import { NodeEnv } from "src/configurations/enums/config.enum";
-import { EnvStatic } from "src/configurations/static.env";
+import { EnvStatic } from "src/configurations/env.static";
 import { generateOTP } from "~helpers/generate-otp";
 import { MailService } from "~shared/mail/mail.service";
 import { UserService } from "../1-users/user.service";
