@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
+import { I18nContext, I18nService } from "nestjs-i18n";
 import { NodeEnv } from "src/configurations/enums/config.enum";
 import { EnvStatic } from "src/configurations/env.static";
 import { generateRandomKey } from "~helpers/generate-random-key";
@@ -36,6 +37,7 @@ export class AuthService {
     private readonly otpService: OtpService,
     private readonly hashingService: HashingService,
     private readonly roleService: RoleService,
+    private readonly i18n: I18nService,
   ) {}
 
   async register({ fcmToken, otpCode, sendOtpTo, ...input }: RegisterDto) {
@@ -77,14 +79,22 @@ export class AuthService {
       },
     );
 
-    if (!user) throw new NotFoundException("Incorrect account!");
+    if (!user)
+      throw new NotFoundException(
+        this.i18n.t("errors.INCORRECT_ACCOUNT", { lang: I18nContext.current().lang }),
+      );
 
     if (user.status === AccountStatus.Deleted)
-      throw new BadRequestException("The account has been removed.");
+      throw new BadRequestException(
+        this.i18n.t("errors.ACCOUNT_REMOVED", { lang: I18nContext.current().lang }),
+      );
 
     const isPasswordValid = await this.hashingService.compare(user.password, password);
 
-    if (!isPasswordValid) throw new UnauthorizedException("Incorrect account!");
+    if (!isPasswordValid)
+      throw new UnauthorizedException(
+        this.i18n.t("errors.INCORRECT_ACCOUNT", { lang: I18nContext.current().lang }),
+      );
 
     if (fcmToken) this.userService.saveFcmToken(user._id, fcmToken);
 
@@ -196,7 +206,10 @@ export class AuthService {
       this.tokenService.verifyRefreshToken(token),
     ]);
 
-    if (!tokenDoc?.userId) throw new UnauthorizedException("Invalid refresh token!");
+    if (!tokenDoc?.userId)
+      throw new UnauthorizedException(
+        this.i18n.t("errors.INVALID_REFRESH_TOKEN", { lang: I18nContext.current().lang }),
+      );
 
     const userFound = await this.userService.findById(tokenDoc.userId, { projection: authSelect });
     if (fcmToken) this.userService.saveFcmToken(userFound._id, fcmToken);
@@ -210,9 +223,15 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     const user = await this.userService.findOne({ email });
-    if (!user) throw new NotFoundException("User not found.");
+    if (!user)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
+
     if (user.status === AccountStatus.Deleted)
-      throw new BadRequestException("The account has been removed.");
+      throw new BadRequestException(
+        this.i18n.t("errors.ACCOUNT_REMOVED", { lang: I18nContext.current().lang }),
+      );
 
     const { expiresAt, token } = await this.tokenService.generateForgotPasswordToken(user);
 
@@ -239,14 +258,20 @@ export class AuthService {
   async resetPasswordWithToken(input: ResetPasswordWithTokenDto) {
     const decoded = await this.tokenService.verifyForgotPasswordToken(input.token);
 
-    if (!decoded?._id) throw new UnauthorizedException("Invalid refresh token!");
+    if (!decoded?._id)
+      throw new UnauthorizedException(
+        this.i18n.t("errors.INVALID_REFRESH_TOKEN", { lang: I18nContext.current().lang }),
+      );
 
     const tokenRemoved = await this.tokenService.updateOne(
       { "tokens.tokenId": "FORGOT_PASSWORD", userId: decoded._id, "tokens.token": input.token },
       { $pullAll: { tokens: { tokenId: "FORGOT_PASSWORD" } } },
     );
 
-    if (!tokenRemoved) throw new BadRequestException("Token has expired!");
+    if (!tokenRemoved)
+      throw new BadRequestException(
+        this.i18n.t("errors.TOKEN_EXPIRED", { lang: I18nContext.current().lang }),
+      );
 
     const user = await this.userService.resetPasswordById(tokenRemoved.userId, input.password, {
       projection: authSelect,

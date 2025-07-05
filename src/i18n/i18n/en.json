@@ -1,0 +1,14 @@
+{
+  "test": {
+    "HELLO": "Hello"
+  },
+  "errors": {
+    "INCORRECT_ACCOUNT": "Incorrect account!",
+    "ACCOUNT_REMOVED": "The account has been removed.",
+    "USER_NOT_FOUND": "User not found.",
+    "INVALID_REFRESH_TOKEN": "Invalid refresh token!",
+    "TOKEN_EXPIRED": "Token has expired!",
+    "INVALID_NOTIFICATION_TYPE": "Invalid notification type!",
+    "INVALID_PASSWORD": "Invalid password!"
+  }
+}

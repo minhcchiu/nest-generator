@@ -7,6 +7,7 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { ObjectId } from "mongodb";
 import { Model, QueryOptions } from "mongoose";
+import { I18nContext, I18nService } from "nestjs-i18n";
 import { BaseService } from "~base-inherit/base.service";
 import { SUPPER_ADMIN_ACCOUNT } from "~utils/constant";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -21,6 +22,7 @@ export class UserService extends BaseService<UserDocument> {
   constructor(
     @InjectModel(User.name) model: Model<UserDocument>,
     private readonly hashingService: HashingService,
+    private readonly i18n: I18nService,
   ) {
     super(model);
     this.userService = this;
@@ -74,11 +76,17 @@ export class UserService extends BaseService<UserDocument> {
       projection: "password",
     });
 
-    if (!user) throw new NotFoundException("User not found.");
+    if (!user)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
 
     const validPass = await this.hashingService.compare(user.password, oldPassword);
 
-    if (!validPass) throw new UnauthorizedException("Invalid old password.");
+    if (!validPass)
+      throw new UnauthorizedException(
+        this.i18n.t("errors.INVALID_PASSWORD", { lang: I18nContext.current().lang }),
+      );
 
     const hashPassword = await this.hashingService.hash(newPassword);
 
@@ -90,7 +98,10 @@ export class UserService extends BaseService<UserDocument> {
 
     const updated = await this.userService.updateOne(filter, { password: hashPassword }, options);
 
-    if (!updated) throw new NotFoundException("User not found.");
+    if (!updated)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
 
     return updated;
   }
@@ -100,7 +111,10 @@ export class UserService extends BaseService<UserDocument> {
 
     const updated = await this.userService.updateById(id, { password: hashPassword }, options);
 
-    if (!updated) throw new NotFoundException("User not found.");
+    if (!updated)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
 
     return updated;
   }

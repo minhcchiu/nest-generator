@@ -1,0 +1,14 @@
+{
+  "test": {
+    "HELLO": "Xin chào"
+  },
+  "errors": {
+    "INCORRECT_ACCOUNT": "Tài khoản không chính xác!",
+    "ACCOUNT_REMOVED": "Tài khoản đã bị xóa.",
+    "USER_NOT_FOUND": "Không tìm thấy người dùng.",
+    "INVALID_REFRESH_TOKEN": "Token làm mới không hợp lệ!",
+    "TOKEN_EXPIRED": "Token đã hết hạn!",
+    "INVALID_NOTIFICATION_TYPE": "Loại thông báo không hợp lệ!",
+    "INVALID_PASSWORD": "Mật khẩu không hợp lệ!"
+  }
+}

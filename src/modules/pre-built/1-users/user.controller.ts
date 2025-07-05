@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseEnumPipe,
   Patch,
@@ -12,6 +13,7 @@ import {
 } from "@nestjs/common";
 import { ObjectId } from "mongodb";
 
+import { I18nContext, I18nService } from "nestjs-i18n";
 import { ParseObjectIdPipe } from "src/utils/parse-object-id.pipe";
 import { stringIdToObjectId } from "src/utils/stringId_to_objectId";
 import { GetAqp } from "~decorators/get-aqp.decorator";
@@ -26,7 +28,10 @@ import { UserService } from "./user.service";
 
 @Controller("users")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly i18n: I18nService,
+  ) {}
 
   //  ----- Method: GET -----
   @Get("/me")
@@ -91,7 +96,14 @@ export class UserController {
     @Param("id", ParseObjectIdPipe) id: ObjectId,
     @Body("status", new ParseEnumPipe(AccountStatus)) status: AccountStatus,
   ) {
-    return this.userService.updateById(id, { status });
+    const updated = await this.userService.updateById(id, { status });
+
+    if (!updated)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
+
+    return updated;
   }
 
   @Patch("/:id")
@@ -99,14 +111,28 @@ export class UserController {
   async update(@Param("id", ParseObjectIdPipe) id: ObjectId, @Body() body: UpdateUserDto) {
     await this.userService.validateCreateUser(body, { _id: { $ne: id } });
 
-    return this.userService.updateById(id, body);
+    const updated = await this.userService.updateById(id, body);
+
+    if (!updated)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
+
+    return updated;
   }
 
   //  ----- Method: DELETE -----
   @Delete("me")
   @HttpCode(HttpStatus.OK)
   async deleteMe(@GetCurrentUserId() id: ObjectId) {
-    return this.userService.updateById(id, { status: AccountStatus.Deleted });
+    const deleted = await this.userService.updateById(id, { status: AccountStatus.Deleted });
+
+    if (!deleted)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
+
+    return deleted;
   }
 
   @Delete(":ids/bulk/hard")
@@ -120,7 +146,14 @@ export class UserController {
   @Delete(":id/hard")
   @HttpCode(HttpStatus.OK)
   async deleteById(@Param("id", ParseObjectIdPipe) id: ObjectId) {
-    return this.userService.deleteById(id);
+    const deleted = await this.userService.deleteById(id);
+
+    if (!deleted)
+      throw new NotFoundException(
+        this.i18n.t("errors.USER_NOT_FOUND", { lang: I18nContext.current().lang }),
+      );
+
+    return deleted;
   }
 
   @Delete("/:ids/bulk")

@@ -23,7 +23,7 @@ export class CreateNotificationDto {
 
   @IsNotEmpty()
   @IsEnum(NotificationType)
-  type: NotificationType;
+  notificationType: NotificationType;
 
   @IsNotEmpty()
   @IsEnum(TargetType)
