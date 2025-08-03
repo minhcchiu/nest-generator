@@ -9,11 +9,11 @@ import {
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { WsExceptionsFilter } from "~exceptions/ws-exception.filter";
+import { UserService } from "~modules/pre-built/1-users/user.service";
 import { CustomLoggerService } from "~shared/logger/custom-logger.service";
 import { SOCKET_EVENTS } from "./constants/socket-event.constant";
 import { socketHelper } from "./helpers/socker.helper";
 import { SocketService } from "./socket.service";
-import { Message } from "./types/message.type";
 import { RenameChat } from "./types/rename-chat.type";
 
 @UseFilters(WsExceptionsFilter)
@@ -27,8 +27,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   server: Server;
 
   constructor(
-    private readonly socketService: SocketService,
     private logger: CustomLoggerService,
+    private readonly socketService: SocketService,
+    private readonly userService: UserService,
   ) {}
 
   afterInit() {
@@ -55,6 +56,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     // Step 04: Emit to all another users
     socket.broadcast.emit(SOCKET_EVENTS.NewUserOnline, userId);
+
+    // Step 05: Update online status
+    this.userService.toggleOnline(userId, true).catch(() => {
+      socket.disconnect(true);
+    });
   }
 
   async handleDisconnect(socket: Socket) {
@@ -64,16 +70,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     if (!user) return socket.disconnect(true);
 
-    const userId = user._id.toString();
+    const userId = user._id;
 
     // Step 01: Remove socket id
-    socketHelper.removeSocketId(userId, socket.id);
+    socketHelper.removeSocketId(userId.toString(), socket.id);
 
     // Step 02: Emit to all another users
-    const userSocketId = socketHelper.getSocketIdsByClientId(userId);
+    const userSocketId = socketHelper.getSocketIdsByClientId(userId.toString());
     if (!userSocketId) {
-      socket.leave(userId);
-      socket.broadcast.emit(SOCKET_EVENTS.NewUserOffline, userId);
+      socket.leave(userId.toString());
+      socket.broadcast.emit(SOCKET_EVENTS.NewUserOffline, userId.toString());
+
+      // Step 03: Update online status
+      this.userService.toggleOnline(userId, false).catch(() => {
+        // Do nothing
+      });
     }
   }
 
@@ -92,34 +103,39 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   // Rename chat
   @SubscribeMessage(SOCKET_EVENTS.RenameChat)
   handleRenameChat(client: Socket, data: RenameChat) {
-    client.to(data.chatId).emit(SOCKET_EVENTS.RenameChat, data);
+    data.receiverIds.forEach(receiverId => {
+      client.to(receiverId).emit(SOCKET_EVENTS.RenameChat, data);
+    });
   }
 
   // Typing
   @SubscribeMessage(SOCKET_EVENTS.Typing)
-  handleTyping(client: Socket, data: { chatId: string }) {
-    client.to(data.chatId).emit(SOCKET_EVENTS.Typing);
+  handleTyping(client: Socket, data: { chatId: string; receiverIds: string[] }) {
+    data.receiverIds.forEach(receiverId => {
+      client.to(receiverId).emit(SOCKET_EVENTS.Typing);
+    });
   }
 
   // Stop typing
   @SubscribeMessage(SOCKET_EVENTS.StopTyping)
-  handleStopTyping(client: Socket, data: { chatId: string }) {
-    client.to(data.chatId).emit(SOCKET_EVENTS.StopTyping);
+  handleStopTyping(client: Socket, data: { chatId: string; receiverIds: string[] }) {
+    data.receiverIds.forEach(receiverId => {
+      client.to(receiverId).emit(SOCKET_EVENTS.StopTyping);
+    });
   }
 
   // New message
   @SubscribeMessage(SOCKET_EVENTS.NewMessage)
-  handleNewMessage(client: Socket, data: Message) {
+  handleNewMessage(client: Socket, data: { chatId: string; receiverIds: string[] }) {
     // check members exist
-    if (!data.chat?.members) {
+    if (!data.receiverIds) {
       client.emit(SOCKET_EVENTS.SocketError, "Chat not found.");
       return;
     }
 
     // send message to all members
-    data.chat.members.forEach(({ user }) => {
-      if (user._id === data.sender._id) return;
-      client.to(user._id).emit(SOCKET_EVENTS.NewMessage, data);
+    data.receiverIds.forEach(receiverId => {
+      client.to(receiverId).emit(SOCKET_EVENTS.NewMessage, data);
     });
   }
 }

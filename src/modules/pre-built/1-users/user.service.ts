@@ -138,5 +138,11 @@ export class UserService extends BaseService<UserDocument> {
     return updated;
   }
 
+  async toggleOnline(id: ObjectId, isOnline: boolean) {
+    const updated = await this.userService.updateById(id, { isOnline });
+
+    return updated;
+  }
+
   // features
 }

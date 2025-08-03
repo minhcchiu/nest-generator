@@ -152,11 +152,9 @@ export class OtpService {
     const secondsLeft = differenceInSeconds(new Date(), new Date(updatedAt));
     const isValidTime = secondsLeft < 30;
 
-    if (isValidTime) {
-      throw new BadRequestException(`Please try again in ${30 - secondsLeft} seconds`);
-    }
+    if (isValidTime) return true;
 
-    return isValidTime;
+    throw new BadRequestException(`Please wait ${30 - secondsLeft} seconds before resending.`);
   }
 
   private async _validateSendOtp(input: CreateOtpDto) {

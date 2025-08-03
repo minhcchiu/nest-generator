@@ -75,6 +75,9 @@ export class User implements IUser {
   })
   status: AccountStatus;
 
+  @Prop({ type: Boolean, default: false })
+  isOnline: boolean;
+
   // Features
   @Prop({ type: Number, default: 0 })
   reputation: number = 0;
