@@ -4,7 +4,7 @@ import { HydratedDocument, SchemaTypes } from "mongoose";
 @Schema({
   timestamps: true,
   versionKey: false,
-  collection: "menugroups",
+  collection: "menu_groups",
 })
 export class MenuGroup {
   @Prop({ type: SchemaTypes.ObjectId, ref: "User", required: true })
