@@ -1,4 +1,4 @@
-export const schemaTypesMap = {
+export const SCHEMA_TYPE_MAP = {
   String: "String",
   Number: "Number",
   Boolean: "Boolean",
@@ -8,7 +8,7 @@ export const schemaTypesMap = {
   Array: "[SchemaTypes.Mixed]",
 };
 
-export const dataTypesMap = {
+export const DATA_TYPE_MAP = {
   String: "string",
   Number: "number",
   Boolean: "boolean",
@@ -17,7 +17,7 @@ export const dataTypesMap = {
   Mixed: "any",
 };
 
-export const validatorMap = {
+export const VALIDATOR_MAP = {
   String: "@IsString()",
   Number: "@IsNumber()",
   Boolean: "@IsBoolean()",

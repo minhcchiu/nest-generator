@@ -1,35 +1,40 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, ValidateIf } from "class-validator";
+import { StorageLocationEnum } from "~modules/pre-built/7-uploads/enum/store-location.enum";
 
 export class AwsConfigDto {
   @IsNotEmpty()
   @IsString()
+  STORAGE_SERVER: StorageLocationEnum;
+
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
+  @IsString()
   S3_ACCESS_KEY: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_SECRET_ACCESS_KEY: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_REGION: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_ENDPOINT: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_BUCKET_NAME: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_CLOUD_FONT: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_CLOUD_FONT_KEY_PAIR_ID: string;
 
-  @IsNotEmpty()
+  @ValidateIf(o => o.STORAGE_SERVER === StorageLocationEnum.S3)
   @IsString()
   S3_CLOUD_FONT_PRIVATE_KEY: string;
 }

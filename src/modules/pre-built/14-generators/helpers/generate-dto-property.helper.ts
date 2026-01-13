@@ -2,9 +2,9 @@ import { pascalCase, snakeCase } from "change-case";
 import * as pluralize from "pluralize";
 import { SchemaFieldDto } from "~modules/pre-built/14-generators/dto/schema-field.dto";
 import {
-  dataTypesMap,
+  DATA_TYPE_MAP,
+  VALIDATOR_MAP,
   preBuiltMap,
-  validatorMap,
 } from "~modules/pre-built/14-generators/types/data-map.type";
 
 export const singularSnakeCase = (name: string) => pluralize.singular(snakeCase(name));
@@ -27,7 +27,7 @@ const getFieldValueType = ({ fieldType, arrayType, fieldName }: SchemaFieldDto):
 
   if (fieldType === "Array" && arrayType === "Object") return `Array<${getDtoName(fieldName)}>`;
 
-  return fieldType === "Array" ? `Array<${dataTypesMap[arrayType]}>` : dataTypesMap[fieldType];
+  return fieldType === "Array" ? `Array<${DATA_TYPE_MAP[arrayType]}>` : DATA_TYPE_MAP[fieldType];
 };
 
 const generateValidationDecorators = (field: SchemaFieldDto): string[] => {
@@ -41,7 +41,7 @@ const generateValidationDecorators = (field: SchemaFieldDto): string[] => {
     Array: [`@ValidateNested({ each: true })`, `@Type(() => ${getDtoName(fieldName)})`],
   };
 
-  const validator = validatorMap[fieldType];
+  const validator = VALIDATOR_MAP[fieldType];
 
   switch (fieldType) {
     case "Date":

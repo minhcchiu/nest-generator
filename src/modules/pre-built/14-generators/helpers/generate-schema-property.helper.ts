@@ -8,10 +8,10 @@ import {
   getModulePath,
   getSchemaPath,
 } from "~modules/pre-built/14-generators/helpers/generate-dto-property.helper";
-import { dataTypesMap } from "~modules/pre-built/14-generators/types/data-map.type";
+import { DATA_TYPE_MAP } from "~modules/pre-built/14-generators/types/data-map.type";
 import { isObjectId } from "~utils/stringId_to_objectId";
 
-export const schemaTypesMap = {
+export const SCHEMA_TYPE_MAP = {
   String: "String",
   Number: "Number",
   Boolean: "Boolean",
@@ -116,7 +116,7 @@ export const generateSchemaProperty = (field: SchemaFieldDto): string => {
     const result: Record<string, any> = {};
     for (const val of values) {
       result[val.fieldName] = {
-        type: schemaTypesMap[val.fieldType] || "SchemaTypes.Mixed",
+        type: SCHEMA_TYPE_MAP[val.fieldType] || "SchemaTypes.Mixed",
       };
 
       if (val.options?.ref) result[val.fieldName].ref = `${getModelName(val.options.ref)}.name`;
@@ -210,7 +210,7 @@ export const generateSchemaProperty = (field: SchemaFieldDto): string => {
         );
       }
 
-      const basicArrayType = schemaTypesMap[arrayType] || "SchemaTypes.Mixed";
+      const basicArrayType = SCHEMA_TYPE_MAP[arrayType] || "SchemaTypes.Mixed";
       const propValues: Record<string, any> = { type: basicArrayType };
 
       if (options.ref) propValues.ref = `${pascalCase(options.ref)}.name`;
@@ -232,11 +232,11 @@ export const generateSchemaProperty = (field: SchemaFieldDto): string => {
         propOptions.push(`default: [${defaultValues.join(", ")}]`);
       }
 
-      return buildArrayDefinition("Array", dataTypesMap[arrayType], defaultValues);
+      return buildArrayDefinition("Array", DATA_TYPE_MAP[arrayType], defaultValues);
     }
 
     default: {
-      const propType = schemaTypesMap[fieldType] || "SchemaTypes.Mixed";
+      const propType = SCHEMA_TYPE_MAP[fieldType] || "SchemaTypes.Mixed";
       propOptions.push(`type: ${propType}`);
 
       if (options.ref) propOptions.push(`ref: ${pascalCase(options.ref)}.name`);
@@ -250,7 +250,7 @@ export const generateSchemaProperty = (field: SchemaFieldDto): string => {
 
       const propDecorator = `@Prop({ ${propOptions.join(", ")} })`;
       const optionalFlag = options.required ? "" : "?";
-      return `  ${propDecorator}\n  ${fieldName}${optionalFlag}: ${dataTypesMap[fieldType]};`;
+      return `  ${propDecorator}\n  ${fieldName}${optionalFlag}: ${DATA_TYPE_MAP[fieldType]};`;
     }
   }
 };
